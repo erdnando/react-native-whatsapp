@@ -19,11 +19,11 @@ export function AuthStartScreen() {
         <Text style={styles.title}>Te damos la bienvenida a ChatApp</Text>
         <Text style={styles.description}>
           Recomendamos usar este servicio con responsabilidad para disfrutar de
-          la experiencia que proporciona esta app desarrollada con cariño
+          la experiencia que proporciona esta app.
         </Text>
         <Text style={styles.description}>
           Consulta nuestras Política de privacidad. Pulsa "Aceptar y continuar"
-          para aceptar las Condiciones del servicio
+          para aceptar las Condiciones del servicio.
         </Text>
 
         <Text style={styles.btn} onPress={goToLogin}>
