@@ -53,12 +53,12 @@ export function Options(props) {
         <Text style={styles.text}>Cambiar apellidos</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}
         onPress={logout}
       >
         <Text style={styles.textClose}>Cerrar sesión</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
