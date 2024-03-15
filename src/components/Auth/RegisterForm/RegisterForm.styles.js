@@ -1,6 +1,7 @@
 import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
+
   viewInput: {
     marginBottom: 5,
   },
@@ -16,4 +17,5 @@ export const styles = new StyleSheet.create({
   inputError: {
     backgroundColor: "#270C0D",
   },
+  
 });

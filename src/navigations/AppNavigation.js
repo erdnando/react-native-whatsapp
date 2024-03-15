@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { BottomTabNavigation } from "./ButtomTabNavigation";
+import { BottomTabNavigation } from "./BottomTabNavigation";
 import {
   UserProfileScreen,
   CameraScreen,
@@ -22,6 +22,7 @@ const Stack = createNativeStackNavigator();
 export function AppNavigation() {
   return (
     <Stack.Navigator>
+
       <Stack.Screen
         name={screens.tab.root}
         component={BottomTabNavigation}
@@ -38,6 +39,7 @@ export function AppNavigation() {
         component={GroupScreen}
         options={{ headerShown: false, ...styles.stackNavigationStyles }}
       />
+
 
       <Stack.Group
         screenOptions={{ presentation: "modal", ...styles.modalStyles }}

@@ -21,6 +21,9 @@ export function LoginForm() {
           formValue.email,
           formValue.password
         );
+
+        console.log(response);
+
         const { access, refresh } = response;
 
         await authController.setAccessToken(access);
@@ -39,7 +42,7 @@ export function LoginForm() {
         <Input
           placeholder="Correo electronico"
           variant="unstyled"
-          autoCapitalize={false}
+          autoCapitalize={"none"}
           value={formik.values.email}
           onChangeText={(text) => formik.setFieldValue("email", text)}
           style={[styles.input, formik.errors.email && styles.inputError]}

@@ -8,6 +8,7 @@ const authController = new Auth();
 export const AuthContext = createContext();
 
 export function AuthProvider(props) {
+  
   const { children } = props;
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -53,9 +54,11 @@ export function AuthProvider(props) {
   const login = async (accessToken) => {
     try {
       setLoading(true);
+      
       const response = await userController.getMe(accessToken);
       setUser(response);
       setToken(accessToken);
+
       setLoading(false);
     } catch (error) {
       console.error(error);

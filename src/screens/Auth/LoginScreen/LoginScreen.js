@@ -5,6 +5,7 @@ import { LoginForm } from "../../../components/Auth";
 import { styles } from "./LoginScreen.styles";
 
 export function LoginScreen() {
+  
   const navigation = useNavigation();
 
   const goToRegister = () => {
@@ -22,7 +23,7 @@ export function LoginScreen() {
       </Text>
 
       <Text style={styles.info}>
-        Debes de tener al menos 16 años de edad para registrarte. Más
+        Debes de tener al menos 18 años de edad para registrarte. Más
         información sobre cómo trabaja ChatApp en las politicas.
       </Text>
     </View>
