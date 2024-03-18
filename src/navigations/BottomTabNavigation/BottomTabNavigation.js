@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
-  ChatsNavigation,
+  //ChatsNavigation,
   GroupsNavigation,
   SettingsNavigation,
 } from "../stacks";
@@ -22,11 +22,11 @@ export function BottomTabNavigation() {
         tabBarIcon: ({ color, size }) => screenIcon(route, color, size),
       })}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name={screens.tab.chats.root}
         component={ChatsNavigation}
         options={{ title: "Chats" }}
-      />
+      /> */}
       <Tab.Screen
         name={screens.tab.groups.root}
         component={GroupsNavigation}
@@ -44,9 +44,9 @@ export function BottomTabNavigation() {
 function screenIcon(route, color, size) {
   let iconName;
 
-  if (route.name === screens.tab.chats.root) {
+  {/*if (route.name === screens.tab.chats.root) {
     iconName = "chat";
-  }
+  }*/}
   if (route.name === screens.tab.groups.root) {
     iconName = "account-group";
   }

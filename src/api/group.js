@@ -1,6 +1,7 @@
 import { ENV } from "../utils";
 
 export class Group {
+
   async create(accessToken, creatorId, usersId, name, image) {
     try {
       const formData = new FormData();
@@ -10,6 +11,34 @@ export class Group {
       formData.append("participants", JSON.stringify([...usersId, creatorId]));
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}`;
+      const params = {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData,
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 201) throw result;
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createAuto(accessToken, creatorId, usersId, name, image) {
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      //formData.append("image", image);
+      formData.append("creator", creatorId);
+      formData.append("participants", JSON.stringify([...usersId, creatorId]));
+
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUPAUTO}`;
       const params = {
         method: "POST",
         headers: {

@@ -29,11 +29,11 @@ export function AppNavigation() {
         options={{ headerShown: false }}
       />
 
-      <Stack.Screen
+      {/*<Stack.Screen
         name={screens.global.chatScreen}
         component={ChatScreen}
         options={{ headerShown: false, ...styles.stackNavigationStyles }}
-      />
+      />*/}
       <Stack.Screen
         name={screens.global.groupScreen}
         component={GroupScreen}

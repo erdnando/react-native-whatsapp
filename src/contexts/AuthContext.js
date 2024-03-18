@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext } from "react";
-import { User, Auth } from "../api";
+import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
 import Constants from 'expo-constants';
 
@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 
 const userController = new User();
 const authController = new Auth();
+const groupController = new Group();
 
 export const AuthContext = createContext();
 
@@ -17,12 +18,58 @@ export function AuthProvider(props) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
+
+  //Metodo incial
   useEffect(() => {
     (async () => {
 
       //get UUID
-      const idApp = Constants.installationId;
+      const idApp = "ME_"+Constants.installationId;
      // await authController.removeTokens();
+
+     const userRegistrado = await authController.login(idApp, idApp  );
+     const { access, refresh } = userRegistrado;
+
+     console.log("accessToken:" + access);
+
+     if(access=="" || access == undefined){
+      //if it's not registered, registered it
+      console.log("Registrando:" + idApp);
+
+      await authController.register(idApp, idApp);
+
+        const responseLogin = await authController.login( idApp,idApp);
+
+        console.log("login",responseLogin);
+
+        const { access, refresh } = responseLogin;
+
+        await authController.setAccessToken(access);
+        await authController.setRefreshToken(refresh);
+        setUser(idApp);
+
+        //Creating its own personal group
+        //-------------------------------------------------------------
+        
+        await groupController.createAuto(
+          access,
+          idApp,
+          idApp,
+          idApp
+        );
+        //-------------------------------------------------------------
+
+        await login(access);
+    }else{
+      console.log("Accessing directly")
+      await authController.setAccessToken(access);
+      await authController.setRefreshToken(refresh);
+      await login(access);  
+    }
+
+
+
+/*
       const accessToken = await authController.getAccessToken();
       const refreshToken = await authController.getRefreshToken();
      
@@ -76,6 +123,10 @@ export function AuthProvider(props) {
         //=============================================================
       }else{
 
+        //=================================================
+        //consultar DB para efectos de demo
+        //==================================================
+
         const response = await authController.login(idApp, idApp  );
           const { access, refresh } = response;
           if(access==""){
@@ -103,7 +154,7 @@ export function AuthProvider(props) {
 
      
       }
-     
+     */
       
      /*
       if (!accessToken || !refreshToken) {

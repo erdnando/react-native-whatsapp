@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "ChatApp",
-    "slug": "chatapp",
+    "owner": "erdnando",
+    "name": "SecureChat",
+    "slug": "securechat-mx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,14 +26,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.xagustin93.chatapp"
+      "package": "com.erdnando.chatapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "2414b49b-81cd-4b2c-971a-f77fd27a9fab"
+        "projectId": "f17ca1f6-8db0-4c47-b757-c5578aa1d780"
       }
     }
   }

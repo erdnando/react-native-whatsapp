@@ -46,6 +46,7 @@ export function CreateGroupScreen() {
 
   return (
     <View>
+      {/*
       {step === 1 && (
         <>
           <Search data={users} setData={setUsersResult} />
@@ -57,6 +58,8 @@ export function CreateGroupScreen() {
         </>
       )}
       {step === 2 && <CreateGrupo.Form usersId={usersId} />}
+*/}
+      <CreateGrupo.Form usersId={usersId} />
     </View>
   );
 }

@@ -52,8 +52,21 @@ export function Form(props) {
     });
   }, []);
 
-  const openGallery = async () => {
+  {/*const openGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const file = imageExpoFormat(result.assets[0].uri);
+      formik.setFieldValue("image", file);
+    }
+  };*/}
+
+  const openGallery = async () => {
+    const result = await ImagePicker.launchCameraAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
