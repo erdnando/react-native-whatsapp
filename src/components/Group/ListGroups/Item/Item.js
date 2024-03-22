@@ -140,7 +140,7 @@ export function Item(props) {
           <Text style={styles.message} numberOfLines={2}>
             <Text>
               {lastMessage
-                ? `${lastMessage.user?.firstname || lastMessage.user.email}: `
+                ? `${lastMessage.user.email.substring(0, 10)+"..."}: `
                 : " "}
             </Text>
             <Text style={styles.text}>

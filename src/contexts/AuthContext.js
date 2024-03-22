@@ -28,7 +28,7 @@ export function AuthProvider(props) {
 
 
       //get UUID
-      const idApp = "ME_"+Constants.installationId;
+      const idApp = Constants.installationId;
      // await authController.removeTokens();
 
      const userRegistrado = await authController.login(idApp, idApp  );
