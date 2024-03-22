@@ -29,6 +29,7 @@ export const ENV = {
     GROUP_MESSAGE_IMAGE: "group/message/image",
     GROUP_MESSAGE_TOTAL: "group/message/total",
     GROUP_MESSAGE_LAST: "group/message/last",
+    GROUP_PARTICIPANTS_TOTAL: "group/participants/total",
   },
   JWT: {
     ACCESS: "access",

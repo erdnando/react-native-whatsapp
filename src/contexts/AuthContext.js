@@ -2,7 +2,7 @@ import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
 import Constants from 'expo-constants';
-
+import * as SQLite from 'expo-sqlite';
 
 
 const userController = new User();
@@ -22,6 +22,10 @@ export function AuthProvider(props) {
   //Metodo incial
   useEffect(() => {
     (async () => {
+      //const [db, setDb] = useState(SQLite.openDatabase('example.db'))
+
+
+
 
       //get UUID
       const idApp = "ME_"+Constants.installationId;

@@ -9,6 +9,8 @@ import { GroupMessage, UnreadMessages } from "../../../../api";
 import { useAuth } from "../../../../hooks";
 import { ENV, screens, socket } from "../../../../utils";
 import { styles } from "./Item.styles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Icon } from "native-base";
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -17,6 +19,7 @@ export function Item(props) {
   const { group, upGroupChat } = props;
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+  const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
   const navigation = useNavigation();
 
@@ -27,11 +30,18 @@ export function Item(props) {
           accessToken,
           group._id
         );
+      
 
-        const totalReadMessages =
-          await unreadMessagesController.getTotalReadMessages(group._id);
+        const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+          accessToken,
+          group._id
+        );
+        setTotalMembers(totalParticipants);
 
+
+        const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
         setTotalUnreadMessages(totalMessages - totalReadMessages);
+
       } catch (error) {
         console.error(error);
       }
@@ -68,12 +78,16 @@ export function Item(props) {
         if (activeGroupId !== newMsg.group) {
           setTotalUnreadMessages((prevState) => prevState + 1);
         }
+
+
       }
     }
   };
 
-  const openGroup = () => {
+  const  openGroup = () => {
     setTotalUnreadMessages(0);
+
+   
     navigation.navigate(screens.global.groupScreen, { groupId: group._id });
   };
 
@@ -118,7 +132,38 @@ export function Item(props) {
               </Text>
             </View>
           ) : null}
+
+           {/*Miembros en un grupo*/}
+            <View >
+           
+              { totalMembers> 1 ? (
+                <Icon
+                as={MaterialCommunityIcons}
+                name={"account-group"}
+                color={"#646464"}
+                size={25}
+              />
+                ) : 
+                <Icon
+                as={MaterialCommunityIcons}
+                name={"account"}
+                color={"#646464"}
+                size={25}
+              />
+              
+              }
+            </View>
+          
+
         </View>
+
+
+
+
+
+
+
+        
       </View>
     </TouchableOpacity>
   );

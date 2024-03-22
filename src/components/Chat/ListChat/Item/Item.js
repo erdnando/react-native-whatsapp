@@ -136,6 +136,8 @@ export function Item(props) {
               </Text>
             ) : null}
 
+           
+
             {totalUnreadMessages ? (
               <View style={styles.totalUnreadContent}>
                 <Text style={styles.totalUnread}>
@@ -144,6 +146,8 @@ export function Item(props) {
               </View>
             ) : null}
           </View>
+
+
         </View>
       </TouchableOpacity>
 
