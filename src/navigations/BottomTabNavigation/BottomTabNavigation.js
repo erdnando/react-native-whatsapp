@@ -30,7 +30,7 @@ export function BottomTabNavigation() {
       <Tab.Screen
         name={screens.tab.groups.root}
         component={GroupsNavigation}
-        options={{ title: "Grupos" }}
+        options={{ title: "Canales" }}
       />
       <Tab.Screen
         name={screens.tab.settings.root}

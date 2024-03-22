@@ -21,10 +21,11 @@ export function GroupProfileScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await groupController.obtain(
-          accessToken,
-          params.groupId
-        );
+        const response = await groupController.obtain(accessToken, params.groupId );
+        console.log("===========miembros obtenidos=================");
+        console.log(response);
+        console.log("============================");
+
         setGroup(response);
       } catch (error) {
         console.error(error);
@@ -43,6 +44,10 @@ export function GroupProfileScreen() {
   };
 
   if (!group) return null;
+
+  console.log("===========miembros obtenidos 2=================");
+        console.log(group);
+        console.log("============================");
 
   return (
     <ScrollView style={styles.content}>

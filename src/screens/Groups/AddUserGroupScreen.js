@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { User, Group } from "../../api";
 import { useAuth } from "../../hooks";
 import { Search, ListUserAddParticipants } from "../../components/Group";
+import { EventRegister } from "react-native-event-listeners";
 
 const userController = new User();
 const groupController = new Group();
@@ -33,8 +34,11 @@ export function AddUserGroupScreen() {
   const addParticipants = async (ids) => {
     try {
       await groupController.addParticipants(accessToken, params.groupId, ids);
+      
+     
       navigation.goBack();
       navigation.goBack();
+      EventRegister.emit("participantsModified",true);
     } catch (error) {
       console.error(error);
     }

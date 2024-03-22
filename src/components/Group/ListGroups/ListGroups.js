@@ -5,6 +5,8 @@ import { styles } from "./ListGroups.styles";
 
 export function ListGroups(props) {
   const { groups, upGroupChat } = props;
+  
+
 
   return (
     <ScrollView alwaysBounceVertical={false}>

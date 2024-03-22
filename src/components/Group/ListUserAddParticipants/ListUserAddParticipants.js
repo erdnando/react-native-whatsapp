@@ -44,7 +44,10 @@ export function ListUserAddParticipants(props) {
   };
 
   const onAddParticipants = () => {
+
     addParticipants(ids);
+   
+
   };
 
   return (

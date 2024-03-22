@@ -89,7 +89,7 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-
+      console.log(groupId);
       if (response.status !== 200) throw result;
 
       return result;

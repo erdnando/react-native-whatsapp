@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Avatar } from "native-base";
 import { isEmpty } from "lodash";
 import { DateTime } from "luxon";
+
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GroupMessage, UnreadMessages } from "../../../../api";
@@ -11,9 +12,12 @@ import { ENV, screens, socket } from "../../../../utils";
 import { styles } from "./Item.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
+import { EventRegister } from "react-native-event-listeners";
+
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
+
 
 export function Item(props) {
   const { group, upGroupChat } = props;
@@ -21,6 +25,7 @@ export function Item(props) {
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -37,10 +42,35 @@ export function Item(props) {
           group._id
         );
         setTotalMembers(totalParticipants);
+        
 
 
         const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
         setTotalUnreadMessages(totalMessages - totalReadMessages);
+
+
+        //=================================================================
+        const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
+          console.log("group list updated...");
+        
+              try {
+                const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+                  accessToken,
+                  group._id
+                );
+                setTotalMembers(totalParticipants);
+                console.log("group and groupResult updated...");
+              } catch (error) {
+                console.error(error);
+              }
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventGrupo);
+        }
+        
+        
+        //================================================================
 
       } catch (error) {
         console.error(error);
@@ -68,6 +98,8 @@ export function Item(props) {
     socket.on("message_notify", newMessage);
   }, []);
 
+
+
   const newMessage = async (newMsg) => {
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
@@ -84,10 +116,11 @@ export function Item(props) {
     }
   };
 
-  const  openGroup = () => {
+  const  openGroup = async () => {
+    console.log("openning group.."+group._id );
+    
     setTotalUnreadMessages(0);
 
-   
     navigation.navigate(screens.global.groupScreen, { groupId: group._id });
   };
 

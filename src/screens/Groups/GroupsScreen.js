@@ -9,6 +9,7 @@ import { screens } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
 
+
 const groupController = new Group();
 
 export function GroupsScreen() {
@@ -16,8 +17,10 @@ export function GroupsScreen() {
   const { accessToken } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
+  const [totalMembers, setTotalMembers] = useState(0);
 
   useEffect(() => {
+
     navigation.setOptions({
       headerRight: () => (
         <IconButton
@@ -29,6 +32,7 @@ export function GroupsScreen() {
         />
       ),
     });
+
   }, []);
 
   useFocusEffect(
@@ -36,14 +40,14 @@ export function GroupsScreen() {
       (async () => {
         try {
           const response = await groupController.getAll(accessToken);
+
           const result = response.sort((a, b) => {
-            return (
-              new Date(b.last_message_date) - new Date(a.last_message_date)
-            );
+            return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
           });
 
           setGroups(result);
           setGroupsResult(result);
+
         } catch (error) {
           console.error(error);
         }
@@ -51,13 +55,19 @@ export function GroupsScreen() {
     }, [])
   );
 
+ 
+
   const upGroupChat = (groupId) => {
+
     const data = groupsResult;
     const fromIndex = data.map((group) => group._id).indexOf(groupId);
     const toIndex = 0;
     const element = data.splice(fromIndex, 1)[0];
+   
     data.splice(toIndex, 0, element);
     setGroups([...data]);
+   
+
   };
 
   if (!groupsResult) return <LoadingScreen />;
@@ -65,9 +75,8 @@ export function GroupsScreen() {
   return (
     <View>
       {size(groups) > 0 && <Search data={groups} setData={setGroupsResult} />}
-      <ListGroups
-        groups={size(groups) === size(groupsResult) ? groups : groupsResult}
-        upGroupChat={upGroupChat}
+      <ListGroups groups={size(groups) === size(groupsResult) ? groups : groupsResult}
+                  upGroupChat={upGroupChat}
       />
     </View>
   );

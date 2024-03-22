@@ -6,10 +6,14 @@ import { Group } from "../../../../api";
 import { useAuth } from "../../../../hooks";
 import { ENV, screens } from "../../../../utils";
 import { styles } from "./Participants.styles";
+import { EventRegister } from "react-native-event-listeners";
 
 const groupController = new Group();
 
 export function Participants(props) {
+
+  console.log("===========props==================");
+  console.log(props);
   const {
     group: { _id, participants },
     onReload,
@@ -21,6 +25,9 @@ export function Participants(props) {
     try {
       await groupController.ban(accessToken, _id, participant._id);
       onReload();
+
+      EventRegister.emit("participantsModified",true);
+
     } catch (error) {
       console.error(error);
     }
@@ -51,21 +58,13 @@ export function Participants(props) {
             <Avatar
               bg="cyan.500"
               marginRight={3}
-              source={{
-                uri:
-                  participant.avatar &&
-                  `${ENV.BASE_PATH}/${participant.avatar}`,
-              }}
-            >
+              source={{ uri:  participant.avatar && `${ENV.BASE_PATH}/${participant.avatar}`,  }}  >
               {participant.email.substring(0, 2).toUpperCase()}
             </Avatar>
+
             <View style={styles.info}>
               <Text style={styles.identity}>
-                {participant.firstname || participant.lastname
-                  ? `${participant.firstname || ""} ${
-                      participant.lastname || ""
-                    }`
-                  : "..."}
+                {participant.firstname || participant.lastname ? `${participant.firstname || ""} ${ participant.lastname || "" }` : "..."}
               </Text>
               <Text style={styles.email}>{participant.email}</Text>
 

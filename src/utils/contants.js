@@ -1,11 +1,11 @@
-//const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app";
-const SERVER_IP = "192.168.0.18:3977";
+const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app";
+//const SERVER_IP = "192.168.0.18:3977";
 
 export const ENV = {
   SERVER_IP: SERVER_IP,
-  BASE_PATH: `http://${SERVER_IP}`,
-  API_URL: `http://${SERVER_IP}/api`,
-  SOCKET_URL: `http://${SERVER_IP}`,
+  BASE_PATH: `https://${SERVER_IP}`,
+  API_URL: `https://${SERVER_IP}/api`,
+  SOCKET_URL: `https://${SERVER_IP}`,
   ENDPOINTS: {
     AUTH: {
       REGISTER: "auth/register",
