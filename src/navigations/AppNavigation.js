@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BottomTabNavigation } from "./BottomTabNavigation";
+import { useNavigation } from "@react-navigation/native";
 import {
   UserProfileScreen,
   CameraScreen,
@@ -14,12 +15,24 @@ import {
 } from "../screens/Groups";
 import { screens, initSockets } from "../utils";
 import { styles } from "./Styles.styles";
+import { Button } from "react-native";
+import { AddIcon, IconButton, ChevronLeftIcon } from "native-base";
 
 initSockets();
 
 const Stack = createNativeStackNavigator();
 
+
+
+
 export function AppNavigation() {
+
+  const navigation = useNavigation();
+  const regresar = async () => {
+    navigation.goBack();
+   
+  };
+
   return (
     <Stack.Navigator>
 
@@ -52,7 +65,13 @@ export function AppNavigation() {
         <Stack.Screen
           name={screens.global.groupProfileScreen}
           component={GroupProfileScreen}
-          options={{ title: "Info. del grupo" }}
+          options={{ headerShown: true,
+            headerLeft: () => (
+              
+              <IconButton icon={<ChevronLeftIcon />} padding={0} marginRight={5} onPress={regresar} />
+              
+            ),
+            title: "Info. del grupo", }}
         />
         <Stack.Screen
           name={screens.global.addUserGroupScreen}
