@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
 import { Group } from "../../api";
-import { useAuth } from "../../hooks";
+import { useAuth,useDB } from "../../hooks";
 import { screens } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
@@ -12,7 +12,12 @@ import { ListGroups, Search } from "../../components/Group";
 
 const groupController = new Group();
 
+
 export function GroupsScreen() {
+  const { createTable,addUser , selectTable,deleteTable } = useDB();
+
+
+
   const navigation = useNavigation();
   const { accessToken } = useAuth();
   const [groups, setGroups] = useState(null);
@@ -20,6 +25,16 @@ export function GroupsScreen() {
   const [totalMembers, setTotalMembers] = useState(0);
 
   useEffect(() => {
+
+    
+    async function fetchData() {
+     // You can await here
+     // deleteTable('USERS');
+     createTable('USERS');
+     addUser('erdnando@gmail.com');
+     selectTable('USERS');
+    }
+    fetchData();
 
     navigation.setOptions({
       headerRight: () => (
