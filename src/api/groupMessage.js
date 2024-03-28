@@ -1,6 +1,13 @@
 import { ENV } from "../utils";
+import { useDB } from "../../hooks";
+
+const { createTable,addUser , selectTable,deleteTable } = useDB();
 
 export class GroupMessage {
+
+  
+
+  //=====================================================================================================
   async getTotal(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_TOTAL}/${groupId}`;
@@ -20,7 +27,7 @@ export class GroupMessage {
       throw error;
     }
   }
-
+//=====================================================================================================
   async getGroupParticipantsTotal(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_PARTICIPANTS_TOTAL}/${groupId}`;
@@ -41,7 +48,7 @@ export class GroupMessage {
       throw error;
     }
   }
-
+//=====================================================================================================
   async getLastMessage(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LAST}/${groupId}`;
@@ -61,7 +68,7 @@ export class GroupMessage {
       throw error;
     }
   }
-
+//=====================================================================================================
   async getAll(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`;
@@ -81,7 +88,7 @@ export class GroupMessage {
       throw error;
     }
   }
-
+//=====================================================================================================
   async sendText(accessToken, groupId, message) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
@@ -100,6 +107,9 @@ export class GroupMessage {
       const response = await fetch(url, params);
       const result = await response.json();
 
+      //get group messages and persist
+     // await selectTable('BITACORA');
+
       if (response.status !== 201) throw result;
 
       return true;
@@ -107,7 +117,7 @@ export class GroupMessage {
       throw error;
     }
   }
-
+//=====================================================================================================
   async sendImage(accessToken, groupId, file) {
     try {
       const formData = new FormData();
@@ -134,4 +144,8 @@ export class GroupMessage {
       throw error;
     }
   }
+  //=====================================================================================================
+
+
+
 }

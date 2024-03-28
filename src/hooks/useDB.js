@@ -1,10 +1,4 @@
-/*import { useContext } from "react";
-import { DBContext } from "../contexts";
-
-export const useDB = () => useContext(DBContext);*/
-
-import { useState, useEffect, createContext } from "react";
-import { User, Auth, Group } from "../api";
+import { useState } from "react";
 import * as SQLite from 'expo-sqlite';
 
 
@@ -15,13 +9,24 @@ export function useDB() {
   const [usuario, setUsuario] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  
-  const addUser=(email) => {
+  //===========================================================================================================================
+  const createTableBitacora=() => {
+    console.log('creating table....');
+
+    db.transaction( tx =>{
+      tx.executeSql('CREATE TABLE IF NOT EXISTS BITACORA (id INTEGER PRIMARY KEY AUTOINCREMENT,group TEXT, userid TEXT, userEmail TEXT, mensaje TEXT, tipo TEXT, idServer TEXT, createdAt TEXT) ');
+    });
+    
+
+  }
+
+//===========================================================================================================================
+  const addBitacora=(registro: Registro) => {
     setLoading(true);
     console.log('inserting.....');
 
     db.transaction(tx =>{
-      tx.executeSql('INSERT INTO USERS (email,firstname,lastname,password,avatar) values (?,?,?,?,?)', [email,'','',email,''],
+      tx.executeSql('INSERT INTO BITACORA (group,userid,userEmail,mensaje,tipo,idServer,createdAt) values (?,?,?,?,?,?,?)', [email,'','',email,''],
       (txObj,resulSet) =>{
         console.log("Inserted data......");
         console.log(resulSet);
@@ -37,13 +42,14 @@ export function useDB() {
 
     setLoading(false);
   }
+//===========================================================================================================================
 
-  const selectTable=(table) => {
+  const selectTableBitacora=() => {
     setLoading(true);
     console.log('selecting.......');
 
     db.transaction( tx =>{
-      tx.executeSql('SELECT * FROM '+table, null,
+      tx.executeSql('SELECT * FROM BITACORA', null,
       (txObj,resulSet) =>{
         console.log("resulSet:::");
         console.log(resulSet.rows._array);
@@ -59,6 +65,7 @@ export function useDB() {
 
     setLoading(false);
   }
+//===========================================================================================================================
 
   const deleteUser=(id) => {
     db.transaction(tx =>{
@@ -73,6 +80,7 @@ export function useDB() {
       )
     })
   }
+//===========================================================================================================================
 
   const deleteTable=(table) => {
     console.log('deleting table '+ table);
@@ -86,6 +94,7 @@ export function useDB() {
       )
     })
   }
+//===========================================================================================================================
 
   const dropTable=(table) => {
     console.log('dropping table '+ table);
@@ -98,22 +107,14 @@ export function useDB() {
       )
     })
   }
+//===========================================================================================================================
 
-  const createTable=(table) => {
-    console.log('creating table....');
-
-    db.transaction( tx =>{
-      tx.executeSql('CREATE TABLE IF NOT EXISTS '+ table +' (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT) ');
-    });
-    
-
-  }
 
   return {
-    createTable,
-    selectTable,
-    addUser,
-    deleteTable
+    createTableBitacora,
+    selectTableBitacora,
+    addBitacora,
+    
   };
 }
 

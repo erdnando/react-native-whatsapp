@@ -14,10 +14,7 @@ const groupController = new Group();
 
 
 export function GroupsScreen() {
-  const { createTable,addUser , selectTable,deleteTable } = useDB();
-
-
-
+  const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
   const { accessToken } = useAuth();
   const [groups, setGroups] = useState(null);
@@ -26,13 +23,11 @@ export function GroupsScreen() {
 
   useEffect(() => {
 
-    
     async function fetchData() {
-     // You can await here
      // deleteTable('USERS');
-     createTable('USERS');
-     addUser('erdnando@gmail.com');
-     selectTable('USERS');
+     //createTableBitacora('BITACORA');//initialize table
+     //addUser('erdnando@gmail.com');
+     //selectTableBitacora();
     }
     fetchData();
 
