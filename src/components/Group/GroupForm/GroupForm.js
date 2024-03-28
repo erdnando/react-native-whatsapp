@@ -9,12 +9,14 @@ import { SendMedia } from "./SendMedia";
 import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 
+
 const groupMessageController = new GroupMessage();
 
 export function GroupForm(props) {
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { accessToken } = useAuth();
+  
 
   useEffect(() => {
     const showKeyboardSub = Keyboard.addListener("keyboardDidShow", (e) => {
@@ -44,6 +46,8 @@ export function GroupForm(props) {
         setKeyboardHeight(0);
         Keyboard.dismiss();
 
+        //process();
+
         await groupMessageController.sendText(
           accessToken,
           groupId,
@@ -62,7 +66,7 @@ export function GroupForm(props) {
       <SendMedia groupId={groupId} />
       <View style={styles.inputContainer}>
         <Input
-          placeholder="Enviar un mensaje..."
+          placeholder="Enviar un mensaje al grupo..."
           variant="unstyled"
           style={styles.input}
           value={formik.values.message}

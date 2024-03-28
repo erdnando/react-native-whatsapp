@@ -21,7 +21,7 @@ export function useDB() {
   }
 
 //===========================================================================================================================
-  const addBitacora=(registro: Registro) => {
+  const addBitacora=(email) => {
     setLoading(true);
     console.log('inserting.....');
 

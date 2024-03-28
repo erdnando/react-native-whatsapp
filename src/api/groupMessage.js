@@ -1,12 +1,13 @@
-import { ENV } from "../utils";
-import { useDB } from "../../hooks";
+import { ENV,Encrypt,Decrypt } from "../utils";
+import { useDB } from "../hooks";
+import { useState, useEffect, useCallback } from "react";
 
-const { createTable,addUser , selectTable,deleteTable } = useDB();
+//const { createTable,addUser , selectTable,deleteTable } = useDB();
 
 export class GroupMessage {
 
-  
-
+ 
+ 
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
     try {
@@ -88,8 +89,15 @@ export class GroupMessage {
       throw error;
     }
   }
-//=====================================================================================================
+
+
+//==============================================================================================
   async sendText(accessToken, groupId, message) {
+   
+    //Encrypt(message);
+
+//=======================================================================================================
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
       const params = {
@@ -100,7 +108,7 @@ export class GroupMessage {
         },
         body: JSON.stringify({
           group_id: groupId,
-          message,
+          message: Encrypt(message),
         }),
       };
 
