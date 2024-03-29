@@ -49,6 +49,7 @@ export function GroupsScreen() {
     useCallback(() => {
       (async () => {
         try {
+          //Get all messages
           const response = await groupController.getAll(accessToken);
 
           const result = response.sort((a, b) => {

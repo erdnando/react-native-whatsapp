@@ -13,15 +13,17 @@ export function ItemText(props) {
   return (
     <View style={styles.content}>
       <View style={styles.message}>
-        {!isMe && (
+        
+     
           <Text style={styles.identity}>
             {message.user.firstname || message.user.lastname
               ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
               : message.user.email}
           </Text>
-        )}
+       
 
         <Text style={styles.text}>{message.message}</Text>
+        <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
         <Text style={styles.date}>
           {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
         </Text>
@@ -29,3 +31,15 @@ export function ItemText(props) {
     </View>
   );
 }
+
+
+
+{/*
+{!isMe && (
+  <Text style={styles.identity}>
+    {message.user.firstname || message.user.lastname
+      ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
+      : message.user.email}
+  </Text>
+)}
+*/}

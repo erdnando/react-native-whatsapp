@@ -33,5 +33,12 @@ export const styled = (isMe) => {
       marginTop: 2,
       textAlign: "right",
     },
+    cifrado: {
+   fontWeight:"bold",
+      color: "red",
+      fontSize: 12,
+      marginTop: 2,
+      textAlign: "right",
+    },
   });
 };

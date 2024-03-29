@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { IconButton, AddIcon, Actionsheet } from "native-base";
+import { IconButton, Icon,AddIcon, Actionsheet } from "native-base";
 import { useAuth } from "../../../../hooks";
 import { GalleryOption, CameraOption } from "./options";
 import { styles } from "./SendMedia.styles";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export function SendMedia(props) {
   const { groupId } = props;
@@ -13,8 +14,9 @@ export function SendMedia(props) {
 
   return (
     <>
-      <IconButton icon={<AddIcon />} padding={0} paddingRight={2} onPress={onOpenClose} style={styles.iconRed} />
-
+      {/*<IconButton icon={<AddIcon />} padding={0} paddingRight={2} onPress={onOpenClose}  />*/}
+      <IconButton icon={<Icon as={MaterialCommunityIcons} name="paperclip"  /> } padding={0} paddingRight={1} onPress={onOpenClose}  />
+      
       <Actionsheet isOpen={show} onClose={onOpenClose}>
         <Actionsheet.Content style={styles.itemsContainer}>
           <CameraOption onClose={onOpenClose} groupId={groupId} />

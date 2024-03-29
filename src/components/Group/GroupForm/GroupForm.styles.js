@@ -25,7 +25,7 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     borderRadius: 50,
-    marginLeft: -5,
+    marginLeft: 0,
     
   },
   select: {

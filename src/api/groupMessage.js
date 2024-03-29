@@ -82,6 +82,9 @@ export class GroupMessage {
       const response = await fetch(url, params);
       const result = await response.json();
 
+      console.log("getting all messages by group");
+      console.log(result);
+
       if (response.status !== 200) throw result;
 
       return result;
@@ -105,8 +108,12 @@ export class GroupMessage {
         body: JSON.stringify({
           group_id: groupId,
           message: Encrypt(message,tipoCifrado),
+          tipo_cifrado: tipoCifrado
         }),
       };
+
+      console.log("sending...."+url);
+      console.log(params);
 
       const response = await fetch(url, params);
       const result = await response.json();

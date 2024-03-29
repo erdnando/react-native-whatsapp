@@ -89,7 +89,7 @@ export function GroupForm(props) {
           onEndEditing={!formik.isSubmitting && formik.handleSubmit}
         />
         <IconButton
-          icon={<Icon as={MaterialCommunityIcons} name="send-lock"  /> }
+          icon={<Icon as={MaterialCommunityIcons} name="send-lock-outline"  /> }
           padding={0}
           style={styles.iconSend}
           onPress={!formik.isSubmitting && formik.handleSubmit}
