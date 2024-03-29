@@ -13,7 +13,7 @@ export function SendMedia(props) {
 
   return (
     <>
-      <IconButton icon={<AddIcon />} padding={0} onPress={onOpenClose} />
+      <IconButton icon={<AddIcon />} padding={0} paddingRight={2} onPress={onOpenClose} style={styles.iconRed} />
 
       <Actionsheet isOpen={show} onClose={onOpenClose}>
         <Actionsheet.Content style={styles.itemsContainer}>

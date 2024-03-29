@@ -92,12 +92,8 @@ export class GroupMessage {
 
 
 //==============================================================================================
-  async sendText(accessToken, groupId, message) {
+  async sendText(accessToken, groupId, message,tipoCifrado) {
    
-    //Encrypt(message);
-
-//=======================================================================================================
-
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
       const params = {
@@ -108,7 +104,7 @@ export class GroupMessage {
         },
         body: JSON.stringify({
           group_id: groupId,
-          message: Encrypt(message),
+          message: Encrypt(message,tipoCifrado),
         }),
       };
 

@@ -1,10 +1,11 @@
 import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
+
   content: {
     position: "absolute",
     width: "100%",
-    left: 0,
+    left: -10,
     bottom: 0,
     paddingHorizontal: 20,
     paddingTop: 10,
@@ -24,12 +25,39 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     borderRadius: 50,
-    marginLeft: 15,
+    marginLeft: -5,
+    
+  },
+  select: {
+    borderColor: "transparent",
+    borderWidth:0,
+    right: 10,
+    backgroundColor: "#29292b",
+    color: "#fff",
+    fontSize: 9,
+    borderRadius: 50,
+    marginLeft: 5,
   },
   iconSend: {
     position: "absolute",
     top: 0,
     right: 10,
     height: "100%",
+    color:'red'
   },
+  iconCrypto: {
+    position: "absolute",
+    top: 13,
+    left:36,
+    fontSize: 20,
+    width:40,
+    height:40,
+    color:'red'
+  },
+  iconRed:{
+    color:'red'
+  }
+  
+ 
+
 });

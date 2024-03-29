@@ -29,4 +29,7 @@ export const styles = new StyleSheet.create({
     fontSize: 20,
     color: "#06b6d4",
   },
+  iconRed:{
+    color:'red'
+  }
 });

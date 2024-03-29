@@ -78,13 +78,11 @@ export function Item(props) {
     })();
   }, [group._id]);
 
+  //getLastMessage
   useEffect(() => {
     (async () => {
       try {
-        const response = await groupMessageController.getLastMessage(
-          accessToken,
-          group._id
-        );
+        const response = await groupMessageController.getLastMessage(accessToken,group._id);
 
         if (!isEmpty(response)) setLastMessage(response);
       } catch (error) {
@@ -93,6 +91,7 @@ export function Item(props) {
     })();
   }, [group._id]);
 
+  //send message to socket IO
   useEffect(() => {
     socket.emit("subscribe", `${group._id}_notify`);
     socket.on("message_notify", newMessage);
@@ -101,6 +100,7 @@ export function Item(props) {
 
 
   const newMessage = async (newMsg) => {
+
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
@@ -110,8 +110,6 @@ export function Item(props) {
         if (activeGroupId !== newMsg.group) {
           setTotalUnreadMessages((prevState) => prevState + 1);
         }
-
-
       }
     }
   };
@@ -140,12 +138,12 @@ export function Item(props) {
           <Text style={styles.message} numberOfLines={2}>
             <Text>
               {lastMessage
-                ? `${lastMessage.user.email.substring(0, 10)+"..."}: `
+                ? `${lastMessage.user.email.substring(0, 20)+"... comento:"} `
                 : " "}
             </Text>
-            <Text style={styles.text}>
+           {/*  <Text style={styles.text}>
               {lastMessage ? lastMessage.message : " "}
-            </Text>
+            </Text> */}
           </Text>
         </View>
 
