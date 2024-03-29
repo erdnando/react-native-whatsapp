@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NativeModules, Platform } from 'react-native';
 import CryptoJS from 'crypto-js';
-import key from '../../secretKey';
+//import key from '../../secretKey.js';
 
 //https://www.npmjs.com/package/crypto-js
 /*
@@ -14,15 +14,15 @@ crypto-js/evpkdf
 */
 
 const Encrypt = (word,tipo) =>{
-
+const qey="3rdn4nd03rdn4nd03rdn4nd03rdn4nd03rdn4nd03rdn4nd0";
 
   let cifrado='';
   switch (tipo) {
-    case 'AES': cifrado=CryptoJS.AES.encrypt(word,key).toString(); break;
-    case '3DES': cifrado=CryptoJS.TripleDES.encrypt(word,key).toString(); break;
-    case 'RC4': cifrado=CryptoJS.RC4.encrypt(word,key).toString(); break;
-    case 'RABBIT': cifrado=CryptoJS.Rabbit.encrypt(word,key).toString(); break;
-    default:cifrado=CryptoJS.AES.encrypt(word,key).toString(); break;
+    case 'AES': cifrado=CryptoJS.AES.encrypt(word,qey).toString(); break;
+    case '3DES': cifrado=CryptoJS.TripleDES.encrypt(word,qey).toString(); break;
+    case 'RC4': cifrado=CryptoJS.RC4.encrypt(word,qey).toString(); break;
+    case 'RABBIT': cifrado=CryptoJS.Rabbit.encrypt(word,qey).toString(); break;
+    default:cifrado=CryptoJS.AES.encrypt(word,qey).toString(); break;
       break;
   }
   return cifrado;
@@ -31,11 +31,11 @@ const Encrypt = (word,tipo) =>{
 const Decrypt = (word,tipo) =>{
   let decifrado='';
   switch (tipo) {
-    case 'AES': decifrado=CryptoJS.AES.decrypt(word,key).toString(); break;
-    case '3DES': decifrado=CryptoJS.TripleDES.decrypt(word,key).toString(); break;
-    case 'RC4': decifrado=CryptoJS.RC4.decrypt(word,key).toString(); break;
-    case 'RABBIT': decifrado=CryptoJS.Rabbit.decrypt(word,key).toString(); break;
-    default:decifrado=CryptoJS.AES.decrypt(word,key).toString(); break;
+    case 'AES': decifrado=CryptoJS.AES.decrypt(word,qey).toString(); break;
+    case '3DES': decifrado=CryptoJS.TripleDES.decrypt(word,qey).toString(); break;
+    case 'RC4': decifrado=CryptoJS.RC4.decrypt(word,qey).toString(); break;
+    case 'RABBIT': decifrado=CryptoJS.Rabbit.decrypt(word,qey).toString(); break;
+    default:decifrado=CryptoJS.AES.decrypt(word,qey).toString(); break;
       break;
   }
   return decifrado;
