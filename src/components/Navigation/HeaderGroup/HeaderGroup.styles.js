@@ -24,4 +24,17 @@ export const styles = new StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
   },
+  iconLocked:{
+    color:'green',
+    fontSize:22,
+    top:4,
+    marginRight:-10,
+    width:25
+  },
+  iconPwdNip:{
+    fontSize:22,
+    top:4,
+    marginRight:10,
+    width:25
+  }
 });

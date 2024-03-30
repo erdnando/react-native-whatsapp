@@ -41,8 +41,11 @@ const Decrypt = (word,tipo) =>{
   return decifrado;
 }
 //============================================================================
+const MD5method = (word)=>{
+  return CryptoJS.MD5(word).toString();
+}
 
 
-export {Encrypt,Decrypt};
+export {Encrypt,Decrypt,MD5method};
 
 

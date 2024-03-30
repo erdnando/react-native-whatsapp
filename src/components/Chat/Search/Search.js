@@ -6,7 +6,6 @@ import { styles } from "./Search.styles";
 const KEYS_TO_FILTERS = [
   "email",
   "firstname",
-  "lastname",
   "participant_one.email",
   "participant_one.firstname",
   "participant_one.lastname",

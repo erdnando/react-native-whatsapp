@@ -1,6 +1,8 @@
 import { ENV } from "../utils";
 
 export class User {
+
+  //==========================================================================================
   async getMe(accessToken) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.ME}`;
@@ -20,7 +22,7 @@ export class User {
       throw error;
     }
   }
-
+//==========================================================================================
   async updateUser(accessToken, userData) {
     try {
       const data = userData;
@@ -50,7 +52,7 @@ export class User {
       throw error;
     }
   }
-
+//==========================================================================================
   async getAll(accessToken) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER}`;
@@ -70,7 +72,7 @@ export class User {
       throw error;
     }
   }
-
+//==========================================================================================
   async getUser(accessToken, userId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER}/${userId}`;
@@ -91,6 +93,7 @@ export class User {
     }
   }
 
+  //==========================================================================================
   async getUsersExeptParticipantsGroup(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER_EXCEPT_PARTICIPANTS_GROUP}/${groupId}`;
@@ -110,4 +113,5 @@ export class User {
       throw error;
     }
   }
+  //==========================================================================================
 }

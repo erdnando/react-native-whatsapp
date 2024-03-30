@@ -2,12 +2,12 @@ import * as Yup from "yup";
 
 export function initialValues() {
   return {
-    lastname: "",
+    nip: "",
   };
 }
 
 export function validationSchema() {
   return Yup.object({
-    lastname: Yup.string().required(true),
+    nip: Yup.string().required(true),
   });
 }

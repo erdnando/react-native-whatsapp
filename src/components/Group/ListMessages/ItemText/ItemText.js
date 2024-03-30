@@ -15,13 +15,11 @@ export function ItemText(props) {
       <View style={styles.message}>
         
      
-          <Text style={styles.identity}>
-            {message.user.firstname || message.user.lastname
-              ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-              : message.user.email}
-          </Text>
-       
-
+        <Text style={styles.identity}>
+          {message.user.firstname || message.user.lastname
+            ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
+            : message.user.email}
+        </Text>
         <Text style={styles.text}>{message.message}</Text>
         <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
         <Text style={styles.date}>

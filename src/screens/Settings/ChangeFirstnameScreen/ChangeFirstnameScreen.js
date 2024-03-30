@@ -32,7 +32,7 @@ export function ChangeFirstnameScreen() {
   return (
     <View style={styles.content}>
       <Input
-        placeholder="Nombre"
+        placeholder="Alias"
         variant="unstyled"
         autoFocus
         value={formik.values.firstname}
@@ -44,7 +44,7 @@ export function ChangeFirstnameScreen() {
         onPress={formik.handleSubmit}
         isLoading={formik.isLoading}
       >
-        Cambiar
+        Aplicar
       </Button>
     </View>
   );

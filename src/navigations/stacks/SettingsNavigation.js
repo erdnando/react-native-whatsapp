@@ -7,9 +7,13 @@ import {
 import { screens } from "../../utils";
 import { styles } from "../Styles.styles";
 
+
 const Stack = createNativeStackNavigator();
 
 export function SettingsNavigation() {
+
+  
+
   return (
     <Stack.Navigator screenOptions={{ ...styles.stackNavigationStyles }}>
       <Stack.Screen
@@ -21,15 +25,16 @@ export function SettingsNavigation() {
         name={screens.tab.settings.changeFirstnameScreen}
         component={ChangeFirstnameScreen}
         options={{
-          title: "Cambiar nombre",
+          title: "Definir alias",
           presentation: "modal",
+         
         }}
       />
       <Stack.Screen
         name={screens.tab.settings.changeLastnameScreen}
         component={ChangeLastnameScreen}
         options={{
-          title: "Cambiar apellidos",
+          title: "Definir NIP",
           presentation: "modal",
         }}
       />

@@ -5,6 +5,9 @@ import { User } from "../../../api";
 import { imageExpoFormat, screens } from "../../../utils";
 import { styles } from "./Options.styles";
 
+import { Center, Flex, Icon } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 const userController = new User();
 
 export function Options(props) {
@@ -43,14 +46,30 @@ export function Options(props) {
 
   return (
     <View style={styles.content}>
+
       <TouchableOpacity style={styles.item} onPress={openGallery}>
-        <Text style={styles.text}>Cambiar foto de perfil</Text>
+        <Flex direction="row"   >
+          <Icon as={MaterialCommunityIcons} name="text-recognition" style={styles.iconOptions} />   
+          <Center size={3}></Center>
+          <Text style={styles.text}>Cambiar foto de perfil</Text>
+        </Flex>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.item} onPress={goChangeFirstname}>
-        <Text style={styles.text}>Cambiar nombre</Text>
+        <Flex direction="row"   >
+          <Icon as={MaterialCommunityIcons} name="tooltip-edit-outline" style={styles.iconOptions} />   
+          <Center size={3}></Center>
+          <Text style={styles.text}>Definir alias</Text>
+        </Flex>
+       
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.item} onPress={goChangeLastname}>
-        <Text style={styles.text}>Cambiar apellidos</Text>
+      <Flex direction="row"   >
+          <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
+          <Center size={3}></Center>
+          <Text style={styles.text}>Definir NIP</Text>
+        </Flex>
       </TouchableOpacity>
 
       {/* <TouchableOpacity

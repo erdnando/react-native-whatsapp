@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
   content: {
-    marginTop: 40,
+    marginTop: 30,
     marginHorizontal: 20,
   },
   item: {
@@ -24,4 +24,11 @@ export const styles = new StyleSheet.create({
     color: "#f00",
     fontSize: 16,
   },
+  iconOptions:{
+    fontSize:20,
+    marginTop:5,
+    marginBottom:3,
+    width:20,
+    top:3
+  }
 });

@@ -14,6 +14,7 @@ const groupController = new Group();
 
 
 export function GroupsScreen() {
+  
   const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
   const { accessToken } = useAuth();
