@@ -31,5 +31,8 @@ export const styles = new StyleSheet.create({
   },
   iconRed:{
     color:'red'
+  },
+  iconAttachment:{
+    color:'gray'
   }
 });

@@ -69,7 +69,7 @@ export class Auth {
       throw error;
     }
   }
-
+//========================================================================
   async setAccessToken(token) {
     await AsyncStorage.setItem(ENV.JWT.ACCESS, token);
   }
@@ -77,7 +77,7 @@ export class Auth {
   async getAccessToken() {
     return await AsyncStorage.getItem(ENV.JWT.ACCESS);
   }
-
+//========================================================================
   async setRefreshToken(token) {
     await AsyncStorage.setItem(ENV.JWT.REFRESH, token);
   }
@@ -85,9 +85,18 @@ export class Auth {
   async getRefreshToken() {
     return await AsyncStorage.getItem(ENV.JWT.REFRESH);
   }
+//========================================================================
+  async setInitial(bflag) {
+    await AsyncStorage.setItem("initial", bflag);
+  }
 
+  async getInitial() {
+    return await AsyncStorage.getItem("initial");
+  }
+//========================================================================
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);
     await AsyncStorage.removeItem(ENV.JWT.REFRESH);
+    await AsyncStorage.removeItem("initial");
   }
 }

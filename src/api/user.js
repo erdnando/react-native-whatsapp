@@ -24,6 +24,11 @@ export class User {
   }
 //==========================================================================================
   async updateUser(accessToken, userData) {
+    console.log("Actualizando::::::::::::::::;");
+    console.log("===================");
+    console.log("userData");
+    console.log(userData);
+    
     try {
       const data = userData;
 
@@ -31,7 +36,9 @@ export class User {
       Object.keys(data).forEach((key) => {
         formData.append(key, data[key]);
       });
-
+      console.log("formData");
+      console.log(formData);
+      
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.ME}`;
 
       const params = {
@@ -42,8 +49,13 @@ export class User {
         body: formData,
       };
 
+      console.log("params");
+      console.log(params);
       const response = await fetch(url, params);
       const result = await response.json();
+
+      console.log("result");
+      console.log(result);
 
       if (response.status !== 200) throw result;
 

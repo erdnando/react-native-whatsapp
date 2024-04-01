@@ -7,18 +7,67 @@ import { useAuth } from "../../hooks";
 import { HeaderGroup } from "../../components/Navigation";
 import { LoadingScreen } from "../../components/Shared";
 import { ListMessages, GroupForm } from "../../components/Group";
-import { ENV, socket } from "../../utils";
-
+import { ENV, socket,Decrypt } from "../../utils";
+import { EventRegister } from "react-native-event-listeners";
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 
 export function GroupScreen() {
-  const {
-    params: { groupId },
-  } = useRoute();
+
+  const { params: { groupId }, } = useRoute();
   const { accessToken } = useAuth();
   const [messages, setMessages] = useState(null);
+  const [cryptMessage, setCryptMessage] = useState(false);
+ 
+
+  useEffect(() => {
+  
+       const eventMessages = EventRegister.addEventListener("unlockMessages", async data=>{
+         
+       
+              try {
+               
+                console.log("Desbloqueando mensajes..."+ data);
+                setCryptMessage(data);
+                (async () => {
+                  try {
+                    const response = await groupMessageController.getAll(
+                      accessToken,
+                      groupId
+                    );
+                   
+                    const unlockedMessages = response.messages;
+
+                    if(data){
+                      unlockedMessages.map((msg) => {
+                        msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                      });
+                    }
+                  
+                    //==========================================
+                    setMessages(unlockedMessages);
+   
+                    unreadMessagesController.setTotalReadMessages(groupId, response.total);
+
+                  } catch (error) {
+                    console.error(error);
+                  }
+                })();
+                  
+              } catch (error) {
+                console.error(error);
+              }
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventMessages);
+        }
+
+   
+  }, []);
+
+ 
 
   useEffect(() => {
     (async () => {
@@ -63,7 +112,12 @@ export function GroupScreen() {
     };
   }, [groupId, messages]);
 
+
+
   const newMessage = (msg) => {
+    if(cryptMessage){
+      msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+    }
     setMessages([...messages, msg]);
   };
 
@@ -77,6 +131,7 @@ export function GroupScreen() {
         <ListMessages messages={messages} />
         <GroupForm groupId={groupId} />
       </View>
+
     </>
   );
 }

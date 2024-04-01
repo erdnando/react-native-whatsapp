@@ -1,9 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
-import Constants from 'expo-constants';
-
-
+import Constants from 'expo-constants';  
 
 const userController = new User();
 const authController = new Auth();
@@ -59,10 +57,15 @@ export function AuthProvider(props) {
           idApp
         );
         //-------------------------------------------------------------
-
+       
+        //show alert with initial NIP
+        await authController.setInitial("1");
+        
         await login(access);
+       
     }else{
-      console.log("Accessing directly")
+      console.log("Accessing directly");
+      await authController.setInitial("0");
       await authController.setAccessToken(access);
       await authController.setRefreshToken(refresh);
       await login(access);  

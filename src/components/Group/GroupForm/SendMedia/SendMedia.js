@@ -15,7 +15,7 @@ export function SendMedia(props) {
   return (
     <>
       {/*<IconButton icon={<AddIcon />} padding={0} paddingRight={2} onPress={onOpenClose}  />*/}
-      <IconButton icon={<Icon as={MaterialCommunityIcons} name="paperclip"  /> } padding={0} paddingRight={1} onPress={onOpenClose}  />
+      <IconButton disabled  icon={<Icon as={MaterialCommunityIcons} name="paperclip" style={styles.iconAttachment} /> } padding={0} paddingRight={1} onPress={onOpenClose}    />
       
       <Actionsheet isOpen={show} onClose={onOpenClose}>
         <Actionsheet.Content style={styles.itemsContainer}>
