@@ -34,11 +34,20 @@ export const styled = (isMe) => {
       textAlign: "right",
     },
     cifrado: {
-   fontWeight:"bold",
+      fontWeight:"bold",
       color: "red",
       fontSize: 12,
       marginTop: 2,
       textAlign: "right",
     },
+    rowMenu:{
+      flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent:'space-between',
+    },
+    editOption:{
+      
+       
+    }
   });
 };

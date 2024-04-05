@@ -1,17 +1,18 @@
 import { useState, useEffect } from "react";
 import { View } from "native-base";
 import { useRoute } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GroupMessage, UnreadMessages } from "../../api";
+import { GroupMessage, UnreadMessages,Auth } from "../../api";
 import { useAuth } from "../../hooks";
 import { HeaderGroup } from "../../components/Navigation";
 import { LoadingScreen } from "../../components/Shared";
 import { ListMessages, GroupForm } from "../../components/Group";
-import { ENV, socket,Decrypt } from "../../utils";
+import { ENV, socket,Decrypt,Encrypt } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
+const authController = new Auth();
 
 export function GroupScreen() {
 
@@ -25,18 +26,18 @@ export function GroupScreen() {
   
        const eventMessages = EventRegister.addEventListener("unlockMessages", async data=>{
          
-       
               try {
                
                 console.log("Desbloqueando mensajes..."+ data);
                 setCryptMessage(data);
+
+            
+                  await authController.setCifrado(data==true ? "NO" : "SI");
+
                 (async () => {
                   try {
-                    const response = await groupMessageController.getAll(
-                      accessToken,
-                      groupId
-                    );
-                   
+                    const response = await groupMessageController.getAll(accessToken, groupId);
+                   //==========================================
                     const unlockedMessages = response.messages;
 
                     if(data){
@@ -54,7 +55,6 @@ export function GroupScreen() {
                     console.error(error);
                   }
                 })();
-                  
               } catch (error) {
                 console.error(error);
               }
@@ -63,11 +63,7 @@ export function GroupScreen() {
         return ()=>{
           EventRegister.removeEventListener(eventMessages);
         }
-
-   
   }, []);
-
- 
 
   useEffect(() => {
     (async () => {
@@ -80,26 +76,40 @@ export function GroupScreen() {
   }, []);
 
   useEffect(() => {
+    //=================================================================================
     (async () => {
       try {
-        const response = await groupMessageController.getAll(
-          accessToken,
-          groupId
-        );
-        setMessages(response.messages);
+        const cifrados = await authController.getCifrado(); 
+        console.log("getCifrado useEffect:::"+cifrados);
+        const response = await groupMessageController.getAll(accessToken, groupId);
+
+        if(cifrados=="SI"){
+          //====================Mantiene cifrados========================================================
+          setMessages(response.messages);
+        }else{
+          //=======================Decifra los mensajes=======================================================
+            const unlockedMessages = response.messages;
+            unlockedMessages.map((msg) => {
+              msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+            });
+
+            setMessages(unlockedMessages);
+          //==============================================================================
+        }
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
+
+       
       } catch (error) {
         console.error(error);
       }
     })();
 
     return async () => {
-      const response = await groupMessageController.getAll(
-        accessToken,
-        groupId
-      );
+      const response = await groupMessageController.getAll(accessToken, groupId );
       unreadMessagesController.setTotalReadMessages(groupId, response.total);
     };
+   //=================================================================================
+
   }, [groupId]);
 
   useEffect(() => {
@@ -115,10 +125,42 @@ export function GroupScreen() {
 
 
   const newMessage = (msg) => {
-    if(cryptMessage){
-      msg.message=Decrypt(msg.message,msg.tipo_cifrado);
-    }
-    setMessages([...messages, msg]);
+    console.log("enviando nuevo msg...");
+    console.log(msg);
+
+    //============Decifra mensaje======================
+    msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+    console.log("decifrado");
+    console.log(msg);
+    //==================================================
+
+
+   
+    (async () => {
+      const cifrados = await authController.getCifrado(); 
+      console.log("getCifrado new message:::"+cifrados);
+
+      if(cifrados=="SI"){
+        setCryptMessage(true);
+        msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+      
+      }else{
+        setCryptMessage(false);
+        //msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+      
+      }
+
+
+      /*if(cryptMessage){
+        msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+      }*/
+      setMessages([...messages, msg]);
+
+
+    })();
+
+
+   
   };
 
   if (!messages) return <LoadingScreen />;

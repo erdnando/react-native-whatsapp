@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useRef } from "react";
 import { NativeModules, Platform } from 'react-native';
 import CryptoJS from 'crypto-js';
 //import key from '../../secretKey.js';
@@ -12,6 +12,7 @@ crypto-js/rabbit
 crypto-js/rabbit-legacy
 crypto-js/evpkdf
 */
+
 
 const Encrypt = (word,tipo) =>{
   const qey="3rdn4nd03rdn4nd03rdn4nd03rdn4nd0";
@@ -46,6 +47,10 @@ const Decrypt = (word,tipo) =>{
 const MD5method = (word)=>{
   return CryptoJS.MD5(word).toString();
 }
+
+
+
+
 
 
 export {Encrypt,Decrypt,MD5method};

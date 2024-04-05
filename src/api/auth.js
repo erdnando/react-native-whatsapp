@@ -1,7 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ENV } from "../utils";
 
+
+
+
 export class Auth {
+
+
+
   async register(email, password) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.REGISTER}`;
@@ -94,9 +100,21 @@ export class Auth {
     return await AsyncStorage.getItem("initial");
   }
 //========================================================================
+async setCifrado(valor) {
+  await AsyncStorage.setItem("cifrado", valor);
+}
+
+async getCifrado() {
+  return await AsyncStorage.getItem("cifrado");
+}
+//========================================================================
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);
     await AsyncStorage.removeItem(ENV.JWT.REFRESH);
     await AsyncStorage.removeItem("initial");
   }
+
+  
+
+ 
 }

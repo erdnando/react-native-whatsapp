@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { View, Keyboard, Platform } from "react-native";
-import { Input, IconButton, Icon, Select,VStack } from "native-base";
+import { Input, IconButton, Icon, Select,Alert } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage } from "../../../api";
@@ -8,15 +8,18 @@ import { useAuth } from "../../../hooks";
 import { SendMedia } from "./SendMedia";
 import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
-import {Picker} from '@react-native-picker/picker';
+import { EventRegister } from "react-native-event-listeners";
 
 const groupMessageController = new GroupMessage();
 
 export function GroupForm(props) {
+
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { accessToken } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
+
+  const inputMessageRef = useRef(null);
 
   useEffect(() => {
     const showKeyboardSub = Keyboard.addListener("keyboardDidShow", (e) => {
@@ -37,6 +40,38 @@ export function GroupForm(props) {
     };
   }, []);
 
+
+  useEffect(() => {
+    (async () => {
+      try {
+        
+       
+        //=================================================================
+        const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
+          console.log("editing message..."+data);
+          //formik.initialValues["message"]=data;
+          //console.log(inputRef.current);
+         
+          //inputMessageRef.current.focus();
+         
+         
+         // 
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventEditMessage);
+        }
+        
+        
+        //================================================================
+
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+  }, []);
+  
+
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: validationSchema(),
@@ -52,6 +87,10 @@ export function GroupForm(props) {
         await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado );
 
         formik.handleReset();
+        
+        //formik.initialValues["message"]="xxxx";
+        //inputMessageRef.current.focus();
+        
       } catch (error) {
         console.error(error);
       }
@@ -64,8 +103,6 @@ export function GroupForm(props) {
 
       <SendMedia groupId={groupId} />
        
-     
-
       <Select borderColor={'transparent'} paddingTop={1} paddingBottom={1} style={styles.select} minWidth={81} maxWidth={82} 
        selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
        onValueChange={itemValue => setTipoCifrado(itemValue)}>
@@ -75,12 +112,10 @@ export function GroupForm(props) {
           <Select.Item label="RAB" value="RABBIT" />
       </Select>
 
-
-
-
       <View style={styles.inputContainer}>
 
-        <Input
+        <Input  
+           ref={inputMessageRef}
           placeholder="Mensaje al grupo..."
           variant="unstyled"
           style={styles.input}

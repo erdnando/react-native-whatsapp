@@ -82,8 +82,8 @@ export class GroupMessage {
       const response = await fetch(url, params);
       const result = await response.json();
 
-      console.log("getting all messages by group");
-      console.log(result);
+      //console.log("getting all messages by group");
+      //console.log(result);
 
       if (response.status !== 200) throw result;
 

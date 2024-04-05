@@ -1,5 +1,5 @@
-const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app";
-//const SERVER_IP = "192.168.0.18:3977";
+//const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app";
+const SERVER_IP = "192.168.0.4:3977";
 
 export const ENV = {
   SERVER_IP: SERVER_IP,

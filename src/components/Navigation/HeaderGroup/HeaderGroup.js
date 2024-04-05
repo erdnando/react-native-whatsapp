@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, Pressable, } from "react-native";
 import { IconButton, ChevronLeftIcon, Avatar,Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import { Group,User } from "../../../api";
+import { Group,User,Auth } from "../../../api";
 import { useAuth } from "../../../hooks";
 import { ENV, screens,MD5method } from "../../../utils";
 import { styles } from "./HeaderGroup.styles";
@@ -12,6 +12,7 @@ import { EventRegister } from "react-native-event-listeners";
 
 const userController = new User();
 const groupController = new Group();
+const authController = new Auth();
 
 export function HeaderGroup(props) {
 
@@ -26,6 +27,19 @@ export function HeaderGroup(props) {
   const [lock, setLock] = useState(true);
 
   useEffect(() => {
+
+    (async () => {
+       const cifrado = await authController.getCifrado();
+       if(cifrado=="SI"){
+        setLock(true);
+       }else{
+        setLock(false);
+       }
+     })();
+
+
+
+
     (async () => {
       try {
         const response = await groupController.obtain(accessToken, groupId);
@@ -47,24 +61,28 @@ export function HeaderGroup(props) {
     
     //call api to validate nip 
     const response = await userController.getMe(accessToken);
-    console.log("nip en DB");
-    console.log(response.nip);
-    console.log("nip ingresado");
-    console.log(nip);
-    console.log("nip ingresado MD5");
-    console.log(MD5method(nip.toString() ));
+    //console.log("nip en DB");
+    //console.log(response.nip);
+    //console.log("nip ingresado");
+    //console.log(nip);
+    //console.log("nip ingresado MD5");
+   // console.log(MD5method(nip.toString() ));
 
     if(MD5method(nip.toString()) == response.nip){
       console.log("NIP OK");
       //if, it is ok, unlock messages, reloading them
+      await authController.setCifrado("NO");
       EventRegister.emit("unlockMessages",true);
       setLock(false);
+     
       setShowModal(false);
 
     }else{
       //else, show an error message
+      await authController.setCifrado("SI");
       EventRegister.emit("unlockMessages",false);
       setLock(true);
+      
       setTituloModal("NIP Incorrecto!");
       console.log("NIP Incorrecto");
     }
@@ -100,13 +118,20 @@ export function HeaderGroup(props) {
             icon={<Icon as={MaterialCommunityIcons} name={lock ? "lock" : "lock-open-variant"} style={styles.iconLocked} /> }
             onPress={() => {
               if(lock ==false){
-                //just change icon status
-                setLock(true);
-                //crypt messages
-                EventRegister.emit("unlockMessages",false);
+               
+                (async () => {
+                   await authController.setCifrado("SI");
+                    //just change icon status
+                    setLock(true);
+                                  
+                    //crypt messages
+                    EventRegister.emit("unlockMessages",false);
+
+                })();
+                
                
               }else{
-                setTituloModal('Mensjaes bloqueados por NIP');
+                setTituloModal('Mensajes bloqueados por NIP');
                 setShowModal(true);
               }
               
@@ -152,10 +177,6 @@ export function HeaderGroup(props) {
 
         </Modal.Content>
       </Modal>
-
-
-
-
 
       </View>
     </SafeAreaView>

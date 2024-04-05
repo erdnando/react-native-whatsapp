@@ -60,12 +60,16 @@ export function AuthProvider(props) {
        
         //show alert with initial NIP
         await authController.setInitial("1");
+        //1a vez, bandera de mensajes cifrados
+        await authController.setCifrado("SI");
+        
         
         await login(access);
        
     }else{
       console.log("Accessing directly");
       await authController.setInitial("0");
+      //siempre cifrados cuando entra
       await authController.setAccessToken(access);
       await authController.setRefreshToken(refresh);
       await login(access);  

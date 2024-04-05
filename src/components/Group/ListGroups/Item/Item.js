@@ -100,10 +100,11 @@ export function Item(props) {
 
 
   const newMessage = async (newMsg) => {
-
+    
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
+        console.log("setting last message");
         setLastMessage(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
