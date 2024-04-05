@@ -27,8 +27,9 @@ export function ItemText(props) {
 
     (async () => {
        const cifrado = await authController.getCifrado();
+       console.log(cifrado);
        if(cifrado=="SI"){
-        setmodoAvanzado(false);
+        setmodoAvanzado(true);
        }else{
         setmodoAvanzado(true);
        }
@@ -48,7 +49,7 @@ export function ItemText(props) {
                 <Text style={styles.identity}>
                   {message.user.firstname || message.user.lastname
                     ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-                    : message.user.email}
+                    : message.user.email.substring(0,30) }
                 </Text>
 
                 <Menu w="190" trigger={triggerProps => {
@@ -108,7 +109,7 @@ export function ItemText(props) {
             <Text style={styles.identity}>
               {message.user.firstname || message.user.lastname
                 ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-                : message.user.email}
+                : message.user.email.substring(0,30)}
             </Text>
             <Text style={styles.text}>{message.message}</Text>
             <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>

@@ -120,7 +120,7 @@ export function HeaderGroup(props) {
               if(lock ==false){
                
                 (async () => {
-                   await authController.setCifrado("SI");
+                   await authController.setCifrado("NO");
                     //just change icon status
                     setLock(true);
                                   

@@ -32,7 +32,7 @@ export function GroupScreen() {
                 setCryptMessage(data);
 
             
-                  await authController.setCifrado(data==true ? "NO" : "SI");
+                  await authController.setCifrado(data==true ? "NO" : "NO");
 
                 (async () => {
                   try {
