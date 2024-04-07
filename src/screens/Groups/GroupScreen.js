@@ -19,36 +19,41 @@ export function GroupScreen() {
   const { params: { groupId }, } = useRoute();
   const { accessToken } = useAuth();
   const [messages, setMessages] = useState(null);
-  const [cryptMessage, setCryptMessage] = useState(false);
+  //const [cryptMessage, setCryptMessage] = useState(false);
  
 
+  //EventListener:: unlockMessages
   useEffect(() => {
   
-       const eventMessages = EventRegister.addEventListener("unlockMessages", async data=>{
+       const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
          
               try {
                
-                console.log("Desbloqueando mensajes..."+ data);
-                setCryptMessage(data);
-
-            
-                  await authController.setCifrado(data==true ? "NO" : "NO");
-
                 (async () => {
+                  console.log("setCifrado por evento:::"+ isCypher);
+                  //setCryptMessage(data);
+                  await authController.setCifrado(isCypher);
+
                   try {
                     const response = await groupMessageController.getAll(accessToken, groupId);
                    //==========================================
                     const unlockedMessages = response.messages;
+                    //console.log(unlockedMessages);
 
-                    if(data){
+                    if(isCypher=="NO"){
+                     // console.log("decifrando mensajes");
                       unlockedMessages.map((msg) => {
                         msg.message = Decrypt(msg.message,msg.tipo_cifrado);
                       });
                     }
                   
                     //==========================================
-                    setMessages(unlockedMessages);
-   
+                    console.log("setting mensajes");
+                    //console.log(unlockedMessages);
+                   // console.log("===============================");
+                   // setMessages(unlockedMessages);
+                   setMessages([]);
+                    setMessages( unlockedMessages);
                     unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
                   } catch (error) {
@@ -65,6 +70,7 @@ export function GroupScreen() {
         }
   }, []);
 
+  //Set ACTIVE_GROUP_ID
   useEffect(() => {
     (async () => {
       await AsyncStorage.setItem(ENV.ACTIVE_GROUP_ID, groupId);
@@ -75,19 +81,23 @@ export function GroupScreen() {
     };
   }, []);
 
+  //Get messages
   useEffect(() => {
     //=================================================================================
     (async () => {
       try {
         const cifrados = await authController.getCifrado(); 
-        console.log("getCifrado useEffect:::"+cifrados);
+       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
+        //console.log("GroupScreen:::Cifrado:::"+cifrados);
         const response = await groupMessageController.getAll(accessToken, groupId);
 
         if(cifrados=="SI"){
           //====================Mantiene cifrados========================================================
+          //console.log("GroupScreen:::Mantiene msgs cifrados");
           setMessages(response.messages);
         }else{
           //=======================Decifra los mensajes=======================================================
+         // console.log("GroupScreen:::Decifra msgs");
             const unlockedMessages = response.messages;
             unlockedMessages.map((msg) => {
               msg.message = Decrypt(msg.message,msg.tipo_cifrado);
@@ -96,6 +106,7 @@ export function GroupScreen() {
             setMessages(unlockedMessages);
           //==============================================================================
         }
+       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
        
@@ -112,6 +123,7 @@ export function GroupScreen() {
 
   }, [groupId]);
 
+  //subscribe sockets
   useEffect(() => {
     socket.emit("subscribe", groupId);
     socket.on("message", newMessage);
@@ -123,12 +135,12 @@ export function GroupScreen() {
   }, [groupId, messages]);
 
 
-
+  //when newMessage is required, call this instruction
   const newMessage = (msg) => {
-    console.log("enviando nuevo msg...");
+    console.log("new cypher message:::GroupScreen");
     console.log(msg);
 
-    //============Decifra mensaje======================
+    //============Always decifra mensaje======================
     msg.message=Decrypt(msg.message,msg.tipo_cifrado);
     console.log("decifrado");
     console.log(msg);
@@ -141,14 +153,13 @@ export function GroupScreen() {
       console.log("getCifrado new message:::"+cifrados);
 
       if(cifrados=="SI"){
-        setCryptMessage(true);
+        //setCryptMessage(true);
         msg.message=Encrypt(msg.message,msg.tipo_cifrado);
       
-      }else{
-        setCryptMessage(false);
-        //msg.message=Decrypt(msg.message,msg.tipo_cifrado);
-      
       }
+      //else{
+       // msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+    //  }
 
 
       /*if(cryptMessage){

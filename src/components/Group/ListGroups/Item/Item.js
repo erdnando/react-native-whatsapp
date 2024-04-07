@@ -98,13 +98,17 @@ export function Item(props) {
   }, []);
 
 
-
+//when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
-    
+    console.log("new cypher message:::item");
+    //console.log(newMsg);
+
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
         console.log("setting last message");
+
+        
         setLastMessage(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
@@ -190,12 +194,6 @@ export function Item(props) {
         </View>
 
 
-
-
-
-
-
-        
       </View>
     </TouchableOpacity>
   );

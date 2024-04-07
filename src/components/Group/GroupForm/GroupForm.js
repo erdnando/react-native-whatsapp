@@ -21,6 +21,7 @@ export function GroupForm(props) {
 
   const inputMessageRef = useRef(null);
 
+  //Manage keyboard
   useEffect(() => {
     const showKeyboardSub = Keyboard.addListener("keyboardDidShow", (e) => {
       const { startCoordinates } = e;
@@ -41,6 +42,7 @@ export function GroupForm(props) {
   }, []);
 
 
+  //EventListener:editingMessage
   useEffect(() => {
     (async () => {
       try {
@@ -72,6 +74,7 @@ export function GroupForm(props) {
   }, []);
   
 
+  //formik definition & onsubmit
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: validationSchema(),

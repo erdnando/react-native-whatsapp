@@ -72,7 +72,7 @@ export function HeaderGroup(props) {
       console.log("NIP OK");
       //if, it is ok, unlock messages, reloading them
       await authController.setCifrado("NO");
-      EventRegister.emit("unlockMessages",true);
+      EventRegister.emit("setCifrado","NO");
       setLock(false);
      
       setShowModal(false);
@@ -80,7 +80,7 @@ export function HeaderGroup(props) {
     }else{
       //else, show an error message
       await authController.setCifrado("SI");
-      EventRegister.emit("unlockMessages",false);
+      EventRegister.emit("setCifrado","SI");
       setLock(true);
       
       setTituloModal("NIP Incorrecto!");
@@ -92,14 +92,19 @@ export function HeaderGroup(props) {
 
   return (
     <SafeAreaView style={styles.container}>
+
       <View style={styles.content}>
+
+       {/*icono del lado izquierdo */}
         <View style={styles.info}>
+        {/*icono Back */}
           <IconButton
             icon={<ChevronLeftIcon />}
             padding={0}
             onPress={navigation.goBack}
           />
 
+         {/*logo group Back */}
           {group && (
             <Pressable onPress={goToGroupProfile} style={styles.info}>
               <Avatar
@@ -109,28 +114,33 @@ export function HeaderGroup(props) {
                 style={styles.avatar}
                 source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
               />
+               {/*Nombre grupo */}
               <Text style={styles.name}>{group.name.substring(0,20) }</Text>
             </Pressable>
           )}
         </View>
-        {/*  lock-open-variant  */}
+
+
+        {/*  candadito verde para bloquear y desbloquear  */}
         <IconButton
             icon={<Icon as={MaterialCommunityIcons} name={lock ? "lock" : "lock-open-variant"} style={styles.iconLocked} /> }
             onPress={() => {
+
               if(lock ==false){
                
-                (async () => {
-                   await authController.setCifrado("NO");
-                    //just change icon status
-                    setLock(true);
-                                  
-                    //crypt messages
-                    EventRegister.emit("unlockMessages",false);
+               // (async () => {
+                //   await authController.setCifrado("SI");
+                   //just change icon status
+                setLock(true);         
+                //emit evento para unlockMessages
+                EventRegister.emit("setCifrado","SI");
+               // })();
 
-                })();
+                
                 
                
               }else{
+                
                 setTituloModal('Mensajes bloqueados por NIP');
                 setShowModal(true);
               }
@@ -169,7 +179,7 @@ export function HeaderGroup(props) {
               onPress={() => {
                 validateNIP();
             }}>
-                Entrar
+                Desbloquear
               </Button>
             </Button.Group>
           </Modal.Footer>

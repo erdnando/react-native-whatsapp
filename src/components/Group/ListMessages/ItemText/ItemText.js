@@ -23,19 +23,19 @@ export function ItemText(props) {
   const [modoAvanzado, setmodoAvanzado] = useState(false);
 
 
-  useEffect(() => {
+  useEffect( () => {
 
-    (async () => {
-       const cifrado = await authController.getCifrado();
-       console.log(cifrado);
-       if(cifrado=="SI"){
-        setmodoAvanzado(true);
-       }else{
-        setmodoAvanzado(true);
-       }
-     })();
-
-
+    async function fetchData() {
+      console.log("useEffect ItemText:::::");
+      const cifrado = await authController.getCifrado();
+      console.log("cifrado item:::::"+cifrado);
+      if(cifrado=="SI"){
+       setmodoAvanzado(false);
+      }else{
+       setmodoAvanzado(true);
+      }
+    }
+    fetchData();
 
   }, []);
 
