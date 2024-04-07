@@ -26,6 +26,7 @@ export const ENV = {
     GROUP_BAN: "group/ban",
     GROUP_ADD_PARTICIPANTS: "group/add_participants",
     GROUP_MESSAGE: "group/message",
+    GROUP_MESSAGE_EDIT: "group/message/edit",
     GROUP_MESSAGE_IMAGE: "group/message/image",
     GROUP_MESSAGE_TOTAL: "group/message/total",
     GROUP_MESSAGE_LAST: "group/message/last",

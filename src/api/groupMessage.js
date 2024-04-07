@@ -93,14 +93,47 @@ export class GroupMessage {
     }
   }
 
-
 //==============================================================================================
-  async sendText(accessToken, groupId, message,tipoCifrado) {
+async sendText(accessToken, groupId, message,tipoCifrado) {
+   
+  try {
+    const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
+    const params = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        group_id: groupId,
+        message: Encrypt(message,tipoCifrado),
+        tipo_cifrado: tipoCifrado
+      }),
+    };
+
+    console.log("sending...."+url);
+    console.log(params);
+
+    const response = await fetch(url, params);
+    const result = await response.json();
+
+    //get group messages and persist
+   // await selectTable('BITACORA');
+
+    if (response.status !== 201) throw result;
+
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+//==============================================================================================
+  async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
    
     try {
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
       const params = {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
@@ -108,7 +141,8 @@ export class GroupMessage {
         body: JSON.stringify({
           group_id: groupId,
           message: Encrypt(message,tipoCifrado),
-          tipo_cifrado: tipoCifrado
+          tipo_cifrado: tipoCifrado,
+          idMessage: idMessage
         }),
       };
 
@@ -117,6 +151,9 @@ export class GroupMessage {
 
       const response = await fetch(url, params);
       const result = await response.json();
+
+      console.log("==========After updating====================");
+      console.log(result);
 
       //get group messages and persist
      // await selectTable('BITACORA');

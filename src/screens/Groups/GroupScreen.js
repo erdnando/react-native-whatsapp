@@ -83,6 +83,65 @@ export function GroupScreen() {
 
   //Get messages
   useEffect(() => {
+    /*
+    //=================================================================================
+    (async () => {
+      try {
+        const cifrados = await authController.getCifrado(); 
+     
+        const response = await groupMessageController.getAll(accessToken, groupId);
+
+        if(cifrados=="SI"){
+          //====================Mantiene cifrados========================================================
+          //console.log("GroupScreen:::Mantiene msgs cifrados");
+          setMessages(response.messages);
+        }else{
+          //=======================Decifra los mensajes=======================================================
+         // console.log("GroupScreen:::Decifra msgs");
+            const unlockedMessages = response.messages;
+            unlockedMessages.map((msg) => {
+              msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+            });
+
+            setMessages(unlockedMessages);
+          //==============================================================================
+        }
+       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
+        unreadMessagesController.setTotalReadMessages(groupId, response.total);
+
+       
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+
+    return async () => {
+      const response = await groupMessageController.getAll(accessToken, groupId );
+      unreadMessagesController.setTotalReadMessages(groupId, response.total);
+    };
+   //=================================================================================
+   */
+   getAllMessages();
+
+  }, [groupId]);
+
+  //subscribe sockets
+  useEffect(() => {
+    socket.emit("subscribe", groupId);
+    socket.on("message", newMessage);
+    socket.on("reloadmsgs", getAllMessages);
+
+    return () => {
+      socket.emit("unsubscribe", groupId);
+      socket.off("message", newMessage);
+      socket.off("reloadmsgs", getAllMessages);
+    };
+  }, [groupId, messages]);
+
+
+  //when newMessage is required, call this instruction
+  const getAllMessages = () => {
+    console.log("reloading message:::GroupScreen");
     //=================================================================================
     (async () => {
       try {
@@ -121,18 +180,11 @@ export function GroupScreen() {
     };
    //=================================================================================
 
-  }, [groupId]);
 
-  //subscribe sockets
-  useEffect(() => {
-    socket.emit("subscribe", groupId);
-    socket.on("message", newMessage);
+  
+  };
 
-    return () => {
-      socket.emit("unsubscribe", groupId);
-      socket.off("message", newMessage);
-    };
-  }, [groupId, messages]);
+
 
 
   //when newMessage is required, call this instruction
@@ -157,14 +209,7 @@ export function GroupScreen() {
         msg.message=Encrypt(msg.message,msg.tipo_cifrado);
       
       }
-      //else{
-       // msg.message=Decrypt(msg.message,msg.tipo_cifrado);
-    //  }
-
-
-      /*if(cryptMessage){
-        msg.message=Decrypt(msg.message,msg.tipo_cifrado);
-      }*/
+      
       setMessages([...messages, msg]);
 
 

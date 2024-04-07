@@ -1,5 +1,5 @@
 import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform } from "react-native";
+import { View, Keyboard, Platform,TextInput } from "react-native";
 import { Input, IconButton, Icon, Select,Alert } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
@@ -18,8 +18,9 @@ export function GroupForm(props) {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { accessToken } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
+  let [idMessage, setIdMessage] = useState("");
 
-  const inputMessageRef = useRef(null);
+  //const inputMessageRef = useRef(null);
 
   //Manage keyboard
   useEffect(() => {
@@ -33,6 +34,7 @@ export function GroupForm(props) {
 
     const hideKeyboardSub = Keyboard.addListener("keyboardDidHide", () => {
       setKeyboardHeight(0);
+      setIdMessage("");
     });
 
     return () => {
@@ -44,33 +46,35 @@ export function GroupForm(props) {
 
   //EventListener:editingMessage
   useEffect(() => {
-    (async () => {
+
+    setIdMessage("");
+    //(async () => {
       try {
         
-       
         //=================================================================
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
-          console.log("editing message..."+data);
-          //formik.initialValues["message"]=data;
-          //console.log(inputRef.current);
-         
-          //inputMessageRef.current.focus();
-         
-         
-         // 
+          setIdMessage("");
+          console.log("message._id:"+data._id);
+          setIdMessage(data._id);
+          console.log("message.message:"+data.message);
+          console.log("message.group:"+data.group);
+          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+          console.log("message.type:"+data.type);
+          
+          formik.setFieldValue("message", data.message);
+         // inputMessageRef.current.focus();
+          
         });
     
         return ()=>{
           EventRegister.removeEventListener(eventEditMessage);
         }
-        
-        
         //================================================================
 
       } catch (error) {
         console.error(error);
       }
-    })();
+   // })();
   }, []);
   
 
@@ -83,16 +87,27 @@ export function GroupForm(props) {
       try {
         setKeyboardHeight(0);
         Keyboard.dismiss();
-
+       
         //process();
        //Envio de mensajes
        console.log("tipo cifrado::"+tipoCifrado);
+       
+       if(idMessage==""){
+        //llamada normal, nuevo mensaje
         await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado );
+       }else{
+        //edicion de mensaje
+        setIdMessage("");
+        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
+       }
+        
 
         formik.handleReset();
-        
-        //formik.initialValues["message"]="xxxx";
-        //inputMessageRef.current.focus();
+        //clearing input after sending a message
+        formik.setFieldValue("message", "");
+
+  
+        setIdMessage("");
         
       } catch (error) {
         console.error(error);
@@ -117,9 +132,10 @@ export function GroupForm(props) {
 
       <View style={styles.inputContainer}>
 
-        <Input  
-           ref={inputMessageRef}
+        <TextInput  
+        
           placeholder="Mensaje al grupo..."
+          placeholderTextColor="#fff" 
           variant="unstyled"
           style={styles.input}
           value={formik.values.message}

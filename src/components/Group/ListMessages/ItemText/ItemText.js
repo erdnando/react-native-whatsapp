@@ -26,9 +26,9 @@ export function ItemText(props) {
   useEffect( () => {
 
     async function fetchData() {
-      console.log("useEffect ItemText:::::");
+     // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
-      console.log("cifrado item:::::"+cifrado);
+      //console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
       }else{
@@ -66,13 +66,14 @@ export function ItemText(props) {
                         onPress={() => {
                      
                            console.log("editando message:::::::::::");
-                           console.log(message.message);
-                           alert('Editar: [  '+message.message+"  ]");
+                          // console.log(message);
+                           //alert('Editar: [  '+message.message+"  ]");
+                           EventRegister.emit("editingMessage",message);  //
                            //focus on chat input
                            //this.inputRef.focus();
                            //inputRef.current.focus();
                            //set message on the input
-                           EventRegister.emit("editingMessage",message.message);  //
+                          
                            //paint previous message with a background
                            //persist changes
                            //reoad mesages
