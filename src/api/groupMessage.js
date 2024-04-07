@@ -165,6 +165,46 @@ async sendText(accessToken, groupId, message,tipoCifrado) {
       throw error;
     }
   }
+
+//====================================================================================================
+async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
+   
+  try {
+    const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_DELETE}`;
+    const params = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        group_id: groupId,
+        message: Encrypt(message,tipoCifrado),
+        tipo_cifrado: tipoCifrado,
+        idMessage: idMessage
+      }),
+    };
+
+    console.log("sending...."+url);
+    console.log(params);
+
+    const response = await fetch(url, params);
+    const result = await response.json();
+
+    console.log("==========After updating====================");
+    console.log(result);
+
+    //get group messages and persist
+   // await selectTable('BITACORA');
+
+    if (response.status !== 201) throw result;
+
+    return true;
+  } catch (error) {
+    throw error;
+  }
+}
+  
 //=====================================================================================================
   async sendImage(accessToken, groupId, file) {
     try {

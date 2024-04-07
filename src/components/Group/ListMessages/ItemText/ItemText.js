@@ -1,5 +1,5 @@
 import { View, Text,Pressable, } from "react-native";
-import { Menu,Icon } from 'native-base';
+import { Menu,Icon,AlertDialog,Button } from 'native-base';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState, useEffect,useRef } from "react";
 import { DateTime } from "luxon";
@@ -21,7 +21,24 @@ export function ItemText(props) {
   const createMessage = new Date(message.createdAt);
 
   const [modoAvanzado, setmodoAvanzado] = useState(false);
+  const [showAdvertencia, setShowAdvertencia] = useState(false);
+  const [mensajeEliminar, setMensajeEliminar] = useState(null);
 
+
+  const onCloseAdvertencia = () => setShowAdvertencia(false);
+ 
+  const onEliminarMensaje = () => {
+
+
+    setShowAdvertencia(false);
+    console.log("eliminando message:::::::::::");
+                         
+    //delete
+    //persist changes
+    //reoad mesages
+    EventRegister.emit("deletingMessage",mensajeEliminar);  //
+    setMensajeEliminar(null);
+  }
 
   useEffect( () => {
 
@@ -66,24 +83,22 @@ export function ItemText(props) {
                         onPress={() => {
                      
                            console.log("editando message:::::::::::");
-                          // console.log(message);
-                           //alert('Editar: [  '+message.message+"  ]");
-                           EventRegister.emit("editingMessage",message);  //
-                           //focus on chat input
-                           //this.inputRef.focus();
-                           //inputRef.current.focus();
+                         
                            //set message on the input
-                          
-                           //paint previous message with a background
                            //persist changes
                            //reoad mesages
+                           EventRegister.emit("editingMessage",message);  //
                         }}>
                     Editar</Menu.Item>
                     <Menu.Item  
                         onPress={() => {
-                          alert('Eliminar: [  '+message.message+"  ]");
+                         // alert('Eliminar: [  '+message.message+"  ]");
+                          setMensajeEliminar(message);
+                          setShowAdvertencia(true);
+                          //reoad mesages
+                            //
                         }}>
-                    Borrar</Menu.Item>
+                    Eliminar</Menu.Item>
                   </Menu>
 
               </View>
@@ -98,6 +113,32 @@ export function ItemText(props) {
               </Text>
               
             </View>
+
+
+
+
+            <AlertDialog  isOpen={showAdvertencia} onClose={onCloseAdvertencia}>
+              <AlertDialog.Content>
+                <AlertDialog.CloseButton />
+                <AlertDialog.Header>Eliminar mensaje</AlertDialog.Header>
+                <AlertDialog.Body>
+                  Esta apunto de eliminar el mensaje: {message.message}
+                </AlertDialog.Body>
+                <AlertDialog.Footer>
+                  <Button.Group space={2}>
+                    <Button variant="unstyled" colorScheme="coolGray" onPress={onCloseAdvertencia} >
+                      Cancelar
+                    </Button>
+                    <Button colorScheme="danger" onPress={onEliminarMensaje}>
+                      Eliminar mensaje
+                    </Button>
+                  </Button.Group>
+                </AlertDialog.Footer>
+              </AlertDialog.Content>
+            </AlertDialog>
+
+
+
           </View>
         );
       }

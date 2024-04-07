@@ -19,8 +19,13 @@ export function GroupForm(props) {
   const { accessToken } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
-
-  //const inputMessageRef = useRef(null);
+  //const [focusEffect, setFocusEffect] = useState(false);
+const inputMessageRef=useRef(null);
+  
+  /*const handleFocus = () => {
+    console.log("foco puesto....")
+    setFocusEffect(true);
+  };*/
 
   //Manage keyboard
   useEffect(() => {
@@ -48,7 +53,7 @@ export function GroupForm(props) {
   useEffect(() => {
 
     setIdMessage("");
-    //(async () => {
+  
       try {
         
         //=================================================================
@@ -62,12 +67,47 @@ export function GroupForm(props) {
           console.log("message.type:"+data.type);
           
           formik.setFieldValue("message", data.message);
-         // inputMessageRef.current.focus();
+         // setFocusEffect(true);
+          inputMessageRef.current.focus();
           
         });
     
         return ()=>{
           EventRegister.removeEventListener(eventEditMessage);
+        }
+        //================================================================
+        
+
+      } catch (error) {
+        console.error(error);
+      }
+  
+  }, []);
+
+   //EventListener:deletingMessage
+   useEffect(() => {
+
+    setIdMessage("");
+   
+      try {
+        
+         //=================================================================
+         const eventDeleteMessage = EventRegister.addEventListener("deletingMessage", async data=>{
+          setIdMessage("");
+          console.log("message._id:"+data._id);
+          setIdMessage(data._id);
+          console.log("message.message:"+data.message);
+          console.log("message.group:"+data.group);
+          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+          console.log("message.type:"+data.type);
+          
+    
+         await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
+          
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventDeleteMessage);
         }
         //================================================================
 
@@ -76,6 +116,7 @@ export function GroupForm(props) {
       }
    // })();
   }, []);
+  
   
 
   //formik definition & onsubmit
@@ -98,6 +139,7 @@ export function GroupForm(props) {
        }else{
         //edicion de mensaje
         setIdMessage("");
+        //setFocusEffect(false);
         await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
        }
         
@@ -133,7 +175,7 @@ export function GroupForm(props) {
       <View style={styles.inputContainer}>
 
         <TextInput  
-        
+        ref={inputMessageRef}
           placeholder="Mensaje al grupo..."
           placeholderTextColor="#fff" 
           variant="unstyled"

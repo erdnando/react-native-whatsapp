@@ -139,7 +139,7 @@ export function GroupScreen() {
   }, [groupId, messages]);
 
 
-  //when newMessage is required, call this instruction
+  //get all messages
   const getAllMessages = () => {
     console.log("reloading message:::GroupScreen");
     //=================================================================================
