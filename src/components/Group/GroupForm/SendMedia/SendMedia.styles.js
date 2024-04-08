@@ -27,12 +27,14 @@ export const styles = new StyleSheet.create({
   cancelText: {
     fontWeight: "bold",
     fontSize: 20,
-    color: "#06b6d4",
+    color: "#fff",
   },
   iconRed:{
     color:'red'
   },
-  iconAttachment:{
-    color:'gray'
+  iconCamera:{
+    color:'gray',   
+    textAlign:'center',
+    fontSize:26 
   }
 });

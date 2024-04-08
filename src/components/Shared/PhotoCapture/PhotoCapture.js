@@ -26,6 +26,8 @@ export function PhotoCapture(props) {
         await chatMessageController.sendImage(accessToken, id, file);
       }
       if (type === "group") {
+        console.log("sendind image to the group");
+        console.log(file)
         await groupMessageController.sendImage(accessToken, id, file);
       }
 

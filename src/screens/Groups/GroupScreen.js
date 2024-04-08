@@ -43,7 +43,17 @@ export function GroupScreen() {
                     if(isCypher=="NO"){
                      // console.log("decifrando mensajes");
                       unlockedMessages.map((msg) => {
-                        msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                        if(msg.type=="TEXT"){
+                           msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                        }
+                       
+                      });
+                    }else{
+                      unlockedMessages.map((msg) => {
+                        if(msg.type=="IMAGE"){
+                          msg.message = "images/cryptedImagex.png";
+                        }
+                       
                       });
                     }
                   
@@ -57,10 +67,12 @@ export function GroupScreen() {
                     unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
                   } catch (error) {
+                    console.log("Error 1")
                     console.error(error);
                   }
                 })();
               } catch (error) {
+                console.log("Error 3")
                 console.error(error);
               }
         });
@@ -83,44 +95,7 @@ export function GroupScreen() {
 
   //Get messages
   useEffect(() => {
-    /*
-    //=================================================================================
-    (async () => {
-      try {
-        const cifrados = await authController.getCifrado(); 
-     
-        const response = await groupMessageController.getAll(accessToken, groupId);
-
-        if(cifrados=="SI"){
-          //====================Mantiene cifrados========================================================
-          //console.log("GroupScreen:::Mantiene msgs cifrados");
-          setMessages(response.messages);
-        }else{
-          //=======================Decifra los mensajes=======================================================
-         // console.log("GroupScreen:::Decifra msgs");
-            const unlockedMessages = response.messages;
-            unlockedMessages.map((msg) => {
-              msg.message = Decrypt(msg.message,msg.tipo_cifrado);
-            });
-
-            setMessages(unlockedMessages);
-          //==============================================================================
-        }
-       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-        unreadMessagesController.setTotalReadMessages(groupId, response.total);
-
-       
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    return async () => {
-      const response = await groupMessageController.getAll(accessToken, groupId );
-      unreadMessagesController.setTotalReadMessages(groupId, response.total);
-    };
-   //=================================================================================
-   */
+    
    getAllMessages();
 
   }, [groupId]);
@@ -146,20 +121,33 @@ export function GroupScreen() {
     (async () => {
       try {
         const cifrados = await authController.getCifrado(); 
-       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-        //console.log("GroupScreen:::Cifrado:::"+cifrados);
+   
         const response = await groupMessageController.getAll(accessToken, groupId);
 
         if(cifrados=="SI"){
-          //====================Mantiene cifrados========================================================
-          //console.log("GroupScreen:::Mantiene msgs cifrados");
-          setMessages(response.messages);
+          //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
+          const lockedMessages = response.messages;
+          lockedMessages.map((msg) => {
+              if(msg.type=="IMAGE"){
+                console.log("=====imagen=========")
+                console.log(msg.message)
+                msg.message = "images/cryptedImagex.png";
+              }
+            });
+
+            setMessages(lockedMessages);
         }else{
           //=======================Decifra los mensajes=======================================================
-         // console.log("GroupScreen:::Decifra msgs");
+        
             const unlockedMessages = response.messages;
             unlockedMessages.map((msg) => {
-              msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+      
+              if(msg.type=="TEXT"){
+                msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+              }else{
+                console.log("========imagenxxx=======================")
+                console.log(msg.message);
+              }
             });
 
             setMessages(unlockedMessages);
@@ -189,13 +177,12 @@ export function GroupScreen() {
 
   //when newMessage is required, call this instruction
   const newMessage = (msg) => {
-    console.log("new cypher message:::GroupScreen");
-    console.log(msg);
-
     //============Always decifra mensaje======================
-    msg.message=Decrypt(msg.message,msg.tipo_cifrado);
-    console.log("decifrado");
-    console.log(msg);
+  
+    if(msg.type=="TEXT"){
+      msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+    }
+    
     //==================================================
 
 
@@ -206,7 +193,14 @@ export function GroupScreen() {
 
       if(cifrados=="SI"){
         //setCryptMessage(true);
-        msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+        if(msg.type=="TEXT"){
+          msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+        }else{
+          //console.log("===========mensaje imagen 1===============")
+         // console.log(msg.message);
+          msg.message = "images/cryptedImagex.png";
+        }
+        
       
       }
       

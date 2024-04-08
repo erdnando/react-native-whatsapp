@@ -42,12 +42,16 @@ export const styled = (isMe) => {
     },
     rowMenu:{
       flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent:'space-between',
+      flexWrap: 'wrap',
+      justifyContent:'space-between',
     },
     editOption:{
       
        
+    },
+    menu:{
+      display:isMe ? "flex": "none",
     }
+
   });
 };

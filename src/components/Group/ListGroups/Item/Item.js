@@ -83,7 +83,8 @@ export function Item(props) {
     (async () => {
       try {
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
-
+        console.log("===========================");
+        console.log(response);
         if (!isEmpty(response)) setLastMessage(response);
       } catch (error) {
         console.error(error);
@@ -101,7 +102,7 @@ export function Item(props) {
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
     console.log("new cypher message:::item");
-    //console.log(newMsg);
+    console.log(newMsg);
 
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
@@ -143,8 +144,8 @@ export function Item(props) {
           <Text style={styles.message} numberOfLines={2}>
             <Text>
               {lastMessage
-                ? `${lastMessage.user.email.substring(0, 20)+"... comento:"} `
-                : " "}
+                ? `${lastMessage.user.email.substring(0,20) +"... comento:"} `
+                : ""}
             </Text>
            {/*  <Text style={styles.text}>
               {lastMessage ? lastMessage.message : " "}

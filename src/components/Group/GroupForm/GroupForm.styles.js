@@ -3,22 +3,24 @@ import { StyleSheet } from "react-native";
 export const styles = new StyleSheet.create({
 
   content: {
-    position: "absolute",
-    width: "100%",
-    left: -10,
-    bottom: 0,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-    paddingBottom: 50,
+    position:'relative',
+    paddingLeft:20,
+    paddingTop: 15,
+    paddingBottom: 40,
     backgroundColor: "#171717",
     borderTopWidth: 1,
     borderTopColor: "#333",
     flexDirection: "row",
-    alignItems: "center",
+    alignContent:'space-around',
+
   },
   inputContainer: {
     flex: 1,
     position: "relative",
+    flexDirection: 'row',
+    marginLeft:5,
+  
+    alignContent:'space-around'
   },
   input: {
     backgroundColor: "#29292b",
@@ -26,25 +28,25 @@ export const styles = new StyleSheet.create({
     fontSize: 16,
     borderRadius: 50,
     height:38,
-    padding:9,
-    
+    width:'95%',
+    borderWidth:2,
+    borderStyle:'dotted',
+   marginLeft:5,
+   paddingLeft:15
   },
   select: {
     borderColor: "transparent",
     borderWidth:0,
-    right: 10,
     backgroundColor: "#29292b",
     color: "#fff",
     fontSize: 9,
     borderRadius: 50,
-    marginLeft: 5,
+  
   },
   iconSend: {
-    position: "absolute",
-    top: 0,
-    right: 10,
-    height: "100%",
-    color:'red'
+    position: "relative",
+    right:38,
+    color:'white'
   },
   iconCrypto: {
     position: "absolute",
@@ -57,6 +59,13 @@ export const styles = new StyleSheet.create({
   },
   iconRed:{
     color:'red'
+  },
+  iconAudio:{
+    color:'gray',
+    position:'relative',
+    right:12,
+    marginLeft:10,
+    fontSize:22
   }
   
  

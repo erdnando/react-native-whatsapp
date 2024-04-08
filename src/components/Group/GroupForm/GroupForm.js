@@ -19,13 +19,21 @@ export function GroupForm(props) {
   const { accessToken } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
-  //const [focusEffect, setFocusEffect] = useState(false);
-const inputMessageRef=useRef(null);
+  const [focusInput, setFocusInput] = useState(false);
+  const inputMessageRef=useRef(null);
+  const [showIconSendText, setShowIconSendText] = useState(false);
   
-  /*const handleFocus = () => {
+  const handleFocus = () => {
     console.log("foco puesto....")
-    setFocusEffect(true);
-  };*/
+    //setFocusInput(true);
+    setShowIconSendText(true);
+  };
+  
+  const handleBlur = () => {
+    console.log("foco perdido....")
+    //setFocusInput(true);
+    setShowIconSendText(false);
+  };
 
   //Manage keyboard
   useEffect(() => {
@@ -67,7 +75,7 @@ const inputMessageRef=useRef(null);
           console.log("message.type:"+data.type);
           
           formik.setFieldValue("message", data.message);
-         // setFocusEffect(true);
+          setFocusInput(true);
           inputMessageRef.current.focus();
           
         });
@@ -139,10 +147,10 @@ const inputMessageRef=useRef(null);
        }else{
         //edicion de mensaje
         setIdMessage("");
-        //setFocusEffect(false);
+       
         await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
        }
-        
+       setFocusInput(false);
 
         formik.handleReset();
         //clearing input after sending a message
@@ -161,7 +169,7 @@ const inputMessageRef=useRef(null);
     <View style={[styles.content, { bottom: keyboardHeight }]}>
       
 
-      <SendMedia groupId={groupId} />
+     
        
       <Select borderColor={'transparent'} paddingTop={1} paddingBottom={1} style={styles.select} minWidth={81} maxWidth={82} 
        selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
@@ -175,22 +183,30 @@ const inputMessageRef=useRef(null);
       <View style={styles.inputContainer}>
 
         <TextInput  
-        ref={inputMessageRef}
+          ref={inputMessageRef}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          borderColor= {focusInput ? 'red' : 'transparent'}
           placeholder="Mensaje al grupo..."
-          placeholderTextColor="#fff" 
+          placeholderTextColor="gray" 
           variant="unstyled"
           style={styles.input}
           value={formik.values.message}
           onChangeText={(text) => formik.setFieldValue("message", text)}
           onEndEditing={!formik.isSubmitting && formik.handleSubmit}
         />
-        <IconButton
+        <IconButton display={showIconSendText ? 'flex':'none'}
           icon={<Icon as={MaterialCommunityIcons} name="send-lock-outline"  /> }
-          padding={0}
           style={styles.iconSend}
           onPress={!formik.isSubmitting && formik.handleSubmit}
         />
+        
+         
       </View>
+      <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
+          <SendMedia groupId={groupId}  />
+          <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }       />
+        </View>
     </View>
   );
 }

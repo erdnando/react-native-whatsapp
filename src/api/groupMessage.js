@@ -213,22 +213,37 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
       formData.append("image", file);
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE}`;
+      //console.log(url);
+
+      //"Content-Type": "application/json",
       const params = {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "multipart/form-data",
+          "accept": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         body: formData,
       };
 
+      //console.log(formData);
+
+    try {
       const response = await fetch(url, params);
+      //console.log(response);
       const result = await response.json();
+      console.log(result);
 
       if (response.status !== 201) throw result;
+    } catch (error) {
+      //console.log("Error al enviar imagen al grupo")
+      console.log(error);
+    }
+     
 
       return true;
     } catch (error) {
+    
       throw error;
     }
   }

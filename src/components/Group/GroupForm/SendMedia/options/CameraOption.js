@@ -33,7 +33,7 @@ export function CameraOption(props) {
           as={MaterialCommunityIcons}
           size="6"
           name="camera"
-          color="primary.500"
+          color="white"
         />
       }
     >

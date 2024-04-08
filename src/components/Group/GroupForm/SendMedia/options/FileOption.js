@@ -7,12 +7,12 @@ import { styles } from "../SendMedia.styles";
 
 const groupMessageController = new GroupMessage();
 
-export function GalleryOption(props) {
+export function FileOption(props) {
   const { onClose, groupId, accessToken } = props;
 
   const openGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: false,
       quality: 1,
     });
@@ -41,12 +41,12 @@ export function GalleryOption(props) {
         <Icon
           as={MaterialCommunityIcons}
           size="6"
-          name="image"
+          name="file-export"
           color="white"
         />
       }
     >
-      Galeria
+      Archivos
     </Actionsheet.Item>
   );
 }

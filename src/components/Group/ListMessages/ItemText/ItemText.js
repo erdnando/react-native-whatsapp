@@ -40,6 +40,7 @@ export function ItemText(props) {
     setMensajeEliminar(null);
   }
 
+  //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
     async function fetchData() {
@@ -70,7 +71,7 @@ export function ItemText(props) {
                 </Text>
 
                 <Menu w="190" trigger={triggerProps => {
-                  return <Pressable accessibilityLabel="More options menu" {...triggerProps}>
+                  return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon
                             as={MaterialCommunityIcons}
                             size="7"
@@ -87,7 +88,7 @@ export function ItemText(props) {
                            //set message on the input
                            //persist changes
                            //reoad mesages
-                           EventRegister.emit("editingMessage",message);  //
+                           EventRegister.emit("editingMessage",message);  //-->GroupForm
                         }}>
                     Editar</Menu.Item>
                     <Menu.Item  
@@ -99,7 +100,7 @@ export function ItemText(props) {
                             //
                         }}>
                     Eliminar</Menu.Item>
-                  </Menu>
+                </Menu>
 
               </View>
              
@@ -113,9 +114,6 @@ export function ItemText(props) {
               </Text>
               
             </View>
-
-
-
 
             <AlertDialog  isOpen={showAdvertencia} onClose={onCloseAdvertencia}>
               <AlertDialog.Content>
@@ -136,8 +134,6 @@ export function ItemText(props) {
                 </AlertDialog.Footer>
               </AlertDialog.Content>
             </AlertDialog>
-
-
 
           </View>
         );

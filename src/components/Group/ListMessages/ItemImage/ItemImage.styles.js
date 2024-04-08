@@ -36,5 +36,10 @@ export const styled = (isMe) => {
       marginTop: 2,
       textAlign: "right",
     },
+    rowMenu:{
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent:'space-between',
+    },
   });
 };
