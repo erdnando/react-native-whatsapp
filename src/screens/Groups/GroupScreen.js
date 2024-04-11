@@ -53,6 +53,9 @@ export function GroupScreen() {
                         if(msg.type=="IMAGE"){
                           msg.message = "images/cryptedImagex.png";
                         }
+                        if(msg.type=="FILE"){
+                          msg.message = "images/cryptedImagex.png";
+                        }
                        
                       });
                     }
@@ -133,6 +136,13 @@ export function GroupScreen() {
                 console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
+
+              if(msg.type=="FILE"){
+                console.log("=====file=========")
+                console.log(msg.message)
+                msg.message = "images/cryptedImagex.png";
+              }
+
             });
 
             setMessages(lockedMessages);
@@ -144,8 +154,14 @@ export function GroupScreen() {
       
               if(msg.type=="TEXT"){
                 msg.message = Decrypt(msg.message,msg.tipo_cifrado);
-              }else{
-                console.log("========imagenxxx=======================")
+              }
+              /*else if(msg.type=="FILE"){
+                console.log("========file=======================")
+                msg.message = "images/cryptedImagex.png";
+                console.log(msg.message);
+              }*/
+              else{
+                console.log("========imagen=======================")
                 console.log(msg.message);
               }
             });
@@ -177,12 +193,19 @@ export function GroupScreen() {
 
   //when newMessage is required, call this instruction
   const newMessage = (msg) => {
+
+    console.log("identificando nuevo mensaje:::::")
+    console.log("===========================================")
+    console.log(msg);
+    console.log("===========================================")
     //============Always decifra mensaje======================
   
     if(msg.type=="TEXT"){
       msg.message=Decrypt(msg.message,msg.tipo_cifrado);
     }
-    
+    /*if(msg.type=="FILE"){
+      msg.message = "images/cryptedImagex.png";
+    }*/
     //==================================================
 
 
@@ -195,13 +218,9 @@ export function GroupScreen() {
         //setCryptMessage(true);
         if(msg.type=="TEXT"){
           msg.message=Encrypt(msg.message,msg.tipo_cifrado);
-        }else{
-          //console.log("===========mensaje imagen 1===============")
-         // console.log(msg.message);
+        }else{ //img or filr
           msg.message = "images/cryptedImagex.png";
         }
-        
-      
       }
       
       setMessages([...messages, msg]);

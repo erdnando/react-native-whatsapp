@@ -247,6 +247,55 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
       throw error;
     }
   }
+
+
+//=====================================================================================================
+async sendFile(accessToken, groupId, file) {
+  try {
+    console.log("sending file from telephone...")
+    console.log(file);
+    const formData = new FormData();
+    formData.append("group_id", groupId);
+    formData.append("file", file);
+
+    const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILE}`;
+    //console.log(url);
+
+    //"Content-Type": "application/json",
+    //multipart/form-data
+    //"Content-Type": file.type,
+    const params = {
+      method: "POST",
+      headers: {
+        
+        'content-type': 'multipart/form-data',
+        "accept": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: formData,
+    };
+
+    console.log(params);
+
+  try {
+    const response = await fetch(url, params);
+    //console.log(response);
+    const result = await response.json();
+    console.log(result);
+
+    if (response.status !== 201) throw result;
+  } catch (error) {
+    //console.log("Error al enviar imagen al grupo")
+    console.log(error);
+  }
+   
+
+    return true;
+  } catch (error) {
+  
+    throw error;
+  }
+}
   //=====================================================================================================
 
 

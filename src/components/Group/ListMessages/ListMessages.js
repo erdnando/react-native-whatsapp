@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import { map } from "lodash";
 import { ItemText } from "./ItemText";
 import { ItemImage } from "./ItemImage";
+import { ItemFile } from "./ItemFile";
 import { styles } from "./ListMessages.styles";
 
 export function ListMessages(props) {
@@ -25,6 +26,10 @@ export function ListMessages(props) {
           }
           if (message.type === "IMAGE") {
             return <ItemImage key={message._id} message={message} />;
+          }
+
+          if (message.type === "FILE") {
+            return <ItemFile key={message._id} message={message} />;
           }
         })}
       </View>

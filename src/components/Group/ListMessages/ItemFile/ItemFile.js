@@ -6,14 +6,14 @@ import { DateTime } from "luxon";
 import AutoHeightImage from "react-native-auto-height-image";
 import { useAuth } from "../../../../hooks";
 import { ENV, screens } from "../../../../utils";
-import { styled } from "./ItemImage.styles";
+import { styled } from "./ItemFile.styles";
 import { Auth } from "../../../../api"
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 
 const authController = new Auth();
 
-export function ItemImage(props) {
+export function ItemFile(props) {
 
   const { message } = props;
   const { user } = useAuth();
@@ -22,7 +22,7 @@ export function ItemImage(props) {
   const createMessage = new Date(message.createdAt);
   const navigation = useNavigation();
 
-  const imageUri = `${ENV.BASE_PATH}/${message.message}`;
+  const imageUri = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -34,10 +34,8 @@ export function ItemImage(props) {
 
     setShowAdvertencia(false);
     console.log("eliminando message:::::::::::");
-                         
-    //delete
-    //persist changes
-    //reoad mesages
+ 
+    
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
     setMensajeEliminar(null);
   }
@@ -46,11 +44,14 @@ export function ItemImage(props) {
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
 
+  const onOpenFile= () => {
+   alert("Descargando archivo....")
+  };
+
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
-    
-
+  
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
@@ -112,17 +113,30 @@ export function ItemImage(props) {
 
               </View>
 
+              {/*vista file download*/}
+              <View style={styles.rowFile}>
+                  <Icon display={isMe?"flex":"none"}
+                                as={MaterialCommunityIcons}
+                                size="39"
+                                name="file"
+                                color="black"
+                              />
 
+               <Text style={styles.fileName}>
+                  {message.message }
+                </Text>
 
+                  <Pressable onPress={onOpenFile}>
+                    <Icon display={isMe?"flex":"none"}
+                                  as={MaterialCommunityIcons}
+                                  size="39"
+                                  name="download-circle"
+                                  color="black"
+                                />
+                  </Pressable>
+              </View>
 
-            <Pressable onPress={onOpenImage}>
-              <AutoHeightImage
-                width={width}
-                maxHeight={400}
-                source={{ uri: imageUri }}
-                style={styles.image}
-              />
-            </Pressable>
+       
             <Text style={styles.date}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
             </Text>

@@ -21,6 +21,7 @@ export function SendMedia(props) {
         <Actionsheet.Content style={styles.itemsContainer}>
 
           <CameraOption onClose={onOpenClose} groupId={groupId} />
+          
           <GalleryOption
             onClose={onOpenClose}
             groupId={groupId}

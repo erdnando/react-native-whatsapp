@@ -46,7 +46,7 @@ export function ItemText(props) {
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
-      //console.log("cifrado item:::::"+cifrado);
+      console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
       }else{
@@ -58,11 +58,13 @@ export function ItemText(props) {
   }, []);
 
   if(modoAvanzado){
+
         return (
           <View style={styles.content}>
             <View style={styles.message}>
 
               <View style={styles.rowMenu}>
+
                 {/*Alias*/}
                 <Text style={styles.identity}>
                   {message.user.firstname || message.user.lastname
