@@ -10,6 +10,15 @@ import { styled } from "./ItemFile.styles";
 import { Auth } from "../../../../api"
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
+import * as FileSystem from 'expo-file-system';
+//import * as Permissions from 'expo-permissions';
+//import * as MediaLibrary from 'expo-media-library';
+
+//import { CameraRoll } from 'react-native';
+//import * as WebBrowser from 'expo-web-browser';
+import { shareAsync } from 'expo-sharing';
+import mime from 'mime';
+
 
 const authController = new Auth();
 
@@ -28,6 +37,7 @@ export function ItemFile(props) {
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
+  const [downloadProgress, setDownloadProgress]= useState(null);
 
   const onEliminarMensaje = () => {
 
@@ -44,10 +54,45 @@ export function ItemFile(props) {
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
 
-  const onOpenFile= () => {
-   alert("Descargando archivo....")
+
+//open file function
+  const onOpenFile= async () => {
+    
+    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+    const filename=message.message.replace("files/","");
+    
+    let mimetype =mime.getType(filename);
+    console.log("mimetype::::::")
+    console.log(mimetype)
+    
+
+    // Download the file and get its local URI
+    const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
+
+    let fileInfo = await FileSystem.getInfoAsync(uri);
+    console.log("fileInfo");
+    console.log(fileInfo);
+
+    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+    if(permissions.granted){
+
+      const base64 = await FileSystem.readAsStringAsync(uri,{encoding:FileSystem.EncodingType.Base64});
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,filename,mimetype).then(async (uri)=>{
+        await FileSystem.writeAsStringAsync(uri,base64,{encoding:FileSystem.EncodingType.Base64})
+      }).catch( e => {
+        console.log(e)
+      });
+
+    }
+    //else{
+     // await shareAsync(uri);
+    //}
+   
+
   };
 
+  
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
@@ -146,9 +191,9 @@ export function ItemFile(props) {
           <AlertDialog  isOpen={showAdvertencia} onClose={onCloseAdvertencia}>
               <AlertDialog.Content>
                 <AlertDialog.CloseButton />
-                <AlertDialog.Header>Eliminar imagen</AlertDialog.Header>
+                <AlertDialog.Header>Eliminar archivo</AlertDialog.Header>
                 <AlertDialog.Body>
-                  Esta apunto de eliminar la imagen
+                  Esta apunto de eliminar este archivo
                 </AlertDialog.Body>
                 <AlertDialog.Footer>
                   <Button.Group space={2}>
@@ -156,7 +201,7 @@ export function ItemFile(props) {
                       Cancelar
                     </Button>
                    <Button colorScheme="danger" onPress={onEliminarMensaje}>
-                      Eliminar imagen
+                      Eliminar archivo
                     </Button>
                   </Button.Group>
                 </AlertDialog.Footer>
