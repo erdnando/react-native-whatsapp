@@ -33,6 +33,15 @@ export const styled = (isMe) => {
       marginTop: 2,
       textAlign: "right",
     },
+    dateEditado: {
+      opacity: 0.6,
+      color: "black",
+      fontSize: 12,
+      marginTop: 2,
+      textAlign: "right",
+      fontStyle:"italic",
+      fontWeight:"bold"
+    },
     cifrado: {
       fontWeight:"bold",
       color: "red",

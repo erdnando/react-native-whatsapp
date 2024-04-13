@@ -150,6 +150,7 @@ export function GroupScreen() {
           //=======================Decifra los mensajes=======================================================
         
             const unlockedMessages = response.messages;
+
             unlockedMessages.map((msg) => {
       
               if(msg.type=="TEXT"){
@@ -165,7 +166,7 @@ export function GroupScreen() {
                 console.log(msg.message);
               }
             });
-
+            setMessages([]);
             setMessages(unlockedMessages);
           //==============================================================================
         }

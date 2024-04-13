@@ -41,5 +41,15 @@ export const styled = (isMe) => {
       flexWrap: 'wrap',
       justifyContent:'space-between',
     },
+    colFile:{
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      backgroundColor:"transparent",
+      height:65,
+      bottom:-8
+    
+    },
   });
 };

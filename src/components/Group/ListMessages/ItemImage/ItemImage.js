@@ -10,6 +10,8 @@ import { styled } from "./ItemImage.styles";
 import { Auth } from "../../../../api"
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
+import mime from 'mime';
+import * as FileSystem from 'expo-file-system';
 
 const authController = new Auth();
 
@@ -44,6 +46,40 @@ export function ItemImage(props) {
 
   const onOpenImage = () => {
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
+  };
+
+
+  //open file function
+  const onOpenFile= async () => {
+    
+    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+    const filename=message.message.replace("images/","");
+    
+    let mimetype =mime.getType(filename);
+    console.log("mimetype::::::")
+    console.log(mimetype)
+    
+
+    // Download the file and get its local URI
+    const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
+
+    let fileInfo = await FileSystem.getInfoAsync(uri);
+    console.log("fileInfo");
+    console.log(fileInfo);
+
+    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+    if(permissions.granted){
+
+      const base64 = await FileSystem.readAsStringAsync(uri,{encoding:FileSystem.EncodingType.Base64});
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,filename,mimetype).then(async (uri)=>{
+        await FileSystem.writeAsStringAsync(uri,base64,{encoding:FileSystem.EncodingType.Base64})
+      }).catch( e => {
+        console.log(e)
+      });
+
+    }
+  
   };
 
    //Identifica modo avanzado basado en el estatus de cifrado
@@ -123,9 +159,24 @@ export function ItemImage(props) {
                 style={styles.image}
               />
             </Pressable>
+
+           <View style={styles.colFile}>
+            {/*download button*/}
+            <Pressable onPress={onOpenFile}>
+                    <Icon display={isMe?"flex":"none"}
+                    style={{marginTop:-35,left:-5 }}
+                                  as={MaterialCommunityIcons}
+                                  size="39"
+                                  name="download-circle"
+                                  color="black"
+                                />
+            </Pressable>
+
             <Text style={styles.date}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
             </Text>
+            </View>
+
           </View>
 
 

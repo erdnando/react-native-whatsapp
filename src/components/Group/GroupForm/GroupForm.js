@@ -133,6 +133,7 @@ export function GroupForm(props) {
     validationSchema: validationSchema(),
     validateOnChange: false,
     onSubmit: async (formValue) => {
+      //onSendMessage
       try {
         setKeyboardHeight(0);
         Keyboard.dismiss();

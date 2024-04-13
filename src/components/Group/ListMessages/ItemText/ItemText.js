@@ -1,4 +1,4 @@
-import { View, Text,Pressable, } from "react-native";
+import { View, Text,Pressable,Clipboard } from "react-native";
 import { Menu,Icon,AlertDialog,Button } from 'native-base';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState, useEffect,useRef } from "react";
@@ -19,11 +19,13 @@ export function ItemText(props) {
   const isMe = user._id === message.user._id;
   const styles = styled(isMe);
   const createMessage = new Date(message.createdAt);
+  const updatedMessage = new Date(message.updatedAt);
 
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
-
+  const [editado, setEditado] = useState(false);
+  //const [copiedText, setCopiedText] = useState('');
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
@@ -42,6 +44,13 @@ export function ItemText(props) {
 
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
+
+  
+    if(createMessage.getTime() ==updatedMessage.getTime() ){
+       setEditado(false)
+    }else{
+      setEditado(true)
+    }
 
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
@@ -95,6 +104,15 @@ export function ItemText(props) {
                     Editar</Menu.Item>
                     <Menu.Item  
                         onPress={() => {
+                     
+                           console.log("copiando message:::::::::::");
+                         
+                           //set text message on the clipboard
+                           Clipboard.setString(message.message);
+                        }}>
+                    Copiar</Menu.Item>
+                    <Menu.Item  
+                        onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
                           setMensajeEliminar(message);
                           setShowAdvertencia(true);
@@ -114,6 +132,12 @@ export function ItemText(props) {
               <Text style={styles.date}>
                 {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
               </Text>
+               {/*hora del mensaje editado*/}
+               <View display={editado?"flex":"none"}>
+               <Text  style={styles.dateEditado}  >
+                {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("HH:mm")}
+              </Text>
+              </View>
               
             </View>
 
