@@ -19,7 +19,7 @@ export function ChangeFirstnameScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
-        const dataUser = { firstname: formValue.firstname };
+        const dataUser = { firstname: formValue.firstname,email: formValue.firstname };
         await userController.updateUser(accessToken, dataUser);
         updateUser("firstname", formValue.firstname);
         navigation.goBack();

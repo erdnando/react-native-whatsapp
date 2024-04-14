@@ -25,22 +25,22 @@ export function GroupForm(props) {
   const [replyMessage, setReplyMessage] = useState(null);
   
   const handleFocus = () => {
-    console.log("foco puesto....")
+    //console.log("foco puesto....")
     //setFocusInput(true);
     setShowIconSendText(true);
   };
   
   const handleBlur = () => {
-    console.log("foco perdido....")
+    //console.log("foco perdido....")
     //setFocusInput(true);
     setShowIconSendText(false);
   };
 
   const onCancelReply = () => {
     console.log("cancelando reply...");
+    setFocusInput(false);
     setReplyMessage(null);
-    //TODO
-    //set flag to identify on sendingmessage event that this message must be represeted as a replied one
+    
   };
 
   //Manage keyboard
@@ -75,14 +75,6 @@ export function GroupForm(props) {
           //=================================================================
           const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async data=>{
             setIdMessage("");
-            console.log("message._id:"+data._id);
-            setIdMessage(data._id);
-            console.log("message.message:"+data.message);
-            console.log("message.group:"+data.group);
-            console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-            console.log("message.type:"+data.type);
-            
-            //formik.setFieldValue("message", data.message);
             setFocusInput(true);
             console.log("mensaje replicado::::")
             console.log(data)
@@ -157,6 +149,7 @@ export function GroupForm(props) {
           
     
          await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
+         setIdMessage("");
           
         });
     
@@ -184,20 +177,25 @@ export function GroupForm(props) {
         setKeyboardHeight(0);
         Keyboard.dismiss();
        
+        console.log("idMessage:::::::")
+        console.log(idMessage)
         //process();
        //Envio de mensajes
-       console.log("tipo cifrado::"+tipoCifrado);
+      // console.log("tipo cifrado::"+tipoCifrado);
        
        if(idMessage==""){
         //llamada normal, nuevo mensaje
-        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado );
+        console.log("===========sending replied=============")
+        console.log(replyMessage);
+        console.log("=======================================")
+        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
        }else{
         //edicion de mensaje
         setIdMessage("");
-       
         await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
        }
        setFocusInput(false);
+       setReplyMessage(null);
 
         formik.handleReset();
         //clearing input after sending a message
@@ -215,28 +213,26 @@ export function GroupForm(props) {
   return (
     <View style={[ { bottom: keyboardHeight }]}>
 
+       
+       
+       
+       {/*reply message section just as a reference to see what would you send*/}
        <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
         </Text>
-      {/*reply message*/}
+      
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
-
-        <Text  
-            style={styles.textReply}
-          >{replyMessage!=null ? replyMessage.message: ""}</Text>
-
-          
-              <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } />
-         
-           
+        <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
+        <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     
+
       
-    
+    {/*section to select chyper mode, input and other options ie send media*/}
        <View style={styles.content}>
-          <Select borderColor={'transparent'} paddingTop={1} paddingBottom={1} style={styles.select} minWidth={81} maxWidth={82} 
+          <Select borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
           onValueChange={itemValue => setTipoCifrado(itemValue)}>
               <Select.Item label="AES" value="AES" />

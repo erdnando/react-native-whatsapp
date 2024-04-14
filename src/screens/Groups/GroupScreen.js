@@ -9,6 +9,7 @@ import { ListMessages, GroupForm } from "../../components/Group";
 import { ENV, socket,Decrypt,Encrypt } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Audio } from 'expo-av';
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -124,7 +125,8 @@ export function GroupScreen() {
     (async () => {
       try {
         const cifrados = await authController.getCifrado(); 
-   
+        console.log("cifrados");
+        console.log(cifrados);
         const response = await groupMessageController.getAll(accessToken, groupId);
 
         if(cifrados=="SI"){
@@ -155,16 +157,20 @@ export function GroupScreen() {
       
               if(msg.type=="TEXT"){
                 msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+
+                if(msg.email_replied != null){
+                  msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+                }
               }
               /*else if(msg.type=="FILE"){
                 console.log("========file=======================")
                 msg.message = "images/cryptedImagex.png";
                 console.log(msg.message);
               }*/
-              else{
+              /*else{
                 console.log("========imagen=======================")
                 console.log(msg.message);
-              }
+              }*/
             });
             setMessages([]);
             setMessages(unlockedMessages);
@@ -174,6 +180,9 @@ export function GroupScreen() {
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
        
+
+
+
       } catch (error) {
         console.error(error);
       }
@@ -189,11 +198,10 @@ export function GroupScreen() {
   
   };
 
-
-
-
   //when newMessage is required, call this instruction
   const newMessage = (msg) => {
+   
+    (async () => {
 
     console.log("identificando nuevo mensaje:::::")
     console.log("===========================================")
@@ -202,7 +210,34 @@ export function GroupScreen() {
     //============Always decifra mensaje======================
   
     if(msg.type=="TEXT"){
-      msg.message=Decrypt(msg.message,msg.tipo_cifrado);
+      msg.message=Decrypt(msg.message, msg.tipo_cifrado);
+
+      if(msg.email_replied != null){
+        msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+
+        //find message original and decryp it on message array
+        try{
+          messages.map((msgx) => {
+            //console.log("=====================")
+            //console.log(msgx.message)
+            //console.log(msg.message_replied)
+            //console.log("=====================")
+            if( Decrypt(msgx.message,msgx.tipo_cifrado) == msg.message_replied){
+              msgx.message = msg.message_replied;
+            }
+           
+          });
+          setMessages(messages);
+        }catch(error){
+          console.log("error al validar xxx")
+        }
+        
+
+      }
+      //here  sound
+      const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
+      await sound.playAsync();
+      
     }
     /*if(msg.type=="FILE"){
       msg.message = "images/cryptedImagex.png";
@@ -210,23 +245,24 @@ export function GroupScreen() {
     //==================================================
 
 
-   
-    (async () => {
+
+
+
       const cifrados = await authController.getCifrado(); 
-      console.log("getCifrado new message:::"+cifrados);
 
       if(cifrados=="SI"){
         //setCryptMessage(true);
         if(msg.type=="TEXT"){
+          console.log("cifrando 5")
           msg.message=Encrypt(msg.message,msg.tipo_cifrado);
         }else{ //img or filr
           msg.message = "images/cryptedImagex.png";
         }
       }
-      
+     
       setMessages([...messages, msg]);
 
-
+     
     })();
 
 

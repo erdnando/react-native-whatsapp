@@ -94,8 +94,17 @@ export class GroupMessage {
   }
 
 //==============================================================================================
-async sendText(accessToken, groupId, message,tipoCifrado) {
-   
+async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
+   console.log("reenviando msg:::::::::::::::::::::")
+  console.log(message);
+  //cifrando msg reenviado
+if(replyMessage!=null){
+  console.log("cifrando 1")
+  replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipoCifrado );
+}
+  
+
+console.log("cifrando 2")
   try {
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
     const params = {
@@ -107,7 +116,8 @@ async sendText(accessToken, groupId, message,tipoCifrado) {
       body: JSON.stringify({
         group_id: groupId,
         message: Encrypt(message,tipoCifrado),
-        tipo_cifrado: tipoCifrado
+        tipo_cifrado: tipoCifrado,
+        replied_message:replyMessage==null ? '' :replyMessage
       }),
     };
 
@@ -129,7 +139,7 @@ async sendText(accessToken, groupId, message,tipoCifrado) {
 }
 //==============================================================================================
   async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
-   
+    console.log("cifrando 3")
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
       const params = {
@@ -168,7 +178,7 @@ async sendText(accessToken, groupId, message,tipoCifrado) {
 
 //====================================================================================================
 async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
-   
+  console.log("cifrando 4")
   try {
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_DELETE}`;
     const params = {

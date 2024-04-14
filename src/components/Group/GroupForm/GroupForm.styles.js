@@ -19,21 +19,20 @@ export const styles = new StyleSheet.create({
     position: "relative",
     flexDirection: 'row',
     marginLeft:5,
-  
     alignContent:'space-around'
   },
   input: {
     backgroundColor: "#29292b",
     color: "#fff",
     fontSize: 16,
-    borderRadius: 50,
-    
+    borderRadius: 10,
     width:'95%',
     borderWidth:2,
     borderStyle:'dotted',
    marginLeft:5,
-   paddingLeft:5,
-   paddingRight:35
+   paddingLeft:15,
+   paddingRight:35,
+   height:'100%'
   },
   textReply:{
     backgroundColor: "#29292b",
@@ -54,8 +53,9 @@ export const styles = new StyleSheet.create({
     backgroundColor: "#29292b",
     color: "#fff",
     fontSize: 9,
-    borderRadius: 50,
-  
+    borderRadius: 10,
+    top:-3,
+  marginTop:5
   },
   iconSend: {
     position: "relative",
@@ -64,7 +64,7 @@ export const styles = new StyleSheet.create({
   },
   iconCrypto: {
     position: "absolute",
-    top: 13,
+    top: 17,
     left:36,
     fontSize: 20,
     width:40,

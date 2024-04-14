@@ -17,10 +17,23 @@ export const styled = (isMe) => {
       paddingHorizontal: 10,
     },
     identity: {
-      color: "#fff",
+      color: "black",
+      marginBottom: 5,
+      fontWeight: "bold",
+      opacity: 0.8,
+    },
+    identityReplica:{
+      color: "black",
       marginBottom: 5,
       fontWeight: "bold",
       opacity: 0.4,
+    },
+    identityMsgReplica:{
+      color: "black",
+      marginBottom: 5,
+      
+      opacity: 0.4,
+      fontStyle:"italic"
     },
     text: {
       color: "#fff",
@@ -48,6 +61,7 @@ export const styled = (isMe) => {
       fontSize: 12,
       marginTop: 2,
       textAlign: "right",
+      marginTop:-20
     },
     rowMenu:{
       flexDirection: 'row',

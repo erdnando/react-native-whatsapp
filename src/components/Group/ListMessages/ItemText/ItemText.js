@@ -7,6 +7,7 @@ import { useAuth } from "../../../../hooks";
 import { styled } from "./ItemText.styles";
 import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
+import { Decrypt,Encrypt } from "../../../../utils";
 
 
 
@@ -25,7 +26,7 @@ export function ItemText(props) {
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
   const [editado, setEditado] = useState(false);
-  //const [copiedText, setCopiedText] = useState('');
+  const [replicado, setReplicado] = useState(false);
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
@@ -45,6 +46,18 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
+    if(message.email_replied != null){
+      console.log("si hay mensaje replicado!!!")
+      setReplicado(true);
+
+      console.log(message.email_replied)
+      console.log(message.tipo_cifrado_replied)
+      console.log(message.message_replied)
+      console.log(":::::::::::::::::::::::::::::::::::;:::::::::::");
+    }else{
+      console.log("no hay mensaje replicado!!")
+      setReplicado(false);
+    }
   
     if(createMessage.getTime() ==updatedMessage.getTime() ){
        setEditado(false)
@@ -55,7 +68,7 @@ export function ItemText(props) {
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
-      console.log("cifrado item:::::"+cifrado);
+     // console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
       }else{
@@ -72,6 +85,7 @@ export function ItemText(props) {
           <View style={styles.content}>
             <View style={styles.message}>
 
+             {/*Textos del encabezado*/}
               <View style={styles.rowMenu}>
 
                 {/*Alias*/}
@@ -126,6 +140,28 @@ export function ItemText(props) {
                 </Menu>
 
               </View>
+
+
+
+
+              {/*Vista del mensaje replicado*/}
+              <View display={replicado?"flex":"none"} style={{backgroundColor:'#b5e0f6', marginLeft:2,marginRight:40,marginTop:5,marginBottom:8,padding:8,borderRadius:8, borderLeftColor:'black',borderLeftWidth:3}}>
+                 {/*alias replicado*/}
+                 <Text style={styles.identityReplica}>
+                  {message.email_replied }
+                </Text>
+                
+
+                 {/*mensaje replicado*/}
+                 <Text style={styles.identityMsgReplica}>
+                  {message.message_replied }
+                </Text>
+
+              </View>
+
+
+
+
              
               {/*Mensaje*/}
               <Text style={styles.text}>{message.message}</Text>
