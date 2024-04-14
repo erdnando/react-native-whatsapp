@@ -95,13 +95,16 @@ export function ItemText(props) {
                         onPress={() => {
                      
                            console.log("editando message:::::::::::");
-                         
-                           //set message on the input
-                           //persist changes
-                           //reoad mesages
                            EventRegister.emit("editingMessage",message);  //-->GroupForm
                         }}>
                     Editar</Menu.Item>
+                    <Menu.Item  
+                        onPress={() => {
+                     
+                           console.log("responder message:::::::::::");
+                           EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                        }}>
+                    Responder</Menu.Item>
                     <Menu.Item  
                         onPress={() => {
                      

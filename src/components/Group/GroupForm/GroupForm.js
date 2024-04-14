@@ -1,5 +1,5 @@
 import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform,TextInput } from "react-native";
+import { View, Keyboard, Platform,TextInput,Text,Pressable } from "react-native";
 import { Input, IconButton, Icon, Select,Alert } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
@@ -22,6 +22,7 @@ export function GroupForm(props) {
   const [focusInput, setFocusInput] = useState(false);
   const inputMessageRef=useRef(null);
   const [showIconSendText, setShowIconSendText] = useState(false);
+  const [replyMessage, setReplyMessage] = useState(null);
   
   const handleFocus = () => {
     console.log("foco puesto....")
@@ -33,6 +34,13 @@ export function GroupForm(props) {
     console.log("foco perdido....")
     //setFocusInput(true);
     setShowIconSendText(false);
+  };
+
+  const onCancelReply = () => {
+    console.log("cancelando reply...");
+    setReplyMessage(null);
+    //TODO
+    //set flag to identify on sendingmessage event that this message must be represeted as a replied one
   };
 
   //Manage keyboard
@@ -57,6 +65,44 @@ export function GroupForm(props) {
   }, []);
 
 
+    //EventListener:replyingMessage
+    useEffect(() => {
+
+      setIdMessage("");
+    
+        try {
+          
+          //=================================================================
+          const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async data=>{
+            setIdMessage("");
+            console.log("message._id:"+data._id);
+            setIdMessage(data._id);
+            console.log("message.message:"+data.message);
+            console.log("message.group:"+data.group);
+            console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+            console.log("message.type:"+data.type);
+            
+            //formik.setFieldValue("message", data.message);
+            setFocusInput(true);
+            console.log("mensaje replicado::::")
+            console.log(data)
+            setReplyMessage(data);
+            inputMessageRef.current.focus();
+            
+          });
+      
+          return ()=>{
+            EventRegister.removeEventListener(eventReplyMessage);
+          }
+          //================================================================
+          
+  
+        } catch (error) {
+          console.error(error);
+        }
+    
+    }, []);
+    
   //EventListener:editingMessage
   useEffect(() => {
 
@@ -167,47 +213,68 @@ export function GroupForm(props) {
   });
 
   return (
-    <View style={[styles.content, { bottom: keyboardHeight }]}>
-      
+    <View style={[ { bottom: keyboardHeight }]}>
 
-     
-       
-      <Select borderColor={'transparent'} paddingTop={1} paddingBottom={1} style={styles.select} minWidth={81} maxWidth={82} 
-       selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
-       onValueChange={itemValue => setTipoCifrado(itemValue)}>
-          <Select.Item label="AES" value="AES" />
-          <Select.Item label="3DES" value="3DES" />
-          <Select.Item label="RCA" value="RCA" />
-          <Select.Item label="RAB" value="RABBIT" />
-      </Select>
+       <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
+                  {replyMessage?.user.firstname || replyMessage?.user.lastname
+                    ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
+                    : replyMessage?.user.email.substring(0,30) }
+        </Text>
+      {/*reply message*/}
+      <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
 
-      <View style={styles.inputContainer}>
+        <Text  
+            style={styles.textReply}
+          >{replyMessage!=null ? replyMessage.message: ""}</Text>
 
-        <TextInput  
-          ref={inputMessageRef}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          borderColor= {focusInput ? 'red' : 'transparent'}
-          placeholder="Mensaje al grupo..."
-          placeholderTextColor="gray" 
-          variant="unstyled"
-          style={styles.input}
-          value={formik.values.message}
-          onChangeText={(text) => formik.setFieldValue("message", text)}
-          onEndEditing={!formik.isSubmitting && formik.handleSubmit}
-        />
-        <IconButton display={showIconSendText ? 'flex':'none'}
-          icon={<Icon as={MaterialCommunityIcons} name="send-lock-outline"  /> }
-          style={styles.iconSend}
-          onPress={!formik.isSubmitting && formik.handleSubmit}
-        />
-        
+          
+              <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } />
          
+           
       </View>
-      <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
-          <SendMedia groupId={groupId}  />
-          <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }       />
+    
+      
+    
+       <View style={styles.content}>
+          <Select borderColor={'transparent'} paddingTop={1} paddingBottom={1} style={styles.select} minWidth={81} maxWidth={82} 
+          selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
+          onValueChange={itemValue => setTipoCifrado(itemValue)}>
+              <Select.Item label="AES" value="AES" />
+              <Select.Item label="3DES" value="3DES" />
+              <Select.Item label="RCA" value="RCA" />
+              <Select.Item label="RAB" value="RABBIT" />
+          </Select>
+
+          <View style={styles.inputContainer}>
+
+            <TextInput  
+              ref={inputMessageRef}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+              multiline
+              borderColor= {focusInput ? 'red' : 'transparent'}
+              placeholder="Mensaje al grupo..."
+              placeholderTextColor="gray" 
+              variant="unstyled"
+              style={styles.input}
+              value={formik.values.message}
+              onChangeText={(text) => formik.setFieldValue("message", text)}
+              onEndEditing={!formik.isSubmitting && formik.handleSubmit}
+            />
+            <IconButton display={showIconSendText ? 'flex':'none'}
+              icon={<Icon as={MaterialCommunityIcons} name="send-lock-outline"  /> }
+              style={styles.iconSend}
+              onPress={!formik.isSubmitting && formik.handleSubmit}
+            />
+            
+            
+          </View>
+          <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
+              <SendMedia groupId={groupId}  />
+              <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }       />
+          </View>
         </View>
+
     </View>
   );
 }

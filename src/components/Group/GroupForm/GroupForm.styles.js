@@ -27,12 +27,26 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     borderRadius: 50,
-    height:38,
+    
     width:'95%',
     borderWidth:2,
     borderStyle:'dotted',
    marginLeft:5,
-   paddingLeft:15
+   paddingLeft:5,
+   paddingRight:35
+  },
+  textReply:{
+    backgroundColor: "#29292b",
+    color: "#fff",
+    fontSize: 16,
+    borderRadius: 10,
+    borderWidth:2,
+    marginLeft:5,
+    paddingLeft:15,
+    paddingRight:15,
+    paddingTop:10,
+    paddingBottom:10,
+    width:'100%',
   },
   select: {
     borderColor: "transparent",
@@ -66,7 +80,24 @@ export const styles = new StyleSheet.create({
     right:12,
     marginLeft:10,
     fontSize:22
-  }
+  },
+  iconCloseReply:{
+    color:'gray',
+    position:'relative',
+    right:12,
+    marginLeft:2,
+    fontSize:22,
+    alignContent:'space-between',
+    right:5
+  },
+  identity: {
+    color: "#fff",
+    marginBottom: 0,
+    marginTop:10,
+    fontWeight: "bold",
+    opacity: 0.4,
+    marginLeft:20
+  },
   
  
 
