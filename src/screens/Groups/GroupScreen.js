@@ -23,7 +23,7 @@ export function GroupScreen() {
   //const [cryptMessage, setCryptMessage] = useState(false);
  
 
-  //EventListener:: unlockMessages
+  //EventListener:: decifra mensajes
   useEffect(() => {
   
        const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
@@ -45,7 +45,11 @@ export function GroupScreen() {
                      // console.log("decifrando mensajes");
                       unlockedMessages.map((msg) => {
                         if(msg.type=="TEXT"){
-                           msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                            msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                            
+                            if(msg.email_replied != null){
+                              msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+                            }
                         }
                        
                       });

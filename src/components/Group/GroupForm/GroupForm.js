@@ -1,6 +1,6 @@
-import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform,TextInput,Text,Pressable } from "react-native";
-import { Input, IconButton, Icon, Select,Alert } from "native-base";
+import { useState, useEffect,useRef, } from "react";
+import { View, Keyboard, Platform,TextInput,Text } from "react-native";
+import { Input, IconButton, Icon, Select,Actionsheet,useDisclose,Box } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage } from "../../../api";
@@ -23,7 +23,15 @@ export function GroupForm(props) {
   const inputMessageRef=useRef(null);
   const [showIconSendText, setShowIconSendText] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
-  
+  const [forwardMessage, setForwardMessage] = useState(false);
+  const {
+    isOpen,
+    onOpen,
+    onClose
+  } = useDisclose();
+
+
+
   const handleFocus = () => {
     //console.log("foco puesto....")
     //setFocusInput(true);
@@ -63,6 +71,32 @@ export function GroupForm(props) {
       hideKeyboardSub.remove();
     };
   }, []);
+
+
+    //EventListener:forwardingMessage
+    useEffect(() => {
+
+      setIdMessage("");
+    
+        try {
+          
+          //=================================================================
+          const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
+            setForwardMessage(true);
+            onOpen();
+          });
+      
+          return ()=>{
+            EventRegister.eventForwardMessage(eventReplyMessage);
+          }
+          //================================================================
+          
+  
+        } catch (error) {
+          console.error(error);
+        }
+    
+    }, []);
 
 
     //EventListener:replyingMessage
@@ -214,8 +248,6 @@ export function GroupForm(props) {
     <View style={[ { bottom: keyboardHeight }]}>
 
        
-       
-       
        {/*reply message section just as a reference to see what would you send*/}
        <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
@@ -269,7 +301,32 @@ export function GroupForm(props) {
               <SendMedia groupId={groupId}  />
               <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }       />
           </View>
-        </View>
+       </View>
+
+    {/*bottom modal*/}
+    
+    
+       
+        <Actionsheet isOpen={isOpen} onClose={onClose}>
+        <Actionsheet.Content>
+       
+
+            <Box  w="100%" h={260} px={4} justifyContent="center">
+            <Text fontSize="20" color="gray.500" _dark={{
+              color: "gray.300"
+            }}>
+                Enviar a
+              </Text>
+            </Box>
+
+
+        </Actionsheet.Content>
+
+
+
+         
+        </Actionsheet>
+     
 
     </View>
   );

@@ -95,7 +95,7 @@ export function ItemText(props) {
                     : message.user.email.substring(0,30) }
                 </Text>
 
-                <Menu w="190" trigger={triggerProps => {
+                <Menu w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon
                             as={MaterialCommunityIcons}
@@ -105,21 +105,45 @@ export function ItemText(props) {
                           />
                         </Pressable>;
                 }}>
-                    <Menu.Item  
-                        onPress={() => {
-                     
-                           console.log("editando message:::::::::::");
-                           EventRegister.emit("editingMessage",message);  //-->GroupForm
-                        }}>
-                    Editar</Menu.Item>
-                    <Menu.Item  
+                   {/*responder*/}                  
+                    <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
                            console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
-                    Responder</Menu.Item>
-                    <Menu.Item  
+                         <View style={styles.contentMenuItem} >
+                            <Text>Responder</Text>
+                            <Icon
+                            style={{}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="reply"
+                            color="black"
+                          />
+                          </View>
+                         
+                    </Menu.Item>
+                   {/*reenviar*/}
+                    <Menu.Item  style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("reenviando message:::::::::::");
+                           EventRegister.emit("forwardingMessage",message);  //-->GroupForm
+                        }}>
+                    <View style={styles.contentMenuItem} >
+                            <Text>Reenviar</Text>
+                            <Icon
+                            style={{transform: [{rotateY: '180deg'}]}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="reply"
+                            color="black"
+                          />
+                          </View>
+                    </Menu.Item>
+                    {/*copiar*/}
+                    <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
                            console.log("copiando message:::::::::::");
@@ -127,8 +151,37 @@ export function ItemText(props) {
                            //set text message on the clipboard
                            Clipboard.setString(message.message);
                         }}>
-                    Copiar</Menu.Item>
-                    <Menu.Item  
+                    <View style={styles.contentMenuItem} >
+                            <Text>Copiar</Text>
+                            <Icon
+                            style={{}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="content-copy"
+                            color="black"
+                          />
+                          </View>
+                    </Menu.Item>
+                   {/*editar*/}
+                    <Menu.Item  style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("editando message:::::::::::");
+                           EventRegister.emit("editingMessage",message);  //-->GroupForm
+                        }}>
+                    <View style={styles.contentMenuItem} >
+                            <Text>Editar</Text>
+                            <Icon
+                            style={{}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="tooltip-edit-outline"
+                            color="black"
+                          />
+                          </View>
+                    </Menu.Item>
+                   {/*eliminar*/}
+                    <Menu.Item    
                         onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
                           setMensajeEliminar(message);
@@ -136,7 +189,18 @@ export function ItemText(props) {
                           //reoad mesages
                             //
                         }}>
-                    Eliminar</Menu.Item>
+                    <View style={styles.contentMenuItem} >
+                            <Text>Eliminar</Text>
+                            <Icon
+                            style={{}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="delete"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
+
                 </Menu>
 
               </View>

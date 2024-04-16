@@ -98,7 +98,15 @@ export const styles = new StyleSheet.create({
     opacity: 0.4,
     marginLeft:20
   },
-  
+  bottomSheet:{
+    flex: 1,
+    padding: 24,
+    backgroundColor: 'grey',
+  },
+  contentBottomSheet:{
+    flex: 1,
+    alignItems: 'center',
+  }
  
 
 });

@@ -127,18 +127,11 @@ export function HeaderGroup(props) {
             onPress={() => {
 
               if(lock ==false){
-               
-               // (async () => {
-                //   await authController.setCifrado("SI");
                    //just change icon status
                 setLock(true);         
                 //emit evento para unlockMessages
                 EventRegister.emit("setCifrado","SI");
-               // })();
-
-                
-                
-               
+              
               }else{
                 
                 setTituloModal('Mensajes bloqueados por NIP');

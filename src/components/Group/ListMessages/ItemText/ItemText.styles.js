@@ -74,6 +74,19 @@ export const styled = (isMe) => {
     },
     menu:{
       display:isMe ? "flex": "none",
+    },
+    menuItem:{
+      flex:1,
+      borderBottomColor:'gray',
+      borderBottomWidth:0,
+      width:'100%',
+      marginLeft:0
+    },
+    contentMenuItem:{
+      flex:1,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      width:'100%',
     }
 
   });
