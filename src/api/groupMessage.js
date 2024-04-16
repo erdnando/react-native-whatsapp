@@ -95,12 +95,19 @@ export class GroupMessage {
 
 //==============================================================================================
 async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
+
+  let reenviado=false;
    console.log("reenviando msg:::::::::::::::::::::")
   console.log(message);
   //cifrando msg reenviado
 if(replyMessage!=null){
   console.log("cifrando 1")
   replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipoCifrado );
+}
+if(message.startsWith("reenviado::")){
+  reenviado=true;
+  message=message.replace("reenviado::","")
+  
 }
   
 
@@ -117,7 +124,8 @@ console.log("cifrando 2")
         group_id: groupId,
         message: Encrypt(message,tipoCifrado),
         tipo_cifrado: tipoCifrado,
-        replied_message:replyMessage==null ? '' :replyMessage
+        replied_message:replyMessage==null ? '' :replyMessage,
+        forwarded:reenviado
       }),
     };
 
@@ -134,6 +142,8 @@ console.log("cifrando 2")
 
     return true;
   } catch (error) {
+    console.log(error);
+    console.log("Error a enviar el mensaje...")
     throw error;
   }
 }

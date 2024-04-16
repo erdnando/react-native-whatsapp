@@ -27,6 +27,7 @@ export function ItemText(props) {
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
+  const [forwarded, setForwarded] = useState(false);
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
@@ -45,6 +46,11 @@ export function ItemText(props) {
 
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
+
+    console.log("message.forwarded::::");
+    console.log(message.forwarded);
+    setForwarded(message.forwarded);
+    
 
     if(message.email_replied != null){
       console.log("si hay mensaje replicado!!!")
@@ -237,9 +243,23 @@ export function ItemText(props) {
               </Text>
                {/*hora del mensaje editado*/}
                <View display={editado?"flex":"none"}>
-               <Text  style={styles.dateEditado}  >
-                {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("HH:mm")}
-              </Text>
+                <Text  style={styles.dateEditado}  >
+                  {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("HH:mm")}
+                </Text>
+              </View>
+
+              {/*forwarded*/}
+              <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
+              <Icon
+                            style={{transform: [{rotateY: '180deg'}]}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="reply"
+                            color="black"
+                          />
+                <Text  style={styles.dateEditado}  >
+                  {"Reenviado"}
+                </Text>
               </View>
               
             </View>

@@ -46,8 +46,8 @@ export function GroupForm(props) {
         if(msgx.isSelected){
           setCanForward(true);
         } 
-    });
-   // console.log(groups);
+      });
+    // console.log(groups);
 
   };
 
@@ -61,6 +61,22 @@ export function GroupForm(props) {
   } = useTheme();
 
 
+  const handleForward= ()=>{
+              
+      console.log("sending msg into selected group:::::::::::");
+    
+      groups.map(async (msgx) => {
+
+        if(msgx.isSelected){
+          console.log(msgx)
+            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, msgx.tipoCifrado, null );
+        } 
+      });
+      onClose();
+    
+      
+   
+  }
   const handleFocus = () => {
     //console.log("foco puesto....")
     //setFocusInput(true);
@@ -129,8 +145,8 @@ export function GroupForm(props) {
 
 
                   //addin isSelected property on runtime
-                  result.map((msgx) => {
-                      msgx.isSelected =false;
+                  result.map((gpo) => {
+                      gpo.isSelected =false;
                   });
                  
                   console.log("obteniendo grupos....")
@@ -283,6 +299,8 @@ export function GroupForm(props) {
         console.log("===========sending replied=============")
         console.log(replyMessage);
         console.log("=======================================")
+        //if replyMessage is null, then it's a normal message
+        //else it's a reply
         await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
        }else{
         //edicion de mensaje
@@ -397,11 +415,7 @@ export function GroupForm(props) {
 
 
                <View style={{height:16}}></View>
-               <Button isDisabled={canForward?false:true} style={{backgroundColor:'black'}}  onPress={() => {
-                     
-                     console.log("sending msg into selected group:::::::::::");
-                     //EventRegister.emit("replyingMessage",message);  //-->GroupForm
-                  }}>Reenviar</Button>
+               <Button isDisabled={canForward?false:true} style={{backgroundColor:'black'}}  onPress={handleForward}>Reenviar</Button>
 
                <View style={{height:0}}></View>
             </View>
