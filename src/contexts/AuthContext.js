@@ -29,7 +29,7 @@ export function AuthProvider(props) {
      const userRegistrado = await authController.login(idApp, idApp  );
      const { access, refresh } = userRegistrado;
 
-     console.log("accessToken:" + access);
+     console.log("accessTokenx:" + access);
 
      if(access=="" || access == undefined){
       //if it's not registered, registered it

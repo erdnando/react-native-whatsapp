@@ -1,22 +1,25 @@
-import { useState, useEffect,useRef, } from "react";
+import { useState, useEffect,useRef,useCallback } from "react";
 import { View, Keyboard, Platform,TextInput,Text } from "react-native";
-import { Input, IconButton, Icon, Select,Actionsheet,useDisclose,Box } from "native-base";
+import { Input, IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,inputValue } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
-import { GroupMessage } from "../../../api";
+import { GroupMessage,Group } from "../../../api";
 import { useAuth } from "../../../hooks";
 import { SendMedia } from "./SendMedia";
 import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
+import { map, size } from "lodash";
+import { ENV } from '../../../utils'
 
 const groupMessageController = new GroupMessage();
+const groupController = new Group();
 
 export function GroupForm(props) {
 
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const { accessToken } = useAuth();
+  const { accessToken,user } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
   const [focusInput, setFocusInput] = useState(false);
@@ -24,12 +27,38 @@ export function GroupForm(props) {
   const [showIconSendText, setShowIconSendText] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
   const [forwardMessage, setForwardMessage] = useState(false);
+  const [groups, setGroups] = useState(null);
+  const [canForward, setCanForward] = useState(false);
+
+  
+//updating checkBoxes status of the list
+  const handleStatusChange = index => {
+
+    setGroups(prevList => {
+      const newList = [...prevList];
+      newList[index].isSelected = !newList[index].isSelected;
+      return newList;
+    });
+
+      //evaluating selected status
+      setCanForward(false);
+      groups.map((msgx) => {
+        if(msgx.isSelected){
+          setCanForward(true);
+        } 
+    });
+   // console.log(groups);
+
+  };
+
   const {
     isOpen,
     onOpen,
     onClose
   } = useDisclose();
-
+  const {
+    colors
+  } = useTheme();
 
 
   const handleFocus = () => {
@@ -73,8 +102,8 @@ export function GroupForm(props) {
   }, []);
 
 
-    //EventListener:forwardingMessage
-    useEffect(() => {
+  //EventListener:forwardingMessage
+  useEffect(() => {
 
       setIdMessage("");
     
@@ -82,12 +111,43 @@ export function GroupForm(props) {
           
           //=================================================================
           const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
+            console.log("grupo desde donde salio el forward::::")
+            console.log(data.group);
             setForwardMessage(true);
-            onOpen();
+            //get groups from API
+       
+              onOpen();
+                try {
+
+                  setForwardMessage(data);
+                  //Get all messages
+                  const response = await groupController.getAll(accessToken);
+        
+                  const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
+                    return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+                  });
+
+
+                  //addin isSelected property on runtime
+                  result.map((msgx) => {
+                      msgx.isSelected =false;
+                  });
+                 
+                  console.log("obteniendo grupos....")
+                  console.log(result)
+                  setGroups(result);
+                 
+
+                 
+                } catch (error) {
+                  console.error(error);
+                }
+           
+            
           });
       
           return ()=>{
-            EventRegister.eventForwardMessage(eventReplyMessage);
+            EventRegister.removeEventListener(eventForwardMessage);
           }
           //================================================================
           
@@ -99,8 +159,8 @@ export function GroupForm(props) {
     }, []);
 
 
-    //EventListener:replyingMessage
-    useEffect(() => {
+  //EventListener:replyingMessage
+  useEffect(() => {
 
       setIdMessage("");
     
@@ -164,8 +224,8 @@ export function GroupForm(props) {
   
   }, []);
 
-   //EventListener:deletingMessage
-   useEffect(() => {
+  //EventListener:deletingMessage
+  useEffect(() => {
 
     setIdMessage("");
    
@@ -199,7 +259,6 @@ export function GroupForm(props) {
   }, []);
   
   
-
   //formik definition & onsubmit
   const formik = useFormik({
     initialValues: initialValues(),
@@ -219,6 +278,8 @@ export function GroupForm(props) {
        
        if(idMessage==""){
         //llamada normal, nuevo mensaje
+        //replyMessage==null if you like a normal message
+
         console.log("===========sending replied=============")
         console.log(replyMessage);
         console.log("=======================================")
@@ -262,7 +323,7 @@ export function GroupForm(props) {
     
 
       
-    {/*section to select chyper mode, input and other options ie send media*/}
+      {/*section to select chyper mode, input and other options ie send media*/}
        <View style={styles.content}>
           <Select borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
@@ -303,30 +364,49 @@ export function GroupForm(props) {
           </View>
        </View>
 
-    {/*bottom modal*/}
-    
-    
-       
+      {/*forward group*/}
         <Actionsheet isOpen={isOpen} onClose={onClose}>
         <Actionsheet.Content>
        
+            <View style={{height:260,width:'100%', padding:8}}>
+              
+            <Text style={{fontWeight:'bold',fontSize:16,marginBottom:5}} >Seleccione el grupo:</Text>
 
-            <Box  w="100%" h={260} px={4} justifyContent="center">
-            <Text fontSize="20" color="gray.500" _dark={{
-              color: "gray.300"
-            }}>
-                Enviar a
-              </Text>
-            </Box>
+               <ScrollView h="full" style={{padding:8,borderRadius:8 }}>
+               <Center w="100%">
+                  <Box  w="100%" style={{paddingHorizontal:5}}>
+                   
+                      <VStack space={4}>
+                        {
+                          groups?.map((group,index) => 
+
+                          <HStack w="100%" justifyContent="space-between" alignItems="center" key={group._id.toString()}>
+
+                              <Checkbox isChecked={group.isSelected} onChange={() => handleStatusChange(index)} value={group.name} aria-label={group.name}></Checkbox>
+                              <Text width="100%" flexShrink={1} textAlign="left" mx="2" strikeThrough={group.isSelected} _light={{
+                                    color: group.isSelected ? "gray.400" : "coolGray.800"}} _dark={{color: group.isSelected ? "gray.400" : "coolGray.50"
+                                  }} onPress={() => console.log("actualizando estatus...")}>
+                                    {"   "+group.name}
+                              </Text>
+                          </HStack>)
+                          }
+                      </VStack>
+                  </Box>
+                </Center>
+              </ScrollView>
 
 
+               <View style={{height:16}}></View>
+               <Button isDisabled={canForward?false:true} style={{backgroundColor:'black'}}  onPress={() => {
+                     
+                     console.log("sending msg into selected group:::::::::::");
+                     //EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                  }}>Reenviar</Button>
+
+               <View style={{height:0}}></View>
+            </View>
         </Actionsheet.Content>
-
-
-
-         
         </Actionsheet>
-     
 
     </View>
   );
