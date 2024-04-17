@@ -9,6 +9,7 @@ import { SendMedia } from "./SendMedia";
 import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
+import { Audio } from 'expo-av';
 import { map, size } from "lodash";
 import { ENV } from '../../../utils'
 
@@ -70,6 +71,9 @@ export function GroupForm(props) {
         if(msgx.isSelected){
           console.log(msgx)
             await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, msgx.tipoCifrado, null );
+             //here  sound
+      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
+      await sound.playAsync();
         } 
       });
       onClose();
@@ -389,15 +393,12 @@ export function GroupForm(props) {
             <View style={{height:260,width:'100%', padding:8}}>
               
             <Text style={{fontWeight:'bold',fontSize:16,marginBottom:5}} >Seleccione el grupo:</Text>
-
                <ScrollView h="full" style={{padding:8,borderRadius:8 }}>
                <Center w="100%">
                   <Box  w="100%" style={{paddingHorizontal:5}}>
-                   
                       <VStack space={4}>
                         {
                           groups?.map((group,index) => 
-
                           <HStack w="100%" justifyContent="space-between" alignItems="center" key={group._id.toString()}>
 
                               <Checkbox isChecked={group.isSelected} onChange={() => handleStatusChange(index)} value={group.name} aria-label={group.name}></Checkbox>
