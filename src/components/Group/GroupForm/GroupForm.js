@@ -1,6 +1,6 @@
-import { useState, useEffect,useRef,useCallback } from "react";
+import { useState, useEffect,useRef } from "react";
 import { View, Keyboard, Platform,TextInput,Text } from "react-native";
-import { Input, IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,inputValue } from "native-base";
+import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,inputValue } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage,Group } from "../../../api";
@@ -10,8 +10,8 @@ import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
-import { map, size } from "lodash";
-import { ENV } from '../../../utils'
+import * as Permissions from 'expo-permissions';
+
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -30,7 +30,88 @@ export function GroupForm(props) {
   const [forwardMessage, setForwardMessage] = useState(false);
   const [groups, setGroups] = useState(null);
   const [canForward, setCanForward] = useState(false);
+  const [recording,setRecording]=useState();
 
+
+  const onRecordingStatusUpdate = async()=>{
+    console.log("onRecordingStatusUpdate..");
+  }
+  //start recording
+  const startRecording = async () => {
+      try {
+        console.log("Requesting submission...");
+        const permissionsx = await Audio.requestPermissionsAsync(Permissions.AUDIO_RECORDING);
+
+    if(permissionsx.granted){
+        console.log("it has permissions::::"+permissionsx.status)
+       await Audio.setAudioModeAsync({
+          allowsRecordingIOS:true,
+          playsInSilentModeIOS:true,
+        });
+
+        
+        console.log("Start recording...");
+        const recording = new Audio.Recording();
+
+        const RECORDING_OPTIONS_PRESET_LOW_QUALITY = {
+          android: {
+              extension: '.wav',
+              outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+              audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
+              sampleRate: 44100,
+              numberOfChannels: 2,
+              bitRate: 128000,
+          },
+          ios: {
+              extension: '.wav',
+              audioQuality: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NBRECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
+              sampleRate: 44100,
+              numberOfChannels: 2,
+              bitRate: 128000,
+              linearPCMBitDepth: 16,
+              linearPCMIsBigEndian: false,
+              linearPCMIsFloat: false,
+          },
+      };
+
+
+        await recording.prepareToRecordAsync(RECORDING_OPTIONS_PRESET_LOW_QUALITY)
+        await recording.startAsync();
+
+        
+        setRecording(recording);
+        console.log("Recording started");
+    }
+
+
+        
+
+      } catch (error) {
+         console.error('Failed to start recording..',error);
+      }
+  }
+  //STOP RECORDING
+  const stopRecording = async () => {
+
+    console.log("Stopping recording...")
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI();
+    console.log("Recording stopped and stored at", uri);
+
+
+
+   //================================================================================
+    const { sound } = await Audio.Sound.createAsync( {uri : "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540erdnando%252Fsecurechat-mx/Audio/recording-2fbad4e0-81f1-4b2f-8f32-dc7db8b2b73b.wav"} );
+    console.log("sound");
+
+    try {
+      await sound.playAsync();
+    } catch (error) {
+      console.log(error)
+    }
+    
+
+  }
   
 //updating checkBoxes status of the list
   const handleStatusChange = index => {
@@ -81,6 +162,7 @@ export function GroupForm(props) {
       
    
   }
+
   const handleFocus = () => {
     //console.log("foco puesto....")
     //setFocusInput(true);
@@ -331,13 +413,12 @@ export function GroupForm(props) {
     <View style={[ { bottom: keyboardHeight }]}>
 
        
-       {/*reply message section just as a reference to see what would you send*/}
-       <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
+      {/*reply message section just as a reference to see what would you send*/}
+      <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
         </Text>
-      
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
@@ -347,6 +428,7 @@ export function GroupForm(props) {
       
       {/*section to select chyper mode, input and other options ie send media*/}
        <View style={styles.content}>
+         {/* cboCrypto select */}
           <Select borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
           onValueChange={itemValue => setTipoCifrado(itemValue)}>
@@ -355,7 +437,7 @@ export function GroupForm(props) {
               <Select.Item label="RCA" value="RCA" />
               <Select.Item label="RAB" value="RABBIT" />
           </Select>
-
+          {/* Text message chat*/}
           <View style={styles.inputContainer}>
 
             <TextInput  
@@ -377,12 +459,15 @@ export function GroupForm(props) {
               style={styles.iconSend}
               onPress={!formik.isSubmitting && formik.handleSubmit}
             />
-            
-            
           </View>
+          {/* Send media and microphone */}
           <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
+              
               <SendMedia groupId={groupId}  />
-              <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }       />
+
+              <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }  
+              title={recording ? 'Stop recording':'Start recording'} 
+                onPress={recording ? stopRecording:startRecording} />
           </View>
        </View>
 
