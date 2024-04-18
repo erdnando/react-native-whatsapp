@@ -11,6 +11,7 @@ import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
 import useInterval from 'use-interval'
+import { fileExpoFormat } from "../../../utils";
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -38,7 +39,7 @@ export function GroupForm(props) {
   const [recordedURI, setRecordedURI] = useState("");
   let recordedURIx = useRef("")
   const [AudioPermission, SetAudioPermission] = useState(false);
-  const [IsRecording, SetIsRecording] = useState(false);
+  const [IsRecording, SetIsRecording] = useState(false);//test
   const [IsPLaying, SetIsPLaying] = useState(false);
 
   const [seconds, setSeconds] = useState(0);
@@ -115,7 +116,7 @@ export function GroupForm(props) {
 
             const RECORDING_OPTIONS_PRESET_LOW_QUALITY = {
               android: {
-                  extension: '.wav',
+                  extension: '.mp3',
                   outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
                   audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
                   sampleRate: 44100,
@@ -183,8 +184,15 @@ export function GroupForm(props) {
       console.log("recordedURI:::::::");
       console.log(recordedURIx);
 
+      //==============================================
       //playing after stopping!!!!!!!!! just to test it
-      await PlayRecordedAudio();
+      //await PlayRecordedAudio();
+      //==============================================
+
+      //TODO load file message with just generated audio
+      await sendAudio(recordedURIx)
+      //console.log("playing recordedURI:::::::");
+      //console.log(recordedURIx);
       //===============================================
     } catch (error) {
       console.log("Error on StopRecording")
@@ -243,6 +251,22 @@ export function GroupForm(props) {
       SetIsPLaying(false);
     } catch (error) {
       console.log("Error on Stopping player")
+    }
+  };
+
+  const sendAudio = async (uri) => {
+    try {
+      const file = fileExpoFormat(uri);
+      console.log("file::");
+      console.log(file);
+      await groupMessageController.sendFile(accessToken, groupId, file);
+      
+
+    } catch (error) {
+
+      console.log("error al enviar audio::"+uri);
+      console.error(error);
+
     }
   };
 
@@ -617,7 +641,7 @@ export function GroupForm(props) {
               <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
              
             </Animated.View>
-            <Text>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
+            <Text style={{marginTop:5,marginLeft:12, fontWeight:'bold',fontSize:16}}>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
             
              </View>
 

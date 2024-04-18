@@ -1,6 +1,6 @@
 import { View, Text, Pressable } from "react-native";
 import { Menu,Icon,AlertDialog,Button } from 'native-base';
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
 import AutoHeightImage from "react-native-auto-height-image";
@@ -11,11 +11,7 @@ import { Auth } from "../../../../api"
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 import * as FileSystem from 'expo-file-system';
-//import * as Permissions from 'expo-permissions';
-//import * as MediaLibrary from 'expo-media-library';
-
-//import { CameraRoll } from 'react-native';
-//import * as WebBrowser from 'expo-web-browser';
+import { Audio } from 'expo-av';
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
 
@@ -54,6 +50,48 @@ export function ItemFile(props) {
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
 
+
+  const AudioPlayer = useRef(new Audio.Sound());
+ 
+   // Function to play the recorded audio
+   const PlayRecordedAudio = async () => {
+    try {
+
+      console.log("playing recordedURI:::::::");
+      
+      const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
+      //const recordedURIx=urlFile.replace("files/","");
+      console.log(recordedURIx);
+
+      //release resources
+      try {
+        await AudioPlayer.current.unloadAsync();
+      } catch (error) {
+        console.log("maybe it fails if it;s the first time")
+        console.log(error);
+      }
+       
+      
+      
+
+      // Load the Recorded URI
+      await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
+
+      // Get Player Status
+      const playerStatus = await AudioPlayer.current.getStatusAsync();
+
+      // Play if song is loaded successfully
+      if (playerStatus.isLoaded) {
+        if (playerStatus.isPlaying === false) {
+          AudioPlayer.current.playAsync();
+          SetIsPLaying(true);
+        }
+      }
+    } catch (error) {
+      console.log("Error on PlayingRecording")
+      console.log(error)
+    }
+  };
 
 //open file function
   const onOpenFile= async () => {
@@ -160,12 +198,28 @@ export function ItemFile(props) {
 
               {/*vista file download*/}
               <View style={styles.rowFile}>
-                  <Icon display={isMe?"flex":"none"}
+
+                {/*any other file*/}
+                <View display={message?.message.toString().endsWith(".mp3") ?"none":"flex"}>
+                   <Icon display={isMe?"flex":"none"}
                                 as={MaterialCommunityIcons}
                                 size="39"
                                 name="file"
                                 color="black"
                               />
+                </View>
+                 {/*just to mp3 files*/}
+                <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
+                    <Pressable onPress={PlayRecordedAudio}>
+                        <Icon 
+                                      as={MaterialCommunityIcons}
+                                      size="49"
+                                      name="play"
+                                      color="black"
+                                    />
+                      </Pressable>
+                </View>
+                  
 
                <Text style={styles.fileName}>
                   {message.message }
