@@ -35,6 +35,7 @@ export const styles = new StyleSheet.create({
   iconCamera:{
     color:'gray',   
     textAlign:'center',
-    fontSize:26 
+    fontSize:26 ,
+    transform: [{scaleX: 1.2},{scaleY:1.2}],
   }
 });

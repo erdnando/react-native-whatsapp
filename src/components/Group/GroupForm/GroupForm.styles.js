@@ -75,11 +75,33 @@ export const styles = new StyleSheet.create({
     color:'red'
   },
   iconAudio:{
-    color:'gray',
     position:'relative',
     right:12,
     marginLeft:10,
-    fontSize:22
+    fontSize:22,
+    color:'gray',
+    transform: [{scaleX: 1.2},{scaleY:1.2}],
+  },
+  iconInnerAudio:{
+    position:'relative',
+    marginLeft:10,
+    marginTop:13,
+    fontSize:18,
+    color:'red',
+    transform: [{scaleX: 1.8},{scaleY:1.8}],
+  },
+  iconAudioRecording:{
+    position:'relative',
+    borderColor:'red',
+    backgroundColor:'red',
+    borderWidth:3,
+    width:19,
+    height:20,
+    borderRadius:40,
+    transform: [{scaleX: 2},{scaleY:2}],
+marginTop:-4,
+marginRight:8
+    
   },
   iconCloseReply:{
     color:'gray',
@@ -89,6 +111,16 @@ export const styles = new StyleSheet.create({
     fontSize:22,
     alignContent:'space-between',
     right:5
+  },
+  iconRecording:{
+    color:'red',
+    position:'relative',
+    right:12,
+    marginLeft:2,
+    fontSize:22,
+    alignContent:'space-between',
+    right:5,
+    transform: [{scaleX: 1.8},{scaleY:1.8}],
   },
   identity: {
     color: "#fff",

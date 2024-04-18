@@ -1,6 +1,6 @@
 import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform,TextInput,Text } from "react-native";
-import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,inputValue } from "native-base";
+import { View, Keyboard, Platform,TextInput,Text,Animated } from "react-native";
+import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,TouchableWithoutFeedback } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage,Group } from "../../../api";
@@ -10,8 +10,7 @@ import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
-import * as Permissions from 'expo-permissions';
-
+import useInterval from 'use-interval'
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -30,88 +29,193 @@ export function GroupForm(props) {
   const [forwardMessage, setForwardMessage] = useState(false);
   const [groups, setGroups] = useState(null);
   const [canForward, setCanForward] = useState(false);
-  const [recording,setRecording]=useState();
+  
+  // Refs for the audio
+  const AudioRecorder = useRef(new Audio.Recording());
+  const AudioPlayer = useRef(new Audio.Sound());
 
+  // States for UI
+  //const [RecordedURI, SetRecordedURI] = useState("");
+  const [recordedURI, setRecordedURI] = useState("");
+  const [AudioPermission, SetAudioPermission] = useState(false);
+  const [IsRecording, SetIsRecording] = useState(false);
+  const [IsPLaying, SetIsPLaying] = useState(false);
 
-  const onRecordingStatusUpdate = async()=>{
-    console.log("onRecordingStatusUpdate..");
-  }
-  //start recording
-  const startRecording = async () => {
-      try {
-        console.log("Requesting submission...");
-        const permissionsx = await Audio.requestPermissionsAsync(Permissions.AUDIO_RECORDING);
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [vuelta, setVuelta] = useState(null);
 
-    if(permissionsx.granted){
-        console.log("it has permissions::::"+permissionsx.status)
-       await Audio.setAudioModeAsync({
-          allowsRecordingIOS:true,
-          playsInSilentModeIOS:true,
-        });
+  const opacityx = useRef(new Animated.Value(0)).current; 
+  var timer;
+  var crono;
 
-        
-        console.log("Start recording...");
-        const recording = new Audio.Recording();
+  useInterval(() => {
+    // Your custom logic here
+    console.log(seconds);
+    setSeconds(seconds+1);
 
-        const RECORDING_OPTIONS_PRESET_LOW_QUALITY = {
-          android: {
-              extension: '.wav',
-              outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-              audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
-              sampleRate: 44100,
-              numberOfChannels: 2,
-              bitRate: 128000,
-          },
-          ios: {
-              extension: '.wav',
-              audioQuality: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NBRECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
-              sampleRate: 44100,
-              numberOfChannels: 2,
-              bitRate: 128000,
-              linearPCMBitDepth: 16,
-              linearPCMIsBigEndian: false,
-              linearPCMIsFloat: false,
-          },
-      };
-
-
-        await recording.prepareToRecordAsync(RECORDING_OPTIONS_PRESET_LOW_QUALITY)
-        await recording.startAsync();
-
-        
-        setRecording(recording);
-        console.log("Recording started");
+    if(seconds==59){
+      setMinutes(minutes+1);
+      setSeconds(0)
     }
+  }, vuelta); // passing null instead of 1000 will cancel the interval if it is already running
+ 
+ 
+  //config de la animacion para la generacion dle audio
+  useEffect(() => {
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacityx, {
+          toValue: 0,
+          duration: 650,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityx, {
+          toValue: 1,
+          duration: 650,
+          useNativeDriver: true,
+        })
+      ])
+    ).start();
+
+  
+  }, [opacityx]);
 
 
-        
+    // Initial Load to get the audio permission
+    useEffect(() => {
+      GetPermission();
+    
+    
+      
+    }, []);
+      
 
+     // Function to get the audio permission
+  const GetPermission = async () => {
+    const getAudioPerm = await Audio.requestPermissionsAsync();
+    SetAudioPermission(getAudioPerm.granted);
+  };
+
+
+
+ 
+
+  // Function to start recording
+  const StartRecording = async () => {
+
+    setSeconds(0)
+    setMinutes(0)
+    setVuelta(1000);
+
+    
+      try {
+        // Check if user has given the permission to record
+        if (AudioPermission === true) {
+          try {
+
+            const RECORDING_OPTIONS_PRESET_LOW_QUALITY = {
+              android: {
+                  extension: '.wav',
+                  outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+                  audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AMR_NB,
+                  sampleRate: 44100,
+                  numberOfChannels: 2,
+                  bitRate: 128000,
+              },
+              ios: {
+                  extension: '.wav',
+                  audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_MIN,
+                  sampleRate: 44100,
+                  numberOfChannels: 2,
+                  bitRate: 128000,
+                  linearPCMBitDepth: 16,
+                  linearPCMIsBigEndian: false,
+                  linearPCMIsFloat: false,
+              },
+          };
+
+
+            // Prepare the Audio Recorder
+            
+            //await AudioRecorder.current.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY );
+            await AudioRecorder.current.prepareToRecordAsync(RECORDING_OPTIONS_PRESET_LOW_QUALITY);
+            // Start recording
+            await AudioRecorder.current.startAsync();
+            SetIsRecording(true);
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          // If user has not given the permission to record, then ask for permission
+          GetPermission();
+        }
       } catch (error) {
-         console.error('Failed to start recording..',error);
+        console.log(error)
       }
-  }
-  //STOP RECORDING
-  const stopRecording = async () => {
+  };
 
-    console.log("Stopping recording...")
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    console.log("Recording stopped and stored at", uri);
-
-
-
-   //================================================================================
-    const { sound } = await Audio.Sound.createAsync( {uri : "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540erdnando%252Fsecurechat-mx/Audio/recording-2fbad4e0-81f1-4b2f-8f32-dc7db8b2b73b.wav"} );
-    console.log("sound");
-
+  // Function to stop recording
+  const StopRecording = async () => {
+    setVuelta(null);
+    
     try {
-      await sound.playAsync();
+     
+      // Stop recording
+      await AudioRecorder.current.stopAndUnloadAsync();
+
+      // Get the recorded URI here
+      const result = AudioRecorder.current.getURI();
+      
+      //SetRecordedURI(result);
+      if (result) setRecordedURI(result);
+      
+      // Reset the Audio Recorder
+      AudioRecorder.current = new Audio.Recording();
+      SetIsRecording(false);
+
+      PlayRecordedAudio();
     } catch (error) {
       console.log(error)
     }
-    
+  };
 
-  }
+    // Function to play the recorded audio
+    const PlayRecordedAudio = async () => {
+      try {
+        // Load the Recorded URI
+        await AudioPlayer.current.loadAsync({ uri: recordedURI }, {}, true);
+  
+        // Get Player Status
+        const playerStatus = await AudioPlayer.current.getStatusAsync();
+  
+        // Play if song is loaded successfully
+        if (playerStatus.isLoaded) {
+          if (playerStatus.isPlaying === false) {
+            AudioPlayer.current.playAsync();
+            SetIsPLaying(true);
+          }
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    };
+
+   // Function to stop the playing audio
+   const StopPlaying = async () => {
+    try {
+      //Get Player Status
+      const playerStatus = await AudioPlayer.current.getStatusAsync();
+
+      // If song is playing then stop it
+      if (playerStatus.isLoaded === true)
+        await AudioPlayer.current.unloadAsync();
+
+      SetIsPLaying(false);
+    } catch (error) {}
+  };
+
   
 //updating checkBoxes status of the list
   const handleStatusChange = index => {
@@ -424,12 +528,16 @@ export function GroupForm(props) {
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     
-
+    {/*recording reference*/}
+      <View display={IsRecording?"flex":"none"} style={{flexDirection:'row-reverse', marginRight:52,width:'90%' ,backgroundColor:'black',padding:10 }}>
+        
+        <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="record-rec" style={styles.iconRecording} /> } /> 
+      </View>
       
       {/*section to select chyper mode, input and other options ie send media*/}
        <View style={styles.content}>
          {/* cboCrypto select */}
-          <Select borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
+          <Select display={IsRecording?"none":"flex"} borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
           onValueChange={itemValue => setTipoCifrado(itemValue)}>
               <Select.Item label="AES" value="AES" />
@@ -438,7 +546,7 @@ export function GroupForm(props) {
               <Select.Item label="RAB" value="RABBIT" />
           </Select>
           {/* Text message chat*/}
-          <View style={styles.inputContainer}>
+          <View display={IsRecording?"none":"flex"} style={styles.inputContainer}>
 
             <TextInput  
               ref={inputMessageRef}
@@ -462,12 +570,33 @@ export function GroupForm(props) {
           </View>
           {/* Send media and microphone */}
           <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
-              
-              <SendMedia groupId={groupId}  />
+              <View display={IsRecording?"none":"flex"}>
+                 <SendMedia  groupId={groupId}  />
+              </View>
+             
+            {/* Recording timer!!!!! */}
+             <View display={IsRecording?"flex":"none"} style={{flex:0,flexDirection:'row',alignContent:'space-between', width:'87%',borderRadius:10,marginRight:5, height:40,backgroundColor:'white'}}>
+             
+            
 
-              <IconButton icon={<Icon as={MaterialCommunityIcons} name="microphone" style={styles.iconAudio} /> }  
-              title={recording ? 'Stop recording':'Start recording'} 
-                onPress={recording ? stopRecording:startRecording} />
+            
+             <Animated.View // Special animatable View
+              style={{
+                opacity: opacityx, // Bind opacity to animated value
+              }}>
+              <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
+             
+            </Animated.View>
+            <Text>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
+            
+             </View>
+
+              {/* microphone */}
+              <IconButton  icon={<Icon as={MaterialCommunityIcons} name="microphone"  color={IsRecording ? 'white': 'gray'}
+              style={[IsRecording ? styles.iconAudioRecording : styles.iconAudio  ]}
+              /> }  
+                onLongPress={ StartRecording} onPressOut={StopRecording} />
+
           </View>
        </View>
 
