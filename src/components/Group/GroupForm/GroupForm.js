@@ -35,8 +35,8 @@ export function GroupForm(props) {
   const AudioPlayer = useRef(new Audio.Sound());
 
   // States for UI
-  //const [RecordedURI, SetRecordedURI] = useState("");
   const [recordedURI, setRecordedURI] = useState("");
+  let recordedURIx = useRef("")
   const [AudioPermission, SetAudioPermission] = useState(false);
   const [IsRecording, SetIsRecording] = useState(false);
   const [IsPLaying, SetIsPLaying] = useState(false);
@@ -46,8 +46,6 @@ export function GroupForm(props) {
   const [vuelta, setVuelta] = useState(null);
 
   const opacityx = useRef(new Animated.Value(0)).current; 
-  var timer;
-  var crono;
 
   useInterval(() => {
     // Your custom logic here
@@ -92,7 +90,7 @@ export function GroupForm(props) {
     }, []);
       
 
-     // Function to get the audio permission
+  // Function to get the audio permission
   const GetPermission = async () => {
     const getAudioPerm = await Audio.requestPermissionsAsync();
     SetAudioPermission(getAudioPerm.granted);
@@ -101,7 +99,7 @@ export function GroupForm(props) {
 
 
  
-
+//=======================================================================================
   // Function to start recording
   const StartRecording = async () => {
 
@@ -145,6 +143,7 @@ export function GroupForm(props) {
             await AudioRecorder.current.startAsync();
             SetIsRecording(true);
           } catch (error) {
+            console.log("Error on preparing audio obj")
             console.log(error);
           }
         } else {
@@ -152,12 +151,17 @@ export function GroupForm(props) {
           GetPermission();
         }
       } catch (error) {
+        console.log("Error on StartRecording")
         console.log(error)
       }
   };
-
-  // Function to stop recording
+//=======================================================================================
+  // Function to STOP RECORDING!!!!
   const StopRecording = async () => {
+    if(vuelta==null){
+      console.log("nada q hacer!!!")
+      return;
+    }
     setVuelta(null);
     
     try {
@@ -168,24 +172,46 @@ export function GroupForm(props) {
       // Get the recorded URI here
       const result = AudioRecorder.current.getURI();
       
-      //SetRecordedURI(result);
-      if (result) setRecordedURI(result);
+      setRecordedURI(result);
+      recordedURIx=result;
+      //if (result) setRecordedURI(result);
       
       // Reset the Audio Recorder
       AudioRecorder.current = new Audio.Recording();
       SetIsRecording(false);
 
-      PlayRecordedAudio();
+      console.log("recordedURI:::::::");
+      console.log(recordedURIx);
+
+      //playing after stopping!!!!!!!!! just to test it
+      await PlayRecordedAudio();
+      //===============================================
     } catch (error) {
+      console.log("Error on StopRecording")
       console.log(error)
     }
   };
-
+//=======================================================================================
     // Function to play the recorded audio
     const PlayRecordedAudio = async () => {
       try {
+
+        console.log("playing recordedURI:::::::");
+        console.log(recordedURIx);
+
+        //release resources
+        try {
+          await AudioPlayer.current.unloadAsync();
+        } catch (error) {
+          console.log("maybe it fails if it;s the first time")
+          console.log(error);
+        }
+         
+        
+        
+
         // Load the Recorded URI
-        await AudioPlayer.current.loadAsync({ uri: recordedURI }, {}, true);
+        await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
   
         // Get Player Status
         const playerStatus = await AudioPlayer.current.getStatusAsync();
@@ -198,12 +224,14 @@ export function GroupForm(props) {
           }
         }
       } catch (error) {
+        console.log("Error on PlayingRecording")
         console.log(error)
       }
     };
 
-   // Function to stop the playing audio
+   // Function to STOP the playing audio
    const StopPlaying = async () => {
+
     try {
       //Get Player Status
       const playerStatus = await AudioPlayer.current.getStatusAsync();
@@ -213,7 +241,9 @@ export function GroupForm(props) {
         await AudioPlayer.current.unloadAsync();
 
       SetIsPLaying(false);
-    } catch (error) {}
+    } catch (error) {
+      console.log("Error on Stopping player")
+    }
   };
 
   
