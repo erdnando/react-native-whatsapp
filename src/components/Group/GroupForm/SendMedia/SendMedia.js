@@ -21,13 +21,14 @@ export function SendMedia(props) {
         <Actionsheet.Content style={styles.itemsContainer}>
 
           <CameraOption onClose={onOpenClose} groupId={groupId} />
-          
-          <GalleryOption
+        {/*<GalleryOption
             onClose={onOpenClose}
             groupId={groupId}
             accessToken={accessToken}
           />
-          <FileOption
+  */}
+
+          <FileOption 
             onClose={onOpenClose}
             groupId={groupId}
             accessToken={accessToken}

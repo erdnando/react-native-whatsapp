@@ -18,7 +18,7 @@ export function FileOption(props) {
     
     //
     const result = await DocumentPicker.getDocumentAsync({
-      type:["application/*","audio/*","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","vnd.ms-excel","vnd.openxmlformats-officedocument.spreadsheetml.sheet","text/csv"],
+      mimeType:["audio/*","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","vnd.ms-excel","vnd.openxmlformats-officedocument.spreadsheetml.sheet","text/csv"],
       copyToCacheDirectory:true,               
       allowsEditing: false,
       quality: 1,

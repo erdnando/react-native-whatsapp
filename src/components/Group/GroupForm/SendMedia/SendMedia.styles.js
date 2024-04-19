@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
   itemsContainer: {
-    backgroundColor: "transparent",
+    backgroundColor: "black",
   },
   option: {
     backgroundColor: "#171717",

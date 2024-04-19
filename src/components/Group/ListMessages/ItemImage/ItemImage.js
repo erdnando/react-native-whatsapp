@@ -166,7 +166,7 @@ export function ItemImage(props) {
                     <Icon display={isMe?"flex":"none"}
                     style={{marginTop:-35,left:-5 }}
                                   as={MaterialCommunityIcons}
-                                  size="39"
+                                  size="30"
                                   name="download-circle"
                                   color="black"
                                 />

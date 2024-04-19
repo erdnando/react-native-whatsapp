@@ -1,5 +1,5 @@
 import { View, Text, Pressable } from "react-native";
-import { Menu,Icon,AlertDialog,Button } from 'native-base';
+import { Menu,Icon,AlertDialog,Button,Box } from 'native-base';
 import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
@@ -34,6 +34,10 @@ export function ItemFile(props) {
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
   const [downloadProgress, setDownloadProgress]= useState(null);
+  const [IsPLaying,SetIsPLaying]=useState(false)
+  const [isPressed,setIsPressed]=useState(false)
+  const [isHovered,setIsHovered]=useState(false)
+
 
   const onEliminarMensaje = () => {
 
@@ -56,6 +60,7 @@ export function ItemFile(props) {
    // Function to play the recorded audio
    const PlayRecordedAudio = async () => {
     try {
+      setIsPressed(true);
 
       console.log("playing recordedURI:::::::");
       
@@ -91,6 +96,8 @@ export function ItemFile(props) {
       console.log("Error on PlayingRecording")
       console.log(error)
     }
+
+    setIsPressed(false);
   };
 
 //open file function
@@ -156,14 +163,7 @@ export function ItemFile(props) {
         <View style={styles.content}>
           <View style={styles.message}>
            
-           {/* {!isMe && (
-              <Text style={styles.identity}>
-                {message.user.firstname || message.user.lastname
-                  ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-                  : message.user.email}
-              </Text>
-            )}
-          */}
+          
               <View style={styles.rowMenu}>
                 {/*Alias*/}
                 <Text style={styles.identity}>
@@ -210,29 +210,40 @@ export function ItemFile(props) {
                 </View>
                  {/*just to mp3 files*/}
                 <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
-                    <Pressable onPress={PlayRecordedAudio}>
-                        <Icon 
-                                      as={MaterialCommunityIcons}
-                                      size="49"
-                                      name="play"
-                                      color="black"
-                                    />
+                  
+
+                     
+                <Pressable onPress={PlayRecordedAudio}>
+                  <View>
+                    <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
+                        as={MaterialCommunityIcons}
+                        size="49"
+                        name="play"
+                        color="black"
+                      />
+                  </View>
+                      
                       </Pressable>
+                      
                 </View>
                   
 
                <Text style={styles.fileName}>
-                  {message.message }
+                  {message.message.replace("files/","") }
                 </Text>
 
-                  <Pressable onPress={onOpenFile}>
-                    <Icon display={isMe?"flex":"none"}
+                 
+
+                <Pressable onPress={onOpenFile} >
+                    <Icon display={isMe?"flex":"none"} style={{marginTop:10}}
                                   as={MaterialCommunityIcons}
-                                  size="39"
+                                  size="30"
                                   name="download-circle"
                                   color="black"
                                 />
-                  </Pressable>
+                </Pressable>
+
+                  
               </View>
 
        
