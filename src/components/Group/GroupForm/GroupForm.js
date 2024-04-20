@@ -1,6 +1,7 @@
 import { useState, useEffect,useRef } from "react";
 import { View, Keyboard, Platform,TextInput,Text,Animated } from "react-native";
-import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,useTheme,Avatar,HStack,Center,Box,Heading,TouchableWithoutFeedback } from "native-base";
+import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,
+          useTheme,Center,Box,Heading,HStack,Spinner } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage,Group } from "../../../api";
@@ -45,6 +46,7 @@ export function GroupForm(props) {
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [vuelta, setVuelta] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
 
   const opacityx = useRef(new Animated.Value(0)).current; 
 
@@ -200,11 +202,11 @@ export function GroupForm(props) {
     }
   };
 //=======================================================================================
-    // Function to play the recorded audio
-    const PlayRecordedAudio = async () => {
+  // Function to play the recorded audio
+  const PlayRecordedAudio = async () => {
       try {
 
-        console.log("playing recordedURI:::::::");
+        console.log("playing recordedURI:::::::1");
         console.log(recordedURIx);
 
         //release resources
@@ -235,7 +237,7 @@ export function GroupForm(props) {
         console.log("Error on PlayingRecording")
         console.log(error)
       }
-    };
+  };
 
    // Function to STOP the playing audio
    const StopPlaying = async () => {
@@ -341,6 +343,24 @@ export function GroupForm(props) {
     setReplyMessage(null);
     
   };
+
+  //EventListener:loading
+  useEffect(() => {
+        //=================================================================
+        const eventLoading = EventRegister.addEventListener("loadingEvent", async data=>{
+          console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
+          setIsLoading(data);    
+
+          setFocusInput(false);
+          setReplyMessage(null);
+          setShowIconSendText(false);
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventLoading);
+        }
+        //================================================================
+  }, []);
 
   //Manage keyboard
   useEffect(() => {
@@ -569,6 +589,21 @@ export function GroupForm(props) {
     },
   });
 
+  console.log("isloading::::::::::::::::::::::::::::::::::::::::::::::::::;"+isLoading)
+  if(isLoading){
+  return (<View style={{position: "absolute",top:0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(60, 60, 60, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",}}>
+          <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.500" />
+          <Heading color="white" fontSize="lg">
+          Cargando...
+          </Heading>
+        </View>
+        );  }
+  
   return (
     <View style={[ { bottom: keyboardHeight }]}>
 
@@ -633,17 +668,14 @@ export function GroupForm(props) {
             {/* Recording timer!!!!! */}
              <View display={IsRecording?"flex":"none"} style={{flex:0,flexDirection:'row',alignContent:'space-between', width:'87%',borderRadius:10,marginRight:5, height:40,backgroundColor:'white'}}>
              
-            
-
-            
-             <Animated.View // Special animatable View
-              style={{
-                opacity: opacityx, // Bind opacity to animated value
-              }}>
-              <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
-             
-            </Animated.View>
-            <Text style={{marginTop:5,marginLeft:12, fontWeight:'bold',fontSize:16}}>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
+                <Animated.View // Special animatable View
+                  style={{
+                    opacity: opacityx, // Bind opacity to animated value
+                  }}>
+                  <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
+                
+                </Animated.View>
+                <Text style={{marginTop:5,marginLeft:12, fontWeight:'bold',fontSize:16}}>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
             
              </View>
 
@@ -692,6 +724,9 @@ export function GroupForm(props) {
             </View>
         </Actionsheet.Content>
         </Actionsheet>
+
+
+        
 
     </View>
   );

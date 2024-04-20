@@ -73,7 +73,7 @@ export const styled = (isMe) => {
        
     },
     menu:{
-      display:isMe ? "flex": "none",
+      display:isMe ? "flex": "flex",
     },
     menuItem:{
       flex:1,

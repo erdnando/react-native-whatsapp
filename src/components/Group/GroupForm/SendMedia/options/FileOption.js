@@ -1,10 +1,7 @@
 import { Actionsheet, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-//import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { Platform } from "react-native";
-
-
 import { GroupMessage } from "../../../../../api";
 import { fileExpoFormat } from "../../../../../utils";
 import { styles } from "../SendMedia.styles";

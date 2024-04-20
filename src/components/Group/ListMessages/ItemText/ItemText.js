@@ -17,7 +17,7 @@ export function ItemText(props) {
 
   const { message } = props;
   const { user } = useAuth();
-  const isMe = user._id === message.user._id;
+  const isMe = user._id === message?.user._id;
   const styles = styled(isMe);
   const createMessage = new Date(message.createdAt);
   const updatedMessage = new Date(message.updatedAt);
@@ -33,13 +33,9 @@ export function ItemText(props) {
  
   const onEliminarMensaje = () => {
 
-
     setShowAdvertencia(false);
     console.log("eliminando message:::::::::::");
                          
-    //delete
-    //persist changes
-    //reoad mesages
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
     setMensajeEliminar(null);
   }
@@ -49,23 +45,23 @@ export function ItemText(props) {
 
     
    // if(message.forwarded){
-      console.log("message.::::");
-      console.log(message);
+     // console.log("message.::::");
+    //  console.log(message);
    // }
     
     setForwarded(message.forwarded);
     
 
     if(message.email_replied != null){
-      console.log("si hay mensaje replicado!!!")
+     // console.log("si hay mensaje replicado!!!")
       setReplicado(true);
 
-      console.log(message.email_replied)
-      console.log(message.tipo_cifrado_replied)
-      console.log(message.message_replied)
-      console.log(":::::::::::::::::::::::::::::::::::;:::::::::::");
+      //console.log(message.email_replied)
+      //console.log(message.tipo_cifrado_replied)
+      //console.log(message.message_replied)
+      //console.log(":::::::::::::::::::::::::::::::::::;:::::::::::");
     }else{
-      console.log("no hay mensaje replicado!!")
+     // console.log("no hay mensaje replicado!!")
       setReplicado(false);
     }
   
@@ -119,7 +115,7 @@ export function ItemText(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("responder message:::::::::::");
+                           //console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
@@ -173,7 +169,7 @@ export function ItemText(props) {
                           </View>
                     </Menu.Item>
                    {/*editar*/}
-                    <Menu.Item  style={styles.menuItem}  
+                    <Menu.Item display={isMe?'flex':'none'} style={styles.menuItem}  
                         onPress={() => {
                      
                            console.log("editando message:::::::::::");
@@ -191,9 +187,8 @@ export function ItemText(props) {
                           </View>
                     </Menu.Item>
                    {/*eliminar*/}
-                    <Menu.Item    
+                    <Menu.Item display={isMe?'flex':'none'}    
                         onPress={() => {
-                         // alert('Eliminar: [  '+message.message+"  ]");
                           setMensajeEliminar(message);
                           setShowAdvertencia(true);
                           //reoad mesages

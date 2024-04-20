@@ -1,4 +1,5 @@
 import { ENV,Encrypt,Decrypt } from "../utils";
+import { EventRegister } from "react-native-event-listeners";
 import { useDB } from "../hooks";
 import { useState, useEffect, useCallback } from "react";
 
@@ -72,6 +73,7 @@ export class GroupMessage {
 //=====================================================================================================
   async getAll(accessToken, groupId) {
     try {
+      EventRegister.emit("loadingEvent",true);
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`;
       const params = {
         headers: {
@@ -84,11 +86,12 @@ export class GroupMessage {
 
       //console.log("getting all messages by group");
       //console.log(result);
-
+      EventRegister.emit("loadingEvent",false);
       if (response.status !== 200) throw result;
-
+     
       return result;
     } catch (error) {
+      EventRegister.emit("loadingEvent",false);
       throw error;
     }
   }
@@ -96,6 +99,7 @@ export class GroupMessage {
 //==============================================================================================
 async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
 
+  EventRegister.emit("loadingEvent",true);
   let reenviado=false;
    console.log("reenviando msg:::::::::::::::::::::")
   console.log(message);
@@ -138,11 +142,13 @@ console.log("cifrando 2")
 
     //get group messages and persist
    // await selectTable('BITACORA');
-
+   EventRegister.emit("loadingEvent",false);
     if (response.status !== 201) throw result;
+
 
     return true;
   } catch (error) {
+    EventRegister.emit("loadingEvent",false);
     console.log(error);
     console.log("Error a enviar el mensaje...")
     throw error;
@@ -151,6 +157,7 @@ console.log("cifrando 2")
 //==============================================================================================
   async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
     console.log("cifrando 3")
+    EventRegister.emit("loadingEvent",true);
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
       const params = {
@@ -178,11 +185,12 @@ console.log("cifrando 2")
 
       //get group messages and persist
      // await selectTable('BITACORA');
-
+     EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
       return true;
     } catch (error) {
+      EventRegister.emit("loadingEvent",false);
       throw error;
     }
   }
@@ -190,6 +198,7 @@ console.log("cifrando 2")
 //====================================================================================================
 async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
   console.log("cifrando 4")
+  EventRegister.emit("loadingEvent",true);
   try {
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_DELETE}`;
     const params = {
@@ -217,17 +226,20 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
 
     //get group messages and persist
    // await selectTable('BITACORA');
-
+  EventRegister.emit("loadingEvent",false);
     if (response.status !== 201) throw result;
 
     return true;
   } catch (error) {
+    EventRegister.emit("loadingEvent",false);
     throw error;
   }
 }
   
 //=====================================================================================================
   async sendImage(accessToken, groupId, file) {
+
+    EventRegister.emit("loadingEvent",true);
     try {
       const formData = new FormData();
       formData.append("group_id", groupId);
@@ -255,6 +267,7 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
       const result = await response.json();
       console.log(result);
 
+      EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
     } catch (error) {
       //console.log("Error al enviar imagen al grupo")
@@ -264,7 +277,7 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
 
       return true;
     } catch (error) {
-    
+       EventRegister.emit("loadingEvent",false);
       throw error;
     }
   }
@@ -272,6 +285,8 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
 
 //=====================================================================================================
 async sendFile(accessToken, groupId, file) {
+
+  EventRegister.emit("loadingEvent",true);
   try {
     console.log("sending file from telephone...")
     console.log(file);
@@ -304,16 +319,17 @@ async sendFile(accessToken, groupId, file) {
     const result = await response.json();
     console.log(result);
 
+    EventRegister.emit("loadingEvent",false);
     if (response.status !== 201) throw result;
   } catch (error) {
     //console.log("Error al enviar imagen al grupo")
     console.log(error);
   }
    
-
+  
     return true;
   } catch (error) {
-  
+    EventRegister.emit("loadingEvent",false);
     throw error;
   }
 }

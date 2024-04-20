@@ -55,5 +55,22 @@ export const styled = (isMe) => {
       opacity: 0.4,
       width:"60%"
     },
+    menuItem:{
+      flex:0,
+      borderBottomColor:'gray',
+      borderBottomWidth:0,
+      width:'100%',
+      marginLeft:0,
+  
+    },
+    menu:{
+      display:isMe ? "flex": "flex",
+    },
+    contentMenuItem:{
+      flex:1,
+      flexDirection:'row',
+      justifyContent:'space-between',
+      width:'100%',
+    }
   });
 };

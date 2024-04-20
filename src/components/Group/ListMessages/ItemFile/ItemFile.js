@@ -64,7 +64,7 @@ export function ItemFile(props) {
     try {
       setIsPressed(true);
 
-      console.log("playing recordedURI:::::::");
+      console.log("playing recordedURI:::::::2");
       
       const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
       //const recordedURIx=urlFile.replace("files/","");
@@ -72,15 +72,17 @@ export function ItemFile(props) {
 
       //release resources
       try {
-        await AudioPlayer.current.unloadAsync();
+       
+        if(AudioPlayer?.current)
+          await AudioPlayer?.current.unloadAsync();
+       
+       
       } catch (error) {
+       
         console.log("maybe it fails if it;s the first time")
         console.log(error);
       }
-       
-      
-      
-
+      console.log("playing audio..");
       // Load the Recorded URI
       await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
 
@@ -178,9 +180,9 @@ export function ItemFile(props) {
                     : message.user.email.substring(0,23) }
                 </Text>
 
-                <Menu display={isMe?"flex":"none"} w="190" trigger={triggerProps => {
+                <Menu display={isMe?"flex":"flex"} w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={isMe?"flex":"none"}
+                          <Icon display={isMe?"flex":"flex"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -188,16 +190,40 @@ export function ItemFile(props) {
                           />
                         </Pressable>;
                 }}>
-                   
+                    {/*responder*/}                  
+                    <Menu.Item style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("responder message:::::::::::");
+                           EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                        }}>
+                         <View style={styles.contentMenuItem} >
+                            <Text>Responder</Text>
+                            <Icon
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="reply"
+                            color="black"
+                          />
+                          </View>
+                         
+                    </Menu.Item>
                     <Menu.Item  
                         onPress={() => {
-                         // alert('Eliminar: [  '+message.message+"  ]");
                           setMensajeEliminar(message);
                           setShowAdvertencia(true);
-                          //reoad mesages
-                            //
                         }}>
-                    Eliminar</Menu.Item>
+                            <View style={styles.contentMenuItem} >
+                            <Text>Eliminar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="delete"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
                 </Menu>
 
               </View>

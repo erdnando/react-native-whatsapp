@@ -20,7 +20,6 @@ export function GroupScreen() {
   const { params: { groupId }, } = useRoute();
   const { accessToken } = useAuth();
   const [messages, setMessages] = useState(null);
-  //const [cryptMessage, setCryptMessage] = useState(false);
  
 
   //EventListener:: decifra mensajes
@@ -180,8 +179,18 @@ export function GroupScreen() {
             setMessages(unlockedMessages);
 
             //here  sound because edited it
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
+            console.log("playing audio................newmsg1");
+
+            
+
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
             await sound.playAsync();
+            /*try {
+              await sound.playAsync();
+            } catch (error) {
+              console.log(error)
+            }*/
+           
           //==============================================================================
         }
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
@@ -278,6 +287,8 @@ export function GroupScreen() {
   };
 
   if (!messages) return <LoadingScreen />;
+
+  
 
   return (
     <>

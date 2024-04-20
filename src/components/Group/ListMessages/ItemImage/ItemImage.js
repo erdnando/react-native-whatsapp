@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
+import loadingImage from '../../../../assets/preloader.gif';
 
 const authController = new Auth();
 
@@ -115,9 +116,9 @@ export function ItemImage(props) {
                     : message.user.email.substring(0,23) }
                 </Text>
 
-                <Menu display={isMe?"flex":"none"} w="190" trigger={triggerProps => {
+                <Menu display={isMe?"flex":"flex"} w="190" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={isMe?"flex":"none"}
+                          <Icon display={isMe?"flex":"flex"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -125,7 +126,24 @@ export function ItemImage(props) {
                           />
                         </Pressable>;
                 }}>
-                   
+                    {/*responder*/}                  
+                    <Menu.Item style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("responder message:::::::::::");
+                           EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                        }}>
+                         <View style={styles.contentMenuItem} >
+                            <Text>Responder</Text>
+                            <Icon
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="reply"
+                            color="black"
+                          />
+                          </View>
+                         
+                    </Menu.Item>
                     <Menu.Item  
                         onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
@@ -134,7 +152,17 @@ export function ItemImage(props) {
                           //reoad mesages
                             //
                         }}>
-                    Eliminar</Menu.Item>
+                             <View style={styles.contentMenuItem} >
+                            <Text>Eliminar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="delete"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
                 </Menu>
 
               </View>
