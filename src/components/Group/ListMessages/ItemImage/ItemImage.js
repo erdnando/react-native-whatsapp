@@ -85,8 +85,6 @@ export function ItemImage(props) {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
-    
-
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
@@ -108,14 +106,7 @@ export function ItemImage(props) {
         <View style={styles.content}>
           <View style={styles.message}>
            
-           {/* {!isMe && (
-              <Text style={styles.identity}>
-                {message.user.firstname || message.user.lastname
-                  ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-                  : message.user.email}
-              </Text>
-            )}
-          */}
+         
               <View style={styles.rowMenu}>
                 {/*Alias*/}
                 <Text style={styles.identity}>
@@ -163,13 +154,12 @@ export function ItemImage(props) {
            <View style={styles.colFile}>
             {/*download button*/}
             <Pressable onPress={onOpenFile}>
-                    <Icon display={isMe?"flex":"none"}
-                    style={{marginTop:-35,left:-5 }}
-                                  as={MaterialCommunityIcons}
-                                  size="30"
-                                  name="download-circle"
-                                  color="black"
-                                />
+                    <Icon style={{marginTop:-35,left:-5 }}
+                          as={MaterialCommunityIcons}
+                          size="30"
+                          name="download-circle"
+                          color="black"
+                         />
             </Pressable>
 
             <Text style={styles.date}>

@@ -28,6 +28,7 @@ export function ItemFile(props) {
   const navigation = useNavigation();
 
   const imageUri = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
+  const imageRealUri = `${ENV.BASE_PATH}/${message.message}`;
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -37,6 +38,7 @@ export function ItemFile(props) {
   const [IsPLaying,SetIsPLaying]=useState(false)
   const [isPressed,setIsPressed]=useState(false)
   const [isHovered,setIsHovered]=useState(false)
+  const [realImage,setRealImage]=useState(false)
 
 
   const onEliminarMensaje = () => {
@@ -141,6 +143,10 @@ export function ItemFile(props) {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
+    if(message?.message.toString().endsWith(".jpg")||message?.message.toString().endsWith(".jpeg")||
+       message?.message.toString().endsWith(".png")||message?.message.toString().endsWith(".bpm")){
+        setRealImage(true)
+    }
   
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
@@ -211,31 +217,40 @@ export function ItemFile(props) {
                  {/*just to mp3 files*/}
                 <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
                   
-
-                     
-                <Pressable onPress={PlayRecordedAudio}>
-                  <View>
-                    <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
-                        as={MaterialCommunityIcons}
-                        size="49"
-                        name="play"
-                        color="black"
-                      />
-                  </View>
+                    <Pressable onPress={PlayRecordedAudio}>
+                      <View>
+                        <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
+                            as={MaterialCommunityIcons}
+                            size="49"
+                            name="play"
+                            color="black"
+                          />
+                      </View>
                       
                       </Pressable>
                       
                 </View>
-                  
+                
+                 {/*just to img files*/}
+                 <View display={realImage ?"flex":"none"}>
+                    <Pressable onPress={onOpenImage}>
+                      <AutoHeightImage
+                        width={width}
+                        maxHeight={400}
+                        source={{ uri: imageRealUri }}
+                        style={styles.image}
+                      />
+                    </Pressable>
+                </View>
 
-               <Text style={styles.fileName}>
+               <Text display={realImage ?"none":"flex"} style={styles.fileName}>
                   {message.message.replace("files/","") }
                 </Text>
 
                  
 
                 <Pressable onPress={onOpenFile} >
-                    <Icon display={isMe?"flex":"none"} style={{marginTop:10}}
+                    <Icon  style={{marginTop:10}}
                                   as={MaterialCommunityIcons}
                                   size="30"
                                   name="download-circle"

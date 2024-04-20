@@ -308,8 +308,10 @@ export function GroupForm(props) {
       groups.map(async (msgx) => {
 
         if(msgx.isSelected){
-          console.log(msgx)
-            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, msgx.tipoCifrado, null );
+          console.log("-->")
+          console.log(forwardMessage)
+          //TODO validat tipo cifrado, no llega l mensaje destino
+            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
              //here  sound
       const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
       await sound.playAsync();

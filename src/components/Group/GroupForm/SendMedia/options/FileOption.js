@@ -37,7 +37,7 @@ export function FileOption(props) {
       console.log("uri enviado ::");
       console.log(uri)
 
-      if(uri.endsWith(".jpg") || uri.endsWith(".png")||uri.endsWith(".gif")||uri.endsWith(".bpm")){
+      if(uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".png")||uri.endsWith(".gif")||uri.endsWith(".bpm")){
         file.type="image/jpg";
         console.log("file enviadox ::");
         console.log(file);

@@ -99,10 +99,11 @@ async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
   let reenviado=false;
    console.log("reenviando msg:::::::::::::::::::::")
   console.log(message);
+  console.log(tipoCifrado);
   //cifrando msg reenviado
 if(replyMessage!=null){
   console.log("cifrando 1")
-  replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipoCifrado );
+  replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
 }
 if(message.startsWith("reenviado::")){
   reenviado=true;

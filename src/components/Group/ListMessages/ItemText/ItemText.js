@@ -47,8 +47,12 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-    console.log("message.forwarded::::");
-    console.log(message.forwarded);
+    
+   // if(message.forwarded){
+      console.log("message.::::");
+      console.log(message);
+   // }
+    
     setForwarded(message.forwarded);
     
 
@@ -248,15 +252,16 @@ export function ItemText(props) {
                 </Text>
               </View>
 
-              {/*forwarded*/}
+              {/*message forwarded*/}
               <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
-              <Icon
-                            style={{transform: [{rotateY: '180deg'}]}}
-                            as={MaterialCommunityIcons}
-                            size="7"
-                            name="reply"
-                            color="black"
-                          />
+                <Icon
+                  style={{transform: [{rotateY: '180deg'}]}}
+                  as={MaterialCommunityIcons}
+                  size="7"
+                  name="reply"
+                  color="black"
+                />
+
                 <Text  style={styles.dateEditado}  >
                   {"Reenviado"}
                 </Text>
