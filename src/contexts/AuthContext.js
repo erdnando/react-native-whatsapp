@@ -1,7 +1,9 @@
 import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
-import { hasExpiredToken } from "../utils";
+import { hasExpiredToken} from "../utils";
 import Constants from 'expo-constants';  
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 
 const userController = new User();
 const authController = new Auth();
@@ -16,26 +18,35 @@ export function AuthProvider(props) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [usuario, setUsuario] = useState(null);
+  
+  const [userDB, setUserDB] = useState(null);
 
 
   useEffect(() => {
     (async () => {
-    
-     //get UUID
+      
+     
+     console.log("userDB:::::::::");
+     console.log(userDB);
+
+      //get UUID
      const idApp = Constants.installationId;
      // await authController.removeTokens();
 
+
+     console.log("idApp:" + idApp);
+     //1.- valida si el user existe
      const userRegistrado = await authController.login(idApp, idApp  );
      const { access, refresh } = userRegistrado;
 
-     console.log("accessTokenx:" + access);
+     console.log("access:" + access);
+     console.log("refresh:" + refresh);
 
      if(access=="" || access == undefined){
-      //if it's not registered, registered it
-      console.log("Registrando:" + idApp);
+        //if it's not registered, registered it
+        console.log("Registrando:" + idApp);
 
-      await authController.register(idApp, idApp);
+        await authController.register(idApp, idApp);
 
         const responseLogin = await authController.login( idApp,idApp);
 
@@ -43,6 +54,7 @@ export function AuthProvider(props) {
 
         const { access, refresh } = responseLogin;
 
+        //una vez autenticado la 1a vez, persiste el token en el dispositivo
         await authController.setAccessToken(access);
         await authController.setRefreshToken(refresh);
         setUser(idApp);
@@ -79,7 +91,11 @@ export function AuthProvider(props) {
     })();
   }, []);
 
-  
+  const loadDatabase = async () =>{
+    const dbName= "securechat.db";
+    const dbAsset = require("../assets/securechat.db")
+  }
+
   const reLogin = async (refreshToken) => {
     try {
       const { accessToken } = await authController.refreshAccessToken(

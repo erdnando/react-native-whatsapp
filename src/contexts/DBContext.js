@@ -29,14 +29,27 @@ export function DBProvider(props) {
    // SelectTable('USERS');
    useEffect( () => {
     (async () => {
-      setLoading(true);
-   
-     // createTable('USERS');
+     // setLoading(true);
+     createTables();
       
-      setLoading(false);
+     // setLoading(false);
   })();  
 
 }, []);
+
+
+const getUsers = (successCallback) => {
+  db.transaction(
+    tx => {
+      tx.executeSql(
+        'select * from users',[],
+        (_, { rows: { _array } }) => {
+          successCallback(_array);
+        }
+      );
+    },
+  );
+}
 
 
   const addUser=(email) => {
@@ -44,7 +57,7 @@ export function DBProvider(props) {
     console.log('inserting.....');
 
     db.transaction(tx =>{
-      tx.executeSql('INSERT INTO USERS (email,firstname,lastname,password,avatar) values (?,?,?,?,?)', [email,'','',email,''],
+      tx.executeSql('INSERT INTO users (_id,email,firstname,lastname,password,avatar,nip) values (?,?,?,?,?,?,?)', ['11111111111111111',email,'','',email,'',''],
       (txObj,resulSet) =>{
         console.log("Inserted data......");
         console.log(resulSet);
@@ -70,10 +83,7 @@ export function DBProvider(props) {
       (txObj,resulSet) =>{
         console.log("resulSet:::");
         console.log(resulSet.rows._array);
-
         //setUsuario(resulSet.rows._array);
-
-        
       },
       (txObj, error) => console.log(error)
       );
@@ -110,26 +120,23 @@ export function DBProvider(props) {
     })
   }
 
-  const dropTable=(table) => {
-    console.log('dropping table '+ table);
-    db.transaction(tx =>{
-      tx.executeSql('DROP TABLE '+ table,null,
-      (txObj,resulSet) =>{
-     console.log('dropping table:' + table);
-      },
-      (txtObj,error)=> console.log(error),
-      )
-    })
+  const dropTables=(table) => {
+    console.log('dropping tables');
+    db.transaction(tx =>{ 
+        tx.executeSql('DROP TABLE groupmessages');
+        tx.executeSql('DROP TABLE groups');
+        tx.executeSql('DROP TABLE users');
+    });
   }
 
-  const createTable=(table) => {
+  const createTables=(table) => {
     console.log('creating table....');
 
     db.transaction( tx =>{
-      tx.executeSql('CREATE TABLE IF NOT EXISTS '+ table +' (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT) ');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS users (_id TEXT PRIMARY KEY,email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT) ');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS groups (_id TEXT PRIMARY KEY,name TEXT, participants TEXT, creator TEXT, image TEXT) ');
+      tx.executeSql('CREATE TABLE IF NOT EXISTS groupmessages (_id TEXT PRIMARY KEY,group TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT) ');
     });
-    
-
   }
 
   
@@ -138,11 +145,12 @@ export function DBProvider(props) {
   
 
   const data = {
+    getUsers,
     selectTable,
     addUser,
   };
 
-  if (loading) return null;
+  //if (loading) return null;
 
   return <DBContext.Provider value={data}>{children}</DBContext.Provider>;
 }

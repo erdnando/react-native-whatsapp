@@ -17,7 +17,7 @@ const userController = new User();
 
 export function GroupsScreen() {
   
-  const { createTableBitacora, selectTableBitacora } = useDB();
+ // const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
   const { accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);

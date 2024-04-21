@@ -24,3 +24,8 @@ Remove SSRProvider import. That is, delete this line import { SSRProvider } from
 Run: npx patch-package native-base.
 
 Select yes in the prompt.
+
+CREATE TABLE IF NOT EXISTS users (\_id TEXT PRIMARY KEY,email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT, avatar64 TEXT);
+CREATE TABLE IF NOT EXISTS groups (\_id TEXT PRIMARY KEY,name TEXT, participants TEXT, creator TEXT, image TEXT, image64 TEXT);
+CREATE TABLE IF NOT EXISTS groupmessages (\_id TEXT PRIMARY KEY,grupo TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT);
+.quit
