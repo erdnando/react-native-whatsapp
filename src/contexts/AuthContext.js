@@ -2,8 +2,7 @@ import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
 import { hasExpiredToken} from "../utils";
 import Constants from 'expo-constants';  
-import * as FileSystem from 'expo-file-system';
-import { Asset } from 'expo-asset';
+
 
 const userController = new User();
 const authController = new Auth();
@@ -91,11 +90,7 @@ export function AuthProvider(props) {
     })();
   }, []);
 
-  const loadDatabase = async () =>{
-    const dbName= "securechat.db";
-    const dbAsset = require("./assets/db/securechat.db");
-    const dbUri = Asset.fromModule(dbAsset).uri;
-  }
+  
 
   const reLogin = async (refreshToken) => {
     try {

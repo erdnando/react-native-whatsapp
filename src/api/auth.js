@@ -2,7 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ENV } from "../utils";
 //import * as SQLite from 'expo-sqlite';
 //import { useState } from "react";
-
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 
 
 export class Auth {
@@ -115,6 +116,12 @@ async getCifrado() {
     await AsyncStorage.removeItem("initial");
   }
 
+
+   loadDatabase =  () =>{
+    const dbName= "securechat.db";
+    let dbAsset = require("../assets/securechat.db");
+    //const dbUri = Asset.fromModule(dbAsset).uri;
+  }
   /*
   async dbCreateTables() {
     const [db, setDb] = useState(SQLite.openDatabase('chatx.db'));
