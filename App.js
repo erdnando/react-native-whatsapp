@@ -4,13 +4,7 @@ import { HandlerNavigation } from "./src/navigations";
 import { AuthProvider } from "./src/contexts";
 import "intl";
 import "intl/locale-data/jsonp/es";
-import * as FileSystem from 'expo-file-system';
-import { Asset } from 'expo-asset';
 
-const loadDatabase = async () =>{
-  const dbName= "securechat.db";
-  const dbAsset = require("./assets/securechat.db");
-}
 
 export default function App() {
 

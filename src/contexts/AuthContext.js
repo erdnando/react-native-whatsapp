@@ -91,7 +91,11 @@ export function AuthProvider(props) {
     })();
   }, []);
 
-  
+  const loadDatabase = async () =>{
+    const dbName= "securechat.db";
+    const dbAsset = require("./assets/db/securechat.db");
+    const dbUri = Asset.fromModule(dbAsset).uri;
+  }
 
   const reLogin = async (refreshToken) => {
     try {
