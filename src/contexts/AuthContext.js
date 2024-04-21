@@ -2,7 +2,7 @@ import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
 import { hasExpiredToken} from "../utils";
 import Constants from 'expo-constants';  
-
+import * as SQLite from 'expo-sqlite';
 
 const userController = new User();
 const authController = new Auth();
@@ -17,16 +17,18 @@ export function AuthProvider(props) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
-  
-  const [userDB, setUserDB] = useState(null);
+  //const [db, setDb] = useState(SQLite.openDatabase('chatx.db'));
+  //const [userDB, setUserDB] = useState(null);
 
 
   useEffect(() => {
     (async () => {
       
-     
-     console.log("userDB:::::::::");
-     console.log(userDB);
+      console.log("onLogin:::::")
+      console.log("db on login:::::::")
+     // console.log(db)
+     //console.log("userDB:::::::::");
+     //console.log(userDB);
 
       //get UUID
      const idApp = Constants.installationId;

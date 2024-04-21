@@ -17,7 +17,7 @@ const userController = new User();
 
 export function GroupsScreen() {
   
- // const { createTableBitacora, selectTableBitacora } = useDB();
+  //const { opendb,createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
   const { accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);
@@ -28,6 +28,11 @@ export function GroupsScreen() {
 
   useEffect(() => {
   
+
+   // const db = opendb();
+   // console.log("db status::::")
+   // console.log(db)
+
     async function validateInitialModal() {
 
       const firtsTime=  await authController.getInitial();
