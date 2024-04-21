@@ -15,7 +15,7 @@ export function FileOption(props) {
     
     //
     const result = await DocumentPicker.getDocumentAsync({
-      mimeType:["audio/*","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","vnd.ms-excel","vnd.openxmlformats-officedocument.spreadsheetml.sheet","text/csv"],
+      mimeType:["application/*","audio/*","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","vnd.ms-excel","vnd.openxmlformats-officedocument.spreadsheetml.sheet","text/csv"],
       copyToCacheDirectory:true,               
       allowsEditing: false,
       quality: 1,
@@ -41,14 +41,15 @@ export function FileOption(props) {
 
         await groupMessageController.sendImage(accessToken, groupId, file);
       }else{
+        console.log("Archivo puro")
+        console.log("file enviado ::");
+        console.log(accessToken);
+        console.log(groupId);
+        console.log(file);
         await groupMessageController.sendFile(accessToken, groupId, file);
       }
     
       
-
-      
-      
-
       onClose();
     } catch (error) {
       console.log("error::");

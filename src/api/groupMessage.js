@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback } from "react";
 export class GroupMessage {
 
  
- 
+  
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
     try {
@@ -290,12 +290,13 @@ async sendFile(accessToken, groupId, file) {
   try {
     console.log("sending file from telephone...")
     console.log(file);
+
     const formData = new FormData();
     formData.append("group_id", groupId);
     formData.append("file", file);
 
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILE}`;
-    //console.log(url);
+    console.log(url);
 
     //"Content-Type": "application/json",
     //multipart/form-data
@@ -303,26 +304,28 @@ async sendFile(accessToken, groupId, file) {
     const params = {
       method: "POST",
       headers: {
-        
-        'content-type': 'multipart/form-data',
+        "content-type": "multipart/form-data",
         "accept": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
       body: formData,
     };
 
+    console.log("params");
     console.log(params);
 
   try {
     const response = await fetch(url, params);
+   
     //console.log(response);
     const result = await response.json();
+    console.log("result call api file");
     console.log(result);
 
     EventRegister.emit("loadingEvent",false);
     if (response.status !== 201) throw result;
   } catch (error) {
-    //console.log("Error al enviar imagen al grupo")
+    console.log("Error al enviar imagen al grupo")
     console.log(error);
   }
    

@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import { User, Auth, Group } from "../api";
-import { hasExpiredToken } from "../utils";
-import Constants from 'expo-constants';
+//import { hasExpiredToken } from "../utils";
+//import Constants from 'expo-constants';
 import * as SQLite from 'expo-sqlite';
 
 
