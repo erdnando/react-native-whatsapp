@@ -24,6 +24,9 @@ export function GroupScreen() {
 
   //EventListener:: decifra mensajes
   useEffect(() => {
+    console.log("groupId:::::::::::::::::::::::::::::::::::")
+    console.log(groupId)
+  
   
        const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
          
@@ -35,7 +38,8 @@ export function GroupScreen() {
                   await authController.setCifrado(isCypher);
 
                   try {
-                    const response = await groupMessageController.getAll(accessToken, groupId);
+                   // const response = await groupMessageController.getAll(accessToken, groupId);
+                    const response = await groupMessageController.getAllLocal(groupId);
                    //==========================================
                     const unlockedMessages = response.messages;
                     //console.log(unlockedMessages);
@@ -92,7 +96,7 @@ export function GroupScreen() {
   //Set ACTIVE_GROUP_ID
   useEffect(() => {
     (async () => {
-      await AsyncStorage.setItem(ENV.ACTIVE_GROUP_ID, groupId);
+      await AsyncStorage.setItem(ENV.ACTIVE_GROUP_ID,groupId.toString());
     })();
 
     return async () => {
@@ -109,12 +113,12 @@ export function GroupScreen() {
 
   //subscribe sockets
   useEffect(() => {
-    socket.emit("subscribe", groupId);
+    socket.emit("subscribe", groupId.toString());
     socket.on("message", newMessage);
     socket.on("reloadmsgs", getAllMessages);
 
     return () => {
-      socket.emit("unsubscribe", groupId);
+      socket.emit("unsubscribe", groupId.toString());
       socket.off("message", newMessage);
       socket.off("reloadmsgs", getAllMessages);
     };
@@ -130,7 +134,11 @@ export function GroupScreen() {
         const cifrados = await authController.getCifrado(); 
         console.log("cifrados");
         console.log(cifrados);
-        const response = await groupMessageController.getAll(accessToken, groupId);
+
+        //const response = await groupMessageController.getAll(accessToken, groupId.toString());
+        const response = await groupMessageController.getAllLocal(accessToken, groupId.toString());
+        console.log("response all messages::::::::::::::::::")
+        console.log(response)
 
         if(cifrados=="SI"){
           //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
@@ -165,15 +173,7 @@ export function GroupScreen() {
                   msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
                 }
               }
-              /*else if(msg.type=="FILE"){
-                console.log("========file=======================")
-                msg.message = "images/cryptedImagex.png";
-                console.log(msg.message);
-              }*/
-              /*else{
-                console.log("========imagen=======================")
-                console.log(msg.message);
-              }*/
+             
             });
             setMessages([]);
             setMessages(unlockedMessages);
@@ -194,7 +194,7 @@ export function GroupScreen() {
           //==============================================================================
         }
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-        unreadMessagesController.setTotalReadMessages(groupId, response.total);
+        unreadMessagesController.setTotalReadMessages(groupId.toString(), response.total);
 
        
 
@@ -206,8 +206,11 @@ export function GroupScreen() {
     })();
 
     return async () => {
-      const response = await groupMessageController.getAll(accessToken, groupId );
-      unreadMessagesController.setTotalReadMessages(groupId, response.total);
+     // const response = await groupMessageController.getAll(accessToken, groupId.toString() 
+      const response = await groupMessageController.getAllLocal(groupId.toString() 
+    );
+
+      unreadMessagesController.setTotalReadMessages(groupId.toString(), response.total);
     };
    //=================================================================================
 
@@ -292,11 +295,11 @@ export function GroupScreen() {
 
   return (
     <>
-      <HeaderGroup groupId={groupId} />
+      <HeaderGroup groupId={groupId.toString()} />
 
       <View style={{ flex: 1 }}>
         <ListMessages messages={messages} />
-        <GroupForm groupId={groupId} />
+        <GroupForm groupId={groupId.toString()} />
       </View>
 
     </>

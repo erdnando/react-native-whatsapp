@@ -2,6 +2,7 @@ import { ENV,Encrypt,Decrypt } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 import { useDB } from "../hooks";
 import { useState, useEffect, useCallback } from "react";
+import * as statex$ from '../state/local.js'
 
 //const { createTable,addUser , selectTable,deleteTable } = useDB();
 
@@ -29,6 +30,21 @@ export class GroupMessage {
       throw error;
     }
   }
+
+  async getTotalLocal(groupId) {
+
+    const arrGroupMessages = statex$.default.groupmessages.get();
+
+    const gpoMsgsFiltrado = arrGroupMessages.filter(function (gm) {
+      return gm.group == groupId;
+    });
+
+    console.log("gpoMsgsFiltrado:::::::::::::::::::::::::::::::::::::::")
+    console.log(gpoMsgsFiltrado)
+    return gpoMsgsFiltrado.length;
+
+    
+  }
 //=====================================================================================================
   async getGroupParticipantsTotal(accessToken, groupId) {
     try {
@@ -50,6 +66,25 @@ export class GroupMessage {
       throw error;
     }
   }
+
+  async getGroupParticipantsTotalLocal(groupId) {
+
+    const arrGroups = statex$.default.groups.get();
+
+    const gpo = arrGroups.filter(function (p) {
+      return p._id == groupId;
+    });
+
+    console.log("gpo.participants.length")
+    console.log(groupId)
+    console.log(gpo[0])
+    console.log(gpo[0].participants)
+    console.log(gpo[0].participants.length)
+    
+    return gpo[0].participants.length;
+   
+  }
+//==
 //=====================================================================================================
   async getLastMessage(accessToken, groupId) {
     try {
@@ -94,6 +129,53 @@ export class GroupMessage {
       EventRegister.emit("loadingEvent",false);
       throw error;
     }
+  }
+
+  async getAllLocal(groupId) {
+    
+    EventRegister.emit("loadingEvent",true);
+
+    const arrGpoMsgs = statex$.default.groupmessages.get();
+    const arrUsers = statex$.default.user.get();
+    let arrMessages=[];
+
+    const lstMessages = arrGpoMsgs.filter(function (gm) {
+      return gm.group == groupId;
+    });
+
+      //1.- Recorre lista de grupos
+      lstMessages.forEach( (gm) => {
+
+        const userMessage = (arrUsers).filter(function (u) {
+          return u.email == gm.user;
+        });
+
+        const newMessage={
+          _id: gm._id,
+          group: gm.group,
+          user: userMessage[0],
+          message: gm.message,
+          type: gm.type,
+          tipo_cifrado: gm.tipo_cifrado,
+          forwarded: gm.forwarded,
+          createdAt: gm.createdAt,
+          updatedAt: gm.updatedAt,
+          __v: 0
+        };
+
+        arrMessages.push(newGpoRespuesta)
+
+      });
+
+
+    const resultado ={
+      "messages": arrMessages,
+      "total": arrMessages.length
+    }
+
+    EventRegister.emit("loadingEvent",false);
+    return resultado;
+  
   }
 
 //==============================================================================================

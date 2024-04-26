@@ -18,7 +18,7 @@ export function HeaderGroup(props) {
 
   const { groupId } = props;
   const navigation = useNavigation();
-  const { accessToken } = useAuth();
+  const { accessToken,idAPPEmail } = useAuth();
   const [group, setGroup] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -42,7 +42,7 @@ export function HeaderGroup(props) {
 
     (async () => {
       try {
-        const response = await groupController.obtain(accessToken, groupId);
+        const response = await groupController.obtainGpoLocal(idAPPEmail, groupId);
         setGroup(response);
       } catch (error) {
         console.error(error);
@@ -60,15 +60,21 @@ export function HeaderGroup(props) {
     console.log("======validating NIP==================");
     
     //call api to validate nip 
-    const response = await userController.getMe(accessToken);
-    //console.log("nip en DB");
-    //console.log(response.nip);
-    //console.log("nip ingresado");
-    //console.log(nip);
-    //console.log("nip ingresado MD5");
-   // console.log(MD5method(nip.toString() ));
+   // const response = await userController.getMe(accessToken);
+    const response = await userController.getMeLocal(idAPPEmail);
+    
+    console.log("user :::::");
+    console.log(response);
 
-    if(MD5method(nip.toString()) == response.nip){
+    console.log("nip raw");
+    console.log(nip);
+    console.log("nip ingresado MD5");
+    console.log(MD5method(nip).toString());
+    console.log("response.nip")
+    console.log(response.nip)
+
+    //if(MD5method(nip.toString()) == response.nip){
+    if(nip == response.nip){
       console.log("NIP OK");
       //if, it is ok, unlock messages, reloading them
       await authController.setCifrado("NO");
@@ -115,7 +121,7 @@ export function HeaderGroup(props) {
                 source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
               />
                {/*Nombre grupo */}
-              <Text style={styles.name}>{group.name.substring(0,20) }</Text>
+              <Text style={styles.name}>{group?.name.substring(0,20) }</Text>
             </Pressable>
           )}
         </View>

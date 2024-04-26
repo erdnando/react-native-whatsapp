@@ -19,7 +19,7 @@ export function GroupsScreen() {
   
   //const { opendb,createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
-  const { accessToken,updateUser } = useAuth();
+  const { accessToken,updateUser,idAPPEmail } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -38,7 +38,7 @@ export function GroupsScreen() {
       const firtsTime=  await authController.getInitial();
 
       if(firtsTime=="1"){
-        console.log("NIP modal");
+        /*console.log("NIP modal");
 
 
         const min = 1000; 
@@ -55,7 +55,14 @@ export function GroupsScreen() {
 
         await userController.updateUser(accessToken, { nip: cifrado });
         //hash nip
-        updateUser("nip", cifrado);
+        updateUser("nip", cifrado);*/
+
+        const userRegistrado =  authController.loginLocal(idAPPEmail );
+        //console.log("userRegistrado nip:::::");
+        //console.log(userRegistrado[0]);
+        setNip(userRegistrado[0].nip);
+
+
         setShowModal(true);
         
 
@@ -98,7 +105,8 @@ export function GroupsScreen() {
       (async () => {
         try {
           //Get all messages
-          const response = await groupController.getAll(accessToken);
+          //const responsex = await groupController.getAll(accessToken);
+          const response = groupController.getAllLocal(idAPPEmail);
 
           const result = response.sort((a, b) => {
             return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
@@ -106,6 +114,8 @@ export function GroupsScreen() {
 
           setGroups(result);
           setGroupsResult(result);
+          console.log("getAllLocal:::::::::::::::::::::::::::::::::::::::::::")
+          console.log(result)
 
         } catch (error) {
           console.error(error);
@@ -140,7 +150,7 @@ export function GroupsScreen() {
 
 
 
-<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
 

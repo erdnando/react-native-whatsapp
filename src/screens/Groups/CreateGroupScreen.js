@@ -10,7 +10,7 @@ const userController = new User();
 
 export function CreateGroupScreen() {
   const navigation = useNavigation();
-  const { accessToken } = useAuth();
+  const { accessToken, idAPPEmail } = useAuth();
   const [users, setUsers] = useState(null);
   const [usersResult, setUsersResult] = useState(null);
   const [step, setStep] = useState(1);
@@ -19,7 +19,7 @@ export function CreateGroupScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <IconButton
+        <IconButton style={{marginRight:20, marginLeft:5}}
           icon={<CloseIcon />}
           padding={0}
           onPress={navigation.goBack}
@@ -31,7 +31,8 @@ export function CreateGroupScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await userController.getAll(accessToken);
+        //const response = await userController.getAll(accessToken);
+        const response = await userController.getAllLocaL(idAPPEmail);
         setUsers(response);
         setUsersResult(response);
       } catch (error) {

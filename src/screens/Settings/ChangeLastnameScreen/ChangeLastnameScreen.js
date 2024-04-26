@@ -14,7 +14,7 @@ const userController = new User();
 
 export function ChangeLastnameScreen() {
   const navigation = useNavigation();
-  const { accessToken, updateUser } = useAuth();
+  const { accessToken, updateUser,idAPPEmail } = useAuth();
   const [show, setShow] = useState(false);
 
 
@@ -26,12 +26,13 @@ export function ChangeLastnameScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
-        console.log("set nip:::::");
-        console.log(formValue);
-        await userController.updateUser(accessToken, formValue);
+        console.log("setting updated nip:::::");
+        console.log(formValue.nip);
+        //await userController.updateUser(accessToken, formValue);
+        await userController.updateUserNIPLocal(idAPPEmail, formValue.nip);
 
         //hash nip
-        updateUser("nip", MD5method(formValue.nip));
+        ///////updateUser("nip", MD5method(formValue.nip));
         navigation.goBack();
       } catch (error) {
         console.error(error);
@@ -47,7 +48,7 @@ export function ChangeLastnameScreen() {
         variant="unstyled"
         autoFocus
         value={formik.values.lastname}
-        onChangeText={(text) => formik.setFieldValue("nip", MD5method(text))}
+        onChangeText={(text) => formik.setFieldValue("nip", text)}
         style={[styles.input, formik.errors.lastname && styles.inputError]}
         InputRightElement={<Pressable onPress={() => setShow(!show)}>
             <Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={7} ml="2" mr="2" color="muted.400" />

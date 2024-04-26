@@ -21,7 +21,7 @@ const unreadMessagesController = new UnreadMessages();
 
 export function Item(props) {
   const { group, upGroupChat } = props;
-  const { accessToken, user } = useAuth();
+  const { accessToken, user,idAPPEmail } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
@@ -31,16 +31,13 @@ export function Item(props) {
   useEffect(() => {
     (async () => {
       try {
-        const totalMessages = await groupMessageController.getTotal(
-          accessToken,
-          group._id
-        );
+        //const totalMessages = await groupMessageController.getTotal(accessToken,group._id);
+        const totalMessages = groupMessageController.getTotalLocal(group._id);
+        console.log("grupo messages recuperados:::::::::::::::::");
+        console.log(totalMessages);
       
 
-        const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-          accessToken,
-          group._id
-        );
+        const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id);
         setTotalMembers(totalParticipants);
         
 
@@ -54,10 +51,7 @@ export function Item(props) {
           console.log("group list updated...");
         
               try {
-                const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-                  accessToken,
-                  group._id
-                );
+                const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id );
                 setTotalMembers(totalParticipants);
                 console.log("group and groupResult updated...");
               } catch (error) {
@@ -121,11 +115,11 @@ export function Item(props) {
   };
 
   const  openGroup = async () => {
-    console.log("openning group.."+group._id );
+    console.log("openning group.."+ "'"+group._id+"'" );
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id.toString() });
   };
 
   return (
