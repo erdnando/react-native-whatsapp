@@ -380,6 +380,45 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
     }
   }
 
+  async sendTextEditadoLocal(accessToken, groupId, message,tipoCifrado,idMessage,idAPPEmail) {
+    //console.log("cifrando 3")
+    EventRegister.emit("loadingEvent",true);
+
+  
+    //call out to reload local message list in each group member
+    try {
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT_LOCAL}`;
+      const params = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          group_id: groupId,
+          idMessage: idMessage,
+          message: Encrypt(message,tipoCifrado),
+          tipo_cifrado: tipoCifrado,
+        }),
+      };
+
+     // message: Encrypt(message,tipoCifrado),
+       //   tipo_cifrado: tipoCifrado,
+   
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+     EventRegister.emit("loadingEvent",false);
+      if (response.status !== 201) throw result;
+
+      return true;
+    } catch (error) {
+      EventRegister.emit("loadingEvent",false);
+      throw error;
+    }
+  }
+
 //====================================================================================================
 async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
   //console.log("cifrando 4")
@@ -421,6 +460,50 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
   }
 }
   
+
+
+async deleteMessageLocal(accessToken, groupId, message,tipoCifrado,idMessage,idAPPEmail) {
+ 
+  EventRegister.emit("loadingEvent",true);
+
+
+  const arrGpoMessages = statex$.default.groupmessages.get();
+  //delete locally
+  const arrMessagesDepurated = arrGpoMessages.filter(function (gm) {
+    return gm._id != idMessage;
+  });
+  statex$.default.groupmessages.set(arrMessagesDepurated);
+
+  //call out to reload local message list in each group member
+  try {
+    const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_DELETE_LOCAL}`;
+    const params = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        group_id: groupId,
+        idMessage: idMessage
+      }),
+    };
+
+  
+
+    const response = await fetch(url, params);
+    const result = await response.json();
+
+  
+  EventRegister.emit("loadingEvent",false);
+   
+    return true;
+  } catch (error) {
+    EventRegister.emit("loadingEvent",false);
+    throw error;
+  }
+}
+
 //=====================================================================================================
   async sendImage(accessToken, groupId, file) {
 

@@ -479,7 +479,7 @@ export function GroupForm(props) {
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
           setIdMessage("");
           console.log("message._id:"+data._id);
-          setIdMessage(data._id);
+          setIdMessage(data._id);//bandera para indicar que se edita este id de mensaje
           console.log("message.message:"+data.message);
           console.log("message.group:"+data.group);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
@@ -520,8 +520,9 @@ export function GroupForm(props) {
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
           console.log("message.type:"+data.type);
           
-    
-         await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
+          
+         //await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
+         await groupMessageController.deleteMessageLocal(accessToken , groupId , "", tipoCifrado,data._id,idAPPEmail );
          setIdMessage("");
           
         });
@@ -556,21 +557,25 @@ export function GroupForm(props) {
        //llamada normal, NUEVO mensaje
        if(idMessage==""){
        
-        //if replyMessage is null, then it's a normal message
-        //else it's a reply
-        console.log("===========input sendText::::::::::::::::::::::::=============")
-        console.log(accessToken);
-        console.log(groupId);
-        console.log(formValue.message);
-        console.log(tipoCifrado);
-        console.log(replyMessage);
-        //await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
-        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage,idAPPEmail );
+            //if replyMessage is null, then it's a normal message
+            //else it's a reply
+            console.log("===========input sendText::::::::::::::::::::::::=============")
+            console.log(accessToken);
+            console.log(groupId);
+            console.log(formValue.message);
+            console.log(tipoCifrado);
+            console.log(replyMessage);
+            //await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
+            await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage,idAPPEmail );
+
        }else{
-        //edicion de mensaje
-        setIdMessage("");
-        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
+            //EDICION de mensaje!!!
+            setIdMessage("");
+           // await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
+            await groupMessageController.sendTextEditadoLocal(accessToken , groupId , formValue.message , tipoCifrado,idMessage,idAPPEmail );
        }
+
+
        setFocusInput(false);
        setReplyMessage(null);
 
