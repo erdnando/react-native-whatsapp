@@ -58,12 +58,18 @@ const state$ = observable({
     user  :"", 
     message  :"", 
     type  :"", 
-    tipo_cifrado  :"", 
+    tipo_cifrado  :"",
+    email_replied:"",
+    message_replied:"",
+    tipo_cifrado_replied:"", 
     forwarded  :"", 
     createdAt  :"", 
     updatedAt  :"",
     file64  :""
-  }]
+  }],
+  flags:{
+    cifrado:true,
+  },
 });
 
 export default state$;

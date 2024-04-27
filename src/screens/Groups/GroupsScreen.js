@@ -114,8 +114,8 @@ export function GroupsScreen() {
 
           setGroups(result);
           setGroupsResult(result);
-          console.log("getAllLocal:::::::::::::::::::::::::::::::::::::::::::")
-          console.log(result)
+          //console.log("getAllLocal:::::::::::::::::::::::::::::::::::::::::::")
+          //console.log(result)
 
         } catch (error) {
           console.error(error);

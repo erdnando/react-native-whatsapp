@@ -10,6 +10,7 @@ import { ENV, socket,Decrypt,Encrypt } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
+import * as statex$ from '../../state/local.js'
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -24,64 +25,88 @@ export function GroupScreen() {
 
   //EventListener:: decifra mensajes
   useEffect(() => {
-    console.log("groupId:::::::::::::::::::::::::::::::::::")
-    console.log(groupId)
+    //console.log("groupId:::::::::::::::::::::::::::::::::::")
+    //console.log(groupId)
   
-  
+      //ok revisado
        const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
          
               try {
-               
-                (async () => {
-                  console.log("setCifrado por evento:::"+ isCypher);
+              
+               // (async () => {
+                  console.log("cifrado candadito:"+ isCypher);
                   //setCryptMessage(data);
-                  await authController.setCifrado(isCypher);
+                  //await authController.setCifrado(isCypher);
+                  statex$.default.flags.cifrado.set(isCypher);
 
                   try {
                    // const response = await groupMessageController.getAll(accessToken, groupId);
+                   //recupero msg del grupo seleccionado
                     const response = await groupMessageController.getAllLocal(groupId);
+                    console.log(" con mensajes cifrados del grupo")
+                    console.log(response)
+
                    //==========================================
                     const unlockedMessages = response.messages;
                     //console.log(unlockedMessages);
 
                     if(isCypher=="NO"){
-                     // console.log("decifrando mensajes");
-                      unlockedMessages.map((msg) => {
-                        if(msg.type=="TEXT"){
-                            msg.message = Decrypt(msg.message,msg.tipo_cifrado);
-                            
-                            if(msg.email_replied != null){
-                              msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
-                            }
-                        }
-                       
-                      });
+                      // console.log("decifrando mensajes");
+                        unlockedMessages.map((msg) => {
+                         
+                          if(msg.type=="TEXT"){
+                              console.log("decifrando")
+                              console.log(msg.message)
+                              console.log("con")
+                              console.log(msg.tipo_cifrado)
+
+                              msg.message = Decrypt(msg.message, msg.tipo_cifrado);
+                              console.log("asi quedo:::")
+                              console.log(msg.message)
+                              
+                              if(msg.email_replied != null){ 
+                                msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+                              }
+
+                          
+                          }
+                        
+                        });
+
                     }else{
-                      unlockedMessages.map((msg) => {
-                        if(msg.type=="IMAGE"){
-                          msg.message = "images/cryptedImagex.png";
-                        }
-                        if(msg.type=="FILE"){
-                          msg.message = "images/cryptedImagex.png";
-                        }
-                       
-                      });
+                        unlockedMessages.map((msg) => {
+                          /*if(msg.type=="TEXT"){
+                            msg.message = Encrypt(msg.message, msg.tipo_cifrado);
+                          }*/
+                          if(msg.type=="IMAGE"){
+                            msg.message = "images/cryptedImagex.png";
+                          }
+                          if(msg.type=="FILE"){
+                            msg.message = "images/cryptedImagex.png";
+                          }
+                        
+                        });
+
                     }
                   
                     //==========================================
-                    console.log("setting mensajes");
+                    //console.log("setting mensajes");
                     //console.log(unlockedMessages);
                    // console.log("===============================");
                    // setMessages(unlockedMessages);
+
                    setMessages([]);
                     setMessages( unlockedMessages);
+
+                    console.log("unlockedMessages")
+                    console.log(unlockedMessages)
                     unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
                   } catch (error) {
                     console.log("Error 1")
                     console.error(error);
                   }
-                })();
+               // })();
               } catch (error) {
                 console.log("Error 3")
                 console.error(error);
@@ -114,50 +139,59 @@ export function GroupScreen() {
   //subscribe sockets
   useEffect(() => {
     socket.emit("subscribe", groupId.toString());
-    socket.on("message", newMessage);
+    //console.log("subscrito al grupo"+ groupId)
+    //socket.on("message", newMessage);
+    socket.on("message", newMessageLocal);
     socket.on("reloadmsgs", getAllMessages);
 
     return () => {
       socket.emit("unsubscribe", groupId.toString());
-      socket.off("message", newMessage);
+      //socket.off("message", newMessage);
+      socket.off("message", newMessageLocal);
       socket.off("reloadmsgs", getAllMessages);
     };
-  }, [groupId, messages]);
+  }, [groupId,messages]); 
 
 
   //get all messages
   const getAllMessages = () => {
-    console.log("reloading message:::GroupScreen");
+  //console.log("reloading message:::GroupScreen");
+    console.log("getAllMessages::::::::::::::::::::::::::::::::::");
+
+  
     //=================================================================================
     (async () => {
       try {
-        const cifrados = await authController.getCifrado(); 
-        console.log("cifrados");
-        console.log(cifrados);
+        //const cifrados = await authController.getCifrado(); 
+        const cifrado = statex$.default.flags.cifrado.get();
+      
+        console.log("cifrado");
+        console.log(cifrado);
 
         //const response = await groupMessageController.getAll(accessToken, groupId.toString());
-        const response = await groupMessageController.getAllLocal(accessToken, groupId.toString());
+        const response = await groupMessageController.getAllLocal(groupId.toString());
         console.log("response all messages::::::::::::::::::")
         console.log(response)
 
-        if(cifrados=="SI"){
+        
+
+        if(cifrado=="SI"){
           //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
           const lockedMessages = response.messages;
           lockedMessages.map((msg) => {
               if(msg.type=="IMAGE"){
-                console.log("=====imagen=========")
-                console.log(msg.message)
+                //console.log("=====imagen=========")
+                //console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
 
               if(msg.type=="FILE"){
-                console.log("=====file=========")
-                console.log(msg.message)
+                //console.log("=====file=========")
+                //console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
 
             });
-
             setMessages(lockedMessages);
         }else{
           //=======================Decifra los mensajes=======================================================
@@ -175,14 +209,11 @@ export function GroupScreen() {
               }
              
             });
+
             setMessages([]);
             setMessages(unlockedMessages);
 
-            //here  sound because edited it
-            console.log("playing audio................newmsg1");
-
-            
-
+           
             const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
             await sound.playAsync();
             /*try {
@@ -207,19 +238,86 @@ export function GroupScreen() {
 
     return async () => {
      // const response = await groupMessageController.getAll(accessToken, groupId.toString() 
-      const response = await groupMessageController.getAllLocal(groupId.toString() 
-    );
+      const response = await groupMessageController.getAllLocal(groupId.toString());
 
       unreadMessagesController.setTotalReadMessages(groupId.toString(), response.total);
     };
-   //=================================================================================
-
-
-  
+   
   };
 
   //when newMessage is required, call this instruction
-  const newMessage = (msg) => {
+  const newMessageLocal = (msgNew) => {
+   
+    console.log("2.-receiving crypted message....");
+    console.log(msgNew);
+    console.log("=========================================");
+
+    (async () => {
+      const arrMessageGrupo = statex$.default.groupmessages.get();
+      //agregando nuevo msg
+      statex$.default.groupmessages.set((arrMessageGrupo) => [...arrMessageGrupo, msgNew]);
+      console.log("3.-adding as it is, to state groupmessages....");
+
+      let msg = { ...msgNew }
+     
+      //console.log("identificando nuevo local mensaje:::::")
+      //console.log("===========================================")
+      //console.log(msg);
+      //console.log("===========================================")
+      //============Always decifra mensaje======================
+    
+
+      if(msg.type=="TEXT"){
+
+
+
+          msg.message=Decrypt(msg.message, msg.tipo_cifrado); //<-------------------AQUI
+
+
+            if(msg.email_replied != null){
+                console.log("entro a message replied section")
+                msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+
+                //find message original and decryp it on message array
+                try{
+                  messages.map((msgx) => {
+                      if( Decrypt(msgx.message,msgx.tipo_cifrado) == msg.message_replied){
+                          msgx.message = msg.message_replied;
+                      }
+                  });
+                  setMessages(messages);
+                }catch(error){
+                  console.log("error al validar xxx local")
+                }
+            }
+            //here  sound
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
+            await sound.playAsync();
+      }
+
+      //const cifrados = await authController.getCifrado(); 
+      const cifrado = statex$.default.flags.cifrado.get();
+     
+      if(cifrado=="SI"){
+        //setCryptMessage(true);
+        if(msg.type=="TEXT"){
+          msg.message=Encrypt(msg.message.toString(), msg.tipo_cifrado);
+        }else{ //img or filr
+          msg.message = "images/cryptedImagex.png";
+        }
+      }
+
+     
+      setMessages([...messages, msg]);
+
+     
+    })();
+
+
+   
+  };
+
+  /*const newMessage = (msg) => {
    
     (async () => {
 
@@ -247,7 +345,7 @@ export function GroupScreen() {
             }
            
           });
-          setMessages(messages);
+          setMessages(messages);//no
         }catch(error){
           console.log("error al validar xxx")
         }
@@ -259,14 +357,8 @@ export function GroupScreen() {
       await sound.playAsync();
       
     }
-    /*if(msg.type=="FILE"){
-      msg.message = "images/cryptedImagex.png";
-    }*/
+   
     //==================================================
-
-
-
-
 
       const cifrados = await authController.getCifrado(); 
 
@@ -280,14 +372,14 @@ export function GroupScreen() {
         }
       }
      
-      setMessages([...messages, msg]);
+      setMessages([...messages, msg]);//no
 
      
     })();
 
 
    
-  };
+  };*/
 
   if (!messages) return <LoadingScreen />;
 

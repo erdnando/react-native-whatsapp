@@ -223,8 +223,8 @@ export class Auth {
    const nip ="A"+randomNumber
    const nipCifrado =MD5method("A"+randomNumber).toString();
    
-   console.log("nip registrado::::::::::::::::"+ nip)
-   console.log("nipCifrado registrado::::::::::::::::"+ nipCifrado)
+   //console.log("nip registrado::::::::::::::::"+ nip)
+   //console.log("nipCifrado registrado::::::::::::::::"+ nipCifrado)
    //================================================================
 
     try {

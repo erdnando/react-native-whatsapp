@@ -21,7 +21,7 @@ export function GroupForm(props) {
 
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const { accessToken,user } = useAuth();
+  const { accessToken,user,idAPPEmail } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
   const [focusInput, setFocusInput] = useState(false);
@@ -98,9 +98,6 @@ export function GroupForm(props) {
     const getAudioPerm = await Audio.requestPermissionsAsync();
     SetAudioPermission(getAudioPerm.granted);
   };
-
-
-
  
 //=======================================================================================
   // Function to start recording
@@ -348,7 +345,7 @@ export function GroupForm(props) {
   useEffect(() => {
         //=================================================================
         const eventLoading = EventRegister.addEventListener("loadingEvent", async data=>{
-          console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
+          //console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
           setIsLoading(data);    
 
           setFocusInput(false);
@@ -542,6 +539,7 @@ export function GroupForm(props) {
   
   
   //formik definition & onsubmit
+  //SEND Message
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: validationSchema(),
@@ -554,20 +552,20 @@ export function GroupForm(props) {
        
         console.log("idMessage:::::::")
         console.log(idMessage)
-        //process();
-       //Envio de mensajes
-      // console.log("tipo cifrado::"+tipoCifrado);
-       
+     
+       //llamada normal, NUEVO mensaje
        if(idMessage==""){
-        //llamada normal, nuevo mensaje
-        //replyMessage==null if you like a normal message
-
-        console.log("===========sending replied=============")
-        console.log(replyMessage);
-        console.log("=======================================")
+       
         //if replyMessage is null, then it's a normal message
         //else it's a reply
-        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
+        console.log("===========input sendText::::::::::::::::::::::::=============")
+        console.log(accessToken);
+        console.log(groupId);
+        console.log(formValue.message);
+        console.log(tipoCifrado);
+        console.log(replyMessage);
+        //await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
+        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage,idAPPEmail );
        }else{
         //edicion de mensaje
         setIdMessage("");
@@ -589,7 +587,7 @@ export function GroupForm(props) {
     },
   });
 
-  console.log("isloading::::::::::::::::::::::::::::::::::::::::::::::::::;"+isLoading)
+  
   if(isLoading){
   return (<View style={{position: "absolute",top:0,
             width: "100%",
@@ -607,26 +605,27 @@ export function GroupForm(props) {
   return (
     <View style={[ { bottom: keyboardHeight }]}>
 
-       
       {/*reply message section just as a reference to see what would you send*/}
       <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
-        </Text>
+      </Text>
+
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     
-    {/*recording reference*/}
+      {/*recording reference*/}
       <View display={IsRecording?"flex":"none"} style={{flexDirection:'row-reverse', marginRight:52,width:'90%' ,backgroundColor:'black',padding:10 }}>
         
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="record-rec" style={styles.iconRecording} /> } /> 
       </View>
       
       {/*section to select chyper mode, input and other options ie send media*/}
-       <View style={styles.content}>
+      {/*INPUT CHAT Section!!!!!!!!!*/}
+      <View style={styles.content}>
          {/* cboCrypto select */}
           <Select display={IsRecording?"none":"flex"} borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
@@ -636,6 +635,7 @@ export function GroupForm(props) {
               <Select.Item label="RCA" value="RCA" />
               <Select.Item label="RAB" value="RABBIT" />
           </Select>
+
           {/* Text message chat*/}
           <View display={IsRecording?"none":"flex"} style={styles.inputContainer}>
 

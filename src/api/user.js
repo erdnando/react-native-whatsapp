@@ -77,8 +77,8 @@ async updateUserLocal(idAPPEmail, userData) {
 }
 
 async updateUserNIPLocal(idAPPEmail, userData) {
-      console.log("nip recibido")
-      console.log(userData)
+     // console.log("nip recibido")
+     // console.log(userData)
 
       const arrUsers = statex$.default.user.get();
 
@@ -90,9 +90,9 @@ async updateUserNIPLocal(idAPPEmail, userData) {
 
       statex$.default.user.set(arrUsersUpdated);
       //============================================
-      console.log("=========Updating NIP ====================")
-      console.log(statex$.default.user.get());
-      console.log("==========================================")
+     // console.log("=========Updating NIP ====================")
+     // console.log(statex$.default.user.get());
+      //console.log("==========================================")
 
       //get nip hashed
       const nipCifrado = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, userData );
@@ -106,9 +106,9 @@ async updateUserNIPLocal(idAPPEmail, userData) {
       statex$.default.user.set(arrUsersUpdatedNIP);
       //============================================
 
-      console.log("=========Updating password================")
-      console.log(statex$.default.user.get());
-      console.log("==========================================")
+      //console.log("=========Updating password================")
+      //console.log(statex$.default.user.get());
+      //console.log("==========================================")
 }
 
   async updateUser(accessToken, userData) {

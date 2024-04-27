@@ -9,6 +9,7 @@ import { styles } from "./HeaderGroup.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Modal,FormControl,Input,Button } from "native-base";
 import { EventRegister } from "react-native-event-listeners"; 
+import * as statex$ from '../../../state/local.js'
 
 const userController = new User();
 const groupController = new Group();
@@ -29,7 +30,8 @@ export function HeaderGroup(props) {
   useEffect(() => {
 
     (async () => {
-       const cifrado = await authController.getCifrado();
+       //const cifrado = await authController.getCifrado();
+       const cifrado = statex$.default.flags.cifrado.get();
        if(cifrado=="SI"){
         setLock(true);
        }else{
@@ -57,27 +59,28 @@ export function HeaderGroup(props) {
   };
 
   const validateNIP = async () => {
-    console.log("======validating NIP==================");
+    //console.log("======validating NIP==================");
     
     //call api to validate nip 
    // const response = await userController.getMe(accessToken);
     const response = await userController.getMeLocal(idAPPEmail);
     
-    console.log("user :::::");
-    console.log(response);
+    //console.log("user :::::");
+    //console.log(response);
 
-    console.log("nip raw");
-    console.log(nip);
-    console.log("nip ingresado MD5");
-    console.log(MD5method(nip).toString());
-    console.log("response.nip")
-    console.log(response.nip)
+    //console.log("nip raw");
+    //console.log(nip);
+    //console.log("nip ingresado MD5");
+    //console.log(MD5method(nip).toString());
+    //console.log("response.nip")
+    //console.log(response.nip)
 
     //if(MD5method(nip.toString()) == response.nip){
     if(nip == response.nip){
-      console.log("NIP OK");
+      //console.log("NIP OK");
       //if, it is ok, unlock messages, reloading them
-      await authController.setCifrado("NO");
+      //await authController.setCifrado("NO");
+      statex$.default.flags.cifrado.set("NO");
       EventRegister.emit("setCifrado","NO");
       setLock(false);
      
@@ -85,12 +88,13 @@ export function HeaderGroup(props) {
 
     }else{
       //else, show an error message
-      await authController.setCifrado("SI");
+      //await authController.setCifrado("SI");
+      statex$.default.flags.cifrado.set("SI");
       EventRegister.emit("setCifrado","SI");
       setLock(true);
       
       setTituloModal("NIP Incorrecto!");
-      console.log("NIP Incorrecto");
+      //console.log("NIP Incorrecto");
     }
    
     

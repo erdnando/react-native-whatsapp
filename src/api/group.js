@@ -37,12 +37,12 @@ export class Group {
 
   //createGpoLocal(idAPPEmail, user._id, usersId, name,image)
   async createGpoLocal(idAPPEmail, creatorId, usersId, name) {
-    console.log("creando grupo local ::::::::::::::::::::::::::::::")
-    console.log(idAPPEmail)
-    console.log(creatorId)
-    console.log(usersId)
-    console.log(name)
-    console.log("::::::::::::::::::::::::::::::")
+    //console.log("creando grupo local ::::::::::::::::::::::::::::::")
+    //console.log(idAPPEmail)
+    //console.log(creatorId)
+    //console.log(usersId)
+    //console.log(name)
+    //console.log("::::::::::::::::::::::::::::::")
 
     const arrGroups = statex$.default.groups.get();
     const arrUsers = statex$.default.user.get();
@@ -100,8 +100,8 @@ export class Group {
     db.transaction(tx =>{
       tx.executeSql('INSERT INTO groups (_id, name , participants , creator , image , image64  ) values (?,?,?,?,?,?)', [_id, name, JSON.stringify(participantes), creatorId,'group/group1.png',''],
       (txObj,resulSet) =>{
-        console.log("Inserting user......");
-        console.log(resulSet);
+        //console.log("Inserting user......");
+        //console.log(resulSet);
 
       },
       (txtObj,error)=> console.log(error),
@@ -152,14 +152,14 @@ export class Group {
 
   getAllLocal(idAPPEmail) {
 
-    console.log("ARMANDO JSON ALL GROUPS:::::::::::::::::::::::::::");
-    console.log("idAPPEmail");
-    console.log(idAPPEmail);
-    console.log("estado final");
-    console.log("USUARIOS:::::::::::::::::::::::::::");
-    console.log(statex$.default.user.get());
-    console.log("GRUPOS:::::::::::::::::::::::::::");
-    console.log(statex$.default.groups.get());
+    //console.log("ARMANDO JSON ALL GROUPS:::::::::::::::::::::::::::");
+    //console.log("idAPPEmail");
+    //console.log(idAPPEmail);
+    //console.log("estado final");
+    //console.log("USUARIOS:::::::::::::::::::::::::::");
+    //console.log(statex$.default.user.get());
+    //console.log("GRUPOS:::::::::::::::::::::::::::");
+    //console.log(statex$.default.groups.get());
 
     //a20b82e7-a35f-4de1-9eb9-3c4ac26432f2
     const arrGroups = statex$.default.groups.get();
@@ -171,8 +171,8 @@ export class Group {
     //1.- Recorre lista de grupos
     arrGroups.forEach( (grupo) => {
 
-      console.log("participants:::" + grupo.name)
-      console.log(grupo.participants)
+      //console.log("participants:::" + grupo.name)
+      //console.log(grupo.participants)
 
 
 
@@ -182,19 +182,19 @@ export class Group {
       });
 
       if(arrP.length>0){
-        console.log("Participante encontrado:::")
-        console.log(arrP)
+        //console.log("Participante encontrado:::")
+        //console.log(arrP)
 
         const creatorx = arrUsers.filter(function (c) {
           return c.email == idAPPEmail;
         });
 
-        console.log("creator")
-        console.log(creatorx)
+        //console.log("creator")
+        //console.log(creatorx)
 
         const participantes = grupo.participants;
-        console.log("participantes")
-        console.log(participantes)
+        //console.log("participantes")
+        //console.log(participantes)
         //grupo
         //creator
 
@@ -213,8 +213,8 @@ export class Group {
 
     });
 
-      console.log("gruposDondeParticipa::::::::::::::::::::")
-      console.log(gruposDondeParticipa)
+     // console.log("gruposDondeParticipa::::::::::::::::::::")
+    //  console.log(gruposDondeParticipa)
     return gruposDondeParticipa;
 
     
@@ -231,8 +231,8 @@ export class Group {
     return p._id == groupId;
   });
 
-  console.log("arrGpofiltrado:::::")
-  console.log(arrGpofiltrado)
+  //console.log("arrGpofiltrado:::::")
+  //console.log(arrGpofiltrado)
 
    return arrGpofiltrado[0];
 }
@@ -248,7 +248,7 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-      console.log(groupId);
+      //console.log(groupId);
       if (response.status !== 200) throw result;
 
       return result;

@@ -85,14 +85,15 @@ export function AuthProvider(props) {
 
         //==================================================================================================
         //==================================================================================================
-        console.log("on init:::::");   
+        console.log("on init, limpiando tablas:::::");   
         statex$.default.user.set([]);
         statex$.default.groups.set([]);
+        statex$.default.groupmessages.set([]);
 
             //get UUID
             const idApp = "a20b82e7-a35f-4de1-9eb9-3c4ac26432f2";//Constants.installationId;
 
-            console.log("idApp:" + idApp);
+            //console.log("idApp:" + idApp);
             //=====1=================================================================
             //const userRegistrado = await authController.login(idApp, idApp  );
             const arrUsers =authController.loginLocal( idApp );
@@ -108,7 +109,7 @@ export function AuthProvider(props) {
                 
               
                 //if it's not registered, registered it
-                console.log("Registrando:" + idApp);
+               // console.log("Registrando:" + idApp);
                 
                 //=====2=================================================================
                 //await authController.register(idApp, idApp);
@@ -150,8 +151,8 @@ export function AuthProvider(props) {
                 //show alert with initial NIP
                 await authController.setInitial("1");
                 //1a vez, bandera de mensajes cifrados
-                await authController.setCifrado("SI");
-                
+                //await authController.setCifrado("SI");
+                statex$.default.flags.cifrado.set("SI");
                 
               // await login(token);
                 //console.log("userArr[0]:::::");
@@ -178,7 +179,7 @@ export function AuthProvider(props) {
               }
               
             }else{
-              console.log("Accessing directly");
+              //console.log("Accessing directly");
               await authController.setInitial("0");
               //siempre cifrados cuando entra
               await authController.setAccessToken(token);
@@ -189,7 +190,7 @@ export function AuthProvider(props) {
              // console.log(arrUsers[0]);
 
               //onsole.log("token:::::");
-              console.log(token);
+              //console.log(token);
 
               setUser(arrUsers[0]);
               setIdAppEmail(idApp);
@@ -230,7 +231,7 @@ export function AuthProvider(props) {
       setLoading(true);
 
       const response = await userController.getMe(token);
-      console.log(response);
+      //console.log(response);
       setUser(response);
       setToken(token);
 

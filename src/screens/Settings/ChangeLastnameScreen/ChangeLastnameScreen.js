@@ -26,8 +26,8 @@ export function ChangeLastnameScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
-        console.log("setting updated nip:::::");
-        console.log(formValue.nip);
+        //console.log("setting updated nip:::::");
+        //console.log(formValue.nip);
         //await userController.updateUser(accessToken, formValue);
         await userController.updateUserNIPLocal(idAPPEmail, formValue.nip);
 

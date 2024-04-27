@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
+import * as statex$ from '../../../../state/local.js'
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
 
@@ -152,7 +153,8 @@ export function ItemFile(props) {
   
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
-      const cifrado = await authController.getCifrado();
+      //const cifrado = await authController.getCifrado();
+      const cifrado = statex$.default.flags.cifrado.get();
       //console.log("cifrado image item:::::"+cifrado);
       if(cifrado=="SI"){
         setWidth(120);

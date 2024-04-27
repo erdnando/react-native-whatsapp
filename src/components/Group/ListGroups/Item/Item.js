@@ -33,8 +33,8 @@ export function Item(props) {
       try {
         //const totalMessages = await groupMessageController.getTotal(accessToken,group._id);
         const totalMessages = groupMessageController.getTotalLocal(group._id);
-        console.log("grupo messages recuperados:::::::::::::::::");
-        console.log(totalMessages);
+        //console.log("grupo messages recuperados:::::::::::::::::");
+       // console.log(totalMessages);
       
 
         const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id);
@@ -48,12 +48,12 @@ export function Item(props) {
 
         //=================================================================
         const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-          console.log("group list updated...");
+         // console.log("group list updated...");
         
               try {
                 const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id );
                 setTotalMembers(totalParticipants);
-                console.log("group and groupResult updated...");
+               // console.log("group and groupResult updated...");
               } catch (error) {
                 console.error(error);
               }
@@ -77,8 +77,8 @@ export function Item(props) {
     (async () => {
       try {
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
-        console.log("===========================");
-        console.log(response);
+        //console.log("===========================");
+       // console.log(response);
         if (!isEmpty(response)) setLastMessage(response);
       } catch (error) {
         console.error(error);
@@ -89,19 +89,20 @@ export function Item(props) {
   //send message to socket IO
   useEffect(() => {
     socket.emit("subscribe", `${group._id}_notify`);
+    
     socket.on("message_notify", newMessage);
   }, []);
 
 
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
-    console.log("new cypher message:::item");
-    console.log(newMsg);
+    //console.log("new cypher message:::item");
+    //console.log(newMsg);
 
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
-        console.log("setting last message");
+        //console.log("setting last message");
 
         
         setLastMessage(newMsg);
@@ -115,7 +116,7 @@ export function Item(props) {
   };
 
   const  openGroup = async () => {
-    console.log("openning group.."+ "'"+group._id+"'" );
+   // console.log("openning group.."+ "'"+group._id+"'" );
     
     setTotalUnreadMessages(0);
 

@@ -6,8 +6,7 @@ import { styles } from "./ListGroups.styles";
 export function ListGroups(props) {
   const { groups, upGroupChat } = props;
   
-  console.log("listado de grupos::::::::::::::::::::::::")
-console.log(groups)
+ 
   return (
     <ScrollView alwaysBounceVertical={false}>
       <View style={styles.content}>
