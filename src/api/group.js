@@ -1,8 +1,4 @@
 import { ENV } from "../utils";
-import * as SQLite from 'expo-sqlite';
-import * as statex$ from '../state/local.js'
-import { Types } from 'mongoose';
-import { array } from "yup";
 
 export class Group {
 
@@ -34,38 +30,6 @@ export class Group {
     }
   }
 
-
-  //createGpoLocal(idAPPEmail, user._id, usersId, name,image)
-  async createGpoLocal(idAPPEmail, creatorId, usersId, name) {
-    //console.log("creando group local ::::::::::::::::::::::::::::::")
-    //console.log(idAPPEmail)
-    //console.log(creatorId)
-    //console.log(usersId)
-    //console.log(name)
-    //console.log("::::::::::::::::::::::::::::::")
-
-    const arrGroups = statex$.default.groups.get();
-    const arrUsers = statex$.default.user.get();
-
-    const participante1 = arrUsers.filter(function (c) {
-      return c.email == idAPPEmail;
-    });
-
-    const newGrupo = {
-      _id :  new Types.ObjectId(),
-      name  : name, 
-      participants  :participante1, 
-      creator  : creatorId, 
-      image  : "group/group1.png", 
-      image64  : ""
-    };
-
-    statex$.default.groups.set((arrGroups) => [...arrGroups, newGrupo]);
-
-    console.log("listado de grupos")
-    console.log(statex$.default.groups.get())
-  }
-
   async createAuto(accessToken, creatorId, usersId, name, image) {
     try {
       const formData = new FormData();
@@ -83,7 +47,11 @@ export class Group {
         body: formData,
       };
 
+      console.log("creacion automatica dle grupo")
       const response = await fetch(url, params);
+      console.log("response creacion automatica")
+      console.log(response)
+
       const result = await response.json();
 
       if (response.status !== 201) throw result;
@@ -92,45 +60,6 @@ export class Group {
     } catch (error) {
       throw error;
     }
-  }
-
-  async createAutodb(creatorId, usersId, name, db) {
-
-   
-    //groups (_id TEXT PRIMARY KEY,name TEXT, participants TEXT, creator TEXT, image TEXT, image64 TEXT)
-    const participantes=[usersId];
-    
-    db.transaction(tx =>{
-      tx.executeSql('INSERT INTO groups (_id, name , participants , creator , image , image64  ) values (?,?,?,?,?,?)', [_id, name, JSON.stringify(participantes), creatorId,'group/group1.png',''],
-      (txObj,resulSet) =>{
-        //console.log("Inserting user......");
-        //console.log(resulSet);
-
-      },
-      (txtObj,error)=> console.log(error),
-      )
-    });
-
-  
-  }
-
-  async createAutoLocal(creatorId, usersId, name,participante1) {
-
-   
-    const arrGroups = statex$.default.groups.get();
-
-    const newGrupo = {
-      _id :  new Types.ObjectId(),
-      name  : name, 
-      participants  :participante1, 
-      creator  : creatorId, 
-      image  : "group/group1.png", 
-      image64  : ""
-    };
-
-    statex$.default.groups.set((arrGroups) => [...arrGroups, newGrupo]);
-
-  
   }
 
   async getAll(accessToken) {
@@ -153,89 +82,6 @@ export class Group {
     }
   }
 
-  getAllLocal(idAPPEmail) {
-
-    //console.log("ARMANDO JSON ALL GROUPS:::::::::::::::::::::::::::");
-    //console.log("idAPPEmail");
-    //console.log(idAPPEmail);
-    //console.log("estado final");
-    //console.log("USUARIOS:::::::::::::::::::::::::::");
-    //console.log(statex$.default.user.get());
-    //console.log("GRUPOS:::::::::::::::::::::::::::");
-    //console.log(statex$.default.groups.get());
-
-    //a20b82e7-a35f-4de1-9eb9-3c4ac26432f2
-    const arrGroups = statex$.default.groups.get();
-    const arrUsers = statex$.default.user.get();
-
-    let gruposDondeParticipa=[];
-
-
-    //1.- Recorre lista de grupos
-    arrGroups.forEach( (group) => {
-
-      
-      //2.- Por cada grupo, busca en su lista de participantes coincidencia
-     const arrP = (group.participants).filter(function (p) {
-        return p.email == idAPPEmail;
-      });
-
-      if(arrP.length>0){
-        //console.log("Participante encontrado:::")
-        //console.log(arrP)
-
-        const creatorx = arrUsers.filter(function (c) {
-          return c.email == idAPPEmail;
-        });
-
-        //console.log("creator")
-        //console.log(creatorx)
-
-        const participantes = group.participants;
-        //console.log("participantes")
-        //console.log(participantes)
-        //group
-        //creator
-
-        const newGpoRespuesta={
-          _id: group._id,
-          name: group.name,
-          participants: participantes,
-          creator: creatorx[0],
-          image: "group/group1.png",
-          __v: 0,
-          last_message_date: null
-        };
-
-        gruposDondeParticipa.push(newGpoRespuesta)
-      }
-
-    });
-
-     // console.log("gruposDondeParticipa::::::::::::::::::::")
-    //  console.log(gruposDondeParticipa)
-    return gruposDondeParticipa;
-
-    
-  }
-
-  //==================================================================================================================
-
-  async obtainGpoLocal(idAPPEmail, groupId) {
-   
-    const arrGroups = statex$.default.groups.get();
-   // const arrUsers = statex$.default.user.get();
-
-   const arrGpofiltrado = (arrGroups).filter(function (p) {
-    return p._id == groupId;
-  });
-
-  //console.log("arrGpofiltrado:::::")
-  //console.log(arrGpofiltrado)
-
-   return arrGpofiltrado[0];
-}
-
   async obtain(accessToken, groupId) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}/${groupId}`;
@@ -247,7 +93,7 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-      //console.log(groupId);
+      console.log(groupId);
       if (response.status !== 200) throw result;
 
       return result;

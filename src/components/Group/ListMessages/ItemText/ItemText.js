@@ -7,7 +7,8 @@ import { useAuth } from "../../../../hooks";
 import { styled } from "./ItemText.styles";
 import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
-import * as statex$ from '../../../../state/local.js'
+import { Decrypt,Encrypt } from "../../../../utils";
+
 
 
 const authController = new Auth();
@@ -15,9 +16,8 @@ const authController = new Auth();
 export function ItemText(props) {
 
   const { message } = props;
-  const { user,idAPPEmail } = useAuth();
-  //const isMe = user._id === message?.user._id;
-  const isMe = idAPPEmail=== message?.user.email;
+  const { user } = useAuth();
+  const isMe = user._id === message?.user._id;
   const styles = styled(isMe);
   const createMessage = new Date(message.createdAt);
   const updatedMessage = new Date(message.updatedAt);
@@ -34,7 +34,7 @@ export function ItemText(props) {
   const onEliminarMensaje = () => {
 
     setShowAdvertencia(false);
-    //console.log("eliminando message:::::::::::");
+    console.log("eliminando message:::::::::::");
                          
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
     setMensajeEliminar(null);
@@ -43,8 +43,12 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-    //console.log("message itemText:::::::::::::::::::::::::::::::::::::::")
-    //console.log(message)
+    
+   // if(message.forwarded){
+     // console.log("message.::::");
+    //  console.log(message);
+   // }
+    
     setForwarded(message.forwarded);
     
 
@@ -69,8 +73,7 @@ export function ItemText(props) {
 
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
-      //const cifrado = await authController.getCifrado();
-      const cifrado = statex$.default.flags.cifrado.get();
+      const cifrado = await authController.getCifrado();
      // console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
@@ -112,7 +115,7 @@ export function ItemText(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("responder message:::::::::::");
+                           //console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
@@ -131,7 +134,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("reenviando message:::::::::::");
+                           console.log("reenviando message:::::::::::");
                            EventRegister.emit("forwardingMessage",message);  //-->GroupForm
                         }}>
                     <View style={styles.contentMenuItem} >
@@ -149,7 +152,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("copiando message:::::::::::");
+                           console.log("copiando message:::::::::::");
                          
                            //set text message on the clipboard
                            Clipboard.setString(message.message);
@@ -169,7 +172,7 @@ export function ItemText(props) {
                     <Menu.Item display={isMe?'flex':'none'} style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("editando message:::::::::::");
+                           console.log("editando message:::::::::::");
                            EventRegister.emit("editingMessage",message);  //-->GroupForm
                         }}>
                     <View style={styles.contentMenuItem} >

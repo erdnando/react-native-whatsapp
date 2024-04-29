@@ -21,7 +21,7 @@ const unreadMessagesController = new UnreadMessages();
 
 export function Item(props) {
   const { group, upGroupChat } = props;
-  const { accessToken, user,idAPPEmail } = useAuth();
+  const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
@@ -31,15 +31,16 @@ export function Item(props) {
   useEffect(() => {
     (async () => {
       try {
-        //console.log("Item.js")
-        //console.log(group)
-        //const totalMessages = await groupMessageController.getTotal(accessToken,group._id);
-        const totalMessages = groupMessageController.getTotalLocal(group._id);
-        //console.log("grupo messages recuperados:::::::::::::::::");
-       // console.log(totalMessages);
+        const totalMessages = await groupMessageController.getTotal(
+          accessToken,
+          group._id
+        );
       
 
-        const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id);
+        const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+          accessToken,
+          group._id
+        );
         setTotalMembers(totalParticipants);
         
 
@@ -50,12 +51,15 @@ export function Item(props) {
 
         //=================================================================
         const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-         // console.log("group list updated...");
+          console.log("group list updated...");
         
               try {
-                const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id );
+                const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+                  accessToken,
+                  group._id
+                );
                 setTotalMembers(totalParticipants);
-               // console.log("group and groupResult updated...");
+                console.log("group and groupResult updated...");
               } catch (error) {
                 console.error(error);
               }
@@ -76,13 +80,11 @@ export function Item(props) {
 
   //getLastMessage
   useEffect(() => {
-   
     (async () => {
       try {
-       // console.log("getLatMessage::::::::::::::::::;")
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
-        //console.log("===========================");
-       // console.log(response);
+        console.log("===========================");
+        console.log(response);
         if (!isEmpty(response)) setLastMessage(response);
       } catch (error) {
         console.error(error);
@@ -92,56 +94,20 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
-    console.log("subscribe message_notify:::::::::::::::::::::::::;")
-    console.log(group._id)
     socket.emit("subscribe", `${group._id}_notify`);
-    
-    socket.on("message_notify", newMessageLocal);
+    socket.on("message_notify", newMessage);
   }, []);
-
-
-
-  //when newMessage is required, call this instruction
-  const newMessageLocal = async (newMsg) => {
-    console.log("newMessageLocal:::message_notify!!!!!");
-    console.log(newMsg?.group);//grupo destinatario al q pertenece el mensaje
-    console.log(group._id);//grupo originario
-   // console.log(user._id);
-    console.log("==================================")
-
-    
-    if (newMsg.group === group._id) {
-      //console.log("son iguales")
-      if (newMsg.user._id !== user._id) {
-
-        console.log("upGroupChat")
-        upGroupChat(newMsg.group);
-        //console.log("setting last message");
-
-        
-        setLastMessage(newMsg);
-
-        const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
-        console.log("grupo activo")
-        console.log(activeGroupId)
-
-        if (activeGroupId !== newMsg.group) {
-          setTotalUnreadMessages((prevState) => prevState + 1);
-        }
-      }
-    }
-  };
 
 
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
-    //console.log("new cypher message:::item");
-    //console.log(newMsg);
+    console.log("new cypher message:::item");
+    console.log(newMsg);
 
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
-        //console.log("setting last message");
+        console.log("setting last message");
 
         
         setLastMessage(newMsg);
@@ -155,11 +121,11 @@ export function Item(props) {
   };
 
   const  openGroup = async () => {
-    console.log("openning group.."+group._id);
+    console.log("openning group.."+group._id );
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id.toString() });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id });
   };
 
   return (

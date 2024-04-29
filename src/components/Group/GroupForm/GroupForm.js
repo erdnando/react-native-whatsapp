@@ -21,7 +21,7 @@ export function GroupForm(props) {
 
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const { accessToken,user,idAPPEmail } = useAuth();
+  const { accessToken,user } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
   const [focusInput, setFocusInput] = useState(false);
@@ -98,6 +98,9 @@ export function GroupForm(props) {
     const getAudioPerm = await Audio.requestPermissionsAsync();
     SetAudioPermission(getAudioPerm.granted);
   };
+
+
+
  
 //=======================================================================================
   // Function to start recording
@@ -302,27 +305,15 @@ export function GroupForm(props) {
 
   const handleForward= ()=>{
               
-      //console.log("sending msg into selected group:::::::::::");
-     // console.log(groups); //grupos seleccioandos en la lista de reenvio
+      console.log("sending msg into selected group:::::::::::");
+    
+      groups.map(async (msgx) => {
 
-      groups.map(async (gpoTarget) => {
-
-        if(gpoTarget.isSelected){
-          console.log("forwardMessage-->")
+        if(msgx.isSelected){
+          console.log("-->")
           console.log(forwardMessage)
-          console.log("Grupo destino-->")
-          console.log(gpoTarget)
-
-          console.log("===========input sendText reenviado::::::::::::::::::::::::=============")
-          console.log(accessToken);
-          console.log(gpoTarget._id);
-          console.log("reenviado::"+forwardMessage.message);
-          console.log(forwardMessage.tipo_cifrado);
-          console.log(null);
-          console.log(idAPPEmail);
-
-            await groupMessageController.sendTextLocal(accessToken , gpoTarget._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null, idAPPEmail );
-
+          //TODO validat tipo cifrado, no llega l mensaje destino
+            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
              //here  sound
       const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
       await sound.playAsync();
@@ -357,7 +348,7 @@ export function GroupForm(props) {
   useEffect(() => {
         //=================================================================
         const eventLoading = EventRegister.addEventListener("loadingEvent", async data=>{
-          //console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
+          console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
           setIsLoading(data);    
 
           setFocusInput(false);
@@ -412,10 +403,7 @@ export function GroupForm(props) {
 
                   setForwardMessage(data);
                   //Get all messages
-                  //const response = await groupController.getAll(accessToken);
-                  const response = groupController.getAllLocal(idAPPEmail);
-                  console.log("response")
-                  console.log(response)
+                  const response = await groupController.getAll(accessToken);
         
                   const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
                     return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
@@ -493,12 +481,8 @@ export function GroupForm(props) {
         //=================================================================
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
           setIdMessage("");
-
-          console.log("editingMessage:");
-          console.log(data);
-          console.log("==============================");
           console.log("message._id:"+data._id);
-          setIdMessage(data._id);//bandera para indicar que se edita este id de mensaje
+          setIdMessage(data._id);
           console.log("message.message:"+data.message);
           console.log("message.group:"+data.group);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
@@ -539,9 +523,8 @@ export function GroupForm(props) {
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
           console.log("message.type:"+data.type);
           
-          
-         //await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
-         await groupMessageController.deleteMessageLocal(accessToken , groupId , "", tipoCifrado,data._id,idAPPEmail );
+    
+         await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
          setIdMessage("");
           
         });
@@ -559,7 +542,6 @@ export function GroupForm(props) {
   
   
   //formik definition & onsubmit
-  //SEND Message
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: validationSchema(),
@@ -572,30 +554,25 @@ export function GroupForm(props) {
        
         console.log("idMessage:::::::")
         console.log(idMessage)
-     
-       //llamada normal, NUEVO mensaje
-       if(idMessage==""){
+        //process();
+       //Envio de mensajes
+      // console.log("tipo cifrado::"+tipoCifrado);
        
-            //if replyMessage is null, then it's a normal message
-            //else it's a reply
-            console.log("===========input sendText::::::::::::::::::::::::=============")
-            console.log(accessToken);
-            console.log(groupId);
-            console.log(formValue.message);
-            console.log(tipoCifrado);
-            console.log(replyMessage);
-            console.log(idAPPEmail);
-            //await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
-            await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage,idAPPEmail );
+       if(idMessage==""){
+        //llamada normal, nuevo mensaje
+        //replyMessage==null if you like a normal message
 
+        console.log("===========sending replied=============")
+        console.log(replyMessage);
+        console.log("=======================================")
+        //if replyMessage is null, then it's a normal message
+        //else it's a reply
+        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
        }else{
-            //EDICION de mensaje!!!
-            setIdMessage("");
-           // await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
-            await groupMessageController.sendTextEditadoLocal(accessToken , groupId , formValue.message , tipoCifrado,idMessage,idAPPEmail );
+        //edicion de mensaje
+        setIdMessage("");
+        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
        }
-
-
        setFocusInput(false);
        setReplyMessage(null);
 
@@ -612,7 +589,7 @@ export function GroupForm(props) {
     },
   });
 
-  
+  console.log("isloading::::::::::::::::::::::::::::::::::::::::::::::::::;"+isLoading)
   if(isLoading){
   return (<View style={{position: "absolute",top:0,
             width: "100%",
@@ -630,27 +607,26 @@ export function GroupForm(props) {
   return (
     <View style={[ { bottom: keyboardHeight }]}>
 
+       
       {/*reply message section just as a reference to see what would you send*/}
       <Text display={replyMessage!=null?"flex":"none"} style={styles.identity}>
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
-      </Text>
-
+        </Text>
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     
-      {/*recording reference*/}
+    {/*recording reference*/}
       <View display={IsRecording?"flex":"none"} style={{flexDirection:'row-reverse', marginRight:52,width:'90%' ,backgroundColor:'black',padding:10 }}>
         
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="record-rec" style={styles.iconRecording} /> } /> 
       </View>
       
       {/*section to select chyper mode, input and other options ie send media*/}
-      {/*INPUT CHAT Section!!!!!!!!!*/}
-      <View style={styles.content}>
+       <View style={styles.content}>
          {/* cboCrypto select */}
           <Select display={IsRecording?"none":"flex"} borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
@@ -660,7 +636,6 @@ export function GroupForm(props) {
               <Select.Item label="RCA" value="RCA" />
               <Select.Item label="RAB" value="RABBIT" />
           </Select>
-
           {/* Text message chat*/}
           <View display={IsRecording?"none":"flex"} style={styles.inputContainer}>
 

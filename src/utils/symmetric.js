@@ -54,5 +54,3 @@ const MD5method = (word)=>{
 
 
 export {Encrypt,Decrypt,MD5method};
-
-

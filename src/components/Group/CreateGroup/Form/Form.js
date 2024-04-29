@@ -7,7 +7,7 @@ import { useFormik } from "formik";
 import * as ImagePicker from "expo-image-picker";
 import { Group } from "../../../../api";
 import { useAuth } from "../../../../hooks";
-import { imageExpoFormat,ENV } from "../../../../utils";
+import { imageExpoFormat } from "../../../../utils";
 import { initialValues, validationSchema } from "./Form.form";
 import { styles } from "./Form.styles";
 
@@ -16,7 +16,7 @@ const groupController = new Group();
 export function Form(props) {
   const { usersId } = props;
   const navigation = useNavigation();
-  const { accessToken, user,idAPPEmail } = useAuth();
+  const { accessToken, user } = useAuth();
 
   const formik = useFormik({
     initialValues: initialValues(),
@@ -25,8 +25,13 @@ export function Form(props) {
     onSubmit: async (formValue) => {
       try {
         const { name, image } = formValue;
-        //await groupController.create(accessToken, user._id, usersId, name,image);
-        await groupController.createGpoLocal(idAPPEmail, user._id, usersId, name);
+        await groupController.create(
+          accessToken,
+          user._id,
+          usersId,
+          name,
+          image
+        );
 
         navigation.goBack();
       } catch (error) {
@@ -64,11 +69,11 @@ export function Form(props) {
 
   return (
     <View style={styles.content}>
-      <Pressable >
+      <Pressable onPress={openGallery}>
         <Avatar
           bg="cyan.500"
           size="xl"
-          source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+          source={{ uri: formik.values.image.uri || null }}
           style={[styles.image, formik.errors.image && styles.imageError]}
         >
           <Icon
