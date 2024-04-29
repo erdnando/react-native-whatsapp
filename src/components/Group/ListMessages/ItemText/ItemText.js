@@ -112,7 +112,7 @@ export function ItemText(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("responder message:::::::::::");
+                           console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >

@@ -302,15 +302,27 @@ export function GroupForm(props) {
 
   const handleForward= ()=>{
               
-      console.log("sending msg into selected group:::::::::::");
-    
-      groups.map(async (msgx) => {
+      //console.log("sending msg into selected group:::::::::::");
+     // console.log(groups); //grupos seleccioandos en la lista de reenvio
 
-        if(msgx.isSelected){
-          console.log("-->")
+      groups.map(async (gpoTarget) => {
+
+        if(gpoTarget.isSelected){
+          console.log("forwardMessage-->")
           console.log(forwardMessage)
-          //TODO validat tipo cifrado, no llega l mensaje destino
-            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
+          console.log("Grupo destino-->")
+          console.log(gpoTarget)
+
+          console.log("===========input sendText reenviado::::::::::::::::::::::::=============")
+          console.log(accessToken);
+          console.log(gpoTarget._id);
+          console.log("reenviado::"+forwardMessage.message);
+          console.log(forwardMessage.tipo_cifrado);
+          console.log(null);
+          console.log(idAPPEmail);
+
+            await groupMessageController.sendTextLocal(accessToken , gpoTarget._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null, idAPPEmail );
+
              //here  sound
       const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
       await sound.playAsync();
@@ -400,7 +412,10 @@ export function GroupForm(props) {
 
                   setForwardMessage(data);
                   //Get all messages
-                  const response = await groupController.getAll(accessToken);
+                  //const response = await groupController.getAll(accessToken);
+                  const response = groupController.getAllLocal(idAPPEmail);
+                  console.log("response")
+                  console.log(response)
         
                   const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
                     return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
@@ -478,6 +493,10 @@ export function GroupForm(props) {
         //=================================================================
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
           setIdMessage("");
+
+          console.log("editingMessage:");
+          console.log(data);
+          console.log("==============================");
           console.log("message._id:"+data._id);
           setIdMessage(data._id);//bandera para indicar que se edita este id de mensaje
           console.log("message.message:"+data.message);
@@ -565,6 +584,7 @@ export function GroupForm(props) {
             console.log(formValue.message);
             console.log(tipoCifrado);
             console.log(replyMessage);
+            console.log(idAPPEmail);
             //await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
             await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage,idAPPEmail );
 

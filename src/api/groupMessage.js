@@ -9,8 +9,6 @@ import { Types } from 'mongoose';
 
 export class GroupMessage {
 
- 
-  
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
     try {
@@ -133,10 +131,14 @@ export class GroupMessage {
   }
 
   async getAllLocal(groupId) {
-    
+   // console.log("getAllLocal groupId")
+   // console.log(groupId)
+
     EventRegister.emit("loadingEvent",true);
 
     const arrGpoMsgs = statex$.default.groupmessages.get();
+    //console.log("arrGpoMsgs:::::::::")
+    //console.log(arrGpoMsgs)
     const arrUsers = statex$.default.user.get();
     let arrMessages=[];
 
@@ -146,11 +148,17 @@ export class GroupMessage {
     //console.log(statex$.default.groupmessages.get())
 
     const lstMessages = arrGpoMsgs.filter(function (gm) {
-      return gm.grupo.toString() == groupId;
+
+     // console.log("=============coincidencias==========")
+     // console.log(gm.group)
+     // console.log(groupId)
+     // console.log(gm.group === groupId)
+
+      return gm.group.toString() == groupId;
     });
 
-    console.log("coincidencias grupo:::::::::::::::")
-    console.log(lstMessages)
+   // console.log("coincidencias group:::::::::::::::")
+   // console.log(lstMessages)
    
 
       //1.- Recorre lista de grupos
@@ -165,9 +173,12 @@ export class GroupMessage {
 //// Encrypt(gm.message,gm.tipo_cifrado ), 
               const newMessage={
                 _id: gm._id,
-                group: gm.grupo,
+                group: gm.group,
                 user: userMessage[0],
                 message: gm.message, 
+                message_replied:gm.message_replied,
+                email_replied:gm.email_replied,
+                tipo_cifrado_replied:gm.tipo_cifrado_replied,
                 type: gm.type,
                 tipo_cifrado: gm.tipo_cifrado,
                 forwarded: gm.forwarded,
@@ -204,13 +215,13 @@ async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
  
     //REPLAYING CASE
     if(replyMessage!=null){
-      //console.log("cifrando 1")
+      console.log("replyMessage")
       //cifrando msg reenviado
-      replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
+      replyMessage.message = replyMessage?.message;//Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
     }
     //FORWARDING CASE
     if(message.startsWith("reenviado::")){
-      //console.log("reenviando msg:::::::::::::::::::::")
+      console.log("reenviando msg:::::::::::::::::::::")
       reenviado=true;
       message=message.replace("reenviado::","")
     }
@@ -260,12 +271,15 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
   EventRegister.emit("loadingEvent",true);
     let reenviado=false;
     
-    //console.log(message);
-    //console.log(tipoCifrado);
+    console.log("Enviando mensajes de texto");
+    console.log("tiene replyMessage?");
+    console.log(replyMessage);
 
  
     //REPLAYING CASE
     if(replyMessage!=null){
+      console.log("replyMessage::::::::::::::::::::::::::::::::::::::::::::::::::")
+      console.log(replyMessage)
       //console.log("cifrando 1")
       //cifrando msg reenviado
       replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
@@ -287,20 +301,21 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
     //Creating groupMessage
     const newGpoMessage={
       _id  :new Types.ObjectId(),
-      grupo  :groupId, 
+      group  :groupId, //grupo al q pertenece el mensaje
       user  :userFiltrado[0], 
       message  : Encrypt(message,tipoCifrado), 
       type  :"TEXT", 
       tipo_cifrado  :tipoCifrado, 
+      message_replied:replyMessage==null ? null :replyMessage?.message,
+      email_replied:replyMessage==null ? null :replyMessage?.user.email,
+      tipo_cifrado_replied:replyMessage==null ? null :replyMessage?.tipo_cifrado,
+      forwarded:reenviado,
       createdAt  :new Date(), 
       updatedAt  :new Date(),
       file64  :""
       };
 
-      //email_replied:null,
-      //message_replied:null,
-      //tipo_cifrado_replied:null,
-      //forwarded  :false, 
+      
 
       //Anadiedno al estado el nuevo mensaje
       //Valida si solo se anade , hasta q se recibe!!!!!!
@@ -316,9 +331,10 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
               body: JSON.stringify(newGpoMessage),
               };
 
-              console.log("1.-sending message....");
-              console.log(newGpoMessage);
-              
+              //console.log("1.-sending message....");
+             // console.log(newGpoMessage);
+              //console.log(url);
+             // console.log(params);
               
 
               const response = await fetch(url, params);

@@ -31,6 +31,8 @@ export function Item(props) {
   useEffect(() => {
     (async () => {
       try {
+        //console.log("Item.js")
+        //console.log(group)
         //const totalMessages = await groupMessageController.getTotal(accessToken,group._id);
         const totalMessages = groupMessageController.getTotalLocal(group._id);
         //console.log("grupo messages recuperados:::::::::::::::::");
@@ -74,8 +76,10 @@ export function Item(props) {
 
   //getLastMessage
   useEffect(() => {
+   
     (async () => {
       try {
+       // console.log("getLatMessage::::::::::::::::::;")
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
         //console.log("===========================");
        // console.log(response);
@@ -88,10 +92,45 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
+    console.log("subscribe message_notify:::::::::::::::::::::::::;")
+    console.log(group._id)
     socket.emit("subscribe", `${group._id}_notify`);
     
-    socket.on("message_notify", newMessage);
+    socket.on("message_notify", newMessageLocal);
   }, []);
+
+
+
+  //when newMessage is required, call this instruction
+  const newMessageLocal = async (newMsg) => {
+    console.log("newMessageLocal:::message_notify!!!!!");
+    console.log(newMsg?.group);//grupo destinatario al q pertenece el mensaje
+    console.log(group._id);//grupo originario
+   // console.log(user._id);
+    console.log("==================================")
+
+    
+    if (newMsg.group === group._id) {
+      //console.log("son iguales")
+      if (newMsg.user._id !== user._id) {
+
+        console.log("upGroupChat")
+        upGroupChat(newMsg.group);
+        //console.log("setting last message");
+
+        
+        setLastMessage(newMsg);
+
+        const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
+        console.log("grupo activo")
+        console.log(activeGroupId)
+
+        if (activeGroupId !== newMsg.group) {
+          setTotalUnreadMessages((prevState) => prevState + 1);
+        }
+      }
+    }
+  };
 
 
 //when newMessage is required, call this instruction
@@ -116,7 +155,7 @@ export function Item(props) {
   };
 
   const  openGroup = async () => {
-   // console.log("openning group.."+ "'"+group._id+"'" );
+    console.log("openning group.."+group._id);
     
     setTotalUnreadMessages(0);
 

@@ -128,12 +128,19 @@ export function GroupsScreen() {
 
   const upGroupChat = (groupId) => {
 
+    console.log("in upGroupChat")
+    console.log(groupId)
+    console.log(groupsResult)
+
     const data = groupsResult;
     const fromIndex = data.map((group) => group._id).indexOf(groupId);
     const toIndex = 0;
     const element = data.splice(fromIndex, 1)[0];
    
     data.splice(toIndex, 0, element);
+
+    console.group(data)
+    console.group("=============data groups======")
     setGroups([...data]);
    
 

@@ -9,6 +9,7 @@ import { CreateGrupo, Search } from "../../components/Group";
 const userController = new User();
 
 export function CreateGroupScreen() {
+  
   const navigation = useNavigation();
   const { accessToken, idAPPEmail } = useAuth();
   const [users, setUsers] = useState(null);

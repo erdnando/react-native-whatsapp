@@ -54,7 +54,7 @@ const state$ = observable({
   ],
   groupmessages:[{
     _id  :"0",
-    grupo  :"", 
+    group  :"", 
     user  :"", 
     message  :"", 
     type  :"", 

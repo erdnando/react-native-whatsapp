@@ -37,7 +37,7 @@ export class Group {
 
   //createGpoLocal(idAPPEmail, user._id, usersId, name,image)
   async createGpoLocal(idAPPEmail, creatorId, usersId, name) {
-    //console.log("creando grupo local ::::::::::::::::::::::::::::::")
+    //console.log("creando group local ::::::::::::::::::::::::::::::")
     //console.log(idAPPEmail)
     //console.log(creatorId)
     //console.log(usersId)
@@ -61,6 +61,9 @@ export class Group {
     };
 
     statex$.default.groups.set((arrGroups) => [...arrGroups, newGrupo]);
+
+    console.log("listado de grupos")
+    console.log(statex$.default.groups.get())
   }
 
   async createAuto(accessToken, creatorId, usersId, name, image) {
@@ -169,15 +172,11 @@ export class Group {
 
 
     //1.- Recorre lista de grupos
-    arrGroups.forEach( (grupo) => {
+    arrGroups.forEach( (group) => {
 
-      //console.log("participants:::" + grupo.name)
-      //console.log(grupo.participants)
-
-
-
+      
       //2.- Por cada grupo, busca en su lista de participantes coincidencia
-     const arrP = (grupo.participants).filter(function (p) {
+     const arrP = (group.participants).filter(function (p) {
         return p.email == idAPPEmail;
       });
 
@@ -192,15 +191,15 @@ export class Group {
         //console.log("creator")
         //console.log(creatorx)
 
-        const participantes = grupo.participants;
+        const participantes = group.participants;
         //console.log("participantes")
         //console.log(participantes)
-        //grupo
+        //group
         //creator
 
         const newGpoRespuesta={
-          _id: grupo._id,
-          name: grupo.name,
+          _id: group._id,
+          name: group.name,
           participants: participantes,
           creator: creatorx[0],
           image: "group/group1.png",

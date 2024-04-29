@@ -118,7 +118,7 @@ export class Auth {
               );
           
     
-             tx.executeSql('CREATE TABLE IF NOT EXISTS groupmessages (_id TEXT PRIMARY KEY,grupo TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT); ', null,
+             tx.executeSql('CREATE TABLE IF NOT EXISTS groupmessages (_id TEXT PRIMARY KEY,group TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT); ', null,
               (txObj,resulSet) =>{
                 console.log("tabla groupmessages creada:");
                
@@ -157,7 +157,7 @@ export class Auth {
       });
 
       db.transaction( tx =>{
-        tx.executeSql('CREATE TABLE IF NOT EXISTS groupmessages (_id TEXT PRIMARY KEY,grupo TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT); ', null,
+        tx.executeSql('CREATE TABLE IF NOT EXISTS groupmessages (_id TEXT PRIMARY KEY,group TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT); ', null,
           (txObj,resulSet) =>{
             console.log("tabla groupmessages creada:");
           },
