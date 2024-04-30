@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ENV } from "../utils";
-
+import * as statex$ from '../state/local'
 
 
 
@@ -39,6 +39,29 @@ export class Auth {
   }
 
   async login(email, password) {
+
+    //====================================================================
+    console.log('validando modo offline:::')
+    console.log(statex$.default.flags.offline.get())
+   //Offline validacion
+   if(statex$.default.flags.offline.get()=='true'){
+
+      console.log("modo Offline!!!!!")
+
+      const userRef=statex$.default.login.get();
+
+      if(userRef.user==email && userRef.pwd== password){
+        return {"access": userRef.access, "refresh": userRef.refresh}
+      }else{
+        //Contrasena incorrecta
+        return {"access": null, "refresh": null}
+      }
+   }
+   //====================================================================
+
+
+
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
       const params = {
@@ -60,6 +83,25 @@ export class Auth {
       console.log(result)
 
       if (response.status !== 200) throw result;
+
+
+      //=============================================================
+      //Offline cache
+      if (response.status == 200){
+        const arrLogins = statex$.default.login.get();
+
+        const newLogin={
+          user:email,
+          pwd:password,
+          access:result.access,
+          refresh:result.refresh
+        }
+          statex$.default.login.set({});
+          statex$.default.login.set(newLogin);
+      }
+      //=============================================================
+
+      
 
       return result;
     } catch (error) {
@@ -98,6 +140,15 @@ export class Auth {
   async getAccessToken() {
     return await AsyncStorage.getItem(ENV.JWT.ACCESS);
   }
+
+  //======================================================================
+  async setOffline(flag) {
+    await AsyncStorage.setItem("offline", flag);
+  }
+
+  async getOffline() {
+    return await AsyncStorage.getItem("offline");
+  }
 //========================================================================
   async setRefreshToken(token) {
     await AsyncStorage.setItem(ENV.JWT.REFRESH, token);
@@ -126,6 +177,7 @@ async getCifrado() {
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);
     await AsyncStorage.removeItem(ENV.JWT.REFRESH);
+    await AsyncStorage.removeItem("offline");
     await AsyncStorage.removeItem("initial");
   }
 

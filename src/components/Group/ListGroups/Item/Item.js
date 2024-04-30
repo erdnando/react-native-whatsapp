@@ -20,6 +20,7 @@ const unreadMessagesController = new UnreadMessages();
 
 
 export function Item(props) {
+
   const { group, upGroupChat } = props;
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
@@ -94,13 +95,18 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
-    socket.emit("subscribe", `${group._id}_notify`);
-    socket.on("message_notify", newMessage);
+    //if(statex$.default.flags.offline.get()=='false'){
+
+      socket.emit("subscribe", `${group._id}_notify`);
+      socket.on("message_notify", newMessage);
+   // }
+   
   }, []);
 
 
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
+
     console.log("new cypher message:::item");
     console.log(newMsg);
 

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity,Alert } from "react-native";
 import { Avatar, AddIcon, DeleteIcon, IconButton } from "native-base";
 import { size, map } from "lodash";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,7 @@ import { useAuth } from "../../../../hooks";
 import { ENV, screens } from "../../../../utils";
 import { styles } from "./Participants.styles";
 import { EventRegister } from "react-native-event-listeners";
+import * as statex$ from '../../../../state/local'
 
 const groupController = new Group();
 
@@ -34,9 +35,20 @@ export function Participants(props) {
   };
 
   const openAddParticipants = () => {
-    navigation.navigate(screens.global.addUserGroupScreen, {
-      groupId: _id,
-    });
+
+    if(statex$.default.flags.offline.get()=='true'){
+          Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+              [{  text: 'Ok',
+                  onPress: async ()=>{
+                    console.log('modo offline!');
+                    statex$.default.flags.offline.set('true');
+                  }
+            } ]);
+      }else{
+           navigation.navigate(screens.global.addUserGroupScreen, { groupId: _id, });
+      }
+
+    
   };
 
   return (

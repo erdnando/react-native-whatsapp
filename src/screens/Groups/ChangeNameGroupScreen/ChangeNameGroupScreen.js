@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View , Alert} from "react-native";
 import { Button, Input } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useFormik } from "formik";
@@ -19,6 +19,7 @@ export function ChangeNameGroupScreen() {
     validationSchema: validationSchema(),
     validateOnChange: false,
     onSubmit: async (formValue) => {
+      console.log("cambiar nombre")
       try {
         await groupController.update(accessToken, params.groupId, {
           name: formValue.name,

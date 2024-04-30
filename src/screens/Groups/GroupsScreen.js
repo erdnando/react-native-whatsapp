@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { View, Text } from "react-native";
+import { View, Alert } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
@@ -10,6 +10,7 @@ import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
 import { EventRegister } from "react-native-event-listeners"; 
 import { Modal,FormControl,Button } from "native-base";
+import * as statex$ from '../../state/local'
 
 const groupController = new Group();
 const authController = new Auth();
@@ -31,6 +32,9 @@ export function GroupsScreen() {
     async function validateInitialModal() {
 
       const firtsTime=  await authController.getInitial();
+      console.log("Groups screens ini");
+      console.log("firtsTime");
+      console.log(firtsTime);
 
       if(firtsTime=="1"){
         console.log("NIP modal");
@@ -79,8 +83,22 @@ export function GroupsScreen() {
         <IconButton
           icon={<AddIcon />}
           padding={0}
-          onPress={() =>
-            navigation.navigate(screens.tab.groups.createGroupScreen)
+          onPress={() =>{
+            if(statex$.default.flags.offline.get()=='true'){
+
+              Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
+              [{  text: 'Ok',
+                  onPress: async ()=>{
+                    console.log('modo offline continua!');
+                   // statex$.default.flags.offline.set('true');
+                  }
+                } ]);
+            }else{
+              navigation.navigate(screens.tab.groups.createGroupScreen)
+            }
+            
+          }
+            
           }
         />
       ),

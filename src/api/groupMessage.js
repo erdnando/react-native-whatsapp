@@ -2,6 +2,7 @@ import { ENV,Encrypt,Decrypt } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 //import { useDB } from "../hooks";
 import { useState, useEffect, useCallback } from "react";
+import * as statex$ from '../state/local'
 
 //const { createTable,addUser , selectTable,deleteTable } = useDB();
 
@@ -11,6 +12,24 @@ export class GroupMessage {
   
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
+
+    //====================================================================
+    //Offline validacion
+    //====================================================================
+    if(statex$.default.flags.offline.get()=='true'){
+
+        console.log("getTotal modo Offline!!!!!")
+        const arrGroupMessages=statex$.default.groupmessages.get();
+
+        const gpoMsgsFiltrado = arrGroupMessages.filter(function (gm) {
+          return gm.group == groupId;
+        });
+
+        return gpoMsgsFiltrado.length;
+    }
+    //====================================================================
+
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_TOTAL}/${groupId}`;
       const params = {
@@ -24,6 +43,8 @@ export class GroupMessage {
 
       if (response.status !== 200) throw result;
 
+      
+
       return result;
     } catch (error) {
       throw error;
@@ -31,6 +52,19 @@ export class GroupMessage {
   }
 //=====================================================================================================
   async getGroupParticipantsTotal(accessToken, groupId) {
+
+    //Offline validacion
+    if(statex$.default.flags.offline.get()=='true'){
+
+      console.log("getGroupParticipantsTotal modo Offline!!!!!")
+      const getGroupParticipantsTotalRef=statex$.default.getGroupParticipantsTotal.get();
+      return getGroupParticipantsTotalRef;
+    
+    }else{
+      console.log("getGroupParticipantsTotal modo on Line!!!!!")
+    }
+
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_PARTICIPANTS_TOTAL}/${groupId}`;
       const params = {
@@ -43,6 +77,10 @@ export class GroupMessage {
       const result = await response.json();
 
       if (response.status !== 200) throw result;
+      //Offline cache
+      if (response.status == 200){
+        statex$.default.getGroupParticipantsTotal.set(result);
+    }
 
       return result;
 
@@ -50,8 +88,22 @@ export class GroupMessage {
       throw error;
     }
   }
+  
 //=====================================================================================================
+
   async getLastMessage(accessToken, groupId) {
+
+    //Offline validacion
+    if(statex$.default.flags.offline.get()=='true'){
+
+      console.log("getLastMessage modo Offline!!!!!")
+      const getLastMessageRef=statex$.default.getLastMessage.get();
+      return getLastMessageRef;
+    
+    }else{
+      console.log("getLastMessage modo on Line!!!!!")
+    }
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LAST}/${groupId}`;
       const params = {
@@ -65,6 +117,13 @@ export class GroupMessage {
 
       if (response.status !== 200) throw result;
 
+      console.log("result lastMessage")
+      console.log(result)
+      //Offline cache
+      if (response.status == 200){
+          statex$.default.getLastMessage.set(result);
+      }
+
       return result;
     } catch (error) {
       throw error;
@@ -72,6 +131,69 @@ export class GroupMessage {
   }
 //=====================================================================================================
   async getAll(accessToken, groupId) {
+
+    //====================================================================
+    //Offline validacion
+    //====================================================================
+    if(statex$.default.flags.offline.get()=='true'){
+
+      console.log("getTotal modo Offline!!!!!")
+      const arrGpoMsgs = statex$.default.groupmessages.get();
+
+      console.log("arrGpoMsgs.messages")
+      console.log(arrGpoMsgs)
+
+      const arrUsers = statex$.default.user.get();
+      console.log("arrUsers")
+      console.log(arrUsers)
+
+      let arrMessages=[];
+
+      const lstMessages = arrGpoMsgs.filter(function (gm) {
+
+        return gm?.group?.toString() == groupId;
+      });
+
+
+      //1.- Recorre lista de grupos
+      lstMessages?.forEach( (gm) => {
+
+              const userMessage = (arrUsers).filter(function (u) {
+                return u.email == gm.user?.email;
+              });
+
+              const newMessage={
+                _id: gm._id,
+                group: gm.group,
+                user: userMessage[0],
+                message: gm.message, 
+                message_replied:gm.message_replied,
+                email_replied:gm.email_replied,
+                tipo_cifrado_replied:gm.tipo_cifrado_replied,
+                type: gm.type,
+                tipo_cifrado: gm.tipo_cifrado,
+                forwarded: gm.forwarded,
+                createdAt: gm.createdAt,
+                updatedAt: gm.updatedAt,
+                __v: 0
+              };
+
+              arrMessages.push(newMessage)
+
+      });
+
+
+    const resultado ={
+      "messages": arrMessages,
+      "total": arrMessages.length
+    }
+
+    return resultado;
+      
+  }
+  //====================================================================
+
+
     try {
       EventRegister.emit("loadingEvent",true);
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`;
@@ -84,10 +206,15 @@ export class GroupMessage {
       const response = await fetch(url, params);
       const result = await response.json();
 
-      //console.log("getting all messages by group");
-      //console.log(result);
+      console.log("getting all messages by group");
+      console.log(result);
       EventRegister.emit("loadingEvent",false);
       if (response.status !== 200) throw result;
+      
+      //Offline cache
+      /*if (response.status == 200){
+          statex$.default.getAllMsgGroup.set(result);
+      }*/
      
       return result;
     } catch (error) {
@@ -97,6 +224,7 @@ export class GroupMessage {
   }
 
 //==============================================================================================
+
 async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
 
   EventRegister.emit("loadingEvent",true);

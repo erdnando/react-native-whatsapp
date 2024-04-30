@@ -1,5 +1,6 @@
-//const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app";
-const SERVER_IP = "192.168.0.100:3977";
+//const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app"; // DEV nube
+//const SERVER_IP = "https://node-express-sockets-whatsapp-production-a1d6.up.railway.app/";  //QA nube
+const SERVER_IP = "192.168.0.100:3977"; //DEV local
 
 export const ENV = {
   SERVER_IP: SERVER_IP,
@@ -14,6 +15,7 @@ export const ENV = {
     },
     ME: "user/me",
     USER: "user",
+    USER_ALL: "user/all",
     USER_EXCEPT_PARTICIPANTS_GROUP: "users_exept_participants_group",
     CHAT: "chat",
     CHAT_MESSAGE: "chat/message",

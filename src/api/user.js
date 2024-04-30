@@ -1,9 +1,32 @@
 import { ENV } from "../utils";
+import * as statex$ from '../state/local'
 
 export class User {
 
   //==========================================================================================
   async getMe(accessToken) {
+   
+    //Offline validacion
+   if(statex$.default.flags.offline.get()=='true'){
+
+        console.log("modo Offline!!!!!")
+
+        const getMeRef=statex$.default.getMe.get();
+
+        if(getMeRef._id !=""){
+          return getMeRef;
+        }else{
+          return {"__v": 0, "_id": "", "email": "", "nip": ""}
+        }
+      
+    }else{
+      console.log("modo on Line!!!!!")
+    }
+
+
+
+
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.ME}`;
       const params = {
@@ -16,6 +39,12 @@ export class User {
       const result = await response.json();
 
       if (response.status !== 200) throw result;
+
+      //Offline cache
+      if (response.status == 200){
+          const newGetMe={"__v": 0, "_id": result._id, "email": result.email, "nip": result.nip}
+            statex$.default.getMe.set(newGetMe);
+      }
 
       return result;
     } catch (error) {
@@ -68,6 +97,26 @@ export class User {
   async getAll(accessToken) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER}`;
+      const params = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllUsers(accessToken) {
+    try {
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER_ALL}`;
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,

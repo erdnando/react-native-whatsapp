@@ -1,4 +1,5 @@
 import { ENV } from "../utils";
+import * as statex$ from '../state/local'
 
 export class Group {
 
@@ -63,6 +64,19 @@ export class Group {
   }
 
   async getAll(accessToken) {
+
+        //Offline validacion
+        if(statex$.default.flags.offline.get()=='true'){
+
+          console.log("getAll modo Offline!!!!!")
+          const getAllRef=statex$.default.getAll.get();
+          return getAllRef;
+        
+        }else{
+          console.log("getAll modo on Line!!!!")
+        }
+
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}`;
       const params = {
@@ -75,6 +89,15 @@ export class Group {
       const result = await response.json();
 
       if (response.status !== 200) throw result;
+
+      //Offline cache
+      if (response.status == 200){
+          statex$.default.getAll.set(result);
+      }
+
+      console.log("result getAll")
+      console.log(result)
+
 
       return result;
     } catch (error) {

@@ -35,10 +35,10 @@ export function GroupScreen() {
                   await authController.setCifrado(isCypher);
 
                   try {
-                    const response = await groupMessageController.getAll(accessToken, groupId);
+                    //get All Messgages of a Group
+                    const response = await groupMessageController.getAll(accessToken, groupId);//offline support!
                    //==========================================
                     const unlockedMessages = response.messages;
-                    //console.log(unlockedMessages);
 
                     if(isCypher=="NO"){
                      // console.log("decifrando mensajes");
@@ -109,6 +109,7 @@ export function GroupScreen() {
 
   //subscribe sockets
   useEffect(() => {
+
     socket.emit("subscribe", groupId);
     socket.on("message", newMessage);
     socket.on("reloadmsgs", getAllMessages);

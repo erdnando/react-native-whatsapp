@@ -30,6 +30,23 @@ configureObservablePersistence({
   })*/
 
 const state$ = observable({
+  login:{
+      user:"",
+      pwd:"",
+      access:"",
+      refresh:""
+    },
+  getMe:{
+    __v: "", 
+    _id: "", 
+    email: "", 
+    nip: ""
+  },
+  getAll:{},
+  getTotal:{},
+  getGroupParticipantsTotal:{},
+  getLastMessage:{},
+  getAllMsgGroup:{},
   user:[{
      _id :"0",
      email :"",
@@ -69,6 +86,7 @@ const state$ = observable({
   }],
   flags:{
     cifrado:true,
+    offline:'false'
   },
 });
 

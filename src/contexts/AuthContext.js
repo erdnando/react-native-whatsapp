@@ -3,6 +3,19 @@ import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
 import Constants from 'expo-constants';  
 
+import NetInfo from '@react-native-community/netinfo';
+import { Alert } from 'react-native'
+import { observable } from "@legendapp/state";
+import { observer } from "@legendapp/state/react";
+import * as statex$ from '../state/local.js'
+import {
+  configureObservablePersistence,
+  persistObservable,
+} from '@legendapp/state/persist'
+import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+
+
 const userController = new User();
 const authController = new Auth();
 const groupController = new Group();
@@ -17,6 +30,48 @@ export function AuthProvider(props) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState(null);
+
+  const arrUsuarios = statex$.default.user.get();
+
+
+  useEffect(() => {
+    NetInfo.fetch().then(async state => {
+      //console.log('Connection type', state.type);
+     // console.log('Is connected?', state.isConnected);
+
+      if(state.isConnected){
+        statex$.default.flags.offline.set('true'); //false
+        
+      }else{
+        Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+        [{  text: 'Ok',
+            onPress: async ()=>{
+              console.log('modo offline!');
+              statex$.default.flags.offline.set('true');
+            }
+          } ]);
+      }
+    });
+
+    configureObservablePersistence({
+      // Use AsyncStorage in React Native
+      pluginLocal: ObservablePersistAsyncStorage,
+      localOptions: {
+        asyncStorage: {
+          // The AsyncStorage plugin needs to be given the implementation of AsyncStorage
+          AsyncStorage,
+        },
+      },
+    })
+    
+   persistObservable(statex$, {
+    pluginLocal: ObservablePersistAsyncStorage,
+    local: 'localState', // Unique name
+  })
+ 
+
+  }, []);
+
 
 
   useEffect(() => {
@@ -76,6 +131,7 @@ export function AuthProvider(props) {
       await authController.setAccessToken(access);
       await authController.setRefreshToken(refresh);
       await login(access);  
+      console.log("login ok!!!!!!!!")
     }
 
       setLoading(false);
@@ -100,6 +156,9 @@ export function AuthProvider(props) {
       setLoading(true);
 
       const response = await userController.getMe(accessToken);
+      console.log("response getMe::::")
+      console.log(response)
+
       setUser(response);
       setToken(accessToken);
 

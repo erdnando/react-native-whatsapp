@@ -1,5 +1,5 @@
 import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform,TextInput,Text,Animated } from "react-native";
+import { View, Keyboard, Platform,TextInput,Text,Animated,Alert } from "react-native";
 import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,
           useTheme,Center,Box,Heading,HStack,Spinner } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
+import * as statex$ from '../../../state/local'
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -106,6 +107,19 @@ export function GroupForm(props) {
   // Function to start recording
   const StartRecording = async () => {
 
+
+    if(statex$.default.flags.offline.get()=='true'){
+      Alert.alert ('Sin conexion a internet. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+          [{  text: 'Ok',
+              onPress: async ()=>{
+                return;
+              }
+        } ]);
+  }
+
+
+
+
     setSeconds(0)
     setMinutes(0)
     setVuelta(1000);
@@ -161,6 +175,14 @@ export function GroupForm(props) {
 //=======================================================================================
   // Function to STOP RECORDING!!!!
   const StopRecording = async () => {
+
+    if(statex$.default.flags.offline.get()=='true'){
+      SetIsRecording(false);
+      return;
+  }
+
+
+
     if(vuelta==null){
       console.log("nada q hacer!!!")
       return;
@@ -326,9 +348,22 @@ export function GroupForm(props) {
   }
 
   const handleFocus = () => {
-    //console.log("foco puesto....")
-    //setFocusInput(true);
-    setShowIconSendText(true);
+
+    if(statex$.default.flags.offline.get()=='true'){
+      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+          [{  text: 'Ok',
+              onPress: async ()=>{
+                console.log('modo offline!');
+                setShowIconSendText(false);
+                
+              }
+        } ]);
+    }else{
+        //console.log("foco puesto....")
+      //setFocusInput(true);
+      setShowIconSendText(true);
+    }
+   
   };
   
   const handleBlur = () => {

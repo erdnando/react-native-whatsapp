@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View,Alert } from "react-native";
 import { Button } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { Group } from "../../../api";
 import { useAuth } from "../../../hooks";
 import { GroupProfile } from "../../../components/Group";
 import { styles } from "./GroupProfileScreen.styles";
+import * as statex$ from '../../../state/local'
 
 const groupController = new Group();
 
@@ -34,13 +35,26 @@ export function GroupProfileScreen() {
   }, [params.groupId, reload]);
 
   const exitGroup = async () => {
-    try {
-      await groupController.exit(accessToken, params.groupId);
-      navigation.goBack();
-      navigation.goBack();
-    } catch (error) {
-      console.error(error);
+
+    if(statex$.default.flags.offline.get()=='true'){
+      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+          [{  text: 'Ok',
+              onPress: async ()=>{
+                console.log('modo offline!');
+                statex$.default.flags.offline.set('true');
+              }
+        } ]);
+    }else{
+        try {
+          await groupController.exit(accessToken, params.groupId);
+          navigation.goBack();
+          navigation.goBack();
+        } catch (error) {
+          console.error(error);
+        }
     }
+
+    
   };
 
   if (!group) return null;

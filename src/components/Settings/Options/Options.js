@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity,Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { User } from "../../../api";
@@ -7,6 +7,7 @@ import { styles } from "./Options.styles";
 
 import { Center, Flex, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as statex$ from '../../../state/local'
 
 const userController = new User();
 
@@ -15,16 +16,29 @@ export function Options(props) {
   const navigation = useNavigation();
 
   const openGallery = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      quality: 1,
-    });
 
-    if (!result.canceled) {
-      const file = imageExpoFormat(result.assets[0].uri);
-      updateUserData({ avatar: file });
+    if(statex$.default.flags.offline.get()=='true'){
+
+        Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
+        [{  text: 'Ok',
+            onPress: async ()=>{
+              console.log('modo offline continua!');
+          }
+        } ]);
+
+    }else{
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: false,
+            quality: 1,
+          });
+
+          if (!result.canceled) {
+            const file = imageExpoFormat(result.assets[0].uri);
+            updateUserData({ avatar: file });
+          }
     }
+
   };
 
   const updateUserData = async (userData) => {
@@ -37,11 +51,35 @@ export function Options(props) {
   };
 
   const goChangeFirstname = () => {
-    navigation.navigate(screens.tab.settings.changeFirstnameScreen);
+    if(statex$.default.flags.offline.get()=='true'){
+
+      Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
+      [{  text: 'Ok',
+          onPress: async ()=>{
+            console.log('modo offline continua!');
+        }
+      } ]);
+      
+    }else{
+          navigation.navigate(screens.tab.settings.changeFirstnameScreen);
+    }
+    
   };
 
   const goChangeLastname = () => {
-    navigation.navigate(screens.tab.settings.changeLastnameScreen);
+    if(statex$.default.flags.offline.get()=='true'){
+
+      Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
+      [{  text: 'Ok',
+          onPress: async ()=>{
+            console.log('modo offline continua!');
+        }
+      } ]);
+      
+    }else{
+      navigation.navigate(screens.tab.settings.changeLastnameScreen);
+    }
+   
   };
 
   return (
