@@ -3,7 +3,7 @@ import { View, Alert } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
-import { Group,Auth,User } from "../../api";
+import { Group,Auth,User, GroupMessage } from "../../api";
 import { useAuth } from "../../hooks";
 import { screens,MD5method } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
@@ -15,6 +15,9 @@ import * as statex$ from '../../state/local'
 const groupController = new Group();
 const authController = new Auth();
 const userController = new User();
+
+const groupMessageController = new GroupMessage();
+
 
 export function GroupsScreen() {
   
@@ -109,20 +112,75 @@ export function GroupsScreen() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
+         //================Get all grupos===================================
         try {
-          //Get all messages
+         
           const response = await groupController.getAll(accessToken);
 
-          const result = response.sort((a, b) => {
+          const result = response?.sort((a, b) => {
             return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
           });
 
           setGroups(result);
           setGroupsResult(result);
 
+
+
+
+          //==================get all messages===================================
+          try {
+
+            //En linea va guardando la ultima foto de datos
+            if(statex$.default.flags.offline.get()=='false'){
+
+                  console.log("Gathering all data into state en groupScreen")
+                  //to gather all groups with their messages into state
+                  statex$.default.groupmessages.set([]);//clean
+                  const arrMessageGrupo = statex$.default.groupmessages.get();//get clean list
+
+                  //Por cada grupo
+                  result.forEach( async (gpo) => { 
+                    console.log("gpo-------------->");
+                    console.log(gpo._id);
+
+                    const gpoMessages = await groupMessageController.getAll(accessToken, gpo._id);
+
+                    console.log("gpoMessages get all del grupo-->")
+                    console.log(gpoMessages)
+                    
+                    gpoMessages.messages.forEach( (msgx)=>{
+                      console.log("msgx detetctado:::::::::::")
+                      console.log(msgx)
+                      statex$.default.groupmessages.set((arrMessageGrupo) => [...arrMessageGrupo, msgx])
+                    });
+
+
+
+                    console.log("Mensajes recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+                    console.log(statex$.default.groupmessages.get())
+  
+                    const arrUsers = await userController.getAllUsers(accessToken);
+                    statex$.default.user.set(arrUsers);
+  
+                    console.log("User recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
+                    console.log(statex$.default.user.get())
+
+
+                  });
+
+                 
+              }
+          } catch (error) {
+            console.error(error);
+          }
+        //======================================================================
+
         } catch (error) {
           console.error(error);
         }
+
+        
+
       })();
     }, [])
   );

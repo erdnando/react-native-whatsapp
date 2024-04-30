@@ -63,17 +63,22 @@ export class Group {
     }
   }
 
+  //obtiene todos logrupos con su detalle
   async getAll(accessToken) {
 
         //Offline validacion
         if(statex$.default.flags.offline.get()=='true'){
 
-          console.log("getAll modo Offline!!!!!")
+          console.log("getAllGrupos modo Offline!!!!!")
           const getAllRef=statex$.default.getAll.get();
+          
+          console.log("getAllGruposRef----------")
+          console.log(getAllRef)
+
           return getAllRef;
         
         }else{
-          console.log("getAll modo on Line!!!!")
+          console.log("getAll grupos modo on Line!!!!")
         }
 
 
@@ -92,10 +97,11 @@ export class Group {
 
       //Offline cache
       if (response.status == 200){
+        //caching grupos
           statex$.default.getAll.set(result);
       }
 
-      console.log("result getAll")
+      console.log("result getAll grupos")
       console.log(result)
 
 

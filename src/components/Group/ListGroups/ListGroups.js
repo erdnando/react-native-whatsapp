@@ -19,7 +19,7 @@ export function ListGroups(props) {
 
       async function fetchData() {
       
-          if(statex$.default.flags.offline.get()=='false'){
+          /*if(statex$.default.flags.offline.get()=='false'){
 
             console.log("Gathering all data into state")
             //to gather all groups with their messages into state
@@ -46,7 +46,7 @@ export function ListGroups(props) {
 
             console.log("User recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
             console.log(statex$.default.user.get())
-        }
+        }*/
     }
 
     console.log("=======================Gathering DATA!!!!!!!!===============================")

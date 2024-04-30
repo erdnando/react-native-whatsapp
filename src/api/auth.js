@@ -48,7 +48,8 @@ export class Auth {
 
       console.log("modo Offline!!!!!")
 
-      const userRef=statex$.default.login.get();
+      const userRef=statex$.default.login.get();//datos de acceso persisitidos
+     
 
       if(userRef.user==email && userRef.pwd== password){
         return {"access": userRef.access, "refresh": userRef.refresh}

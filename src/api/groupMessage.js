@@ -183,14 +183,14 @@ export class GroupMessage {
       });
 
 
-    const resultado ={
-      "messages": arrMessages,
-      "total": arrMessages.length
-    }
+      const resultado ={
+        "messages": arrMessages,
+        "total": arrMessages.length
+      }
 
-    return resultado;
+      return resultado;
       
-  }
+  }//end if offline
   //====================================================================
 
 

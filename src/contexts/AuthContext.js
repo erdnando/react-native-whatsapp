@@ -77,6 +77,8 @@ export function AuthProvider(props) {
   useEffect(() => {
     (async () => {
     
+
+      console.log("RESETEANDO!!!!!!!!!!!!!!")
      //get UUID
      const idApp = Constants.installationId;
      // await authController.removeTokens();
