@@ -95,7 +95,7 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
-    //if(statex$.default.flags.offline.get()=='false'){
+   // if(statex$.default.flags.offline.get()=='false'){
 
       socket.emit("subscribe", `${group._id}_notify`);
       socket.on("message_notify", newMessage);

@@ -10,6 +10,7 @@ import { ENV, socket,Decrypt,Encrypt } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
+import * as statex$ from '../../state/local'
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -36,6 +37,7 @@ export function GroupScreen() {
 
                   try {
                     //get All Messgages of a Group
+                    console.log('getAll===========origin')
                     const response = await groupMessageController.getAll(accessToken, groupId);//offline support!
                    //==========================================
                     const unlockedMessages = response.messages;
@@ -110,16 +112,21 @@ export function GroupScreen() {
   //subscribe sockets
   useEffect(() => {
 
+      
     socket.emit("subscribe", groupId);
     socket.on("message", newMessage);
     socket.on("reloadmsgs", getAllMessages);
-
+      
     return () => {
+     
       socket.emit("unsubscribe", groupId);
       socket.off("message", newMessage);
       socket.off("reloadmsgs", getAllMessages);
+      
     };
   }, [groupId, messages]);
+
+
 
 
   //get all messages
@@ -151,11 +158,21 @@ export function GroupScreen() {
 
             });
 
+            if(statex$.default.flags.offline.get()=='true'){
+
+              lockedMessages=statex$.default.messages.get();
+            }else{
+              //cahce
+              statex$.default.messages.set(lockedMessages);
+            }
+
+
+
             setMessages(lockedMessages);
         }else{
           //=======================Decifra los mensajes=======================================================
         
-            const unlockedMessages = response.messages;
+            let unlockedMessages = response.messages;
 
             unlockedMessages.map((msg) => {
       
@@ -178,6 +195,15 @@ export function GroupScreen() {
             });
             setMessages([]);
             setMessages(unlockedMessages);
+
+            if(statex$.default.flags.offline.get()=='true'){
+
+              unlockedMessages=statex$.default.messages.get();
+              setMessages(unlockedMessages);
+            }else{
+              //cahce
+              statex$.default.messages.set(unlockedMessages);
+            }
 
             //here  sound because edited it
             console.log("playing audio................newmsg1");

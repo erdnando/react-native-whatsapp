@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
 import loadingImage from '../../../../assets/preloader.gif';
+import * as statex$ from '../../../../state/local'
 
 const authController = new Auth();
 
@@ -31,6 +32,7 @@ export function ItemImage(props) {
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
+  const [offline,setOffline]=useState(false)
 
   const onEliminarMensaje = () => {
 
@@ -87,6 +89,15 @@ export function ItemImage(props) {
    useEffect( () => {
 
     async function fetchData() {
+
+      if(statex$.default.flags.offline.get()=='true'){
+        setOffline(true)
+      }else{
+        setOffline(false)
+      }
+
+
+
      // console.log("useEffect ItemText:::::");
       const cifrado = await authController.getCifrado();
       //console.log("cifrado image item:::::"+cifrado);
@@ -118,7 +129,7 @@ export function ItemImage(props) {
 
                 <Menu display={isMe?"flex":"flex"} w="190" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={isMe?"flex":"flex"}
+                          <Icon display={offline?"none":"flex"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -182,7 +193,7 @@ export function ItemImage(props) {
            <View style={styles.colFile}>
             {/*download button*/}
             <Pressable onPress={onOpenFile}>
-                    <Icon style={{marginTop:-35,left:-5 }}
+                    <Icon style={{marginTop:-35,left:-5 }} display={offline?"none":"flex"}
                           as={MaterialCommunityIcons}
                           size="30"
                           name="download-circle"

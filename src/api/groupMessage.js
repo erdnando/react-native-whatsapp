@@ -38,7 +38,9 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -73,7 +75,9 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -112,7 +116,9 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -132,10 +138,12 @@ export class GroupMessage {
 //=====================================================================================================
   async getAll(accessToken, groupId) {
 
+    console.log('get all=================================================')
+
     //====================================================================
     //Offline validacion
     //====================================================================
-    if(statex$.default.flags.offline.get()=='true'){
+    /*if(statex$.default.flags.offline.get()=='true'){
 
       console.log("getTotal modo Offline!!!!!")
       const arrGpoMsgs = statex$.default.groupmessages.get();
@@ -190,12 +198,27 @@ export class GroupMessage {
 
       return resultado;
       
-  }//end if offline
+  }*/
+  //end if offline
+  //Offline validacion
+  if(statex$.default.flags.offline.get()=='true'){
+
+    console.log("getAllGrupos modo Offline!!!!!")
+    const getAllMsgBRef=statex$.default.getAllMsgGroup.get();
+    
+    console.log("getAllMsgBRef----------")
+    console.log(getAllMsgBRef)
+
+    return getAllMsgBRef;
+  
+  }
+
   //====================================================================
 
 
     try {
-      EventRegister.emit("loadingEvent",true);
+     EventRegister.emit("loadingEvent",true);
+      console.log('1')
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`;
       const params = {
         headers: {
@@ -203,18 +226,21 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       console.log("getting all messages by group");
       console.log(result);
       EventRegister.emit("loadingEvent",false);
+      console.log('2')
       if (response.status !== 200) throw result;
       
       //Offline cache
-      /*if (response.status == 200){
+      //if (response.status == 200){
           statex$.default.getAllMsgGroup.set(result);
-      }*/
+     // }
      
       return result;
     } catch (error) {
@@ -265,7 +291,9 @@ console.log("cifrando 2")
     console.log("sending...."+url);
     console.log(params);
 
-    const response = await fetch(url, params);
+    const response = await fetch(url, params).catch(e=> {
+      statex$.default.flags.offline.set('true');
+    });
     const result = await response.json();
 
     //get group messages and persist
@@ -286,6 +314,8 @@ console.log("cifrando 2")
   async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
     console.log("cifrando 3")
     EventRegister.emit("loadingEvent",true);
+    console.log('3')
+
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
       const params = {
@@ -305,7 +335,9 @@ console.log("cifrando 2")
       console.log("sending...."+url);
       console.log(params);
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       console.log("==========After updating====================");
@@ -327,6 +359,7 @@ console.log("cifrando 2")
 async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
   console.log("cifrando 4")
   EventRegister.emit("loadingEvent",true);
+  console.log('4')
   try {
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_DELETE}`;
     const params = {
@@ -346,7 +379,9 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
     console.log("sending...."+url);
     console.log(params);
 
-    const response = await fetch(url, params);
+    const response = await fetch(url, params).catch(e=> {
+      statex$.default.flags.offline.set('true');
+    });
     const result = await response.json();
 
     console.log("==========After updating====================");
@@ -367,7 +402,8 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
 //=====================================================================================================
   async sendImage(accessToken, groupId, file) {
 
-    EventRegister.emit("loadingEvent",true);
+   EventRegister.emit("loadingEvent",true);
+    console.log('5')
     try {
       const formData = new FormData();
       formData.append("group_id", groupId);
@@ -390,7 +426,9 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
       //console.log(formData);
 
         try {
-          const response = await fetch(url, params);
+          const response = await fetch(url, params).catch(e=> {
+            statex$.default.flags.offline.set('true');
+          });
           //console.log(response);
           const result = await response.json();
           console.log(result);
@@ -416,6 +454,7 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
 async sendFile(accessToken, groupId, file) {
 
   EventRegister.emit("loadingEvent",true);
+  console.log('6')
   try {
     console.log("sending file from telephone...")
     console.log(file);
@@ -444,7 +483,9 @@ async sendFile(accessToken, groupId, file) {
     console.log(params);
 
   try {
-    const response = await fetch(url, params);
+    const response = await fetch(url, params).catch(e=> {
+      statex$.default.flags.offline.set('true');
+    });
    
     //console.log(response);
     const result = await response.json();

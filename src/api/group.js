@@ -1,5 +1,11 @@
 import { ENV } from "../utils";
 import * as statex$ from '../state/local'
+//import { Groups, } from '../models/groups'
+//import { Users } from '../models/users'
+import { Types } from 'mongoose';
+//import { useDBGroups } from '../sqlite/useDBGroups'
+import { addGroup } from '../hooks/useDA'
+
 
 export class Group {
 
@@ -20,7 +26,9 @@ export class Group {
         body: formData,
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 201) throw result;
@@ -49,7 +57,9 @@ export class Group {
       };
 
       console.log("creacion automatica dle grupo")
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       console.log("response creacion automatica")
       console.log(response)
 
@@ -63,7 +73,77 @@ export class Group {
     }
   }
 
+  async createAutodb(creatorId, usersId, name) {
+    try {
+        let response=null;
+        const _id = new Types.ObjectId();
+      
+        await addGroup(_id, creatorId, usersId, name).then(result =>{
+
+          response=result.rows._array;
+          console.log('grupo insertado')
+          console.log(result)
+
+        }).catch(error => {
+          console.log(error)
+        }); 
+
+        return response==null ? 'Error al insertar' : 'insertado correctamente';
+    } catch (error) {
+        console.log(error)
+      throw error;
+    }
+  }
+
   //obtiene todos logrupos con su detalle
+  async getAllGroupsDB(email) {
+
+        try {
+
+          /*const groupsRef = Groups.getGroups();
+          const ownerRef = Users.getUserById(gpo.creator)
+
+          console.log("Listado de grupos")
+          console.log(groupsRef)
+
+          let arrGrupos=[];
+          groupsRef.forEach( async (gpo) => { 
+
+            const gpoDetalle = {
+                                _id: gpo.id,
+                                name: gpo.name,
+                                image: gpo.image,
+                                __v: 0,
+                                last_message_date: "",
+                                creator: ownerRef,
+                                participants: [
+                                  {
+                                    "_id": "662886c9ac4a4be81cbea857",
+                                    "email": "b7548672-bd45-4a08-aca9-0a325a64c34a",
+                                    "password": "$2a$10$etmcymIhdmI0ETPEZU1fJuc8TmsEohlgsmGlbYmv8PMtlMScMVx8W",
+                                    "__v": 0,
+                                    "nip": "827ccb0eea8a706c4c34a16891f84e7b"
+                                  }
+                                ],
+                                
+                               
+                              }
+                              console.log("gpoDetalle")
+                              console.log(gpoDetalle)
+
+                              arrGrupos.push(gpoDetalle)
+            
+          });
+
+          return arrGrupos;*/
+
+        } catch (error) {
+          throw error;
+        }
+}
+
+
+
   async getAll(accessToken) {
 
         //Offline validacion
@@ -90,7 +170,9 @@ export class Group {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -120,7 +202,9 @@ export class Group {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
       console.log(groupId);
       if (response.status !== 200) throw result;
@@ -141,7 +225,9 @@ export class Group {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -167,7 +253,9 @@ export class Group {
         body: formData,
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -193,7 +281,9 @@ export class Group {
         }),
       };
 
-      const repsonse = await fetch(url, params);
+      const repsonse = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await repsonse.json();
 
       if (repsonse.status !== 200) throw result;
@@ -218,7 +308,9 @@ export class Group {
         }),
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;

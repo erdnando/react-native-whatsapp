@@ -23,7 +23,7 @@ export function GroupsScreen() {
   
   //const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
-  const { accessToken,updateUser } = useAuth();
+  const { accessToken,updateUser,email } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -35,51 +35,20 @@ export function GroupsScreen() {
     async function validateInitialModal() {
 
       const firtsTime=  await authController.getInitial();
-      console.log("Groups screens ini");
+      console.log("Groups screens");
       console.log("firtsTime");
       console.log(firtsTime);
 
-      if(firtsTime=="1"){
-        console.log("NIP modal");
-
-
-        const min = 1000; 
-        const max = 9999; 
-        const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
-
-        console.log("set nip:::::");
-        console.log(randomNumber);
-        console.log("accessToken:::::"+accessToken);
-
-        console.log("setShowModal:::::");
-        setNip("A"+randomNumber);
-       const cifrado =MD5method("A"+randomNumber).toString();
-
-        await userController.updateUser(accessToken, { nip: cifrado });
-        //hash nip
-        updateUser("nip", cifrado);
+      if(firtsTime=="1"){ 
         setShowModal(true);
-        
-
-       
       }
     }
     validateInitialModal();
    
-
-
 }, []);
 
 
   useEffect(() => {
-
-    async function fetchData() {
-     // deleteTable('USERS');
-     //createTableBitacora('BITACORA');//initialize table
-     //addUser('erdnando@gmail.com');
-     //selectTableBitacora();
-    }
-    fetchData();
 
     navigation.setOptions({
       headerRight: () => (
@@ -87,21 +56,8 @@ export function GroupsScreen() {
           icon={<AddIcon />}
           padding={0}
           onPress={() =>{
-            if(statex$.default.flags.offline.get()=='true'){
-
-              Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
-              [{  text: 'Ok',
-                  onPress: async ()=>{
-                    console.log('modo offline continua!');
-                   // statex$.default.flags.offline.set('true');
-                  }
-                } ]);
-            }else{
               navigation.navigate(screens.tab.groups.createGroupScreen)
-            }
-            
-          }
-            
+          } 
           }
         />
       ),
@@ -112,20 +68,19 @@ export function GroupsScreen() {
   useFocusEffect(
     useCallback(() => {
       (async () => {
+        let resultx={} 
          //================Get all grupos===================================
         try {
-         
-          const response = await groupController.getAll(accessToken);
+        
+            const groupsRef = await groupController.getAllGroupsDB(email);
 
-          const result = response?.sort((a, b) => {
-            return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
-          });
+            //const result = response?.sort((a, b) => {
+            //  return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+            //});
+            //resultx=result;
 
-          setGroups(result);
-          setGroupsResult(result);
-
-
-
+            setGroups(groupsRef);
+            setGroupsResult(groupsRef);
 
           //==================get all messages===================================
           try {
@@ -139,7 +94,7 @@ export function GroupsScreen() {
                   const arrMessageGrupo = statex$.default.groupmessages.get();//get clean list
 
                   //Por cada grupo
-                  result.forEach( async (gpo) => { 
+                  resultx.forEach( async (gpo) => { 
                     console.log("gpo-------------->");
                     console.log(gpo._id);
 
@@ -189,16 +144,32 @@ export function GroupsScreen() {
 
   const upGroupChat = (groupId) => {
 
-    const data = groupsResult;
-    const fromIndex = data.map((group) => group._id).indexOf(groupId);
-    const toIndex = 0;
-    const element = data.splice(fromIndex, 1)[0];
-   
-    data.splice(toIndex, 0, element);
-    setGroups([...data]);
-   
+      if(statex$.default.flags.offline.get()=='true'){
+          //setGroupsResult(statex$.default.getAll.get())
 
+         // console.log("recuperando groupsResult")
+          //console.log( groupsResult)
+      }
+
+  
+      const data = groupsResult;
+      const fromIndex = data.map((group) => group._id).indexOf(groupId);
+      const toIndex = 0;
+      const element = data.splice(fromIndex, 1)[0];
+    
+      data.splice(toIndex, 0, element);
+      setGroups([...data]);
+   
   };
+
+
+ // if(statex$.default.flags.offline.get()=='true'){
+    //setGroupsResult(statex$.default.getAll.get())
+  //}
+  console.log("setGroupsResult::::::::::::::::::::::::::::::::::::::::")
+  //console.log(groupsResult)
+  //console.log(statex$.default.getAll.get())
+  console.log("::::::::::::::::::::::::::::::::;;;;;;;;;;;;;;;;::::::::")
 
   if (!groupsResult) return <LoadingScreen />;
 

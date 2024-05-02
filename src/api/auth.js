@@ -1,12 +1,90 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { ENV } from "../utils";
+import { ENV,MD5method } from "../utils";
 import * as statex$ from '../state/local'
-
+import * as Crypto from 'expo-crypto';
+import { Types } from 'mongoose';
+//import db from '../sqlite/sqlite';
+import { findUsersByEmail,addUser } from '../hooks/useDA'
+import { array } from "yup";
 
 
 export class Auth {
 
 
+  async registerdb(email) {
+
+        let token ="";
+        try {
+        
+          const hashPassword = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, email );
+
+          const min = 1000; 
+          const max = 9999; 
+          const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
+          const nip ="A"+randomNumber
+          const nipCifrado =MD5method("A"+randomNumber).toString();
+          const _id = new Types.ObjectId();
+
+
+          try {
+            const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.TOKEN}`;
+            const params = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                "_id": _id,
+              "email": email,
+              "password": hashPassword,
+              "__v": 0
+            }),
+            };
+      
+            const response = await fetch(url, params);
+            token = await response.json();
+            
+            console.log("token usuario obtenido")
+            console.log(token)
+            
+      
+            if (response.status !== 200) throw result;
+
+            //Inserting new user to local DB
+            //=============================================================
+              try {
+                  let response=null;
+                 
+                  await addUser(_id, email,hashPassword,nipCifrado,token).then(result =>{
+
+                    response=result.rows._array;
+                    console.log('usuario insertado')
+                    console.log(result)
+
+                  }).catch(error => {
+                    console.log(error)
+                  }); 
+      
+                  return response==null ? 'Error' : token;
+              } catch (error) {
+                  console.log(error)
+                throw error;
+              }
+            //===============================================================
+            
+          } catch (error) {
+            throw error;
+          }
+
+         // console.log("userRef")
+         // console.log(userRef)
+
+          return token;
+
+      } catch (error) {
+        throw error;
+      }
+  }
 
   async register(email, password) {
     try {
@@ -24,7 +102,10 @@ export class Auth {
       console.log("params registro")
       console.log(params)
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      })
+
       const result = await response.json();
 
       console.log("result registro")
@@ -60,8 +141,7 @@ export class Auth {
    }
    //====================================================================
 
-
-
+  
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
@@ -76,7 +156,11 @@ export class Auth {
       console.log("login")
       console.log(url)
       console.log(params)
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+        const userRef=statex$.default.login.get();
+        return {"access": userRef.access, "refresh": userRef.refresh}
+      });
       const result = await response.json();
       console.log("=======================================")
       console.log("result login")
@@ -110,6 +194,41 @@ export class Auth {
     }
   }
 
+   async logindb(email, password) {
+   
+    try {
+           let response=null;
+           await findUsersByEmail(email).then(result =>{
+            response=result.rows._array
+           }); 
+
+           return response;
+      } catch (error) {
+       // console.log(error)
+        throw error;
+      }
+  }
+
+  /*
+   getUsersById(email){
+
+    console.log("::::::::getUsersById:::::::::::::::::");
+  
+
+     db.transaction( tx => {
+      tx.executeSql('SELECT count(*) FROM users ', null,
+        (txObj, resultSet) => statex$.default.usuariosSelect.set(resultSet.rows._array),
+        (txObj, error)=> console.log(error) 
+        );
+      });
+
+    console.log("2-SELECT count(*) FROM users where email=", email)
+
+    console.log("::::::::data select:::::::::::::::::");
+    console.log(statex$.default.usuariosSelect.get());
+    return statex$.default.usuariosSelect.get();
+  }*/
+
   async refreshAccessToken(refreshToken) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.REFRESH_ACCESS_TOKEN}`;
@@ -123,7 +242,9 @@ export class Auth {
         }),
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;

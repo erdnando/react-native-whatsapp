@@ -35,7 +35,9 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -80,7 +82,9 @@ export class User {
 
       console.log("params");
       console.log(params);
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       console.log("result");
@@ -103,7 +107,9 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -123,7 +129,9 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -143,7 +151,9 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -164,7 +174,9 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw error;

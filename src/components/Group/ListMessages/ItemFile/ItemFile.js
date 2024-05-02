@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable,Alert } from "react-native";
 import { Menu,Icon,AlertDialog,Button,Box } from 'native-base';
 import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +14,7 @@ import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
-
+import * as statex$ from '../../../../state/local'
 
 const authController = new Auth();
 
@@ -39,6 +39,7 @@ export function ItemFile(props) {
   const [isPressed,setIsPressed]=useState(false)
   const [isHovered,setIsHovered]=useState(false)
   const [realImage,setRealImage]=useState(false)
+  const [offline,setOffline]=useState(false)
 
 
   const onEliminarMensaje = () => {
@@ -61,48 +62,65 @@ export function ItemFile(props) {
  
    // Function to play the recorded audio
    const PlayRecordedAudio = async () => {
-    try {
-      setIsPressed(true);
 
-      console.log("playing recordedURI:::::::2");
-      
-      const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
-      //const recordedURIx=urlFile.replace("files/","");
-      console.log(recordedURIx);
+    if(offline){
+      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+          [{  text: 'Ok',
+              onPress: async ()=>{
+                console.log('modo offline!');
+               
+              }
+            } ]);
+    }else{
 
-      //release resources
-      try {
-       
-        if(AudioPlayer?.current)
-          await AudioPlayer?.current.unloadAsync();
-       
-       
-      } catch (error) {
-       
-        console.log("maybe it fails if it;s the first time")
-        console.log(error);
-      }
-      console.log("playing audio..");
-      // Load the Recorded URI
-      await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
+        try {
+          setIsPressed(true);
 
-      // Get Player Status
-      const playerStatus = await AudioPlayer.current.getStatusAsync();
+          console.log("playing recordedURI:::::::2");
+          
+          const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
+          //const recordedURIx=urlFile.replace("files/","");
+          console.log(recordedURIx);
 
-      // Play if song is loaded successfully
-      if (playerStatus.isLoaded) {
-        if (playerStatus.isPlaying === false) {
-          AudioPlayer.current.playAsync();
-          SetIsPLaying(true);
+          //release resources
+          try {
+          
+            if(AudioPlayer?.current)
+              await AudioPlayer?.current.unloadAsync();
+          
+          
+          } catch (error) {
+          
+            console.log("maybe it fails if it;s the first time")
+            console.log(error);
+          }
+          console.log("playing audio..");
+          // Load the Recorded URI
+          await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
+
+          // Get Player Status
+          const playerStatus = await AudioPlayer.current.getStatusAsync();
+
+          // Play if song is loaded successfully
+          if (playerStatus.isLoaded) {
+            if (playerStatus.isPlaying === false) {
+              AudioPlayer.current.playAsync();
+              SetIsPLaying(true);
+            }
+          }
+        } catch (error) {
+          console.log("Error on PlayingRecording")
+          console.log(error)
         }
-      }
-    } catch (error) {
-      console.log("Error on PlayingRecording")
-      console.log(error)
-    }
 
-    setIsPressed(false);
+        setIsPressed(false);
+
+  }
+
+
   };
+
+
 
 //open file function
   const onOpenFile= async () => {
@@ -145,6 +163,12 @@ export function ItemFile(props) {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
+    if(statex$.default.flags.offline.get()=='true'){
+      setOffline(true)
+    }else{
+      setOffline(false)
+    }
+
     if(message?.message.toString().endsWith(".jpg")||message?.message.toString().endsWith(".jpeg")||
        message?.message.toString().endsWith(".png")||message?.message.toString().endsWith(".bpm")){
         setRealImage(true)
@@ -182,7 +206,7 @@ export function ItemFile(props) {
 
                 <Menu display={isMe?"flex":"flex"} w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={isMe?"flex":"flex"}
+                          <Icon display={offline?"none":"flex"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -229,19 +253,21 @@ export function ItemFile(props) {
               </View>
 
               {/*vista file download*/}
-              <View style={styles.rowFile}>
+              <View style={styles.rowFile} >
 
                 {/*any other file*/}
-                <View display={message?.message.toString().endsWith(".mp3") ?"none":"flex"}>
-                   <Icon display={isMe?"flex":"none"}
-                                as={MaterialCommunityIcons}
-                                size="39"
-                                name="file"
-                                color="black"
-                              />
+                <View display={ (message?.message.toString().endsWith(".mp3") ) ?"none":"flex"}>
+                     
+                        <Icon display={isMe?"flex":"none"}
+                                      as={MaterialCommunityIcons}
+                                      size="39"
+                                      name="file"
+                                      color="black"
+                                />
+                             
                 </View>
                  {/*just to mp3 files*/}
-                <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
+                <View display={  (message?.message.toString().endsWith(".mp3") ) ?"flex":"none"}>
                   
                     <Pressable onPress={PlayRecordedAudio}>
                       <View>
@@ -275,7 +301,7 @@ export function ItemFile(props) {
 
                  
 
-                <Pressable onPress={onOpenFile} >
+                <Pressable onPress={onOpenFile}  display={offline ?"none":"flex"}> 
                     <Icon  style={{marginTop:10}}
                                   as={MaterialCommunityIcons}
                                   size="30"

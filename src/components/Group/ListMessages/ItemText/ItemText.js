@@ -8,7 +8,7 @@ import { styled } from "./ItemText.styles";
 import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
 import { Decrypt,Encrypt } from "../../../../utils";
-
+import * as statex$ from '../../../../state/local'
 
 
 const authController = new Auth();
@@ -28,6 +28,7 @@ export function ItemText(props) {
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState(false);
+  const [offline,setOffline]=useState(false)
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
@@ -44,10 +45,11 @@ export function ItemText(props) {
   useEffect( () => {
 
     
-   // if(message.forwarded){
-     // console.log("message.::::");
-    //  console.log(message);
-   // }
+    if(statex$.default.flags.offline.get()=='true'){
+      setOffline(true)
+    }else{
+      setOffline(false)
+    }
     
     setForwarded(message.forwarded);
     
@@ -103,7 +105,7 @@ export function ItemText(props) {
 
                 <Menu w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon
+                          <Icon display={offline?"none":"flex"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"

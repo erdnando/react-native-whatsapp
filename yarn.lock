@@ -2342,7 +2342,7 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-community/netinfo@^11.1.1":
+"@react-native-community/netinfo@^11.1.0":
   version "11.3.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-11.3.1.tgz#4539371a2f4bd402d932031be82c2449ed63a1a5"
   integrity sha512-UBnJxyV0b7i9Moa97Av+HKho1ByzX0DtbJXzUQS5E3xhQs6P2D/Os0iw3ouy7joY1TVd6uIhplPbr7l1SJNaNQ==
@@ -4506,7 +4506,7 @@ expo-sharing@~11.10.0:
   resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-11.10.0.tgz#0e85197ee4d2634b00fe201e571fbdc64cf83eef"
   integrity sha512-/64RyyKlZ25WfnMXa87HbPXhIIqWwNbIku/RaIYAq4SE0XTRC+KTH3v0XFkfDa+SCG/jKsAr1pJ3vQvsNo1sCQ==
 
-expo-sqlite@^13.4.0:
+expo-sqlite@~13.4.0:
   version "13.4.0"
   resolved "https://registry.yarnpkg.com/expo-sqlite/-/expo-sqlite-13.4.0.tgz#ae945622662263431aa9daee59b659255cb6a9fd"
   integrity sha512-5f7d2EDM+pgerM33KndtX4gWw2nuVaXY68nnqx7PhkiYeyEmeNfZ29bIFtpBzNb/L5l0/DTtRxuSqftxbknFtw==

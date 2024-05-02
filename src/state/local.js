@@ -47,6 +47,10 @@ const state$ = observable({
   getGroupParticipantsTotal:{},
   getLastMessage:{},
   getAllMsgGroup:{},
+  groupsResult:{},
+  messages:{},
+  groupsResultx:{},
+  usuariosSelect:{},
   user:[{
      _id :"0",
      email :"",

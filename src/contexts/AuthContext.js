@@ -1,6 +1,5 @@
 import { useState, useEffect, createContext } from "react";
-import { User, Auth, Group } from "../api";
-import { hasExpiredToken } from "../utils";
+import { Auth, Group } from "../api";
 import Constants from 'expo-constants';  
 
 import NetInfo from '@react-native-community/netinfo';
@@ -14,9 +13,9 @@ import {
 } from '@legendapp/state/persist'
 import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { fnCreateTables,deleteUserTables } from '../hooks/useDA.js'
 
-
-const userController = new User();
+//const userController = new User();
 const authController = new Auth();
 const groupController = new Group();
 
@@ -30,23 +29,34 @@ export function AuthProvider(props) {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [usuario, setUsuario] = useState(null);
+  const [email, setEmail] = useState('');
 
-  const arrUsuarios = statex$.default.user.get();
+  //const arrUsuarios = statex$.default.user.get();
+
+
+useEffect(() => {
+
+  fnCreateTables();
+  //just to clean tables on testing and developing. On releases, commented it
+  deleteUserTables();
+  
+}, [])
+
+
 
 
   useEffect(() => {
+
+
     NetInfo.fetch().then(async state => {
-      //console.log('Connection type', state.type);
-     // console.log('Is connected?', state.isConnected);
+     
 
       if(state.isConnected){
-        statex$.default.flags.offline.set('true'); //false
-        
+        statex$.default.flags.offline.set('false'); //false
       }else{
         Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
         [{  text: 'Ok',
             onPress: async ()=>{
-              console.log('modo offline!');
               statex$.default.flags.offline.set('true');
             }
           } ]);
@@ -70,75 +80,77 @@ export function AuthProvider(props) {
   })
  
 
+     init();
+
   }, []);
 
 
-
-  useEffect(() => {
-    (async () => {
-    
+  const init = async () => {
 
       console.log("RESETEANDO!!!!!!!!!!!!!!")
      //get UUID
      const idApp = Constants.installationId;
      // await authController.removeTokens();
 
-     const userRegistrado = await authController.login(idApp, idApp  );
-     const { access, refresh } = userRegistrado;
+     console.log(idApp)
+     setEmail(idApp);
 
-     console.log("accessTokenx:" + access);
+     const userRef = await authController.logindb( idApp, idApp);
+     console.log("logindb")
+     console.log(userRef)
 
-     if(access=="" || access == undefined){
-      //if it's not registered, registered it
-      console.log("Registrando:" + idApp);
+     //console.log("accessTokenx:" + access);
 
-      await authController.register(idApp, idApp);
+     if(userRef.length==0){
+        //if it's not registered, registered it
+        console.log("Registrando:" + idApp);
 
-        const responseLogin = await authController.login(idApp,idApp);
+        const token = await authController.registerdb(idApp);
 
-        console.log("login:::::::");
-        console.log(responseLogin);
+          console.log("token registrado:::::::");
+          console.log(token);
 
-        const { access, refresh } = responseLogin;
+          await authController.setAccessToken(token);
+          await authController.setRefreshToken(token);
+          setUser(idApp);
+          setToken(token);
 
-        await authController.setAccessToken(access);
-        await authController.setRefreshToken(refresh);
-        setUser(idApp);
+          //Creating its own personal group
+          //-------------------------------------------------------------
+          
+         const groupCreatedRef = await groupController.createAutodb(
+            idApp,
+            idApp,
+            idApp
+          );
 
-        console.log("access")
-        console.log(access)
-        //Creating its own personal group
-        //-------------------------------------------------------------
+          console.log("groupCreatedRef")
+          console.log(groupCreatedRef)
+          //-------------------------------------------------------------
         
-        await groupController.createAuto(
-          access,
-          idApp,
-          idApp,
-          idApp
-        );
-        //-------------------------------------------------------------
-       
-        //show alert with initial NIP
-        await authController.setInitial("1");
-        //1a vez, bandera de mensajes cifrados
-        await authController.setCifrado("SI");
-        
-        
-        await login(access);
+          //show alert with initial NIP
+          await authController.setInitial("1");
+          //1a vez, bandera de mensajes cifrados
+          await authController.setCifrado("SI");
        
     }else{
+
       console.log("Accessing directly");
       await authController.setInitial("0");
+      setUser(idApp);
+      
       //siempre cifrados cuando entra
-      await authController.setAccessToken(access);
-      await authController.setRefreshToken(refresh);
-      await login(access);  
+      await authController.setAccessToken(userRef[0].token);
+      await authController.setRefreshToken(userRef[0].token);
+      await authController.setCifrado("SI");
+
+      setToken(userRef[0].token);
+
       console.log("login ok!!!!!!!!")
     }
 
       setLoading(false);
-    })();
-  }, []);
+}
 
   
   const reLogin = async (refreshToken) => {
@@ -153,7 +165,7 @@ export function AuthProvider(props) {
     }
   };
 
-  const login = async (accessToken) => {
+  /*const login = async (accessToken) => {
     try {
       setLoading(true);
 
@@ -169,7 +181,7 @@ export function AuthProvider(props) {
       console.error(error);
       setLoading(false);
     }
-  };
+  };*/
 
   const logout = () => {
     setUser(null);
@@ -187,9 +199,9 @@ export function AuthProvider(props) {
   const data = {
     accessToken: token,
     user,
-    login,
     logout,
     updateUser,
+    email
   };
 
   if (loading) return null;

@@ -4,7 +4,7 @@ import { map, size } from "lodash";
 import { Item } from "./Item";
 import { useAuth } from "../../../hooks";
 import { styles } from "./ListGroups.styles";
-import * as statex$ from '../../../state/local'
+
 import { GroupMessage, User } from "../../../api";
 
 const groupMessageController = new GroupMessage();

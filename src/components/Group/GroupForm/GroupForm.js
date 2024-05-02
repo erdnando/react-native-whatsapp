@@ -383,7 +383,7 @@ export function GroupForm(props) {
   useEffect(() => {
         //=================================================================
         const eventLoading = EventRegister.addEventListener("loadingEvent", async data=>{
-          console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
+         // console.log("loading::::::::::::::::::::::::::::::::::::;:::"+data)
           setIsLoading(data);    
 
           setFocusInput(false);

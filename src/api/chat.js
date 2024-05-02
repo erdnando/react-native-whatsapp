@@ -38,7 +38,9 @@ export class Chat {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw error;
@@ -59,7 +61,9 @@ export class Chat {
         },
       };
 
-      const response = await fetch(url, params);
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
       const result = await response.json();
 
       if (response.status !== 200) throw result;
