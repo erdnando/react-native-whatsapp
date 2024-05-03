@@ -63,7 +63,7 @@ export function Participants(props) {
               bg="cyan.500"
               marginRight={3}
               source={{ uri:  participant.avatar && `${ENV.BASE_PATH}/${participant.avatar}`,  }}  >
-              {participant.email.substring(0, 2).toUpperCase()}
+              {participant?.email?.substring(0, 2).toUpperCase()}
             </Avatar>
 
             <View style={styles.info}>

@@ -3,6 +3,10 @@ import { EventRegister } from "react-native-event-listeners";
 import { useState, useEffect, useCallback } from "react";
 import * as statex$ from '../state/local'
 import { findAllGrupoMessages } from '../hooks/useDA'
+import { Types } from 'mongoose';
+import { addMessage } from '../hooks/useDA'
+import * as Crypto from 'expo-crypto';
+
 
 export class GroupMessage {
 
@@ -202,7 +206,7 @@ export class GroupMessage {
     }
   }
 //=====================================================================================================
-  async getAll(accessToken, groupId) {
+  /*async getAll(accessToken, groupId) {
 
    
 
@@ -232,9 +236,176 @@ export class GroupMessage {
       EventRegister.emit("loadingEvent",false);
       throw error;
     }
-}
+}*/
+
+async getAllLocalDB(groupId) {
+  // console.log("getAllLocal groupId")
+  // console.log(groupId)
+
+   EventRegister.emit("loadingEvent",true);
+
+   const arrGpoMsgs = statex$.default.messages.get();
+   console.log("listado de mensajes del grupo:::::::::")
+   console.log(arrGpoMsgs)
+   const arrUsers = statex$.default.users.get();
+   let arrMessages=[];
+
+   //console.log("getAllLocal::::::::::::::::::::::::::::::::::::::::::::::")
+   //console.log(groupId)
+   //console.log(arrGpoMsgs)
+   //console.log(statex$.default.groupmessages.get())
+
+   const lstMessages = arrGpoMsgs.filter(function (gm) {
+
+     return gm?.group?.toString() == groupId;
+   });
+
+  // console.log("coincidencias group:::::::::::::::")
+  // console.log(lstMessages)
+  
+
+     //1.- Recorre lista de grupos
+     lstMessages.forEach( (gm) => {
+
+             const userMessage = (arrUsers).filter(function (u) {
+               return u.email == gm.user?.email;
+             });
+
+           // console.log("userMessage")
+       //  console.log(userMessage[0])
+//// Encrypt(gm.message,gm.tipo_cifrado ), 
+             const newMessage={
+               _id: gm._id,
+               group: gm.group,
+               user: userMessage[0],
+               message: gm.message, 
+               message_replied:gm.message_replied,
+               email_replied:gm.email_replied,
+               tipo_cifrado_replied:gm.tipo_cifrado_replied,
+               type: gm.type,
+               tipo_cifrado: gm.tipo_cifrado,
+               forwarded: gm.forwarded,
+               createdAt: gm.createdAt,
+               updatedAt: gm.updatedAt,
+               __v: 0
+             };
+
+             arrMessages.push(newMessage)
+
+     });
+
+
+   const resultado ={
+     "messages": arrMessages,
+     "total": arrMessages.length
+   }
+
+   EventRegister.emit("loadingEvent",false);
+
+   return resultado;
+ 
+ }
 
 //==============================================================================================
+
+async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idAPPEmail) {
+
+  console.log("message TEXT::::::::::::::::::::::::::::::::")
+  console.log(message)
+  EventRegister.emit("loadingEvent",true);
+    let reenviado=false;
+    
+    console.log("Enviando mensajes de texto");
+    console.log("tiene replyMessage?");
+    console.log(replyMessage);
+
+ 
+    //REPLAYING CASE
+    if(replyMessage!=null){
+
+        console.log("replyMessage::::::::::::::::::::::::::::::::::::::::::::::::::")
+        console.log(replyMessage)
+        //console.log("cifrando 1")
+        //cifrando msg reenviado
+        replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
+
+    }
+    //FORWARDING CASE
+    if(message.startsWith("reenviado::")){
+
+        console.log("reenviando msg:::::::::::::::::::::")
+        reenviado=true;
+        message=message.replace("reenviado::","")
+
+    }
+  
+    
+    const arrUsers = statex$.default.users.get();
+
+    const userFiltrado = arrUsers.filter(function (c) {
+      return c.email == idAPPEmail;
+    });
+
+    const _id = new Types.ObjectId();
+    //Creating groupMessage
+    const newGpoMessage={
+      _id  :_id.toString(),
+      group  :groupId, //grupo al q pertenece el mensaje
+      user  :userFiltrado[0], 
+      message  : Encrypt(message,tipoCifrado), 
+      type  :"TEXT", 
+      tipo_cifrado  :tipoCifrado, 
+      message_replied:replyMessage==null ? null :replyMessage?.message,
+      email_replied:replyMessage==null ? null :replyMessage?.user.email,
+      tipo_cifrado_replied:replyMessage==null ? null :replyMessage?.tipo_cifrado,
+      forwarded:reenviado,
+      createdAt  :new Date(), 
+      updatedAt  :new Date(),
+      file64  :""
+      };
+
+      
+
+      //Anadiedno al estado el nuevo mensaje
+      //Valida si solo se anade , hasta q se recibe!!!!!!
+   
+        try {
+              const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LOCAL}`;
+              const params = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${accessToken}`,
+              },
+              body: JSON.stringify(newGpoMessage),
+              };
+
+              //console.log("1.-sending message....");
+             // console.log(newGpoMessage);
+              //console.log(url);
+             // console.log(params);
+              
+
+              const response = await fetch(url, params);
+              const result = await response.json();
+
+              //get group messages and persist
+              // await selectTable('BITACORA');
+              EventRegister.emit("loadingEvent",false);
+              
+              if (response.status !== 201) throw result;
+
+              return true;
+
+        } catch (error) {
+          EventRegister.emit("loadingEvent",false);
+          console.log(error);
+          console.log("Error a enviar el mensaje...")
+          throw error;
+        }
+}
+
+
 
 async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
 
@@ -483,6 +654,27 @@ async sendFile(accessToken, groupId, file) {
 }
   //=====================================================================================================
 
+  async guardaMessage(newMessage) {
+    try {
+        let response=null;
+        const today = new Date().toISOString()
+        
+      
+        await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today   ).then(result =>{
 
+          response=result.rows._array;
+          console.log('mensaje insertado')
+          console.log(result)
+
+        }).catch(error => {
+          console.log(error)
+        }); 
+
+        return response==null ? 'Error al insertar' : 'insertado correctamente';
+    } catch (error) {
+        console.log(error)
+      throw error;
+    }
+  }
 
 }

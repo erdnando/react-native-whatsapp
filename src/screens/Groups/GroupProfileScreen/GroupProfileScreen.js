@@ -22,7 +22,7 @@ export function GroupProfileScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await groupController.obtain(accessToken, params.groupId );
+        const response = await groupController.obtainLocal(params.groupId );
         console.log("===========miembros obtenidos=================");
         console.log(response);
         console.log("============================");

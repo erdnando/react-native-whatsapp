@@ -18,7 +18,7 @@ export function HeaderGroup(props) {
 
   const { groupId } = props;
   const navigation = useNavigation();
-  const { accessToken } = useAuth();
+  const { accessToken, email } = useAuth();
   const [group, setGroup] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -42,7 +42,7 @@ export function HeaderGroup(props) {
 
     (async () => {
       try {
-        const response = await groupController.obtain(accessToken, groupId);
+        const response = await groupController.obtainLocal(groupId);
         setGroup(response);
       } catch (error) {
         console.error(error);
@@ -60,7 +60,7 @@ export function HeaderGroup(props) {
     console.log("======validating NIP==================");
     
     //call api to validate nip 
-    const response = await userController.getMe(accessToken);
+    const response = await userController.getMeLocal(email);
     //console.log("nip en DB");
     //console.log(response.nip);
     //console.log("nip ingresado");
@@ -115,7 +115,7 @@ export function HeaderGroup(props) {
                 source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
               />
                {/*Nombre grupo */}
-              <Text style={styles.name}>{group.name.substring(0,20) }</Text>
+              <Text style={styles.name}>{group?.name?.substring(0,20) }</Text>
             </Pressable>
           )}
         </View>

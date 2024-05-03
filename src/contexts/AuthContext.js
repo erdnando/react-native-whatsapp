@@ -187,7 +187,7 @@ useEffect(() => {
       const messagesAllRef = await groupMessageController.getAllGroupMessage();
       console.log("getAllGroupMessage")
       console.log(messagesAllRef);
-      statex$.default.messages.set(groupAllRef);
+      statex$.default.messages.set(messagesAllRef);
 
 
 

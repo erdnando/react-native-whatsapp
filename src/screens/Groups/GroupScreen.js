@@ -18,10 +18,10 @@ const authController = new Auth();
 
 export function GroupScreen() {
 
-  const { params: { groupId }, } = useRoute();
-  const { accessToken } = useAuth();
+  //const { params: { groupId }, } = useRoute();
+  const { accessToken, email } = useAuth();
   const [messages, setMessages] = useState(null);
- 
+  const groupId = statex$.default.grupoId.get();
 
   //EventListener:: decifra mensajes
   useEffect(() => {
@@ -38,7 +38,7 @@ export function GroupScreen() {
                   try {
                     //get All Messgages of a Group
                     console.log('getAll===========origin')
-                    const response = await groupMessageController.getAll(accessToken, groupId);//offline support!
+                    const response = await groupMessageController.getAllLocalDB(groupId);//offline support!
                    //==========================================
                     const unlockedMessages = response.messages;
 
@@ -94,6 +94,7 @@ export function GroupScreen() {
   //Set ACTIVE_GROUP_ID
   useEffect(() => {
     (async () => {
+      
       await AsyncStorage.setItem(ENV.ACTIVE_GROUP_ID, groupId);
     })();
 
@@ -112,13 +113,20 @@ export function GroupScreen() {
   //subscribe sockets
   useEffect(() => {
 
-      
+    console.log("subscribiendo grupo:::::")
+    console.log(groupId)
+
     socket.emit("subscribe", groupId);
+    //socket.emit("subscribe", `${groupId}_message`);
     socket.on("message", newMessage);
     socket.on("reloadmsgs", getAllMessages);
       
     return () => {
      
+      console.log("unsuscribing grupo:::::")
+    console.log(groupId)
+
+      //socket.emit("unsubscribe", `${groupId}_message`);
       socket.emit("unsubscribe", groupId);
       socket.off("message", newMessage);
       socket.off("reloadmsgs", getAllMessages);
@@ -131,6 +139,7 @@ export function GroupScreen() {
 
   //get all messages
   const getAllMessages = () => {
+
     console.log("reloading message:::GroupScreen");
     //=================================================================================
     (async () => {
@@ -138,11 +147,11 @@ export function GroupScreen() {
         const cifrados = await authController.getCifrado(); 
         console.log("cifrados");
         console.log(cifrados);
-        const response = await groupMessageController.getAll(accessToken, groupId);
+        const response = await groupMessageController.getAllLocalDB(groupId);
 
         if(cifrados=="SI"){
           //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
-          const lockedMessages = response.messages;
+          let lockedMessages = response.messages;
           lockedMessages.map((msg) => {
               if(msg.type=="IMAGE"){
                 console.log("=====imagen=========")
@@ -231,20 +240,20 @@ export function GroupScreen() {
   };
 
   //when newMessage is required, call this instruction
-  const newMessage = (msg) => {
+  const newMessage = (newMsg) => {
    
     (async () => {
 
     console.log("identificando nuevo mensaje:::::")
     console.log("===========================================")
-    console.log(msg);
+    console.log(newMsg);
     console.log("===========================================")
     //============Always decifra mensaje======================
   
-    if(msg.type=="TEXT"){
-      msg.message=Decrypt(msg.message, msg.tipo_cifrado);
+    if(newMsg.type=="TEXT"){
+      newMsg.message=Decrypt(newMsg.message, newMsg.tipo_cifrado);
 
-      if(msg.email_replied != null){
+      if(newMsg.email_replied != null){
         msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
 
         //find message original and decryp it on message array
@@ -271,28 +280,30 @@ export function GroupScreen() {
       await sound.playAsync();
       
     }
-    /*if(msg.type=="FILE"){
-      msg.message = "images/cryptedImagex.png";
-    }*/
-    //==================================================
-
-
-
-
+   
 
       const cifrados = await authController.getCifrado(); 
 
       if(cifrados=="SI"){
         //setCryptMessage(true);
-        if(msg.type=="TEXT"){
+        if(newMsg.type=="TEXT"){
           console.log("cifrando 5")
-          msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+          newMsg.message=Encrypt(newMsg.message,newMsg.tipo_cifrado);
         }else{ //img or filr
-          msg.message = "images/cryptedImagex.png";
+          newMsg.message = "images/cryptedImagex.png";
         }
       }
      
-      setMessages([...messages, msg]);
+      //ading to local state
+      setMessages([...messages, newMsg]);
+      //adding to global state
+      const arrMessagesRef =statex$.default.messages.get();
+      statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsg]);
+
+      //adding to local db
+      groupMessageController.guardaMessage(newMsg)
+
+    
 
      
     })();

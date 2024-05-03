@@ -2,7 +2,7 @@ import { ENV } from "../utils";
 import * as statex$ from '../state/local'
 import { Types } from 'mongoose';
 import { addGroup,findUsersByEmail,findAllUsers, findAllGroups } from '../hooks/useDA'
-
+import * as Crypto from 'expo-crypto';
 
 export class Group {
 
@@ -68,7 +68,7 @@ export class Group {
         //add to state managment
         const arrGroups = statex$.default.groups.get();
         const newGrupo = {
-          _id :  new Types.ObjectId(),
+          _id :  _id.toString(),
           name  : name, 
           participants  :arrParticipantes, 
           creator  : creatorId, 
@@ -170,11 +170,9 @@ export class Group {
           //2.- Por cada grupo, busca en su lista de participantes coincidencia
           const participantesx = JSON.parse(grupo.participants);
 
-          const arrP = participantesx.filter(function (p) {
-            return p == email;
-          });
+         
 
-          if(arrP.length>0){
+          if(participantesx.length>0){
          
             const creatorx = arrUsers.filter(function (c) {
               return c.email == email;
@@ -217,9 +215,7 @@ export class Group {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -240,9 +236,23 @@ export class Group {
     }
   }
 
+  async obtainLocal(groupId) {
+    const arrGroups = statex$.default.groups.get();
+    const groupRef = arrGroups.filter(function (g) {
+      return g._id == groupId;
+    });
+
+    console.log("obtain local")
+    console.log(groupRef[0])
+    return groupRef[0];
+  }
+
   async obtain(accessToken, groupId) {
     try {
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}/${groupId}`;
+      //groupId=JSON.parse(groupId)
+      console.log("invocando api group::::::::::")
+      console.log(groupId)
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}/${groupId}`; //<----------------------
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -255,6 +265,10 @@ export class Group {
       const result = await response.json();
       console.log(groupId);
       if (response.status !== 200) throw result;
+
+
+//get groupRef
+
 
       return result;
     } catch (error) {

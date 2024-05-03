@@ -22,7 +22,7 @@ export function GroupForm(props) {
 
   const { groupId } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const { accessToken,user } = useAuth();
+  const { accessToken,user, email } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
   let [idMessage, setIdMessage] = useState("");
   const [focusInput, setFocusInput] = useState(false);
@@ -391,7 +391,8 @@ export function GroupForm(props) {
   }, []);
 
 
-  //EventListener:forwardingMessage
+   //EventListener:forwardingMessage
+
   useEffect(() => {
 
       setIdMessage("");
@@ -549,6 +550,7 @@ export function GroupForm(props) {
   
   
   //formik definition & onsubmit
+  //Send message & editon's message
   const formik = useFormik({
     initialValues: initialValues(),
     validationSchema: validationSchema(),
@@ -574,8 +576,10 @@ export function GroupForm(props) {
         console.log("=======================================")
         //if replyMessage is null, then it's a normal message
         //else it's a reply
-        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
+        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email );
+
        }else{
+
         //edicion de mensaje
         setIdMessage("");
         await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );

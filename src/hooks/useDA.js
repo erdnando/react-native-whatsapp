@@ -160,7 +160,7 @@ export  function updateNip(nipraw,nipcifrado,email){
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql('UPDATE  users set nipraw=?, nipcifrado=? where email=?', [nipraw, nipcifrado,email], 
+        tx.executeSql('UPDATE  users set nipraw=?, nip=? where email=?', [nipraw, nipcifrado,email], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -226,15 +226,18 @@ export  function findAllGroups() {
   });     
 }
 
-export  function addMessage(_id,email,hashPassword,nipCifrado,token,today) {
+
+
+
+export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
          //_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat
-        tx.executeSql('INSERT INTO messages(_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat) values(?,?,?,?,?,?,?,?,?)', 
-                                        [0,'gpo1','yo','mensaje','TEXT','AES','false',today, today], 
+        tx.executeSql('INSERT INTO messages(_id , grupo , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat) values(?,?,?,?,?,?,?,?,?)', 
+                                        [_id,group,user,message,tipo,tip_cifrado,forwarded,today, today], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback

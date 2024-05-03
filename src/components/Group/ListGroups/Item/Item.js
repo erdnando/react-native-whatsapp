@@ -13,7 +13,7 @@ import { styles } from "./Item.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
-
+import * as statex$ from '../../../../state/local'
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -90,11 +90,10 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
-   // if(statex$.default.flags.offline.get()=='false'){
 
       socket.emit("subscribe", `${group._id}_notify`);
       socket.on("message_notify", newMessage);
-   // }
+   
    
   }, []);
 
@@ -102,8 +101,10 @@ export function Item(props) {
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
 
-    console.log("new cypher message:::item");
+    console.log("new message_notify message:::item");
     console.log(newMsg);
+    console.log("group._id");
+    console.log(group._id);
 
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
@@ -123,10 +124,11 @@ export function Item(props) {
 
   const  openGroup = async () => {
     console.log("openning group.."+group._id );
+    statex$.default.grupoId.set(group._id.toString());
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id.toString() });
   };
 
   return (

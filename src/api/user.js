@@ -5,13 +5,9 @@ import { updateNip,updateAlias } from '../hooks/useDA.js'
 export class User {
 
   //==========================================================================================
-  async getMe(accessToken) {
+  /*async getMe(accessToken) {
    
-    
-
-
-
-
+  
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.ME}`;
       const params = {
@@ -31,6 +27,20 @@ export class User {
     } catch (error) {
       throw error;
     }
+  }*/
+
+  async getMeLocal(idAPPEmail) {
+
+
+    const arrUsuarios = statex$.default.users.get();
+
+    var userFiltrado = arrUsuarios.filter(function (u) {
+      return u.email == idAPPEmail;
+    });
+    
+    return userFiltrado[0];
+
+   
   }
 //==========================================================================================
 async updateUserNipDB(email, userData) {
@@ -40,13 +50,34 @@ async updateUserNipDB(email, userData) {
   console.log(data)
 
   updateNip(data.nipraw,data.nip,email)
+   //====================stata update================
+   const arrUsers = statex$.default.users.get();
+   const arrUsersUpdated = arrUsers.map(p =>
+     p.email === email
+       ? { ...p, nip:data.nip,nipraw:data.nipraw }
+       : p
+   );
+   statex$.default.users.set(arrUsersUpdated);
+   //================================================
+
 }
 
 async updateUserAliasDB(email, userData) {
 
   const data = userData;
 
-  updateAlias(data.firstname, email)
+  updateAlias(data.firstname, email);
+  //====================stata update================
+  const arrUsers = statex$.default.users.get();
+  const arrUsersUpdated = arrUsers.map(p =>
+    p.email === email
+      ? { ...p, firstname: data.firstname }
+      : p
+  );
+  statex$.default.users.set(arrUsersUpdated);
+  //================================================
+
+
 }
 
 /*async updateUser(accessToken, userData) {

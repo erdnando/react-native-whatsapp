@@ -90,9 +90,9 @@ export function GroupsScreen() {
             //En linea va guardando la ultima foto de datos
            
 
-                  console.log("Gathering all data into state en groupScreen")
+                  /*console.log("Gathering all data into state en groupScreen")
                   //to gather all groups with their messages into state
-                  statex$.default.messages.set([]);//clean
+                 // statex$.default.messages.set([]);//clean
                   const arrMessageGrupo = statex$.default.messages.get();//get clean list
 
                   //Por cada grupo
@@ -111,23 +111,7 @@ export function GroupsScreen() {
                       statex$.default.messages.set((arrMessageGrupo) => [...arrMessageGrupo, msgx])
                     });
 
-
-
-                    console.log("Mensajes recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
-                    console.log(statex$.default.messages.get())
-  
-                    //const arrUsers = await userController.getAllUsers(accessToken);
-                    //s//tatex$.default.users.set(arrUsers);
-  
-                    console.log("User recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
-                    console.log(statex$.default.users.get())
-
-                    console.log(" ")
-                    console.log("=======parte 4 carga demensajes  OK!=========")
-                    console.log(" ")
-
-
-                  });
+                  });*/
 
                  
               

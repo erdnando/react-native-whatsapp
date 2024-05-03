@@ -58,7 +58,7 @@ async getAllUsers() {
           const _id = new Types.ObjectId();
 
 
-          try {
+          try {console.log("calling api token::::")
             const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.TOKEN}`;
             const params = {
               method: "POST",
