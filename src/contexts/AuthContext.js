@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from "react";
-import { Auth, Group } from "../api";
+import { Auth, Group, GroupMessage } from "../api";
 import Constants from 'expo-constants';  
-
+//import db from '../sqlite/sqlite.js'
 import NetInfo from '@react-native-community/netinfo';
 import { Alert } from 'react-native'
 import { observable } from "@legendapp/state";
@@ -13,11 +13,13 @@ import {
 } from '@legendapp/state/persist'
 import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { fnCreateTables,deleteUserTables } from '../hooks/useDA.js'
+import { fnCreateTableUsers,fnCreateTableGroups,fnCreateTableGroupMessages,fnDropTableUsers ,fnDropTableGroups, fnDropTableGroupMessages } from '../hooks/useDA.js'
+
 
 //const userController = new User();
 const authController = new Auth();
 const groupController = new Group();
+const groupMessageController = new GroupMessage();
 
 
 export const AuthContext = createContext();
@@ -36,13 +38,21 @@ export function AuthProvider(props) {
 
 useEffect(() => {
 
-  fnCreateTables();
-  //just to clean tables on testing and developing. On releases, commented it
-  deleteUserTables();
-  
+    async function fetchData() {
+      console.log(" ")
+      
+      //fnDropTableUsers();
+      //fnDropTableGroups();
+      //fnDropTableGroupMessages();
+
+      fnCreateTableUsers();
+      fnCreateTableGroups();
+      fnCreateTableGroupMessages();
+    }
+
+    fetchData();
+
 }, [])
-
-
 
 
   useEffect(() => {
@@ -87,7 +97,9 @@ useEffect(() => {
 
   const init = async () => {
 
-      console.log("RESETEANDO!!!!!!!!!!!!!!")
+    console.log("=======parte 2 Iniciando verificacion login/registro================")
+    console.log(" ")
+
      //get UUID
      const idApp = Constants.installationId;
      // await authController.removeTokens();
@@ -96,7 +108,7 @@ useEffect(() => {
      setEmail(idApp);
 
      const userRef = await authController.logindb( idApp, idApp);
-     console.log("logindb")
+     console.log("usuario identificado:")
      console.log(userRef)
 
      //console.log("accessTokenx:" + access);
@@ -110,10 +122,10 @@ useEffect(() => {
           console.log("token registrado:::::::");
           console.log(token);
 
-          await authController.setAccessToken(token);
-          await authController.setRefreshToken(token);
-          setUser(idApp);
-          setToken(token);
+          await authController.setAccessToken(token.toString());
+          await authController.setRefreshToken(token.toString());
+          setUser(idApp.toString());
+          setToken(token.toString());
 
           //Creating its own personal group
           //-------------------------------------------------------------
@@ -135,7 +147,9 @@ useEffect(() => {
        
     }else{
 
-      console.log("Accessing directly");
+      console.log("Usuario existente");
+      console.log(userRef[0])
+
       await authController.setInitial("0");
       setUser(idApp);
       
@@ -146,8 +160,36 @@ useEffect(() => {
 
       setToken(userRef[0].token);
 
-      console.log("login ok!!!!!!!!")
+      console.log(" ")
+      console.log("=======parte 3 Iniciando verificacion login/registro  OK!=========")
+      console.log(" ")
+
+
+
+      console.log(" ")
+      console.log(" ")
     }
+
+
+
+      //just to check groups table
+      const groupAllRef = await groupController.getAllGroups();
+      console.log("getAllGroups")
+      console.log(groupAllRef)
+      statex$.default.groups.set(groupAllRef);
+
+      const usersAllRef = await authController.getAllUsers();
+      console.log("getAllUsers")
+      console.log(usersAllRef);
+      statex$.default.users.set(usersAllRef);
+
+      const messagesAllRef = await groupMessageController.getAllGroupMessage();
+      console.log("getAllGroupMessage")
+      console.log(messagesAllRef);
+      statex$.default.messages.set(groupAllRef);
+
+
+
 
       setLoading(false);
 }

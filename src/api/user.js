@@ -141,6 +141,28 @@ export class User {
       throw error;
     }
   }
+
+  async getAllUsersLocal() {
+    try {
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.USER_ALL}`;
+      const params = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await fetch(url, params).catch(e=> {
+        statex$.default.flags.offline.set('true');
+      });
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 //==========================================================================================
   async getUser(accessToken, userId) {
     try {

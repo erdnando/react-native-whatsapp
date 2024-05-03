@@ -1,15 +1,101 @@
 import { ENV,Encrypt,Decrypt } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
-//import { useDB } from "../hooks";
 import { useState, useEffect, useCallback } from "react";
 import * as statex$ from '../state/local'
-
-//const { createTable,addUser , selectTable,deleteTable } = useDB();
+import { findAllGrupoMessages } from '../hooks/useDA'
 
 export class GroupMessage {
 
  
-  
+  async getAllLocal(groupId) {
+    // console.log("getAllLocal groupId")
+    // console.log(groupId)
+ 
+     EventRegister.emit("loadingEvent",true);
+ 
+     const arrGpoMsgs = statex$.default.messages.get();
+     //console.log("arrGpoMsgs:::::::::")
+     //console.log(arrGpoMsgs)
+     const arrUsers = statex$.default.users.get();
+     let arrMessages=[];
+ 
+     //console.log("getAllLocal::::::::::::::::::::::::::::::::::::::::::::::")
+     //console.log(groupId)
+     //console.log(arrGpoMsgs)
+     //console.log(statex$.default.groupmessages.get())
+ 
+     const lstMessages = arrGpoMsgs.filter(function (gm) {
+ 
+      // console.log("=============coincidencias==========")
+      // console.log(gm.group)
+      // console.log(groupId)
+      // console.log(gm.group === groupId)
+ 
+       return gm.group.toString() == groupId;
+     });
+ 
+    // console.log("coincidencias group:::::::::::::::")
+    // console.log(lstMessages)
+    
+ 
+       //1.- Recorre lista de grupos
+       lstMessages.forEach( (gm) => {
+ 
+               const userMessage = (arrUsers).filter(function (u) {
+                 return u.email == gm.user?.email;
+               });
+ 
+             // console.log("userMessage")
+         //  console.log(userMessage[0])
+ //// Encrypt(gm.message,gm.tipo_cifrado ), 
+               const newMessage={
+                 _id: gm._id,
+                 group: gm.group,
+                 user: userMessage[0],
+                 message: gm.message, 
+                 message_replied:gm.message_replied,
+                 email_replied:gm.email_replied,
+                 tipo_cifrado_replied:gm.tipo_cifrado_replied,
+                 type: gm.type,
+                 tipo_cifrado: gm.tipo_cifrado,
+                 forwarded: gm.forwarded,
+                 createdAt: gm.createdAt,
+                 updatedAt: gm.updatedAt,
+                 __v: 0
+               };
+ 
+               arrMessages.push(newMessage)
+ 
+       });
+ 
+ 
+     const resultado ={
+       "messages": arrMessages,
+       "total": arrMessages.length
+     }
+ 
+     EventRegister.emit("loadingEvent",false);
+ 
+     return resultado;
+   
+   }
+
+
+  async getAllGroupMessage() {
+   //addMessage
+    try {
+           let response=null;
+           await findAllGrupoMessages().then(result =>{
+            response=result.rows._array
+            
+           }); 
+
+           return response;
+      } catch (error) {
+       // console.log(error)
+        throw error;
+      }
+  }
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
 
@@ -52,6 +138,19 @@ export class GroupMessage {
       throw error;
     }
   }
+
+  async getTotalLocal(groupId) {
+
+    const arrGroupMessages = statex$.default.messages.get();
+
+    const gpoMsgsFiltrado = arrGroupMessages.filter(function (gm) {
+      return gm.group == groupId;
+    });
+
+    return gpoMsgsFiltrado.length;
+
+    
+  }
 //=====================================================================================================
   async getGroupParticipantsTotal(accessToken, groupId) {
 
@@ -93,6 +192,18 @@ export class GroupMessage {
     }
   }
   
+  async getGroupParticipantsTotalLocal(groupId) {
+
+    const arrGroups = statex$.default.groups.get();
+
+    const gpo = arrGroups.filter(function (p) {
+      return p._id == groupId;
+    });
+
+    
+    return gpo[0].participants.length;
+   
+  }
 //=====================================================================================================
 
   async getLastMessage(accessToken, groupId) {
@@ -143,15 +254,15 @@ export class GroupMessage {
     //====================================================================
     //Offline validacion
     //====================================================================
-    /*if(statex$.default.flags.offline.get()=='true'){
+    if(statex$.default.flags.offline.get()=='true'){
 
       console.log("getTotal modo Offline!!!!!")
-      const arrGpoMsgs = statex$.default.groupmessages.get();
+      const arrGpoMsgs = statex$.default.messages.get();
 
       console.log("arrGpoMsgs.messages")
       console.log(arrGpoMsgs)
 
-      const arrUsers = statex$.default.user.get();
+      const arrUsers = statex$.default.users.get();
       console.log("arrUsers")
       console.log(arrUsers)
 
@@ -198,10 +309,11 @@ export class GroupMessage {
 
       return resultado;
       
-  }*/
-  //end if offline
+  }//end if offline
+
+
   //Offline validacion
-  if(statex$.default.flags.offline.get()=='true'){
+ /* if(statex$.default.flags.offline.get()=='true'){
 
     console.log("getAllGrupos modo Offline!!!!!")
     const getAllMsgBRef=statex$.default.getAllMsgGroup.get();
@@ -246,8 +358,8 @@ export class GroupMessage {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       throw error;
-    }
-  }
+    }*/
+}
 
 //==============================================================================================
 

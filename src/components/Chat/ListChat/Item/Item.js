@@ -42,7 +42,7 @@ export function Item(props) {
     })();
   }, [chat._id]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     (async () => {
       try {
         const response = await chatMessageController.getLastMessage(
@@ -56,6 +56,7 @@ export function Item(props) {
       }
     })();
   }, [chat._id]);
+  */
 
   const userChat =
     user._id === participant_one._id ? participant_two : participant_one;

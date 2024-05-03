@@ -32,21 +32,18 @@ export function Item(props) {
   useEffect(() => {
     (async () => {
       try {
-        const totalMessages = await groupMessageController.getTotal(
-          accessToken,
+        const totalMessages = await groupMessageController.getTotalLocal(
           group._id
         );
       
 
-        const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-          accessToken,
-          group._id
-        );
+        const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal( group._id );
         setTotalMembers(totalParticipants);
         
 
 
         const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
+
         setTotalUnreadMessages(totalMessages - totalReadMessages);
 
 
@@ -55,10 +52,7 @@ export function Item(props) {
           console.log("group list updated...");
         
               try {
-                const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-                  accessToken,
-                  group._id
-                );
+                const totalParticipants = await groupMessageController.getGroupParticipantsTotalLocal(group._id);
                 setTotalMembers(totalParticipants);
                 console.log("group and groupResult updated...");
               } catch (error) {
@@ -80,7 +74,7 @@ export function Item(props) {
   }, [group._id]);
 
   //getLastMessage
-  useEffect(() => {
+  /*useEffect(() => {
     (async () => {
       try {
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
@@ -92,6 +86,7 @@ export function Item(props) {
       }
     })();
   }, [group._id]);
+  */
 
   //send message to socket IO
   useEffect(() => {

@@ -72,33 +72,33 @@ export function GroupsScreen() {
          //================Get all grupos===================================
         try {
         
-            const groupsRef = await groupController.getAllGroupsDB(email);
+            const groupsParticipaRef = await groupController.getAllGroupsLocal(email);
 
             //const result = response?.sort((a, b) => {
             //  return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
             //});
-            //resultx=result;
+           // resultx=result;
 
-            setGroups(groupsRef);
-            setGroupsResult(groupsRef);
+            setGroups(groupsParticipaRef);
+            setGroupsResult(groupsParticipaRef);
 
           //==================get all messages===================================
           try {
 
             //En linea va guardando la ultima foto de datos
-            if(statex$.default.flags.offline.get()=='false'){
+           
 
                   console.log("Gathering all data into state en groupScreen")
                   //to gather all groups with their messages into state
-                  statex$.default.groupmessages.set([]);//clean
-                  const arrMessageGrupo = statex$.default.groupmessages.get();//get clean list
+                  statex$.default.messages.set([]);//clean
+                  const arrMessageGrupo = statex$.default.messages.get();//get clean list
 
                   //Por cada grupo
-                  resultx.forEach( async (gpo) => { 
+                  groupsParticipaRef.forEach( async (gpo) => { 
                     console.log("gpo-------------->");
                     console.log(gpo._id);
 
-                    const gpoMessages = await groupMessageController.getAll(accessToken, gpo._id);
+                    const gpoMessages = await groupMessageController.getAllLocal(gpo._id);
 
                     console.log("gpoMessages get all del grupo-->")
                     console.log(gpoMessages)
@@ -106,25 +106,29 @@ export function GroupsScreen() {
                     gpoMessages.messages.forEach( (msgx)=>{
                       console.log("msgx detetctado:::::::::::")
                       console.log(msgx)
-                      statex$.default.groupmessages.set((arrMessageGrupo) => [...arrMessageGrupo, msgx])
+                      statex$.default.messages.set((arrMessageGrupo) => [...arrMessageGrupo, msgx])
                     });
 
 
 
                     console.log("Mensajes recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
-                    console.log(statex$.default.groupmessages.get())
+                    console.log(statex$.default.messages.get())
   
-                    const arrUsers = await userController.getAllUsers(accessToken);
-                    statex$.default.user.set(arrUsers);
+                    //const arrUsers = await userController.getAllUsers(accessToken);
+                    //s//tatex$.default.users.set(arrUsers);
   
                     console.log("User recuperados!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1")
-                    console.log(statex$.default.user.get())
+                    console.log(statex$.default.users.get())
+
+                    console.log(" ")
+                    console.log("=======parte 4 carga demensajes  OK!=========")
+                    console.log(" ")
 
 
                   });
 
                  
-              }
+              
           } catch (error) {
             console.error(error);
           }
@@ -144,14 +148,7 @@ export function GroupsScreen() {
 
   const upGroupChat = (groupId) => {
 
-      if(statex$.default.flags.offline.get()=='true'){
-          //setGroupsResult(statex$.default.getAll.get())
-
-         // console.log("recuperando groupsResult")
-          //console.log( groupsResult)
-      }
-
-  
+    
       const data = groupsResult;
       const fromIndex = data.map((group) => group._id).indexOf(groupId);
       const toIndex = 0;
@@ -163,13 +160,6 @@ export function GroupsScreen() {
   };
 
 
- // if(statex$.default.flags.offline.get()=='true'){
-    //setGroupsResult(statex$.default.getAll.get())
-  //}
-  console.log("setGroupsResult::::::::::::::::::::::::::::::::::::::::")
-  //console.log(groupsResult)
-  //console.log(statex$.default.getAll.get())
-  console.log("::::::::::::::::::::::::::::::::;;;;;;;;;;;;;;;;::::::::")
 
   if (!groupsResult) return <LoadingScreen />;
 

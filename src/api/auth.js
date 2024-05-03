@@ -3,14 +3,46 @@ import { ENV,MD5method } from "../utils";
 import * as statex$ from '../state/local'
 import * as Crypto from 'expo-crypto';
 import { Types } from 'mongoose';
-//import db from '../sqlite/sqlite';
-import { findUsersByEmail,addUser } from '../hooks/useDA'
+import { findUsersByEmail,addUser,findAllUsers } from '../hooks/useDA'
 import { array } from "yup";
+import { DateTime } from "luxon";
 
 
 export class Auth {
 
+//================================================================================================================================================================
 
+async getAllUsers() {
+   
+  try {
+         let response=null;
+         await findAllUsers().then(result =>{
+          response=result.rows._array
+         }); 
+
+         return response;
+    } catch (error) {
+     // console.log(error)
+      throw error;
+    }
+}
+
+  async logindb(email, password) {
+   
+    try {
+           let response=null;
+           await findUsersByEmail(email).then(result =>{
+            response=result.rows._array
+           }); 
+
+           return response;
+      } catch (error) {
+       // console.log(error)
+        throw error;
+      }
+  }
+
+  //================================================================================================================================================================
   async registerdb(email) {
 
         let token ="";
@@ -43,6 +75,7 @@ export class Auth {
       
             const response = await fetch(url, params);
             token = await response.json();
+            //token = JSON.stringify(token)
             
             console.log("token usuario obtenido")
             console.log(token)
@@ -54,18 +87,21 @@ export class Auth {
             //=============================================================
               try {
                   let response=null;
-                 
-                  await addUser(_id, email,hashPassword,nipCifrado,token).then(result =>{
+                  //======================
+                  const today = new Date().toISOString()
+                  //=======================
+                  await addUser(_id.toString() , email,hashPassword,nipCifrado,token.access ,today ).then(result =>{
 
                     response=result.rows._array;
                     console.log('usuario insertado')
                     console.log(result)
 
                   }).catch(error => {
+                    console.log("Error al registrar user")
                     console.log(error)
                   }); 
       
-                  return response==null ? 'Error' : token;
+                  return response==null ? 'Error' : token.access;
               } catch (error) {
                   console.log(error)
                 throw error;
@@ -194,20 +230,7 @@ export class Auth {
     }
   }
 
-   async logindb(email, password) {
-   
-    try {
-           let response=null;
-           await findUsersByEmail(email).then(result =>{
-            response=result.rows._array
-           }); 
 
-           return response;
-      } catch (error) {
-       // console.log(error)
-        throw error;
-      }
-  }
 
   /*
    getUsersById(email){

@@ -1,28 +1,125 @@
-import db from '../sqlite/sqlite'
+//import { openDatabase } from '../sqlite/sqlite'
 
+
+import * as SQLite from 'expo-sqlite';
+
+
+const db = SQLite.openDatabase('chatappx');
 
 
 //==============================================================================================================================================================================================================================
-export function fnCreateTables() {
+export function fnDropTableUsers() {
 
-  console.log('creando tablas.......');
+  //console.log('dropping tablas..users.....');
 
-  db.transaction( tx =>{
-    tx.executeSql("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT, token TEXT, createdAt TEXT, updatedAt TEXT, avatar64 TEXT);" );
-    tx.executeSql("CREATE TABLE IF NOT EXISTS groups (id TEXT PRIMARY KEY, name TEXT, participants TEXT, creator TEXT, image TEXT, image64 TEXT, createdAt TEXT, updatedAt TEXT);" );
-    tx.executeSql("CREATE TABLE IF NOT EXISTS groupmessage (id TEXT PRIMARY KEY, group TEXT, user TEXT, message TEXT, type TEXT, tip_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT);" );
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("DROP TABLE users;" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
   });
 }
 
 //==============================================================================================================================================================================================================================
+export function fnDropTableGroups() {
 
+  //console.log('dropping tablas..groups.....');
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("DROP TABLE groups;" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+//==============================================================================================================================================================================================================================
+export function fnDropTableGroupMessages() {
+
+  //console.log('dropping tablas..groupmessage.....');
+
+  return new Promise((resolve, reject) => {
+    this.db.transaction(
+      tx => {
+        tx.executeSql("DROP TABLE messages;" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+//==============================================================================================================================================================================================================================
+export function fnCreateTableUsers() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS users ( _id TEXT, email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT, token TEXT, createdat TEXT, updatedat TEXT, avatar64 TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+//==============================================================================================================================================================================================================================
+export function fnCreateTableGroups() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS groups (_id TEXT,name TEXT, participants TEXT, creator TEXT, image TEXT, image64 TEXT, createdat TEXT, updatedat TEXT);", 
+        (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+//==============================================================================================================================================================================================================================
+
+export function fnCreateTableGroupMessages() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS messages (_id TEXT, grupo TEXT, user TEXT, message TEXT, tipo TEXT, tip_cifrado TEXT, forwarded TEXT, createdat TEXT, updatedat TEXT);", 
+        (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+
+}
+
+
+
+
+
+
+//==============================================================================================================================================================================================================================
+                 
 export  function findUsersByEmail(email) {
- 
+
+  //console.log("SELECT * FROM users where email=\""+email+"\"")
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
-        tx.executeSql('SELECT * FROM users where email=?', [email], 
+        tx.executeSql("SELECT * FROM users where email=\""+email+"\"", [], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
+
+export  function findAllUsers() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM users", [], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -35,14 +132,15 @@ export  function findUsersByEmail(email) {
 
 //==============================================================================================================================================================================================================================
 
-export  function addUser(_id,email,hashPassword,nipCifrado,token) {
+export  function addUser(_id,email,hashPassword,nipCifrado,token,today) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
          //id ,email , firstname , lastname , password , avatar , nip , token , createdAt , updatedAt , avatar64 
-        tx.executeSql('INSERT INTO USERS (id, email,firstname,lastname,password,avatar, nip , token , createdAt , updatedAt , avatar64 ) values (?,?,?,?,?,?,?,?,?,?,?)', [_id,email,'','',hashPassword,'',nipCifrado,token,new Date(), new Date()], 
+        tx.executeSql('INSERT INTO users(_id, email,firstname,lastname,password,avatar,nip,token,createdat,updatedat,avatar64) values(?,?,?,?,?,?,?,?,?,?,?)', 
+                                        [_id,email,'','',hashPassword,'',nipCifrado,token,today, today,''], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -56,14 +154,15 @@ export  function addUser(_id,email,hashPassword,nipCifrado,token) {
 }
 //==============================================================================================================================================================================================================================
 
-export  function addGroup(_id, creatorId, usersId, name) {
+export  function addGroup(_id, creatorId, usersId, name, today) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
          //id , name , participants , creator , image , image64 , createdAt , updatedAt 
-        tx.executeSql('INSERT INTO USERS (id , name , participants , creator , image , image64 , createdAt , updatedAt ) values (?,?,?,?,?,?,?,?)', [_id, name, usersId, creatorId ,'','',new Date(), new Date()], 
+        tx.executeSql('INSERT INTO groups (_id , name , participants , creator , image , image64 , createdat , updatedat ) values (?,?,?,?,?,?,?,?)', 
+        [_id, name, usersId, creatorId ,'group/group1.png','',today, today], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -74,22 +173,58 @@ export  function addGroup(_id, creatorId, usersId, name) {
   });
    
 }
-//==============================================================================================================================================================================================================================
 
-export  function deleteUserTables() {
+export  function addMessage(_id,email,hashPassword,nipCifrado,token,today) {
  
+  return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
-        tx.executeSql('DELETE FROM users');
-        tx.executeSql('DELETE FROM groups');
-        tx.executeSql('DELETE FROM groupmessage');
+         //_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat
+        tx.executeSql('INSERT INTO messages(_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat) values(?,?,?,?,?,?,?,?,?)', 
+                                        [0,'gpo1','yo','mensaje','TEXT','AES','false',today, today], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
       }
     );
+  });
+
+        
 }
 //==============================================================================================================================================================================================================================
+export  function findAllGroups() {
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql('SELECT * FROM groups', [], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
 
+//==============================================================================================================================================================================================================================
 
+export  function findAllGrupoMessages() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM messages", [], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });     
+}
 //==============================================================================================================================================================================================================================
 
 

@@ -1,13 +1,25 @@
 import { ENV } from "../utils";
 import * as statex$ from '../state/local'
-//import { Groups, } from '../models/groups'
-//import { Users } from '../models/users'
 import { Types } from 'mongoose';
-//import { useDBGroups } from '../sqlite/useDBGroups'
-import { addGroup } from '../hooks/useDA'
+import { addGroup,findUsersByEmail,findAllUsers, findAllGroups } from '../hooks/useDA'
 
 
 export class Group {
+
+  async getAllGroups() {
+   
+    try {
+           let response=null;
+           await findAllGroups().then(result =>{
+            response=result.rows._array
+           }); 
+
+           return response;
+      } catch (error) {
+       // console.log(error)
+        throw error;
+      }
+  }
 
   async create(accessToken, creatorId, usersId, name, image) {
     try {
@@ -77,8 +89,10 @@ export class Group {
     try {
         let response=null;
         const _id = new Types.ObjectId();
+        const today = new Date().toISOString()
+        const arrParticipantes= JSON.stringify([usersId]);
       
-        await addGroup(_id, creatorId, usersId, name).then(result =>{
+        await addGroup(_id.toString() , creatorId, arrParticipantes, name, today).then(result =>{
 
           response=result.rows._array;
           console.log('grupo insertado')
@@ -95,52 +109,57 @@ export class Group {
     }
   }
 
+  
+
   //obtiene todos logrupos con su detalle
-  async getAllGroupsDB(email) {
+  async getAllGroupsLocal(email) {
 
-        try {
+   
+    const arrGroups = statex$.default.groups.get();
+    const arrUsers = statex$.default.users.get();
 
-          /*const groupsRef = Groups.getGroups();
-          const ownerRef = Users.getUserById(gpo.creator)
+    let gruposDondeParticipa=[];
+    console.log("arrGroups--------->")
+    console.log(arrGroups)
 
-          console.log("Listado de grupos")
-          console.log(groupsRef)
 
-          let arrGrupos=[];
-          groupsRef.forEach( async (gpo) => { 
+    //1.- Recorre lista de grupos
+    arrGroups.forEach( (grupo) => {
+     
+          //2.- Por cada grupo, busca en su lista de participantes coincidencia
+          const participantesx = JSON.parse(grupo.participants);
 
-            const gpoDetalle = {
-                                _id: gpo.id,
-                                name: gpo.name,
-                                image: gpo.image,
-                                __v: 0,
-                                last_message_date: "",
-                                creator: ownerRef,
-                                participants: [
-                                  {
-                                    "_id": "662886c9ac4a4be81cbea857",
-                                    "email": "b7548672-bd45-4a08-aca9-0a325a64c34a",
-                                    "password": "$2a$10$etmcymIhdmI0ETPEZU1fJuc8TmsEohlgsmGlbYmv8PMtlMScMVx8W",
-                                    "__v": 0,
-                                    "nip": "827ccb0eea8a706c4c34a16891f84e7b"
-                                  }
-                                ],
-                                
-                               
-                              }
-                              console.log("gpoDetalle")
-                              console.log(gpoDetalle)
-
-                              arrGrupos.push(gpoDetalle)
-            
+          const arrP = participantesx.filter(function (p) {
+            return p == email;
           });
 
-          return arrGrupos;*/
+          if(arrP.length>0){
+         
+            const creatorx = arrUsers.filter(function (c) {
+              return c.email == email;
+            });
 
-        } catch (error) {
-          throw error;
-        }
-}
+            const participantes = grupo.participants;
+        
+            const newGpoRespuesta={
+              _id: grupo._id,
+              name: grupo.name,
+              participants: participantes,
+              creator: creatorx[0],
+              image: "group/group1.png",
+              __v: 0,
+              last_message_date: null
+            };
+
+            gruposDondeParticipa.push(newGpoRespuesta)
+          }
+    });
+
+      console.log("gruposDondeParticipa::::::::::::::::::::")
+      console.log(gruposDondeParticipa)
+    return gruposDondeParticipa;
+  }
+
 
 
 
