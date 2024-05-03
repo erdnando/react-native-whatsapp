@@ -51,6 +51,45 @@ export class Group {
     }
   }
 
+  async createlocal(accessToken, creatorId, usersId, name, image) {
+    
+    try {
+      let response=null;
+      const _id = new Types.ObjectId();
+      const today = new Date().toISOString()
+      const arrParticipantes= JSON.stringify([usersId]);
+    
+      await addGroup(_id.toString() , creatorId, arrParticipantes, name, today).then(result =>{
+
+        response=result.rows._array;
+        console.log('grupo insertado por opcion')
+        console.log(result)
+
+        //add to state managment
+        const arrGroups = statex$.default.groups.get();
+        const newGrupo = {
+          _id :  new Types.ObjectId(),
+          name  : name, 
+          participants  :arrParticipantes, 
+          creator  : creatorId, 
+          image  : "group/group1.png", 
+          image64  : ""
+        };
+        console.log("Adding to state")
+        statex$.default.groups.set((arrGroups) => [...arrGroups, newGrupo]);
+
+      }).catch(error => {
+        console.log("Error al crear el grupo")
+        console.log(error)
+      }); 
+
+      return response==null ? 'Error al insertar' : 'insertado correctamente';
+  } catch (error) {
+      console.log(error)
+    throw error;
+  }
+  }
+
   async createAuto(accessToken, creatorId, usersId, name, image) {
     try {
       const formData = new FormData();
@@ -95,7 +134,7 @@ export class Group {
         await addGroup(_id.toString() , creatorId, arrParticipantes, name, today).then(result =>{
 
           response=result.rows._array;
-          console.log('grupo insertado')
+          console.log('grupo insertado en nueva implementacion')
           console.log(result)
 
         }).catch(error => {
@@ -114,7 +153,9 @@ export class Group {
   //obtiene todos logrupos con su detalle
   async getAllGroupsLocal(email) {
 
-   
+   console.log("Obteniendo grupos donde participa::::::")
+   console.log(email)
+
     const arrGroups = statex$.default.groups.get();
     const arrUsers = statex$.default.users.get();
 
