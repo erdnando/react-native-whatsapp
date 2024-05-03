@@ -13,20 +13,7 @@ export function SendMedia(props) {
   const { accessToken } = useAuth();
 
   const onOpenClose = () => {
-
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Sin conexion a internet. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-                statex$.default.flags.offline.set('true');
-              }
-        } ]);
-  }else{
     setShow((prevState) => !prevState);
-  }
-
-    
   }
 
 

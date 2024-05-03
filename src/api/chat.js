@@ -39,7 +39,7 @@ export class Chat {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
@@ -62,7 +62,7 @@ export class Chat {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 

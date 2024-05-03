@@ -12,6 +12,7 @@ const state$ = observable({
   users:[],
   groups:[],
   messages:[],
+  me:{},
   flags:{
     cifrado:true,
     offline:'false'

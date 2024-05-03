@@ -43,7 +43,7 @@ async getAllUsers() {
   }
 
   //================================================================================================================================================================
-  async registerdb(email) {
+  async registerUsuariodb(email) {
 
         let token ="";
         try {
@@ -90,7 +90,7 @@ async getAllUsers() {
                   //======================
                   const today = new Date().toISOString()
                   //=======================
-                  await addUser(_id.toString() , email,hashPassword,nipCifrado,token.access ,today ).then(result =>{
+                  await addUser(_id.toString() , email,hashPassword,nipCifrado,token.access ,today,nip ).then(result =>{
 
                     response=result.rows._array;
                     console.log('usuario insertado')
@@ -122,7 +122,7 @@ async getAllUsers() {
       }
   }
 
-  async register(email, password) {
+  /*async register(email, password) {
     try {
 
       
@@ -153,28 +153,12 @@ async getAllUsers() {
     } catch (error) {
       throw error;
     }
-  }
+  }*/
 
   async login(email, password) {
 
-    //====================================================================
-    console.log('validando modo offline:::')
-    console.log(statex$.default.flags.offline.get())
-   //Offline validacion
-   if(statex$.default.flags.offline.get()=='true'){
-
-      console.log("modo Offline!!!!!")
-
-      const userRef=statex$.default.login.get();//datos de acceso persisitidos
-     
-
-      if(userRef.user==email && userRef.pwd== password){
-        return {"access": userRef.access, "refresh": userRef.refresh}
-      }else{
-        //Contrasena incorrecta
-        return {"access": null, "refresh": null}
-      }
-   }
+   
+  
    //====================================================================
 
   
@@ -193,7 +177,7 @@ async getAllUsers() {
       console.log(url)
       console.log(params)
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+       
         const userRef=statex$.default.login.get();
         return {"access": userRef.access, "refresh": userRef.refresh}
       });
@@ -266,7 +250,7 @@ async getAllUsers() {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 

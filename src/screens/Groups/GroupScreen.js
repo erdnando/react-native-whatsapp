@@ -158,14 +158,9 @@ export function GroupScreen() {
 
             });
 
-            if(statex$.default.flags.offline.get()=='true'){
-
+      
               lockedMessages=statex$.default.messages.get();
-            }else{
-              //cahce
-              statex$.default.messages.set(lockedMessages);
-            }
-
+            
 
 
             setMessages(lockedMessages);
@@ -196,14 +191,7 @@ export function GroupScreen() {
             setMessages([]);
             setMessages(unlockedMessages);
 
-            if(statex$.default.flags.offline.get()=='true'){
-
-              unlockedMessages=statex$.default.messages.get();
-              setMessages(unlockedMessages);
-            }else{
-              //cahce
-              statex$.default.messages.set(unlockedMessages);
-            }
+           
 
             //here  sound because edited it
             console.log("playing audio................newmsg1");

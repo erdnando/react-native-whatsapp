@@ -23,7 +23,7 @@ export function GroupsScreen() {
   
   //const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
-  const { accessToken,updateUser,email } = useAuth();
+  const { accessToken,updateUser,email,user } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -40,6 +40,8 @@ export function GroupsScreen() {
       console.log(firtsTime);
 
       if(firtsTime=="1"){ 
+        //const userRef =statex$.default.me.get();
+        setNip(user.nipraw)
         setShowModal(true);
       }
     }

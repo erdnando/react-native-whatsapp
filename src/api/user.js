@@ -1,28 +1,13 @@
 import { ENV } from "../utils";
 import * as statex$ from '../state/local'
+import { updateNip,updateAlias } from '../hooks/useDA.js'
 
 export class User {
 
   //==========================================================================================
   async getMe(accessToken) {
    
-    //Offline validacion
-   if(statex$.default.flags.offline.get()=='true'){
-
-        console.log("modo Offline!!!!!")
-
-        const getMeRef=statex$.default.getMe.get();
-
-        if(getMeRef._id !=""){
-          return getMeRef;
-        }else{
-          return {"__v": 0, "_id": "", "email": "", "nip": ""}
-        }
-      
-    }else{
-      console.log("modo on Line!!!!!")
-    }
-
+    
 
 
 
@@ -35,18 +20,12 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
 
-      //Offline cache
-      if (response.status == 200){
-          const newGetMe={"__v": 0, "_id": result._id, "email": result.email, "nip": result.nip}
-            statex$.default.getMe.set(newGetMe);
-      }
+     
 
       return result;
     } catch (error) {
@@ -54,7 +33,23 @@ export class User {
     }
   }
 //==========================================================================================
-  async updateUser(accessToken, userData) {
+async updateUserNipDB(email, userData) {
+
+  const data = userData;
+
+  console.log(data)
+
+  updateNip(data.nipraw,data.nip,email)
+}
+
+async updateUserAliasDB(email, userData) {
+
+  const data = userData;
+
+  updateAlias(data.firstname, email)
+}
+
+/*async updateUser(accessToken, userData) {
     console.log("Actualizando::::::::::::::::;");
     console.log("===================");
     console.log("userData");
@@ -82,9 +77,7 @@ export class User {
 
       console.log("params");
       console.log(params);
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       console.log("result");
@@ -96,7 +89,7 @@ export class User {
     } catch (error) {
       throw error;
     }
-  }
+  }*/
 //==========================================================================================
   async getAll(accessToken) {
     try {
@@ -107,9 +100,7 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -129,9 +120,7 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -151,9 +140,7 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -173,9 +160,7 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -196,9 +181,7 @@ export class User {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw error;

@@ -108,18 +108,6 @@ export function GroupForm(props) {
   const StartRecording = async () => {
 
 
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Sin conexion a internet. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                return;
-              }
-        } ]);
-  }
-
-
-
-
     setSeconds(0)
     setMinutes(0)
     setVuelta(1000);
@@ -176,11 +164,7 @@ export function GroupForm(props) {
   // Function to STOP RECORDING!!!!
   const StopRecording = async () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-      SetIsRecording(false);
-      return;
-  }
-
+  
 
 
     if(vuelta==null){
@@ -348,21 +332,9 @@ export function GroupForm(props) {
   }
 
   const handleFocus = () => {
-
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-                setShowIconSendText(false);
-                
-              }
-        } ]);
-    }else{
-        //console.log("foco puesto....")
+     //console.log("foco puesto....")
       //setFocusInput(true);
       setShowIconSendText(true);
-    }
    
   };
   

@@ -17,15 +17,7 @@ export function Info(props) {
 
   const openGallery = async () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Sin conexion a internet. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-                statex$.default.flags.offline.set('true');
-              }
-        } ]);
-  }else{
+   
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -35,7 +27,7 @@ export function Info(props) {
     if (!result.canceled) {
       updateImage(result.assets[0].uri);
     }
-  }
+  
 
     
   };
@@ -55,20 +47,12 @@ export function Info(props) {
 
   const openChangeNameGroup = () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Sin conexion a internet. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-                statex$.default.flags.offline.set('true');
-              }
-        } ]);
-    }else{
+   
       navigation.navigate(screens.global.changeNameGroupScreen, {
         groupId: group._id,
         groupName: group.name,
       });
-    }
+    
 
 
     

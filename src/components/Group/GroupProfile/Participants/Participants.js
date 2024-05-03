@@ -36,17 +36,9 @@ export function Participants(props) {
 
   const openAddParticipants = () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-          Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-              [{  text: 'Ok',
-                  onPress: async ()=>{
-                    console.log('modo offline!');
-                    statex$.default.flags.offline.set('true');
-                  }
-            } ]);
-      }else{
+   
            navigation.navigate(screens.global.addUserGroupScreen, { groupId: _id, });
-      }
+      
 
     
   };

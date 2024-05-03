@@ -100,20 +100,6 @@ export class GroupMessage {
   async getTotal(accessToken, groupId) {
 
     //====================================================================
-    //Offline validacion
-    //====================================================================
-    if(statex$.default.flags.offline.get()=='true'){
-
-        console.log("getTotal modo Offline!!!!!")
-        const arrGroupMessages=statex$.default.groupmessages.get();
-
-        const gpoMsgsFiltrado = arrGroupMessages.filter(function (gm) {
-          return gm.group == groupId;
-        });
-
-        return gpoMsgsFiltrado.length;
-    }
-    //====================================================================
 
 
     try {
@@ -124,9 +110,7 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
@@ -154,17 +138,7 @@ export class GroupMessage {
 //=====================================================================================================
   async getGroupParticipantsTotal(accessToken, groupId) {
 
-    //Offline validacion
-    if(statex$.default.flags.offline.get()=='true'){
-
-      console.log("getGroupParticipantsTotal modo Offline!!!!!")
-      const getGroupParticipantsTotalRef=statex$.default.getGroupParticipantsTotal.get();
-      return getGroupParticipantsTotalRef;
     
-    }else{
-      console.log("getGroupParticipantsTotal modo on Line!!!!!")
-    }
-
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_PARTICIPANTS_TOTAL}/${groupId}`;
@@ -174,16 +148,11 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
-      //Offline cache
-      if (response.status == 200){
-        statex$.default.getGroupParticipantsTotal.set(result);
-    }
+    
 
       return result;
 
@@ -208,16 +177,7 @@ export class GroupMessage {
 
   async getLastMessage(accessToken, groupId) {
 
-    //Offline validacion
-    if(statex$.default.flags.offline.get()=='true'){
-
-      console.log("getLastMessage modo Offline!!!!!")
-      const getLastMessageRef=statex$.default.getLastMessage.get();
-      return getLastMessageRef;
-    
-    }else{
-      console.log("getLastMessage modo on Line!!!!!")
-    }
+  
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LAST}/${groupId}`;
@@ -227,19 +187,14 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       if (response.status !== 200) throw result;
 
       console.log("result lastMessage")
       console.log(result)
-      //Offline cache
-      if (response.status == 200){
-          statex$.default.getLastMessage.set(result);
-      }
+      
 
       return result;
     } catch (error) {
@@ -249,84 +204,7 @@ export class GroupMessage {
 //=====================================================================================================
   async getAll(accessToken, groupId) {
 
-    console.log('get all=================================================')
-
-    //====================================================================
-    //Offline validacion
-    //====================================================================
-    if(statex$.default.flags.offline.get()=='true'){
-
-      console.log("getTotal modo Offline!!!!!")
-      const arrGpoMsgs = statex$.default.messages.get();
-
-      console.log("arrGpoMsgs.messages")
-      console.log(arrGpoMsgs)
-
-      const arrUsers = statex$.default.users.get();
-      console.log("arrUsers")
-      console.log(arrUsers)
-
-      let arrMessages=[];
-
-      const lstMessages = arrGpoMsgs.filter(function (gm) {
-
-        return gm?.group?.toString() == groupId;
-      });
-
-
-      //1.- Recorre lista de grupos
-      lstMessages?.forEach( (gm) => {
-
-              const userMessage = (arrUsers).filter(function (u) {
-                return u.email == gm.user?.email;
-              });
-
-              const newMessage={
-                _id: gm._id,
-                group: gm.group,
-                user: userMessage[0],
-                message: gm.message, 
-                message_replied:gm.message_replied,
-                email_replied:gm.email_replied,
-                tipo_cifrado_replied:gm.tipo_cifrado_replied,
-                type: gm.type,
-                tipo_cifrado: gm.tipo_cifrado,
-                forwarded: gm.forwarded,
-                createdAt: gm.createdAt,
-                updatedAt: gm.updatedAt,
-                __v: 0
-              };
-
-              arrMessages.push(newMessage)
-
-      });
-
-
-      const resultado ={
-        "messages": arrMessages,
-        "total": arrMessages.length
-      }
-
-      return resultado;
-      
-  }//end if offline
-
-
-  //Offline validacion
- /* if(statex$.default.flags.offline.get()=='true'){
-
-    console.log("getAllGrupos modo Offline!!!!!")
-    const getAllMsgBRef=statex$.default.getAllMsgGroup.get();
-    
-    console.log("getAllMsgBRef----------")
-    console.log(getAllMsgBRef)
-
-    return getAllMsgBRef;
-  
-  }
-
-  //====================================================================
-
+   
 
     try {
      EventRegister.emit("loadingEvent",true);
@@ -338,9 +216,7 @@ export class GroupMessage {
         },
       };
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       console.log("getting all messages by group");
@@ -349,16 +225,13 @@ export class GroupMessage {
       console.log('2')
       if (response.status !== 200) throw result;
       
-      //Offline cache
-      //if (response.status == 200){
-          statex$.default.getAllMsgGroup.set(result);
-     // }
+      
      
       return result;
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       throw error;
-    }*/
+    }
 }
 
 //==============================================================================================
@@ -403,9 +276,7 @@ console.log("cifrando 2")
     console.log("sending...."+url);
     console.log(params);
 
-    const response = await fetch(url, params).catch(e=> {
-      statex$.default.flags.offline.set('true');
-    });
+    const response = await fetch(url, params)
     const result = await response.json();
 
     //get group messages and persist
@@ -447,9 +318,7 @@ console.log("cifrando 2")
       console.log("sending...."+url);
       console.log(params);
 
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      });
+      const response = await fetch(url, params)
       const result = await response.json();
 
       console.log("==========After updating====================");
@@ -491,9 +360,7 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
     console.log("sending...."+url);
     console.log(params);
 
-    const response = await fetch(url, params).catch(e=> {
-      statex$.default.flags.offline.set('true');
-    });
+    const response = await fetch(url, params)
     const result = await response.json();
 
     console.log("==========After updating====================");
@@ -538,9 +405,7 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
       //console.log(formData);
 
         try {
-          const response = await fetch(url, params).catch(e=> {
-            statex$.default.flags.offline.set('true');
-          });
+          const response = await fetch(url, params)
           //console.log(response);
           const result = await response.json();
           console.log(result);
@@ -595,9 +460,7 @@ async sendFile(accessToken, groupId, file) {
     console.log(params);
 
   try {
-    const response = await fetch(url, params).catch(e=> {
-      statex$.default.flags.offline.set('true');
-    });
+    const response = await fetch(url, params)
    
     //console.log(response);
     const result = await response.json();

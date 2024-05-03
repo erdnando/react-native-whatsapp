@@ -17,16 +17,7 @@ export function Options(props) {
 
   const openGallery = async () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-
-        Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
-        [{  text: 'Ok',
-            onPress: async ()=>{
-              console.log('modo offline continua!');
-          }
-        } ]);
-
-    }else{
+   
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: false,
@@ -37,7 +28,7 @@ export function Options(props) {
             const file = imageExpoFormat(result.assets[0].uri);
             updateUserData({ avatar: file });
           }
-    }
+    
 
   };
 
@@ -51,47 +42,26 @@ export function Options(props) {
   };
 
   const goChangeFirstname = () => {
-    if(statex$.default.flags.offline.get()=='true'){
-
-      Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
-      [{  text: 'Ok',
-          onPress: async ()=>{
-            console.log('modo offline continua!');
-        }
-      } ]);
-      
-    }else{
           navigation.navigate(screens.tab.settings.changeFirstnameScreen);
-    }
-    
   };
 
   const goChangeLastname = () => {
-    if(statex$.default.flags.offline.get()=='true'){
-
-      Alert.alert('Modo offline habilitado. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones como esta',
-      [{  text: 'Ok',
-          onPress: async ()=>{
-            console.log('modo offline continua!');
-        }
-      } ]);
-      
-    }else{
+   
       navigation.navigate(screens.tab.settings.changeLastnameScreen);
-    }
+    
    
   };
 
   return (
     <View style={styles.content}>
 
-      <TouchableOpacity style={styles.item} onPress={openGallery}>
+      {/*<TouchableOpacity style={styles.item} onPress={openGallery}>
         <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="text-recognition" style={styles.iconOptions} />   
           <Center size={3}></Center>
           <Text style={styles.text}>Cambiar foto de perfil</Text>
         </Flex>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <TouchableOpacity style={styles.item} onPress={goChangeFirstname}>
         <Flex direction="row"   >

@@ -41,9 +41,9 @@ useEffect(() => {
     async function fetchData() {
       console.log(" ")
       
-      //fnDropTableUsers();
-      //fnDropTableGroups();
-      //fnDropTableGroupMessages();
+      fnDropTableUsers();
+      fnDropTableGroups();
+      fnDropTableGroupMessages();
 
       fnCreateTableUsers();
       fnCreateTableGroups();
@@ -107,24 +107,25 @@ useEffect(() => {
      console.log(idApp)
      setEmail(idApp);
 
-     const userRef = await authController.logindb( idApp, idApp);
-     console.log("usuario identificado:")
+     let userRef = await authController.logindb( idApp, idApp);
+     console.log("usuario existente:")
      console.log(userRef)
+     
 
      //console.log("accessTokenx:" + access);
 
      if(userRef.length==0){
         //if it's not registered, registered it
-        console.log("Registrando:" + idApp);
+        console.log("Registrando usuario:" + idApp);
 
-        const token = await authController.registerdb(idApp);
+        const token = await authController.registerUsuariodb(idApp);
 
-          console.log("token registrado:::::::");
+          console.log("token obtenido:::::::");
           console.log(token);
 
           await authController.setAccessToken(token.toString());
           await authController.setRefreshToken(token.toString());
-          setUser(idApp.toString());
+          //setUser(idApp.toString());
           setToken(token.toString());
 
           //Creating its own personal group
@@ -135,11 +136,8 @@ useEffect(() => {
             idApp,
             idApp
           );
-
-          console.log("groupCreatedRef")
-          console.log(groupCreatedRef)
           //-------------------------------------------------------------
-        
+         
           //show alert with initial NIP
           await authController.setInitial("1");
           //1a vez, bandera de mensajes cifrados
@@ -151,12 +149,13 @@ useEffect(() => {
       console.log(userRef[0])
 
       await authController.setInitial("0");
-      setUser(idApp);
+      //setUser(idApp);
       
       //siempre cifrados cuando entra
       await authController.setAccessToken(userRef[0].token);
       await authController.setRefreshToken(userRef[0].token);
       await authController.setCifrado("SI");
+      
 
       setToken(userRef[0].token);
 
@@ -171,7 +170,9 @@ useEffect(() => {
     }
 
 
-
+      userRef = await authController.logindb( idApp, idApp);
+      statex$.default.me.set(userRef[0]);
+      setUser(userRef[0]);
       //just to check groups table
       const groupAllRef = await groupController.getAllGroups();
       console.log("getAllGroups")
@@ -232,10 +233,13 @@ useEffect(() => {
   };
 
   const updateUser = (key, value) => {
+
     setUser({
       ...user,
       [key]: value,
     });
+
+    statex$.default.me.set(user);
   };
 
   const data = {
@@ -243,7 +247,7 @@ useEffect(() => {
     user,
     logout,
     updateUser,
-    email
+    email,
   };
 
   if (loading) return null;

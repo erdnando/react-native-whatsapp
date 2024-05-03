@@ -36,15 +36,7 @@ export function GroupProfileScreen() {
 
   const exitGroup = async () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
-      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-                statex$.default.flags.offline.set('true');
-              }
-        } ]);
-    }else{
+   
         try {
           await groupController.exit(accessToken, params.groupId);
           navigation.goBack();
@@ -52,7 +44,7 @@ export function GroupProfileScreen() {
         } catch (error) {
           console.error(error);
         }
-    }
+    
 
     
   };

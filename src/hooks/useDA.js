@@ -41,7 +41,7 @@ export function fnDropTableGroupMessages() {
   //console.log('dropping tablas..groupmessage.....');
 
   return new Promise((resolve, reject) => {
-    this.db.transaction(
+    db.transaction(
       tx => {
         tx.executeSql("DROP TABLE messages;" , (_, result) => resolve(result), (_, error) => reject(error));
       }
@@ -55,7 +55,7 @@ export function fnCreateTableUsers() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS users ( _id TEXT, email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT, token TEXT, createdat TEXT, updatedat TEXT, avatar64 TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+        tx.executeSql("CREATE TABLE IF NOT EXISTS users ( _id TEXT, email TEXT, firstname TEXT, lastname TEXT, password TEXT, avatar TEXT, nip TEXT, token TEXT, createdat TEXT, updatedat TEXT, avatar64 TEXT,nipraw TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
   });
@@ -132,15 +132,15 @@ export  function findAllUsers() {
 
 //==============================================================================================================================================================================================================================
 
-export  function addUser(_id,email,hashPassword,nipCifrado,token,today) {
+export  function addUser(_id,email,hashPassword,nipCifrado,token,today,nipraw) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
          //id ,email , firstname , lastname , password , avatar , nip , token , createdAt , updatedAt , avatar64 
-        tx.executeSql('INSERT INTO users(_id, email,firstname,lastname,password,avatar,nip,token,createdat,updatedat,avatar64) values(?,?,?,?,?,?,?,?,?,?,?)', 
-                                        [_id,email,'','',hashPassword,'',nipCifrado,token,today, today,''], 
+        tx.executeSql('INSERT INTO users(_id, email,firstname,lastname,password,avatar,nip,token,createdat,updatedat,avatar64,nipraw) values(?,?,?,?,?,?,?,?,?,?,?,?)', 
+                                        [_id,email,'','',hashPassword,'group/group1.png',nipCifrado,token,today, today,'',nipraw], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -151,6 +151,40 @@ export  function addUser(_id,email,hashPassword,nipCifrado,token,today) {
   });
 
         
+}
+
+//==============================================================================================================================================================================================================================
+
+export  function updateNip(nipraw,nipcifrado,email){
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE  users set nipraw=?, nipcifrado=? where email=?', [nipraw, nipcifrado,email], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });
+}
+
+export  function updateAlias(alias, email){
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE  users set firstname=? where email=?', [alias,email], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });
 }
 //==============================================================================================================================================================================================================================
 
@@ -174,6 +208,24 @@ export  function addGroup(_id, creatorId, usersId, name, today) {
    
 }
 
+//==============================================================================================================================================================================================================================
+export  function findAllGroups() {
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql('SELECT * FROM groups', [], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
+
 export  function addMessage(_id,email,hashPassword,nipCifrado,token,today) {
  
   return new Promise((resolve, reject) => {
@@ -193,23 +245,6 @@ export  function addMessage(_id,email,hashPassword,nipCifrado,token,today) {
   });
 
         
-}
-//==============================================================================================================================================================================================================================
-export  function findAllGroups() {
- 
-  return new Promise((resolve, reject) => {
-    db.transaction(
-      tx => {
-        // Execute SQL operation
-        tx.executeSql('SELECT * FROM groups', [], 
-          // Success callback
-          (_, result) => resolve(result),
-          // Error callback
-          (_, error) => reject(error)
-        );
-      }
-    );
-  });     
 }
 
 //==============================================================================================================================================================================================================================

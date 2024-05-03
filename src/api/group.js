@@ -39,7 +39,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
@@ -109,7 +109,7 @@ export class Group {
 
       console.log("creacion automatica dle grupo")
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       console.log("response creacion automatica")
       console.log(response)
@@ -206,20 +206,7 @@ export class Group {
 
   async getAll(accessToken) {
 
-        //Offline validacion
-        if(statex$.default.flags.offline.get()=='true'){
-
-          console.log("getAllGrupos modo Offline!!!!!")
-          const getAllRef=statex$.default.getAll.get();
-          
-          console.log("getAllGruposRef----------")
-          console.log(getAllRef)
-
-          return getAllRef;
-        
-        }else{
-          console.log("getAll grupos modo on Line!!!!")
-        }
+      
 
 
     try {
@@ -231,7 +218,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
@@ -263,7 +250,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
       console.log(groupId);
@@ -286,7 +273,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
@@ -314,7 +301,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
@@ -342,7 +329,7 @@ export class Group {
       };
 
       const repsonse = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await repsonse.json();
 
@@ -369,7 +356,7 @@ export class Group {
       };
 
       const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
+        
       });
       const result = await response.json();
 
