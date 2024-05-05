@@ -34,6 +34,7 @@ export const ENV = {
     GROUP_MESSAGE_EDIT_LOCAL: "group/message/edit/local",
     GROUP_MESSAGE_DELETE: "group/message/delete",
     GROUP_MESSAGE_IMAGE: "group/message/image",
+    GROUP_MESSAGE_IMAGE_LOCAL: "group/message/image/local",
     GROUP_MESSAGE_FILE: "group/message/file",
     GROUP_MESSAGE_TOTAL: "group/message/total",
     GROUP_MESSAGE_LAST: "group/message/last",

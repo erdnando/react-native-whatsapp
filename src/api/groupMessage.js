@@ -661,6 +661,86 @@ async deleteMessageLocal(idMessage) {
     }
   }
 
+  async sendImageLocal(accessToken, groupId, file, email,img64) {
+
+    EventRegister.emit("loadingEvent",true);
+     try {
+
+      //============preparing image package=========================
+      const arrUsers = statex$.default.users.get();
+
+      const userFiltrado = arrUsers.filter(function (c) {
+        return c.email == email;
+      });
+
+      //console.log("cifrando 2")
+      const _id = new Types.ObjectId();
+      const today = new Date().toISOString()
+      //Creating groupMessage
+      const newGpoMessage={
+        _id  :_id.toString(),
+        grupo  :groupId, //grupo al q pertenece el mensaje
+        user  :userFiltrado[0], 
+        message  : "", 
+        type  :"IMAGE", 
+        tipo_cifrado  :"", 
+        message_replied:null,
+        email_replied:null,
+        tipo_cifrado_replied:null,
+        forwarded:false,
+        createdAt  :today, 
+        updatedAt  :today,
+        file64  :img64,
+        grupoDestino :null
+        };
+      //=============================================================
+
+
+       const formData = new FormData();
+       formData.append("group_id", groupId);
+       formData.append("image", file);
+       formData.append("message_obj", JSON.stringify(newGpoMessage));
+ 
+       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE_LOCAL}`;
+       //console.log(url);
+ 
+       //"Content-Type": "application/json",
+       const params = {
+         method: "POST",
+         headers: {
+           "Content-Type": "multipart/form-data",
+           "accept": "application/json",
+           Authorization: `Bearer ${accessToken}`,
+         },
+         body: formData,
+       };
+ 
+       console.log("formData");
+       console.log(formData);
+ 
+         try {
+           const response = await fetch(url, params)
+           console.log(response);
+           const result = await response.json();
+           console.log(result);
+ 
+           EventRegister.emit("loadingEvent",false);
+           if (response.status !== 201) throw result;
+         } catch (error) {
+           console.log("Error al enviar imagen al grupo")
+           console.log(error);
+         }
+      
+ 
+       return true;
+     } catch (error) {
+       console.log("Error general al enviar imagen al grupo")
+        EventRegister.emit("loadingEvent",false);
+       throw error;
+     }
+   }
+ 
+
 
 //=====================================================================================================
 async sendFile(accessToken, groupId, file) {

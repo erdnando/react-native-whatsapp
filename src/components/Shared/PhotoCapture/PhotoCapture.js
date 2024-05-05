@@ -15,20 +15,26 @@ export function PhotoCapture(props) {
   const { photo, type, id } = props;
   const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
-  const { accessToken } = useAuth();
+  const { accessToken,email } = useAuth();
 
   const sendMedia = async () => {
     try {
       setLoading(true);
+      console.log("photo.uri")
+      console.log(photo.uri)
       const file = imageExpoFormat(photo.uri);
+      const img64=photo.base64;
+      console.log("photo.file")
+      console.log(file)
 
-      if (type === "chat") {
-        await chatMessageController.sendImage(accessToken, id, file);
-      }
+      //if (type === "chat") {
+      //  await chatMessageController.sendImage(accessToken, id, file);
+     // }
       if (type === "group") {
         console.log("sendind image to the group");
         console.log(file)
-        await groupMessageController.sendImage(accessToken, id, file);
+        //await groupMessageController.sendImage(accessToken, id, file);
+        await groupMessageController.sendImageLocal(accessToken,id, file,email,img64);
       }
 
       setLoading(false);

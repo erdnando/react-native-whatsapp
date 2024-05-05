@@ -657,6 +657,9 @@ export function GroupForm(props) {
               onPress={!formik.isSubmitting && formik.handleSubmit}
             />
           </View>
+
+
+          
           {/* Send media and microphone */}
           <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
               <View display={IsRecording?"none":"flex"}>

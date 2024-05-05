@@ -58,10 +58,7 @@ export function ItemText(props) {
      // console.log("si hay mensaje replicado!!!")
       setReplicado(true);
 
-      //console.log(message.email_replied)
-      //console.log(message.tipo_cifrado_replied)
-      //console.log(message.message_replied)
-      //console.log(":::::::::::::::::::::::::::::::::::;:::::::::::");
+   
     }else{
      // console.log("no hay mensaje replicado!!")
       setReplicado(false);

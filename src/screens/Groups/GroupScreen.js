@@ -311,15 +311,20 @@ export function GroupScreen() {
       console.log("===========================================")
     }
 
+    
+
+    //adding to local db
+    groupMessageController.guardaMessage(newMsgx);
+
     //adding to global state
     const arrMessagesRef =statex$.default.messages.get();
-    statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgx]);
-   
-    //adding to local db
-    groupMessageController.guardaMessage(newMsgx)
-
-     
-    let newMsg = { ...newMsgx };
+      //remove base64, before adding to state
+      let newMsgSin64 = { ...newMsgx };
+      newMsgSin64.file64="";
+      statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgSin64]);
+    
+    //working just with state without images64
+    let newMsg = { ...newMsgSin64 };
 
     if(newMsg.type=="TEXT"){
       const cifrados = await authController.getCifrado(); 
@@ -345,9 +350,6 @@ export function GroupScreen() {
         }
       }
       //============================================================================
-
-
-      
     }
 
     
@@ -357,60 +359,11 @@ export function GroupScreen() {
 
     }
       
-
     //here  sound
     const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
     await sound.playAsync();
   //=================================================================
-  /*let newMsg = { ...newMsgx }
   
-    if(newMsg.type=="TEXT"){
-      console.log("decifrando..")
-      newMsg.message=Decrypt(newMsg.message, newMsg.tipo_cifrado);
-      console.log(newMsg.message)
-
-      if(newMsg.email_replied != null){
-        msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
-
-        //find message original and decryp it on message array
-        try{
-          messages.map((msgx) => {
-            if( Decrypt(msgx.message,msgx.tipo_cifrado) == msg.message_replied){
-              msgx.message = msg.message_replied;
-            }
-           
-          });
-          setMessages(messages);
-        }catch(error){
-          console.log("error al validar xxx")
-        }
-        
-
-      }
-      //here  sound
-      const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
-      await sound.playAsync();
-      
-    }
-   
-
-      const cifrados = await authController.getCifrado(); 
-
-      if(cifrados=="SI"){
-        if(newMsg.type=="TEXT"){
-
-          console.log("cifrando antes de persistir en state!!!!!!!!")
-          console.log("cifrando 7")
-          newMsg.message=Encrypt(newMsg.message,newMsg.tipo_cifrado);
-          console.log("newMsg:::::::")
-          console.log(newMsg)
-
-        }else{ //img or filr
-          newMsg.message = "images/cryptedImagex.png";
-        }
-      }
-      */
-    
     })();
 
 

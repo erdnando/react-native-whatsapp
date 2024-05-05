@@ -107,12 +107,10 @@ export function Item(props) {
     console.log(group._id);
 
     if (newMsg.group === group._id) {
-      console.log("message_notify to me")
+      
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
-        console.log("setting last message");
-
-        
+      
         setLastMessage(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
