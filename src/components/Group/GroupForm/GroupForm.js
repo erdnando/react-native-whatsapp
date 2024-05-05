@@ -391,62 +391,54 @@ export function GroupForm(props) {
   }, []);
 
 
-   //EventListener:forwardingMessage
-
+  //EventListener:forwardingMessage 
   useEffect(() => {
 
       setIdMessage("");
     
-        try {
-          
-          //=================================================================
-          const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
-            console.log("grupo desde donde salio el forward::::")
-            console.log(data.group);
-            setForwardMessage(true);
-            //get groups from API
-       
-              onOpen();
-                try {
+      try { 
+        //=================================================================
+        const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
+          console.log("grupo desde donde salio el forward::::")
+          console.log(data.group);
+          setForwardMessage(true);
+            onOpen();
+              try {
 
-                  setForwardMessage(data);
-                  //Get all messages
-                  const response = await groupController.getAll(accessToken);
-        
-                  const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
-                    return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
-                  });
-
-
-                  //addin isSelected property on runtime
-                  result.map((gpo) => {
-                      gpo.isSelected =false;
-                  });
-                 
-                  console.log("obteniendo grupos....")
-                  console.log(result)
-                  setGroups(result);
-                 
-
-                 
-                } catch (error) {
-                  console.error(error);
-                }
-           
-            
-          });
+                setForwardMessage(data);
+                //Get all messages
+                const response = await groupController.getAll(accessToken);
       
-          return ()=>{
-            EventRegister.removeEventListener(eventForwardMessage);
-          }
-          //================================================================
-          
-  
-        } catch (error) {
-          console.error(error);
-        }
+                const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
+                  return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+                });
+
+
+                //addin isSelected property on runtime
+                result.map((gpo) => {
+                    gpo.isSelected =false;
+                });
+                
+                console.log("obteniendo grupos....")
+                console.log(result)
+                setGroups(result);
+                
+
+                
+              } catch (error) {
+                console.error(error);
+              }
+        });
     
-    }, []);
+        return ()=>{
+          EventRegister.removeEventListener(eventForwardMessage);
+        }
+        //================================================================
+      } catch (error) {
+        console.error(error);
+      }
+    
+  },[]);
 
 
   //EventListener:replyingMessage
@@ -492,7 +484,7 @@ export function GroupForm(props) {
           console.log("message._id:"+data._id);
           setIdMessage(data._id);
           console.log("message.message:"+data.message);
-          console.log("message.group:"+data.group);
+          console.log("message.group:"+data.grupo);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
           console.log("message.type:"+data.type);
           
@@ -578,7 +570,7 @@ export function GroupForm(props) {
 
         //edicion de mensaje
         setIdMessage("");
-        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
+        await groupMessageController.sendTextEditadoLocal(accessToken , groupId , formValue.message , tipoCifrado,idMessage,email );
        }
        setFocusInput(false);
        setReplyMessage(null);

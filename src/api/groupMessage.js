@@ -2,7 +2,7 @@ import { ENV,Encrypt,Decrypt } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 import { useState, useEffect, useCallback } from "react";
 import * as statex$ from '../state/local'
-import { findAllGrupoMessages, deleteMessageById } from '../hooks/useDA'
+import { findAllGrupoMessages, deleteMessageById,updateMessage } from '../hooks/useDA'
 import { Types } from 'mongoose';
 import { addMessage } from '../hooks/useDA'
 import * as Crypto from 'expo-crypto';
@@ -69,7 +69,8 @@ export class GroupMessage {
      return resultado;
    }
  }*/
-  async getAllGroupMessage() {
+  
+ async getAllGroupMessage() {
    //addMessage
     try {
            let response=null;
@@ -257,12 +258,10 @@ async getAllLocalDB(groupId) {
                return u.email == gm.user?.email;
              });
 
-           // console.log("userMessage")
-       //  console.log(userMessage[0])
-//// Encrypt(gm.message,gm.tipo_cifrado ), 
+  
              const newMessage={
                _id: gm._id,
-               group: gm.group,
+               grupo: gm.grupo,  //<-------------------------group or grupo
                user: userMessage[0],
                message: gm.message, 
                message_replied:gm.message_replied,
@@ -294,8 +293,6 @@ async getAllLocalDB(groupId) {
    return resultado;
  
  }
-
- 
 
 //==============================================================================================
 
@@ -339,6 +336,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
 
     console.log("cifrando 2")
     const _id = new Types.ObjectId();
+    const today = new Date().toISOString()
     //Creating groupMessage
     const newGpoMessage={
       _id  :_id.toString(),
@@ -351,8 +349,8 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       email_replied:replyMessage==null ? null :replyMessage?.user.email,
       tipo_cifrado_replied:replyMessage==null ? null :replyMessage?.tipo_cifrado,
       forwarded:reenviado,
-      createdAt  :new Date(), 
-      updatedAt  :new Date(),
+      createdAt  :today, 
+      updatedAt  :today,
       file64  :""
       };
 
@@ -396,7 +394,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
 
 
 
-async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
+/*async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
 
   EventRegister.emit("loadingEvent",true);
   let reenviado=false;
@@ -452,9 +450,9 @@ console.log("cifrando 4")
     console.log("Error a enviar el mensaje...")
     throw error;
   }
-}
+}*/
 //==============================================================================================
-  async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
+  /*async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
     console.log("cifrando 5")
     EventRegister.emit("loadingEvent",true);
     console.log('3')
@@ -486,6 +484,41 @@ console.log("cifrando 4")
 
       //get group messages and persist
      // await selectTable('BITACORA');
+     EventRegister.emit("loadingEvent",false);
+      if (response.status !== 201) throw result;
+
+      return true;
+    } catch (error) {
+      EventRegister.emit("loadingEvent",false);
+      throw error;
+    }
+  }*/
+
+  async sendTextEditadoLocal(accessToken, groupId, message,tipoCifrado,idMessage,idAPPEmail) {
+    //console.log("cifrando 3")
+    EventRegister.emit("loadingEvent",true);
+
+  
+    //call out to reload local message list in each group member
+    try {
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT_LOCAL}`;
+      const params = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          group_id: groupId,
+          idMessage: idMessage,
+          message: Encrypt(message,tipoCifrado),
+          tipo_cifrado: tipoCifrado,
+        }),
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
      EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
@@ -693,6 +726,29 @@ async sendFile(accessToken, groupId, file) {
         }); 
 
         return response==null ? 'Error al insertar' : 'insertado correctamente';
+    } catch (error) {
+        console.log(error)
+      throw error;
+    }
+  }
+
+  async updateMessage(editedMssage) {
+    try {
+        let response=null;
+        const today = new Date().toISOString()
+        
+      
+        await updateMessage(editedMssage._id, editedMssage.message,editedMssage.tipo_cifrado, today   ).then(result =>{
+
+          response=result.rows._array;
+          console.log('mensaje updated')
+          console.log(result)
+
+        }).catch(error => {
+          console.log(error)
+        }); 
+
+        return response==null ? 'Error al actualizar' : 'actualizado correctamente';
     } catch (error) {
         console.log(error)
       throw error;

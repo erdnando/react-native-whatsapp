@@ -1,12 +1,12 @@
-const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app"; // DEV nube
+//const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app"; // DEV nube
 //const SERVER_IP = "node-express-sockets-whatsapp-production-a1d6.up.railway.app";  //QA nube
-//const SERVER_IP = "192.168.0.100:3977"; //DEV local
+const SERVER_IP = "192.168.0.100:3977"; //DEV local
 
 export const ENV = {
   SERVER_IP: SERVER_IP,
-  BASE_PATH: `https://${SERVER_IP}`,
-  API_URL: `https://${SERVER_IP}/api`,
-  SOCKET_URL: `https://${SERVER_IP}`,
+  BASE_PATH: `http://${SERVER_IP}`,
+  API_URL: `http://${SERVER_IP}/api`,
+  SOCKET_URL: `http://${SERVER_IP}`,
   ENDPOINTS: {
     AUTH: {
       REGISTER: "auth/register",
@@ -31,6 +31,7 @@ export const ENV = {
     GROUP_MESSAGE: "group/message",
     GROUP_MESSAGE_LOCAL: "group/message/local",
     GROUP_MESSAGE_EDIT: "group/message/edit",
+    GROUP_MESSAGE_EDIT_LOCAL: "group/message/edit/local",
     GROUP_MESSAGE_DELETE: "group/message/delete",
     GROUP_MESSAGE_IMAGE: "group/message/image",
     GROUP_MESSAGE_FILE: "group/message/file",

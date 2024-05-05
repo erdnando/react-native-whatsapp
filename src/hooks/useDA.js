@@ -89,7 +89,7 @@ export function fnCreateTableGroupMessages() {
 }
 
 //==================================================================================================================================================================================
-//==================================================================================================================================================================================
+//======================USERS=======================================================================================================================================================
                  
 export  function findUsersByEmail(email) {
 
@@ -125,8 +125,6 @@ export  function findAllUsers() {
     );
   });     
 }
-
-//=================================================================================================================================================================================
 
 export  function addUser(_id,email,hashPassword,nipCifrado,token,today,nipraw) {
  
@@ -182,7 +180,7 @@ export  function updateAlias(alias, email){
     );
   });
 }
-//=================================================================================================================================================================================
+//====================GROUPS========================================================================================================================================================
 
 export  function addGroup(_id, creatorId, usersId, name, today) {
  
@@ -204,7 +202,6 @@ export  function addGroup(_id, creatorId, usersId, name, today) {
    
 }
 
-//=================================================================================================================================================================================
 export  function findAllGroups() {
  
   return new Promise((resolve, reject) => {
@@ -222,6 +219,7 @@ export  function findAllGroups() {
   });     
 }
 
+//===================MESSAGES=======================================================================================================================================================
 export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today) {
  
   return new Promise((resolve, reject) => {
@@ -258,8 +256,6 @@ export  function deleteMessageById(_id ) {
   });    
 }
 
-//=================================================================================================================================================================================
-
 export  function findAllGrupoMessages() {
 
   return new Promise((resolve, reject) => {
@@ -270,6 +266,23 @@ export  function findAllGrupoMessages() {
       }
     );
   });     
+}
+
+export  function updateMessage(_id,message,tip_cifrado,fechaActualizacion){
+  //editedMssage._id, editedMssage.message,editedMssage.tipo_cifrado, today 
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE  messages set message=?, tip_cifrado=?, updatedat=? where _id=?', [message,tip_cifrado, fechaActualizacion,_id], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });
 }
 //=================================================================================================================================================================================
 
