@@ -94,7 +94,7 @@ export function ItemFile(props) {
             console.log("maybe it fails if it;s the first time")
             console.log(error);
           }
-          console.log("playing audio..");
+          //console.log("playing audio..");
           // Load the Recorded URI
           await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
 

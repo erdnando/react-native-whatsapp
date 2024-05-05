@@ -142,6 +142,7 @@ useEffect(() => {
           await authController.setInitial("1");
           //1a vez, bandera de mensajes cifrados
           await authController.setCifrado("SI");
+          statex$.default.flags.cifrado.set("SI");
        
     }else{
 

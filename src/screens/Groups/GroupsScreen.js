@@ -73,7 +73,7 @@ export function GroupsScreen() {
         let resultx={} 
          //================Get all grupos===================================
         try {
-        
+            console.log("getAllGroupsLocal...")
             const groupsParticipaRef = await groupController.getAllGroupsLocal(email);
 
             //const result = response?.sort((a, b) => {
@@ -83,48 +83,11 @@ export function GroupsScreen() {
 
             setGroups(groupsParticipaRef);
             setGroupsResult(groupsParticipaRef);
-
-          //==================get all messages===================================
-          try {
-
-            //En linea va guardando la ultima foto de datos
-           
-
-                  /*console.log("Gathering all data into state en groupScreen")
-                  //to gather all groups with their messages into state
-                 // statex$.default.messages.set([]);//clean
-                  const arrMessageGrupo = statex$.default.messages.get();//get clean list
-
-                  //Por cada grupo
-                  groupsParticipaRef.forEach( async (gpo) => { 
-                    console.log("gpo-------------->");
-                    console.log(gpo._id);
-
-                    const gpoMessages = await groupMessageController.getAllLocal(gpo._id);
-
-                    console.log("gpoMessages get all del grupo-->")
-                    console.log(gpoMessages)
-                    
-                    gpoMessages.messages.forEach( (msgx)=>{
-                      console.log("msgx detetctado:::::::::::")
-                      console.log(msgx)
-                      statex$.default.messages.set((arrMessageGrupo) => [...arrMessageGrupo, msgx])
-                    });
-
-                  });*/
-
-                 
-              
-          } catch (error) {
-            console.error(error);
-          }
         //======================================================================
 
         } catch (error) {
           console.error(error);
         }
-
-        
 
       })();
     }, [])

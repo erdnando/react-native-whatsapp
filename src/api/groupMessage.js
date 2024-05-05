@@ -11,9 +11,7 @@ import * as Crypto from 'expo-crypto';
 export class GroupMessage {
 
  
-  async getAllLocal(groupId) {
-    // console.log("getAllLocal groupId")
-    // console.log(groupId)
+  /*async getAllLocal(groupId) {
  
      EventRegister.emit("loadingEvent",true);
  
@@ -22,25 +20,12 @@ export class GroupMessage {
      //console.log(arrGpoMsgs)
      const arrUsers = statex$.default.users.get();
      let arrMessages=[];
- 
-     //console.log("getAllLocal::::::::::::::::::::::::::::::::::::::::::::::")
-     //console.log(groupId)
-     //console.log(arrGpoMsgs)
-     //console.log(statex$.default.groupmessages.get())
+
  
      const lstMessages = arrGpoMsgs.filter(function (gm) {
  
-      // console.log("=============coincidencias==========")
-      // console.log(gm.group)
-      // console.log(groupId)
-      // console.log(gm.group === groupId)
- 
        return gm.group.toString() == groupId;
      });
- 
-    // console.log("coincidencias group:::::::::::::::")
-    // console.log(lstMessages)
-    
  
        //1.- Recorre lista de grupos
        lstMessages.forEach( (gm) => {
@@ -54,9 +39,9 @@ export class GroupMessage {
  //// Encrypt(gm.message,gm.tipo_cifrado ), 
                const newMessage={
                  _id: gm._id,
-                 group: gm.group,
+                 grupo: gm.group,
                  user: userMessage[0],
-                 message: gm.message, 
+                 message: gm.message,     //<-------------validate if it need to be crypted!!!!!
                  message_replied:gm.message_replied,
                  email_replied:gm.email_replied,
                  tipo_cifrado_replied:gm.tipo_cifrado_replied,
@@ -72,19 +57,18 @@ export class GroupMessage {
  
        });
  
- 
      const resultado ={
        "messages": arrMessages,
        "total": arrMessages.length
      }
+
+     console.log("getAllLocal")
+     console.log(resultado)
  
      EventRegister.emit("loadingEvent",false);
- 
      return resultado;
-   
    }
-
-
+ }*/
   async getAllGroupMessage() {
    //addMessage
     try {
@@ -94,12 +78,16 @@ export class GroupMessage {
             
            }); 
 
+           console.log("getAllGroupMessage")
+           console.log(response)
+
            return response;
       } catch (error) {
        // console.log(error)
         throw error;
       }
-  }
+    }
+ 
   //=====================================================================================================
   async getTotal(accessToken, groupId) {
 
@@ -247,21 +235,19 @@ async getAllLocalDB(groupId) {
    const arrGpoMsgs = statex$.default.messages.get();
    console.log("listado de mensajes del grupo:::::::::")
    console.log(arrGpoMsgs)
+   console.log("groupId")
+   console.log(groupId)
    const arrUsers = statex$.default.users.get();
    let arrMessages=[];
 
-   //console.log("getAllLocal::::::::::::::::::::::::::::::::::::::::::::::")
-   //console.log(groupId)
-   //console.log(arrGpoMsgs)
-   //console.log(statex$.default.groupmessages.get())
 
    const lstMessages = arrGpoMsgs.filter(function (gm) {
 
-     return gm?.group?.toString() == groupId;
+     return gm?.grupo == groupId;
    });
 
-  // console.log("coincidencias group:::::::::::::::")
-  // console.log(lstMessages)
+   console.log("coincidencias group:::::::::::::::")
+   console.log(lstMessages)
   
 
      //1.- Recorre lista de grupos
@@ -302,9 +288,14 @@ async getAllLocalDB(groupId) {
 
    EventRegister.emit("loadingEvent",false);
 
+   console.log("getAllLocalDB:::")
+   console.log(resultado)
+
    return resultado;
  
  }
+
+ 
 
 //==============================================================================================
 
@@ -325,7 +316,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
 
         console.log("replyMessage::::::::::::::::::::::::::::::::::::::::::::::::::")
         console.log(replyMessage)
-        //console.log("cifrando 1")
+        console.log("cifrando 1")
         //cifrando msg reenviado
         replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
 
@@ -346,13 +337,14 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       return c.email == idAPPEmail;
     });
 
+    console.log("cifrando 2")
     const _id = new Types.ObjectId();
     //Creating groupMessage
     const newGpoMessage={
       _id  :_id.toString(),
-      group  :groupId, //grupo al q pertenece el mensaje
+      grupo  :groupId, //grupo al q pertenece el mensaje
       user  :userFiltrado[0], 
-      message  : Encrypt(message,tipoCifrado), 
+      message  : Encrypt(message,tipoCifrado), //se envia cifrado el mensaje, Siempre!!!!!!
       type  :"TEXT", 
       tipo_cifrado  :tipoCifrado, 
       message_replied:replyMessage==null ? null :replyMessage?.message,
@@ -365,6 +357,11 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       };
 
       
+      console.log("msg, antes de enviar")
+      console.log("============original=====================")
+      console.log(newGpoMessage)
+      console.log("============stringify=====================")
+      console.log(JSON.stringify(newGpoMessage))
 
       //Anadiedno al estado el nuevo mensaje
       //Valida si solo se anade , hasta q se recibe!!!!!!
@@ -380,17 +377,9 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
               body: JSON.stringify(newGpoMessage),
               };
 
-              //console.log("1.-sending message....");
-             // console.log(newGpoMessage);
-              //console.log(url);
-             // console.log(params);
-              
-
               const response = await fetch(url, params);
               const result = await response.json();
 
-              //get group messages and persist
-              // await selectTable('BITACORA');
               EventRegister.emit("loadingEvent",false);
               
               if (response.status !== 201) throw result;
@@ -416,7 +405,7 @@ async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
   console.log(tipoCifrado);
   //cifrando msg reenviado
 if(replyMessage!=null){
-  console.log("cifrando 1")
+  console.log("cifrando 3")
   replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
 }
 if(message.startsWith("reenviado::")){
@@ -426,7 +415,7 @@ if(message.startsWith("reenviado::")){
 }
   
 
-console.log("cifrando 2")
+console.log("cifrando 4")
   try {
     const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
     const params = {
@@ -466,7 +455,7 @@ console.log("cifrando 2")
 }
 //==============================================================================================
   async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
-    console.log("cifrando 3")
+    console.log("cifrando 5")
     EventRegister.emit("loadingEvent",true);
     console.log('3')
 
@@ -509,7 +498,7 @@ console.log("cifrando 2")
 
 //====================================================================================================
 async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
-  console.log("cifrando 4")
+  console.log("cifrando 6")
   EventRegister.emit("loadingEvent",true);
   console.log('4')
   try {

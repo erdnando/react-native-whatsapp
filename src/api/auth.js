@@ -296,7 +296,9 @@ async getAllUsers() {
   }
 //========================================================================
 async setCifrado(valor) {
+  statex$.default.flags.cifrado.set(valor);
   await AsyncStorage.setItem("cifrado", valor);
+  
 }
 
 async getCifrado() {

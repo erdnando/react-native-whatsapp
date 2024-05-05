@@ -5,10 +5,18 @@ import { ItemText } from "./ItemText";
 import { ItemImage } from "./ItemImage";
 import { ItemFile } from "./ItemFile";
 import { styles } from "./ListMessages.styles";
+import { Decrypt,Encrypt } from "../../../utils";
+import { Auth } from "../../../api";
+import * as statex$ from '../../../state/local'
+
+const authController = new Auth();
 
 export function ListMessages(props) {
   const { messages } = props;
   const scrollViewRef = useRef();
+
+
+ 
 
   return (
     <ScrollView

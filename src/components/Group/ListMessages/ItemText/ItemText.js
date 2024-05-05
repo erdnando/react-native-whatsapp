@@ -67,7 +67,7 @@ export function ItemText(props) {
       setReplicado(false);
     }
   
-    if(createMessage.getTime() ==updatedMessage.getTime() ){
+    if(createMessage.getTime() == updatedMessage.getTime() ){
        setEditado(false)
     }else{
       setEditado(true)

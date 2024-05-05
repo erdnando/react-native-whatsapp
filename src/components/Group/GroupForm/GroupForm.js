@@ -571,9 +571,7 @@ export function GroupForm(props) {
         //llamada normal, nuevo mensaje
         //replyMessage==null if you like a normal message
 
-        console.log("===========sending replied=============")
-        console.log(replyMessage);
-        console.log("=======================================")
+    
         //if replyMessage is null, then it's a normal message
         //else it's a reply
         await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email );
@@ -600,7 +598,7 @@ export function GroupForm(props) {
     },
   });
 
-  console.log("isloading::::::::::::::::::::::::::::::::::::::::::::::::::;"+isLoading)
+  //console.log("isloading::::::::::::::::::::::::::::::::::::::::::::::::::;"+isLoading)
   if(isLoading){
   return (<View style={{position: "absolute",top:0,
             width: "100%",

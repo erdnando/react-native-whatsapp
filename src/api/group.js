@@ -59,14 +59,18 @@ export class Group {
       const today = new Date().toISOString()
       const arrParticipantes= JSON.stringify([usersId]);
     
+      //adding to DB
       await addGroup(_id.toString() , creatorId, arrParticipantes, name, today).then(result =>{
 
         response=result.rows._array;
         console.log('grupo insertado por opcion')
+        console.log("id del nuevo grupo:")
+        console.log(_id.toString())
         console.log(result)
 
         //add to state managment
         const arrGroups = statex$.default.groups.get();
+
         const newGrupo = {
           _id :  _id.toString(),
           name  : name, 
@@ -170,28 +174,42 @@ export class Group {
           //2.- Por cada grupo, busca en su lista de participantes coincidencia
           const participantesx = JSON.parse(grupo.participants);
 
-         
-
-          if(participantesx.length>0){
-         
             const creatorx = arrUsers.filter(function (c) {
               return c.email == email;
             });
 
             const participantes = grupo.participants;
-        
-            const newGpoRespuesta={
-              _id: grupo._id,
-              name: grupo.name,
-              participants: participantes,
-              creator: creatorx[0],
-              image: "group/group1.png",
-              __v: 0,
-              last_message_date: null
-            };
+            console.log("participantes:::::::::::::::::::::::::::si son 0 validar!!!!")
+            console.log(participantes)
 
-            gruposDondeParticipa.push(newGpoRespuesta)
-          }
+            let bcontinua=false;
+            participantesx.forEach((element) => {
+              console.log("validando participantes")
+              console.log(element)
+              console.log(email)
+              console.log(email==element)
+              if(element == email){
+                bcontinua=true;
+              }
+            })
+
+            if(bcontinua){
+
+                const newGpoRespuesta={
+                  _id: grupo._id,
+                  name: grupo.name,
+                  participants: participantes,
+                  creator: creatorx[0],
+                  image: "group/group1.png",
+                  __v: 0,
+                  last_message_date: null
+                };
+    
+                gruposDondeParticipa.push(newGpoRespuesta)
+            }
+        
+           
+          
     });
 
       console.log("gruposDondeParticipa::::::::::::::::::::")
@@ -242,8 +260,8 @@ export class Group {
       return g._id == groupId;
     });
 
-    console.log("obtain local")
-    console.log(groupRef[0])
+    //console.log("obtain local")
+    //console.log(groupRef[0])
     return groupRef[0];
   }
 
