@@ -524,15 +524,13 @@ export function GroupForm(props) {
          //=================================================================
          const eventDeleteMessage = EventRegister.addEventListener("deletingMessage", async data=>{
           setIdMessage("");
-          console.log("message._id:"+data._id);
+          console.log("msg a eliminar");
+          console.log(data);
           setIdMessage(data._id);
-          console.log("message.message:"+data.message);
-          console.log("message.group:"+data.group);
-          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-          console.log("message.type:"+data.type);
+          
           
     
-         await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
+         await groupMessageController.deleteMessageLocal(data._id );
          setIdMessage("");
           
         });

@@ -23,6 +23,25 @@ export function GroupScreen() {
   const [messages, setMessages] = useState(null);
   const groupId = statex$.default.grupoId.get();
 
+
+
+  //EventListener:: reload msgs
+  useEffect(() => {
+  
+    const eventReloadMessages = EventRegister.addEventListener("reloadMessages", async data=>{
+      
+      getAllMessages();
+         
+     });
+ 
+     return ()=>{
+       EventRegister.removeEventListener(eventReloadMessages);
+     }
+     
+}, []);
+
+
+
   //EventListener:: decifra mensajes
   useEffect(() => {
   
@@ -95,6 +114,7 @@ export function GroupScreen() {
         return ()=>{
           EventRegister.removeEventListener(eventMessages);
         }
+
   }, []);
 
   //Set ACTIVE_GROUP_ID
@@ -255,12 +275,34 @@ export function GroupScreen() {
     groupMessageController.guardaMessage(newMsgx)
 
      
-    let newMsg = { ...newMsgx }
+    let newMsg = { ...newMsgx };
+
     if(newMsg.type=="TEXT"){
       const cifrados = await authController.getCifrado(); 
       if(cifrados=="NO"){
         newMsg.message=Decrypt(newMsg.message,newMsg.tipo_cifrado);
       }
+
+      //============================================================================
+      if(newMsg.email_replied != null){
+        newMsg.message_replied=Decrypt(newMsg.message_replied,newMsg.tipo_cifrado_replied);
+
+        //find message original and decryp it on message array
+        try{
+          messages.map((msgx) => {
+            if( Decrypt(msgx.message,msgx.tipo_cifrado) == newMsg.message_replied){
+              msgx.message = newMsg.message_replied;
+            }
+           
+          });
+          setMessages(messages);
+        }catch(error){
+          console.log("error al validar msg replied")
+        }
+      }
+      //============================================================================
+
+
       
     }
       //ading to local state

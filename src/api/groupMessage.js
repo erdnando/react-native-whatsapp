@@ -2,7 +2,7 @@ import { ENV,Encrypt,Decrypt } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 import { useState, useEffect, useCallback } from "react";
 import * as statex$ from '../state/local'
-import { findAllGrupoMessages } from '../hooks/useDA'
+import { findAllGrupoMessages, deleteMessageById } from '../hooks/useDA'
 import { Types } from 'mongoose';
 import { addMessage } from '../hooks/useDA'
 import * as Crypto from 'expo-crypto';
@@ -536,6 +536,39 @@ async deleteMessage(accessToken, groupId, message,tipoCifrado,idMessage) {
     EventRegister.emit("loadingEvent",false);
     throw error;
   }
+}
+
+
+async deleteMessageLocal(idMessage) {
+
+   try {
+           let response=null;
+           await deleteMessageById(idMessage).then(result =>{
+            console.log("deleteMessageById")
+            console.log(result)
+
+
+            //delete locally-------------------------------------------------
+            const arrGpoMessages = statex$.default.messages.get();
+            const arrMessagesDepurated = arrGpoMessages.filter(function (gm) {
+              return gm._id != idMessage;
+            });
+            statex$.default.messages.set(arrMessagesDepurated);
+            //---------------------------------------------------------------
+
+            //
+            EventRegister.emit("reloadMessages","SI");
+            return true;
+            
+           }); 
+
+
+           return true;
+      } catch (error) {
+        console.log("error al borrar mensaje")
+        console.log(error)
+        throw error;
+      }
 }
   
 //=====================================================================================================

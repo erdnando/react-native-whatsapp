@@ -238,9 +238,24 @@ export  function addMessage(_id , group , user , message , tipo , tip_cifrado , 
         );
       }
     );
-  });
+  });    
+}
 
-        
+export  function deleteMessageById(_id ) {
+ 
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql('DELETE from messages WHERE _id =?', [_id], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });    
 }
 
 //=================================================================================================================================================================================
