@@ -454,7 +454,7 @@ export function GroupForm(props) {
             setFocusInput(true);
             console.log("mensaje replicado::::")
             console.log(data)
-            setReplyMessage(data);
+            setReplyMessage(data);//flag to identify replyng case
             inputMessageRef.current.focus();
             
           });
@@ -553,17 +553,12 @@ export function GroupForm(props) {
        
         console.log("idMessage:::::::")
         console.log(idMessage)
-        //process();
-       //Envio de mensajes
-      // console.log("tipo cifrado::"+tipoCifrado);
+      
        
        if(idMessage==""){
-        //llamada normal, nuevo mensaje
-        //replyMessage==null if you like a normal message
 
-    
         //if replyMessage is null, then it's a normal message
-        //else it's a reply
+        //else it's a replying case!!!!!
         await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email );
 
        }else{

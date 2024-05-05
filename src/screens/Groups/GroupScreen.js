@@ -159,7 +159,6 @@ export function GroupScreen() {
   const editAndReloadmsgs = (msgEdited) => {
    
     //console.log("editing and reloading message:::GroupScreen");
-    //params:  { group_id,idMessage,message,tipo_cifrado } 
       console.log("editAndReloadmsgs::::::::::::::::::::::::::::::::::");
       console.log("msgEdited --> referencia del mensaje")
       console.log(msgEdited);//referencia del mensaje
@@ -169,7 +168,7 @@ export function GroupScreen() {
       groupMessageController.updateMessage(msgEdited)
 
 
-
+      //updating state
       const arrGpoMessages = statex$.default.messages.get();
       console.log("arrGpoMessages")
       console.log(arrGpoMessages)
@@ -182,87 +181,12 @@ export function GroupScreen() {
         return gm;
       });
 
-      console.log("mensajes edit version")
-      console.log(arrEditedGpoMessages)
-
-      
       //setting edited array
       statex$.default.messages.set(arrEditedGpoMessages);
-      //=================================================================================
+      
+      //Reload
       getAllMessages();
-
-      /*(async () => {
-        try {
-          const cifrado = statex$.default.flags.cifrado.get();
-        
-          console.log("cifrado");
-          console.log(cifrado);
-  
-          const response = await groupMessageController.getAllLocal(groupId.toString());
-          console.log("response all messages::::::::::::::::::")
-          console.log(response)
-  
-          
-  
-          if(cifrado=="SI"){
-            //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
-            const lockedMessages = response.messages;
-
-            lockedMessages.map((msg) => {
-                if(msg.type=="IMAGE"){
-                  msg.message = "images/cryptedImagex.png";
-                }
-  
-                if(msg.type=="FILE"){
-                  msg.message = "images/cryptedImagex.png";
-                }
-  
-              });
-              setMessages(lockedMessages);
-          }else{
-            //=======================Decifra los mensajes=======================================================
-          
-              const unlockedMessages = response.messages;
-            
-              unlockedMessages.map((msg) => {
-        
-                if(msg.type=="TEXT"){
-                 
-                  msg.message = Decrypt(msg.message,msg.tipo_cifrado);
-
-                  if(msg.email_replied != null){
-                    msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
-                  }
-                }
-               
-              });
-  
-              setMessages([]);
-              setMessages(unlockedMessages);
-             
-             
-              const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
-              await sound.playAsync();
-              
-             
-            //==============================================================================
-          }
-         // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-          unreadMessagesController.setTotalReadMessages(groupId.toString(), response.total);
-  
-         
-        } catch (error) {
-          console.error(error);
-        }
-      })();*/
-  
-      /*return async () => {
-        const response = await groupMessageController.getAllLocal(groupId.toString());
-  
-        unreadMessagesController.setTotalReadMessages(groupId.toString(), response.total);
-      };*/
-     
-    };
+  };
 
   //get all messages
   const getAllMessages = () => {

@@ -313,7 +313,6 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
 
         console.log("replyMessage::::::::::::::::::::::::::::::::::::::::::::::::::")
         console.log(replyMessage)
-        console.log("cifrando 1")
         //cifrando msg reenviado
         replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
 
