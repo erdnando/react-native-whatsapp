@@ -313,13 +313,16 @@ export function GroupForm(props) {
               
       console.log("sending msg into selected group:::::::::::");
     
-      groups.map(async (msgx) => {
+      groups.map(async (gpox) => {
 
-        if(msgx.isSelected){
-          console.log("-->")
+        if(gpox.isSelected){
+          console.log("forwardMessage-->")
           console.log(forwardMessage)
+          console.log("gpox-->")
+          console.log(gpox)
           //TODO validat tipo cifrado, no llega l mensaje destino
-            await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
+            //await groupMessageController.sendText(accessToken , msgx._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
+            await groupMessageController.sendTextLocal(accessToken, groupId, "reenviado::"+forwardMessage.message ,forwardMessage.tipo_cifrado, null,email,gpox._id) 
              //here  sound
       const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
       await sound.playAsync();
@@ -400,16 +403,19 @@ export function GroupForm(props) {
         //=================================================================
         const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
           console.log("grupo desde donde salio el forward::::")
-          console.log(data.group);
+          console.log(data.grupo);
           setForwardMessage(true);
             onOpen();
               try {
 
                 setForwardMessage(data);
-                //Get all messages
-                const response = await groupController.getAll(accessToken);
+                //Get all groups
+                //const arrGrupos = groupController.getAllGroupsLocal(email);
+                const arrGrupos = statex$.default.groups.get();
+                console.log("response grupos")
+                console.log(arrGrupos)
       
-                const result = response.filter(gpo => gpo._id != data.group).sort((a, b) => {
+                const result = arrGrupos.filter(gpo => gpo._id != data.grupo).sort((a, b) => {
                   return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
                 });
 
@@ -422,8 +428,6 @@ export function GroupForm(props) {
                 console.log("obteniendo grupos....")
                 console.log(result)
                 setGroups(result);
-                
-
                 
               } catch (error) {
                 console.error(error);
@@ -559,7 +563,7 @@ export function GroupForm(props) {
 
         //if replyMessage is null, then it's a normal message
         //else it's a replying case!!!!!
-        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email );
+        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email,null );
 
        }else{
 

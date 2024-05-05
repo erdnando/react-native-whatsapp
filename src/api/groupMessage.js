@@ -296,10 +296,18 @@ async getAllLocalDB(groupId) {
 
 //==============================================================================================
 
-async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idAPPEmail) {
+async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idAPPEmail,gpoDestino) {
+
+  //accessToken, msgx._id, "reenviado::"+forwardMessage.message ,forwardMessage.tipo_cifrado, null,email
+
 
   console.log("message TEXT::::::::::::::::::::::::::::::::")
+  console.log(groupId)
   console.log(message)
+  console.log(tipoCifrado)
+  console.log(replyMessage)
+  console.log(idAPPEmail)
+  console.log("---------------------------------------------")
   EventRegister.emit("loadingEvent",true);
     let reenviado=false;
     
@@ -323,6 +331,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
         console.log("reenviando msg:::::::::::::::::::::")
         reenviado=true;
         message=message.replace("reenviado::","")
+        
 
     }
   
@@ -333,7 +342,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       return c.email == idAPPEmail;
     });
 
-    console.log("cifrando 2")
+    //console.log("cifrando 2")
     const _id = new Types.ObjectId();
     const today = new Date().toISOString()
     //Creating groupMessage
@@ -350,7 +359,8 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       forwarded:reenviado,
       createdAt  :today, 
       updatedAt  :today,
-      file64  :""
+      file64  :"",
+      grupoDestino  :gpoDestino
       };
 
       

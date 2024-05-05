@@ -107,6 +107,7 @@ export function Item(props) {
     console.log(group._id);
 
     if (newMsg.group === group._id) {
+      console.log("message_notify to me")
       if (newMsg.user._id !== user._id) {
         upGroupChat(newMsg.group);
         console.log("setting last message");
@@ -124,11 +125,11 @@ export function Item(props) {
 
   const  openGroup = async () => {
     console.log("openning group.."+group._id );
-    statex$.default.grupoId.set(group._id.toString());
+    statex$.default.grupoId.set(group._id);
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id.toString() });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id });
   };
 
   return (

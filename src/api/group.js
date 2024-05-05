@@ -222,8 +222,6 @@ export class Group {
 
   async getAll(accessToken) {
 
-      
-
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}`;

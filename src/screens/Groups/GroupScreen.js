@@ -300,6 +300,17 @@ export function GroupScreen() {
     console.log("===========================================")
     //============Always decifra mensaje======================
 
+    console.log("grupo destino")
+    console.log(newMsgx.grupoDestino)
+    console.log("=================")
+
+    if(newMsgx.grupoDestino!=null){
+      newMsgx.grupo=newMsgx.grupoDestino;
+      console.log("===========newMsgx updated================================")
+      console.log(newMsgx);
+      console.log("===========================================")
+    }
+
     //adding to global state
     const arrMessagesRef =statex$.default.messages.get();
     statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgx]);
@@ -338,8 +349,14 @@ export function GroupScreen() {
 
       
     }
+
+    
+    if(newMsgx.grupoDestino==null){
       //ading to local state
-    setMessages([...messages, newMsg]);
+      setMessages([...messages, newMsg]);
+
+    }
+      
 
     //here  sound
     const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
