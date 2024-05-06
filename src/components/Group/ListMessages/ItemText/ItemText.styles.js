@@ -87,6 +87,11 @@ export const styled = (isMe) => {
       flexDirection:'row',
       justifyContent:'space-between',
       width:'100%',
+    },
+    image_replicada:{
+      justifyContent:'center',
+      alignContent:'center',
+      alignItems:'center'
     }
 
   });

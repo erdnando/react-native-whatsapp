@@ -311,20 +311,24 @@ export function GroupScreen() {
       console.log("===========================================")
     }
 
-    
+    if(newMsgx.type=="IMAGE"){
+      //newMsgx.message = newMsgx.image64;
+    }
 
     //adding to local db
     groupMessageController.guardaMessage(newMsgx);
 
     //adding to global state
     const arrMessagesRef =statex$.default.messages.get();
-      //remove base64, before adding to state
-      let newMsgSin64 = { ...newMsgx };
-      newMsgSin64.file64="";
-      statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgSin64]);
+    //remove base64, before adding to state
+    //========================================================================================
+    //let newMsgSin64 = { ...newMsgx };
+    //newMsgSin64.image64= "data:image/png;base64,"+newMsgSin64.image64;
+    statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgx]);
+    //========================================================================================
     
-    //working just with state without images64
-    let newMsg = { ...newMsgSin64 };
+    
+    let newMsg = { ...newMsgx };
 
     if(newMsg.type=="TEXT"){
       const cifrados = await authController.getCifrado(); 
@@ -358,10 +362,15 @@ export function GroupScreen() {
       setMessages([...messages, newMsg]);
 
     }
+    
       
     //here  sound
-    const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
-    await sound.playAsync();
+    //const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
+    //await sound.playAsync();
+
+
+
+    getAllMessages()
   //=================================================================
   
     })();

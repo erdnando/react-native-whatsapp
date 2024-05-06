@@ -8,7 +8,7 @@ import { useAuth } from "../../../hooks";
 import { imageExpoFormat } from "../../../utils";
 import { styles } from "./PhotoCapture.styles";
 
-const chatMessageController = new ChatMessage();
+//const chatMessageController = new ChatMessage();
 const groupMessageController = new GroupMessage();
 
 export function PhotoCapture(props) {
@@ -23,7 +23,7 @@ export function PhotoCapture(props) {
       console.log("photo.uri")
       console.log(photo.uri)
       const file = imageExpoFormat(photo.uri);
-      const img64=photo.base64;
+      const image64=photo.base64;
       console.log("photo.file")
       console.log(file)
 
@@ -34,7 +34,7 @@ export function PhotoCapture(props) {
         console.log("sendind image to the group");
         console.log(file)
         //await groupMessageController.sendImage(accessToken, id, file);
-        await groupMessageController.sendImageLocal(accessToken,id, file,email,img64);
+        await groupMessageController.sendImageLocal(accessToken,id, file,email,image64);
       }
 
       setLoading(false);

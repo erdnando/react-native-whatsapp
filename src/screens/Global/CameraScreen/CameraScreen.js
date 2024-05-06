@@ -23,7 +23,7 @@ export function CameraScreen() {
 
   const captureImage = async () => {
     //0` means compress for small size, and `1` means compress for maximum quality.
-    const options = { quality: 0.3,base64:true };//quality from 0.1 to 1.0
+    const options = { quality: 0.1,base64:true };//quality from 0.1 to 1.0
     const newPhoto = await cameraRef.current.takePictureAsync(options);
     console.log("newPhoto")
     console.log(newPhoto)

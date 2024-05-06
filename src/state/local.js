@@ -14,6 +14,7 @@ const state$ = observable({
   messages:[],
   grupoId:"",
   me:{},
+  imgReplicada:"",
   flags:{
     cifrado:true,
     offline:'false'

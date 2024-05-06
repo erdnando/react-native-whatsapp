@@ -26,7 +26,8 @@ export function ItemImage(props) {
   const createMessage = new Date(message.createdAt);
   const navigation = useNavigation();
 
-  const imageUri = `${ENV.BASE_PATH}/${message.message}`;
+  //const imageUri = `${ENV.BASE_PATH}/${message.message}`;
+  const imageUri = message.message;//image64;
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -56,6 +57,9 @@ export function ItemImage(props) {
   const onOpenFile= async () => {
     
     const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+
+    console.log("urlFile")
+    console.log(urlFile)
     const filename=message.message.replace("images/","");
     
     let mimetype =mime.getType(filename);
@@ -142,7 +146,7 @@ export function ItemImage(props) {
                         onPress={() => {
                      
                            console.log("responder message:::::::::::");
-                           EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                           EventRegister.emit("replyingImage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
                             <Text>Responder</Text>

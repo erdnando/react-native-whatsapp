@@ -29,6 +29,8 @@ export function GroupForm(props) {
   const inputMessageRef=useRef(null);
   const [showIconSendText, setShowIconSendText] = useState(false);
   const [replyMessage, setReplyMessage] = useState(null);
+  const [imagenReplicada, setImagenReplicada] = useState(false);
+  
   const [forwardMessage, setForwardMessage] = useState(false);
   const [groups, setGroups] = useState(null);
   const [canForward, setCanForward] = useState(false);
@@ -453,12 +455,12 @@ export function GroupForm(props) {
         try {
           
           //=================================================================
-          const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async data=>{
+          const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async msg=>{
             setIdMessage("");
             setFocusInput(true);
             console.log("mensaje replicado::::")
-            console.log(data)
-            setReplyMessage(data);//flag to identify replyng case
+            console.log(msg)
+            setReplyMessage(msg);//flag to identify replyng case
             inputMessageRef.current.focus();
             
           });
@@ -474,6 +476,38 @@ export function GroupForm(props) {
         }
     
     }, []);
+
+      //EventListener:replyingImage
+  useEffect(() => {
+
+    setIdMessage("");
+  
+      try {
+        
+        //=================================================================
+        const eventReplyMessage = EventRegister.addEventListener("replyingImage", async msg=>{
+          setIdMessage("");
+          setFocusInput(true);
+          setImagenReplicada(true);
+          console.log("imagen replicado::::")
+          console.log(msg)
+          statex$.default.imgReplicada.set(msg.message);//image64
+          setReplyMessage(msg);//flag to identify replyng case
+          inputMessageRef.current.focus();
+          
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventReplyMessage);
+        }
+        //================================================================
+        
+
+      } catch (error) {
+        console.error(error);
+      }
+  
+  }, []);
     
   //EventListener:editingMessage
   useEffect(() => {
@@ -555,16 +589,12 @@ export function GroupForm(props) {
         setKeyboardHeight(0);
         Keyboard.dismiss();
        
-        console.log("idMessage:::::::")
+        console.log("idMessage:::::::x")
         console.log(idMessage)
       
        
        if(idMessage==""){
-
-        //if replyMessage is null, then it's a normal message
-        //else it's a replying case!!!!!
-        await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email,null );
-
+          await groupMessageController.sendTextLocal(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, email,null );  
        }else{
 
         //edicion de mensaje
@@ -611,9 +641,14 @@ export function GroupForm(props) {
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
-        </Text>
+      </Text>
+
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
-        <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
+        <Text style={styles.textReply}>
+          {replyMessage!=null ? 
+          (replyMessage.type!="TEXT" ? replyMessage?.user?.email+".png" : replyMessage.message)  
+          : ""}
+          </Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     

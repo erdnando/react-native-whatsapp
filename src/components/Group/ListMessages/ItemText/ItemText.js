@@ -9,7 +9,8 @@ import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
 import { Decrypt,Encrypt } from "../../../../utils";
 import * as statex$ from '../../../../state/local'
-
+import AutoHeightImage from "react-native-auto-height-image";
+import { findMessageImageById } from '../../../../hooks/useDA'
 
 const authController = new Auth();
 
@@ -29,7 +30,11 @@ export function ItemText(props) {
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState(false);
   const [offline,setOffline]=useState(false)
+  const [showImagen,setShowImagen]=useState(false)
+  const [img64Replied,setImg64Replied]=useState("")
 
+
+  
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
   const onEliminarMensaje = () => {
@@ -44,6 +49,12 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
+    setImg64Replied("");
+    if(message?.message_replied?.endsWith(".png")){
+      setImg64Replied(statex$.default.imgReplicada.get());
+        setShowImagen(true)
+        
+    }
     
     if(statex$.default.flags.offline.get()=='true'){
       setOffline(true)
@@ -222,9 +233,21 @@ export function ItemText(props) {
 
                  {/*mensaje replicado*/}
                  <Text style={styles.identityMsgReplica}>
-                  {message.message_replied }
-                </Text>
+                    {message.message_replied }
+                  </Text>
 
+                  <Pressable display={ showImagen ? "flex":"none"}  >
+                  <AutoHeightImage
+                    width={120}
+                    maxHeight={120}
+                    source={{ uri: img64Replied }}
+                    style={{flex: 1,
+                      justifyContent: 'center',
+                      alignItems: 'center',}}
+                  />
+                </Pressable>
+
+                 
               </View>
 
 

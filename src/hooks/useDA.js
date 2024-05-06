@@ -80,7 +80,7 @@ export function fnCreateTableGroupMessages() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS messages (_id TEXT, grupo TEXT, user TEXT, message TEXT, tipo TEXT, tip_cifrado TEXT, forwarded TEXT, createdat TEXT, updatedat TEXT);", 
+        tx.executeSql("CREATE TABLE IF NOT EXISTS messages (_id TEXT, grupo TEXT, user TEXT, message TEXT, tipo TEXT, tip_cifrado TEXT, forwarded TEXT, createdat TEXT, updatedat TEXT, image64 TEXT);", 
         (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
@@ -220,15 +220,15 @@ export  function findAllGroups() {
 }
 
 //===================MESSAGES=======================================================================================================================================================
-export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today) {
+export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today,image64) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
          //_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat
-        tx.executeSql('INSERT INTO messages(_id , grupo , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat) values(?,?,?,?,?,?,?,?,?)', 
-                                        [_id,group,user,message,tipo,tip_cifrado,forwarded,today, today], 
+        tx.executeSql('INSERT INTO messages(_id , grupo , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat,image64) values(?,?,?,?,?,?,?,?,?,?)', 
+                                        [_id,group,user,message,tipo,tip_cifrado,forwarded,today, today,image64], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback
@@ -284,6 +284,21 @@ export  function updateMessage(_id,message,tip_cifrado,fechaActualizacion){
     );
   });
 }
+
+export function findMessageImageById(_id){
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT message FROM messages where _id=?", [_id], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });  
+}
+
+
+
+
 //=================================================================================================================================================================================
 
 

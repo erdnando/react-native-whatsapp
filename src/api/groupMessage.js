@@ -296,6 +296,8 @@ async getAllLocalDB(groupId) {
 
 //==============================================================================================
 
+
+
 async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idAPPEmail,gpoDestino) {
 
   //accessToken, msgx._id, "reenviado::"+forwardMessage.message ,forwardMessage.tipo_cifrado, null,email
@@ -321,8 +323,15 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
 
         console.log("replyMessage::::::::::::::::::::::::::::::::::::::::::::::::::")
         console.log(replyMessage)
+
+        if(replyMessage.type=="IMAGE"){
+          replyMessage.message = replyMessage._id+".png";
+        }
         //cifrando msg reenviado
         replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
+        
+            
+
 
     }
     //FORWARDING CASE
@@ -331,8 +340,6 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
         console.log("reenviando msg:::::::::::::::::::::")
         reenviado=true;
         message=message.replace("reenviado::","")
-        
-
     }
   
     
@@ -359,7 +366,7 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       forwarded:reenviado,
       createdAt  :today, 
       updatedAt  :today,
-      file64  :"",
+      image64  :"",//replyMessage==null ? null :replyMessage?.image64,
       grupoDestino  :gpoDestino
       };
 
@@ -400,108 +407,6 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
           throw error;
         }
 }
-
-
-
-/*async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage) {
-
-  EventRegister.emit("loadingEvent",true);
-  let reenviado=false;
-   console.log("reenviando msg:::::::::::::::::::::")
-  console.log(message);
-  console.log(tipoCifrado);
-  //cifrando msg reenviado
-if(replyMessage!=null){
-  console.log("cifrando 3")
-  replyMessage.message = Encrypt(replyMessage?.message,replyMessage?.tipo_cifrado );
-}
-if(message.startsWith("reenviado::")){
-  reenviado=true;
-  message=message.replace("reenviado::","")
-  
-}
-  
-
-console.log("cifrando 4")
-  try {
-    const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}`;
-    const params = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        group_id: groupId,
-        message: Encrypt(message,tipoCifrado),
-        tipo_cifrado: tipoCifrado,
-        replied_message:replyMessage==null ? '' :replyMessage,
-        forwarded:reenviado
-      }),
-    };
-
-    console.log("sending...."+url);
-    console.log(params);
-
-    const response = await fetch(url, params)
-    const result = await response.json();
-
-    //get group messages and persist
-   // await selectTable('BITACORA');
-   EventRegister.emit("loadingEvent",false);
-    if (response.status !== 201) throw result;
-
-
-    return true;
-  } catch (error) {
-    EventRegister.emit("loadingEvent",false);
-    console.log(error);
-    console.log("Error a enviar el mensaje...")
-    throw error;
-  }
-}*/
-//==============================================================================================
-  /*async sendTextEditado(accessToken, groupId, message,tipoCifrado,idMessage) {
-    console.log("cifrando 5")
-    EventRegister.emit("loadingEvent",true);
-    console.log('3')
-
-    try {
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
-      const params = {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          group_id: groupId,
-          message: Encrypt(message,tipoCifrado),
-          tipo_cifrado: tipoCifrado,
-          idMessage: idMessage
-        }),
-      };
-
-      console.log("sending...."+url);
-      console.log(params);
-
-      const response = await fetch(url, params)
-      const result = await response.json();
-
-      console.log("==========After updating====================");
-      console.log(result);
-
-      //get group messages and persist
-     // await selectTable('BITACORA');
-     EventRegister.emit("loadingEvent",false);
-      if (response.status !== 201) throw result;
-
-      return true;
-    } catch (error) {
-      EventRegister.emit("loadingEvent",false);
-      throw error;
-    }
-  }*/
 
   async sendTextEditadoLocal(accessToken, groupId, message,tipoCifrado,idMessage,idAPPEmail) {
     //console.log("cifrando 3")
@@ -661,7 +566,7 @@ async deleteMessageLocal(idMessage) {
     }
   }
 
-  async sendImageLocal(accessToken, groupId, file, email,img64) {
+  async sendImageLocal(accessToken, groupId, file, email,image64) {
 
     EventRegister.emit("loadingEvent",true);
      try {
@@ -690,16 +595,16 @@ async deleteMessageLocal(idMessage) {
         forwarded:false,
         createdAt  :today, 
         updatedAt  :today,
-        file64  :img64,
+        image64  :"",//de inicio no se manda, se persiste hasta q llega al destino
         grupoDestino :null
         };
       //=============================================================
 
 
-       const formData = new FormData();
+       /*const formData = new FormData();
        formData.append("group_id", groupId);
-       formData.append("image", file);
-       formData.append("message_obj", JSON.stringify(newGpoMessage));
+       //formData.append("image", file);
+       formData.append("message_obj", JSON.stringify(newGpoMessage));*/
  
        const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE_LOCAL}`;
        //console.log(url);
@@ -708,24 +613,31 @@ async deleteMessageLocal(idMessage) {
        const params = {
          method: "POST",
          headers: {
-           "Content-Type": "multipart/form-data",
-           "accept": "application/json",
+           "Content-Type": "application/json",// "multipart/form-data",
+          // "accept": "application/json",
            Authorization: `Bearer ${accessToken}`,
          },
-         body: formData,
+         body:JSON.stringify({
+          group_id:groupId,
+          image64:image64,
+          message_obj:JSON.stringify(newGpoMessage)
+         }),
        };
  
-       console.log("formData");
-       console.log(formData);
+ 
+       console.log("params::::::::::::::::::::::::::")
+       console.log(params)
  
          try {
            const response = await fetch(url, params)
-           console.log(response);
+           //console.log(response);
            const result = await response.json();
-           console.log(result);
+           //console.log(result);
  
            EventRegister.emit("loadingEvent",false);
+
            if (response.status !== 201) throw result;
+           
          } catch (error) {
            console.log("Error al enviar imagen al grupo")
            console.log(error);
@@ -803,9 +715,12 @@ async sendFile(accessToken, groupId, file) {
         let response=null;
         const today = new Date().toISOString()
         
+        
       
-        await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today   ).then(result =>{
+         await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today ,newMessage.image64  ).then(result =>{
 
+      
+      
           response=result.rows._array;
           console.log('mensaje insertado')
           console.log(result)
