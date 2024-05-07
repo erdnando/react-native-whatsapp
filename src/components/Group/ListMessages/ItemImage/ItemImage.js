@@ -56,7 +56,7 @@ export function ItemImage(props) {
   //open file function
   const onOpenFilelocal= async () => {
     
-    const file64=message.message;
+    const file64=message.message.replace("data:image/png;base64,","");
     console.log("mimetype::::::")
     console.log(message.file_type)
     console.log("file_name::::::")
