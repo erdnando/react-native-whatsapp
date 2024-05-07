@@ -31,7 +31,7 @@ export function ItemText(props) {
   const [forwarded, setForwarded] = useState(false);
   const [offline,setOffline]=useState(false)
   const [showImagen,setShowImagen]=useState(false)
-  const [img64Replied,setImg64Replied]=useState("")
+  const [img64Replied,setImg64Replied]=useState("http://")
 
 
   
@@ -49,9 +49,20 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-    setImg64Replied("");
+    //setImg64Replied("");
     if(message?.message_replied?.endsWith(".png")){
-      setImg64Replied(statex$.default.imgReplicada.get());
+
+      //const xxx = findMessageImageById(message._id)
+      const arrGpoMessages = statex$.default.messages.get();
+      const arrMessagesDepurated = arrGpoMessages.filter(function (gm) {
+              return gm._id == message.id_message_replied;
+            });
+            console.log("arrMessagesDepurated:::::::::::::::::::::::::::::::::::::::::::::::")
+            console.log(arrMessagesDepurated)
+
+      setImg64Replied(arrMessagesDepurated[0].message);
+    
+
         setShowImagen(true)
         
     }

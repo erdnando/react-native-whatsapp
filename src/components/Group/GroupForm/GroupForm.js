@@ -491,7 +491,8 @@ export function GroupForm(props) {
           setImagenReplicada(true);
           console.log("imagen replicado::::")
           console.log(msg)
-          statex$.default.imgReplicada.set(msg.message);//image64
+         // statex$.default.imgReplicada.set({});
+         // statex$.default.imgReplicada.set(msg.message);
           setReplyMessage(msg);//flag to identify replyng case
           inputMessageRef.current.focus();
           

@@ -311,19 +311,14 @@ export function GroupScreen() {
       console.log("===========================================")
     }
 
-    if(newMsgx.type=="IMAGE"){
-      //newMsgx.message = newMsgx.image64;
-    }
+   
 
     //adding to local db
     groupMessageController.guardaMessage(newMsgx);
 
     //adding to global state
     const arrMessagesRef =statex$.default.messages.get();
-    //remove base64, before adding to state
-    //========================================================================================
-    //let newMsgSin64 = { ...newMsgx };
-    //newMsgSin64.image64= "data:image/png;base64,"+newMsgSin64.image64;
+  
     statex$.default.messages.set((arrMessagesRef) => [...arrMessagesRef, newMsgx]);
     //========================================================================================
     
@@ -356,27 +351,21 @@ export function GroupScreen() {
       //============================================================================
     }
 
-    
     if(newMsgx.grupoDestino==null){
       //ading to local state
       setMessages([...messages, newMsg]);
-
     }
-    
-      
+        
     //here  sound
     //const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
     //await sound.playAsync();
 
-
-
+    //obtiene y recarga todo
     getAllMessages()
   //=================================================================
   
     })();
 
-
-   
   };
 
   if (!messages) return <LoadingScreen />;

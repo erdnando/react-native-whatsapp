@@ -10,7 +10,7 @@ import * as statex$ from '../../../../state/local'
 export function SendMedia(props) {
   const { groupId } = props;
   const [show, setShow] = useState(false);
-  const { accessToken } = useAuth();
+  const { accessToken,email } = useAuth();
 
   const onOpenClose = () => {
     setShow((prevState) => !prevState);
@@ -38,6 +38,7 @@ export function SendMedia(props) {
                 onClose={onOpenClose}
                 groupId={groupId}
                 accessToken={accessToken}
+                email={email}
               />
 
               <Actionsheet.Item

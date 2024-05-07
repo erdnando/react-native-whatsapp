@@ -27,7 +27,7 @@ export function ItemImage(props) {
   const navigation = useNavigation();
 
   //const imageUri = `${ENV.BASE_PATH}/${message.message}`;
-  const imageUri = message.message;//image64;
+  const imageUri = message.message;;
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -128,7 +128,7 @@ export function ItemImage(props) {
                 <Text style={styles.identity}>
                   {message.user.firstname || message.user.lastname
                     ? `${message.user.firstname || ""} ${message.user.lastname || ""}`
-                    : message.user.email.substring(0,23) }
+                    : message.user.email.substring(0,23)+".png" }
                 </Text>
 
                 <Menu display={isMe?"flex":"flex"} w="190" trigger={triggerProps => {

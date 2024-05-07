@@ -5,11 +5,12 @@ import { Platform } from "react-native";
 import { GroupMessage } from "../../../../../api";
 import { fileExpoFormat } from "../../../../../utils";
 import { styles } from "../SendMedia.styles";
+import * as FileSystem from 'expo-file-system';
 
 const groupMessageController = new GroupMessage();
 
 export function FileOption(props) {
-  const { onClose, groupId, accessToken } = props;
+  const { onClose, groupId, accessToken, email } = props;
 
   const openFileGallery = async () => {
     
@@ -18,7 +19,7 @@ export function FileOption(props) {
       mimeType:["application/*","audio/*","application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document","vnd.ms-excel","vnd.openxmlformats-officedocument.spreadsheetml.sheet","text/csv"],
       copyToCacheDirectory:true,               
       allowsEditing: false,
-      quality: 1,
+      quality: 1
     });
 
     if (!result.canceled) {
@@ -39,7 +40,16 @@ export function FileOption(props) {
         console.log("file enviadox ::");
         console.log(file);
 
-        await groupMessageController.sendImage(accessToken, groupId, file);
+        FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
+          //const res = { ...result, base64 }
+         // console.log(base64);
+          groupMessageController.sendImageLocal(accessToken, groupId, file,email,base64);
+      })
+          .catch(error => {
+              console.error(error);
+          });
+       // await groupMessageController.sendImage(accessToken, groupId, file);
+       
       }else{
         console.log("Archivo puro")
         console.log("file enviado ::");

@@ -11,65 +11,6 @@ import * as Crypto from 'expo-crypto';
 export class GroupMessage {
 
  
-  /*async getAllLocal(groupId) {
- 
-     EventRegister.emit("loadingEvent",true);
- 
-     const arrGpoMsgs = statex$.default.messages.get();
-     //console.log("arrGpoMsgs:::::::::")
-     //console.log(arrGpoMsgs)
-     const arrUsers = statex$.default.users.get();
-     let arrMessages=[];
-
- 
-     const lstMessages = arrGpoMsgs.filter(function (gm) {
- 
-       return gm.group.toString() == groupId;
-     });
- 
-       //1.- Recorre lista de grupos
-       lstMessages.forEach( (gm) => {
- 
-               const userMessage = (arrUsers).filter(function (u) {
-                 return u.email == gm.user?.email;
-               });
- 
-             // console.log("userMessage")
-         //  console.log(userMessage[0])
- //// Encrypt(gm.message,gm.tipo_cifrado ), 
-               const newMessage={
-                 _id: gm._id,
-                 grupo: gm.group,
-                 user: userMessage[0],
-                 message: gm.message,     //<-------------validate if it need to be crypted!!!!!
-                 message_replied:gm.message_replied,
-                 email_replied:gm.email_replied,
-                 tipo_cifrado_replied:gm.tipo_cifrado_replied,
-                 type: gm.type,
-                 tipo_cifrado: gm.tipo_cifrado,
-                 forwarded: gm.forwarded,
-                 createdAt: gm.createdAt,
-                 updatedAt: gm.updatedAt,
-                 __v: 0
-               };
- 
-               arrMessages.push(newMessage)
- 
-       });
- 
-     const resultado ={
-       "messages": arrMessages,
-       "total": arrMessages.length
-     }
-
-     console.log("getAllLocal")
-     console.log(resultado)
- 
-     EventRegister.emit("loadingEvent",false);
-     return resultado;
-   }
- }*/
-  
  async getAllGroupMessage() {
    //addMessage
     try {
@@ -264,6 +205,7 @@ async getAllLocalDB(groupId) {
                grupo: gm.grupo,  //<-------------------------group or grupo
                user: userMessage[0],
                message: gm.message, 
+               id_message_replied:gm.id_message_replied,
                message_replied:gm.message_replied,
                email_replied:gm.email_replied,
                tipo_cifrado_replied:gm.tipo_cifrado_replied,
@@ -288,7 +230,7 @@ async getAllLocalDB(groupId) {
    EventRegister.emit("loadingEvent",false);
 
    console.log("getAllLocalDB:::")
-   console.log(resultado)
+   //console.log(resultado)
 
    return resultado;
  
@@ -360,13 +302,14 @@ async sendTextLocal(accessToken, groupId, message ,tipoCifrado, replyMessage,idA
       message  : Encrypt(message,tipoCifrado), //se envia cifrado el mensaje, Siempre!!!!!!
       type  :"TEXT", 
       tipo_cifrado  :tipoCifrado, 
+      id_message_replied:replyMessage==null ? null :replyMessage?._id,
       message_replied:replyMessage==null ? null :replyMessage?.message,
       email_replied:replyMessage==null ? null :replyMessage?.user.email,
       tipo_cifrado_replied:replyMessage==null ? null :replyMessage?.tipo_cifrado,
       forwarded:reenviado,
       createdAt  :today, 
       updatedAt  :today,
-      image64  :"",//replyMessage==null ? null :replyMessage?.image64,
+      image64  :"",
       grupoDestino  :gpoDestino
       };
 
@@ -601,20 +544,14 @@ async deleteMessageLocal(idMessage) {
       //=============================================================
 
 
-       /*const formData = new FormData();
-       formData.append("group_id", groupId);
-       //formData.append("image", file);
-       formData.append("message_obj", JSON.stringify(newGpoMessage));*/
+     
  
        const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE_LOCAL}`;
-       //console.log(url);
- 
-       //"Content-Type": "application/json",
+      
        const params = {
          method: "POST",
          headers: {
-           "Content-Type": "application/json",// "multipart/form-data",
-          // "accept": "application/json",
+           "Content-Type": "application/json",
            Authorization: `Bearer ${accessToken}`,
          },
          body:JSON.stringify({
@@ -626,7 +563,7 @@ async deleteMessageLocal(idMessage) {
  
  
        console.log("params::::::::::::::::::::::::::")
-       console.log(params)
+       //console.log(params)
  
          try {
            const response = await fetch(url, params)
@@ -716,8 +653,8 @@ async sendFile(accessToken, groupId, file) {
         const today = new Date().toISOString()
         
         
-      
-         await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today ,newMessage.image64  ).then(result =>{
+      //id_message_replied
+         await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today  ).then(result =>{
 
       
       
