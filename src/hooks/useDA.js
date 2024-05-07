@@ -80,7 +80,7 @@ export function fnCreateTableGroupMessages() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS messages (_id TEXT, grupo TEXT, user TEXT, message TEXT, tipo TEXT, tip_cifrado TEXT, forwarded TEXT, createdat TEXT, updatedat TEXT);", 
+        tx.executeSql("CREATE TABLE IF NOT EXISTS messages (_id TEXT, grupo TEXT, user TEXT, message TEXT, tipo TEXT, tip_cifrado TEXT, forwarded TEXT, createdat TEXT, updatedat TEXT,file_name TEXT,file_type TEXT );", 
         (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
@@ -220,15 +220,14 @@ export  function findAllGroups() {
 }
 
 //===================MESSAGES=======================================================================================================================================================
-export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today) {
+export  function addMessage(_id , group , user , message , tipo , tip_cifrado , forwarded , today, file_name,file_type ) {
  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
         // Execute SQL operation
-         //_id , group , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat
-        tx.executeSql('INSERT INTO messages(_id , grupo , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat) values(?,?,?,?,?,?,?,?,?)', 
-                                        [_id,group,user,message,tipo,tip_cifrado,forwarded,today, today], 
+        tx.executeSql('INSERT INTO messages(_id , grupo , user , message , tipo , tip_cifrado , forwarded , createdat , updatedat, file_name,file_type ) values(?,?,?,?,?,?,?,?,?,?,?)', 
+                                        [_id,group,user,message,tipo,tip_cifrado,forwarded,today, today,file_name,file_type ], 
           // Success callback
           (_, result) => resolve(result),
           // Error callback

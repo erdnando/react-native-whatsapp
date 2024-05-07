@@ -27,7 +27,7 @@ export function ItemImage(props) {
   const navigation = useNavigation();
 
   //const imageUri = `${ENV.BASE_PATH}/${message.message}`;
-  const imageUri = message.message;;
+  const imageUri = message.message;//message;
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -54,6 +54,30 @@ export function ItemImage(props) {
 
 
   //open file function
+  const onOpenFilelocal= async () => {
+    
+    const file64=message.message;
+    console.log("mimetype::::::")
+    console.log(message.file_type)
+    console.log("file_name::::::")
+    console.log(message.file_name)
+    
+  
+    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+  
+    if(permissions.granted){
+  
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,message.file_name, message.file_type)
+      .then(async (uri)=>{
+        await FileSystem.writeAsStringAsync(uri,file64,{encoding:FileSystem.EncodingType.Base64})
+      }).catch( e => {
+        console.log(e)
+      });
+  
+    }
+  };
+
+
   const onOpenFile= async () => {
     
     const urlFile = `${ENV.BASE_PATH}/${message.message}`;
@@ -196,7 +220,7 @@ export function ItemImage(props) {
 
            <View style={styles.colFile}>
             {/*download button*/}
-            <Pressable onPress={onOpenFile}>
+            <Pressable onPress={onOpenFilelocal}>
                     <Icon style={{marginTop:-35,left:-5 }} display={offline?"none":"flex"}
                           as={MaterialCommunityIcons}
                           size="30"

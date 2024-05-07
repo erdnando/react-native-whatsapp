@@ -32,7 +32,7 @@ export function FileOption(props) {
       const file = fileExpoFormat(uri);
       console.log("file enviado ::");
       console.log(file);
-      console.log("uri enviado ::");
+      //console.log("uri enviado ::");
       console.log(uri)
 
       if(uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".png")||uri.endsWith(".gif")||uri.endsWith(".bpm")){
@@ -41,22 +41,27 @@ export function FileOption(props) {
         console.log(file);
 
         FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
-          //const res = { ...result, base64 }
-         // console.log(base64);
-          groupMessageController.sendImageLocal(accessToken, groupId, file,email,base64);
-      })
-          .catch(error => {
+    
+            groupMessageController.sendImageLocal(accessToken, groupId, file,email,base64);
+
+        }).catch(error => {
               console.error(error);
-          });
-       // await groupMessageController.sendImage(accessToken, groupId, file);
+        });
        
       }else{
         console.log("Archivo puro")
         console.log("file enviado ::");
-        console.log(accessToken);
-        console.log(groupId);
+        console.log(file.type);
+        console.log(file.name);
         console.log(file);
-        await groupMessageController.sendFile(accessToken, groupId, file);
+        
+        FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
+    
+          groupMessageController.sendFileLocal(accessToken, groupId, file, email, base64);
+          
+      }).catch(error => {
+            console.error(error);
+      });
       }
     
       

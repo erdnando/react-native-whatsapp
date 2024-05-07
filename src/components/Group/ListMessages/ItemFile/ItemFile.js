@@ -27,8 +27,10 @@ export function ItemFile(props) {
   const createMessage = new Date(message.createdAt);
   const navigation = useNavigation();
 
-  const imageUri = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
-  const imageRealUri = `${ENV.BASE_PATH}/${message.message}`;
+  const imageUriCrypted = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
+  const fileRealUri = message.message;//`${ENV.BASE_PATH}/${message.message}`;
+  const imageRealUri = "data:image/png;base64,"+message.message;//`${ENV.BASE_PATH}/${message.message}`;
+  
   const [width, setWidth] = useState(240);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
@@ -54,34 +56,30 @@ export function ItemFile(props) {
   }
 
   const onOpenImage = () => {
-    navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
+    navigation.navigate(screens.global.imageFullScreen, { uri: imageUriCrypted });
   };
-
 
   const AudioPlayer = useRef(new Audio.Sound());
  
+  //====================================================================================================================================================
    // Function to play the recorded audio
    const PlayRecordedAudio = async () => {
-
-    if(offline){
-      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-          [{  text: 'Ok',
-              onPress: async ()=>{
-                console.log('modo offline!');
-               
-              }
-            } ]);
-    }else{
 
         try {
           setIsPressed(true);
 
           console.log("playing recordedURI:::::::2");
-          
-          const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
-          //const recordedURIx=urlFile.replace("files/","");
-          console.log(recordedURIx);
+      
+          const soundObject = new Audio.Sound()
+          const { sound, status } = await soundObject.loadAsync(
+            { uri: "data:" + message.file_type + ";base64,"+message.message, },
+            { shouldPlay: true, }
+          )
 
+          await sound.playAsync()
+
+
+/*
           //release resources
           try {
           
@@ -107,22 +105,37 @@ export function ItemFile(props) {
               AudioPlayer.current.playAsync();
               SetIsPLaying(true);
             }
-          }
+          }*/
         } catch (error) {
           console.log("Error on PlayingRecording")
           console.log(error)
         }
 
         setIsPressed(false);
-
-  }
-
-
   };
 
-
-
 //open file function
+const onOpenFilelocal= async () => {
+    
+  const file64=message.message;
+  console.log("mimetype::::::")
+  console.log(message.file_type)
+  
+
+  const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+  if(permissions.granted){
+
+    await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,message.file_name, message.file_type)
+    .then(async (uri)=>{
+      await FileSystem.writeAsStringAsync(uri,file64,{encoding:FileSystem.EncodingType.Base64})
+    }).catch( e => {
+      console.log(e)
+    });
+
+  }
+};
+
   const onOpenFile= async () => {
     
     const urlFile = `${ENV.BASE_PATH}/${message.message}`;
@@ -132,7 +145,6 @@ export function ItemFile(props) {
     console.log("mimetype::::::")
     console.log(mimetype)
     
-
     // Download the file and get its local URI
     const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
 
@@ -152,9 +164,7 @@ export function ItemFile(props) {
       });
 
     }
-    //else{
-     // await shareAsync(uri);
-    //}
+   
    
 
   };
@@ -173,6 +183,9 @@ export function ItemFile(props) {
        message?.message.toString().endsWith(".png")||message?.message.toString().endsWith(".bpm")){
         setRealImage(true)
     }
+
+    console.log("realImage")
+    console.log(realImage)
   
     async function fetchData() {
      // console.log("useEffect ItemText:::::");
@@ -191,6 +204,8 @@ export function ItemFile(props) {
   }, []);
 
   if(modoAvanzado){
+    console.log("message::::::::::::;")
+    console.log(message)
       return (
         <View style={styles.content}>
           <View style={styles.message}>
@@ -252,65 +267,70 @@ export function ItemFile(props) {
 
               </View>
 
-              {/*vista file download*/}
+
+
+
+              {/*View file type*/}
               <View style={styles.rowFile} >
 
-                {/*any other file*/}
-                <View display={ (message?.message.toString().endsWith(".mp3") ) ?"none":"flex"}>
-                     
-                        <Icon display={isMe?"flex":"none"}
-                                      as={MaterialCommunityIcons}
-                                      size="39"
-                                      name="file"
-                                      color="black"
-                                />
-                             
-                </View>
-                 {/*just to mp3 files*/}
-                <View display={  (message?.message.toString().endsWith(".mp3") ) ?"flex":"none"}>
-                  
-                    <Pressable onPress={PlayRecordedAudio}>
-                      <View>
-                        <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
-                            as={MaterialCommunityIcons}
-                            size="49"
-                            name="play"
-                            color="black"
+                    {/*any other file*/}
+                    {/*left icono file*/}
+                    <View display={ (!message?.file_name.toString().endsWith(".mp3") ) ?"flex":"none"}>
+                        
+                            <Icon display={isMe?"flex":"none"}
+                                          as={MaterialCommunityIcons}
+                                          size="39"
+                                          name="file"
+                                          color="black"
+                                    />    
+                    </View>
+
+                    {/*just to mp3 files*/}
+                      {/*left icono audio*/}
+                    <View display={  (message?.file_name.toString().endsWith(".mp3") ) ?"flex":"none"}>
+                      
+                        <Pressable onPress={PlayRecordedAudio}>
+                          <View>
+                            <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
+                                as={MaterialCommunityIcons}
+                                size="49"
+                                name="play"
+                                color="black"
+                              />
+                          </View>
+                          
+                          </Pressable>
+                          
+                    </View>
+                    
+                    {/*just to img files*/}
+                    <View display={realImage ?"flex":"none"}>
+                        <Pressable onPress={onOpenImage}>
+                          <AutoHeightImage
+                            width={width}
+                            maxHeight={400}
+                            source={{ uri: imageRealUri }}
+                            style={styles.image}
                           />
-                      </View>
-                      
-                      </Pressable>
-                      
-                </View>
-                
-                 {/*just to img files*/}
-                 <View display={realImage ?"flex":"none"}>
-                    <Pressable onPress={onOpenImage}>
-                      <AutoHeightImage
-                        width={width}
-                        maxHeight={400}
-                        source={{ uri: imageRealUri }}
-                        style={styles.image}
-                      />
+                        </Pressable>
+                    </View>
+
+                    
+                  <Text  style={styles.fileName}>
+                      {message.file_name }
+                    </Text>
+
+                    
+                    {/*vista file download*/}
+                    <Pressable onPress={onOpenFilelocal}  display={offline ?"none":"flex"}> 
+                        <Icon  style={{marginTop:10}}
+                                      as={MaterialCommunityIcons}
+                                      size="30"
+                                      name="download-circle"
+                                      color="black"
+                                    />
                     </Pressable>
-                </View>
 
-               <Text display={realImage ?"none":"flex"} style={styles.fileName}>
-                  {message.message.replace("files/","") }
-                </Text>
-
-                 
-
-                <Pressable onPress={onOpenFile}  display={offline ?"none":"flex"}> 
-                    <Icon  style={{marginTop:10}}
-                                  as={MaterialCommunityIcons}
-                                  size="30"
-                                  name="download-circle"
-                                  color="black"
-                                />
-                </Pressable>
-
-                  
               </View>
 
        
@@ -358,7 +378,7 @@ export function ItemFile(props) {
               <AutoHeightImage
                 width={width}
                 maxHeight={400}
-                source={{ uri: imageUri }}
+                source={{ uri: imageUriCrypted }}
                 style={styles.image}
               />
             </Pressable>

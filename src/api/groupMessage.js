@@ -214,6 +214,8 @@ async getAllLocalDB(groupId) {
                forwarded: gm.forwarded,
                createdAt: gm.createdAt,
                updatedAt: gm.updatedAt,
+               file_name: gm.file_name,
+               file_type: gm.file_type,
                __v: 0
              };
 
@@ -525,7 +527,7 @@ async deleteMessageLocal(idMessage) {
       const _id = new Types.ObjectId();
       const today = new Date().toISOString()
       //Creating groupMessage
-      const newGpoMessage={
+      const newMessage={
         _id  :_id.toString(),
         grupo  :groupId, //grupo al q pertenece el mensaje
         user  :userFiltrado[0], 
@@ -539,7 +541,9 @@ async deleteMessageLocal(idMessage) {
         createdAt  :today, 
         updatedAt  :today,
         image64  :"",//de inicio no se manda, se persiste hasta q llega al destino
-        grupoDestino :null
+        grupoDestino :null,
+        file_name: file.name, //with extension
+        file_type: file.type  //content type
         };
       //=============================================================
 
@@ -557,7 +561,7 @@ async deleteMessageLocal(idMessage) {
          body:JSON.stringify({
           group_id:groupId,
           image64:image64,
-          message_obj:JSON.stringify(newGpoMessage)
+          message_obj:JSON.stringify(newMessage)
          }),
        };
  
@@ -592,7 +596,90 @@ async deleteMessageLocal(idMessage) {
 
 
 //=====================================================================================================
-async sendFile(accessToken, groupId, file) {
+async sendFileLocal(accessToken, groupId, file,email,file64) {
+
+  EventRegister.emit("loadingEvent",true);
+     try {
+
+      //============preparing image package=========================
+      const arrUsers = statex$.default.users.get();
+
+      const userFiltrado = arrUsers.filter(function (c) {
+        return c.email == email;
+      });
+
+      //console.log("cifrando 2")
+      const _id = new Types.ObjectId();
+      const today = new Date().toISOString();
+
+      //Creating groupMessage
+      const newMessage={
+        _id  :_id.toString(),
+        grupo  :groupId, //grupo al q pertenece el mensaje
+        user  :userFiltrado[0], 
+        message  : "", 
+        type  :"FILE", 
+        tipo_cifrado  :"", 
+        message_replied:null,
+        email_replied:null,
+        tipo_cifrado_replied:null,
+        forwarded:false,
+        createdAt  :today, 
+        updatedAt  :today,
+        image64  :"",//de inicio no se manda, se persiste hasta q llega al destino
+        grupoDestino :null,
+        file_name: file.name, //with extension
+        file_type: file.type  //content type
+        };
+      //=============================================================
+
+
+     
+ 
+       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILE_LOCAL}`;
+      
+       const params = {
+         method: "POST",
+         headers: {
+           "Content-Type": "application/json",
+           Authorization: `Bearer ${accessToken}`,
+         },
+         body:JSON.stringify({
+          group_id:groupId,
+          file64:file64,
+          message_obj:JSON.stringify(newMessage)
+         }),
+       };
+ 
+ 
+       console.log("params::::::::::::::::::::::::::")
+       //console.log(params)
+ 
+         try {
+           const response = await fetch(url, params)
+           //console.log(response);
+           const result = await response.json();
+           //console.log(result);
+ 
+           EventRegister.emit("loadingEvent",false);
+
+           if (response.status !== 201) throw result;
+           
+         } catch (error) {
+           console.log("Error al enviar imagen al grupo")
+           console.log(error);
+         }
+      
+ 
+       return true;
+     } catch (error) {
+       console.log("Error general al enviar imagen al grupo")
+        EventRegister.emit("loadingEvent",false);
+       throw error;
+     }
+}
+
+/*async sendFile(accessToken, groupId, file) {
 
   EventRegister.emit("loadingEvent",true);
   console.log('6')
@@ -644,20 +731,21 @@ async sendFile(accessToken, groupId, file) {
     EventRegister.emit("loadingEvent",false);
     throw error;
   }
-}
+}*/
   //=====================================================================================================
 
-  async guardaMessage(newMessage) {
+  async guardaMessage(msg) {
     try {
         let response=null;
         const today = new Date().toISOString()
         
-        
+        const file_name = msg.file_name == null ? "" : msg.file_mame;
+        const file_type =msg.file_type== null ? "" : msg.file_type;
       //id_message_replied
-         await addMessage(newMessage._id, newMessage.group, newMessage.user._id, newMessage.message,newMessage.type,newMessage.tipo_cifrado,newMessage.forwarded, today  ).then(result =>{
+         await addMessage(msg._id, msg.group, msg.user._id, msg.message,msg.type,msg.tipo_cifrado,msg.forwarded, today,file_name,file_type  ).then(result =>{
 
       
-      
+       
           response=result.rows._array;
           console.log('mensaje insertado')
           console.log(result)

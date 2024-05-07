@@ -215,8 +215,8 @@ export function GroupScreen() {
 
               if(msg.type=="FILE"){
                 console.log("=====file=========")
-                console.log(msg.message)
-                msg.message = "images/cryptedImagex.png";
+                //console.log(msg.message)
+                //msg.message = "images/cryptedImagex.png";
               }
 
             });

@@ -31,7 +31,7 @@ export function ItemText(props) {
   const [forwarded, setForwarded] = useState(false);
   const [offline,setOffline]=useState(false)
   const [showImagen,setShowImagen]=useState(false)
-  const [img64Replied,setImg64Replied]=useState("http://")
+  const [img64Replied,setImg64Replied]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
 
 
   
