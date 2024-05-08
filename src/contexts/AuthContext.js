@@ -41,9 +41,7 @@ useEffect(() => {
     async function fetchData() {
       console.log(" ")
       
-      fnDropTableUsers();
-      fnDropTableGroups();
-      fnDropTableGroupMessages();
+      
 
       fnCreateTableUsers();
       fnCreateTableGroups();

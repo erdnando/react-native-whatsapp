@@ -234,7 +234,7 @@ const onOpenFilelocal= async () => {
                         onPress={() => {
                      
                            console.log("responder message:::::::::::");
-                           EventRegister.emit("replyingMessage",message);  //-->GroupForm
+                           EventRegister.emit("replyingFile",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
                             <Text>Responder</Text>

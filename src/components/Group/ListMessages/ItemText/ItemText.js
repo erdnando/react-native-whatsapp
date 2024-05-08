@@ -49,10 +49,11 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-    //setImg64Replied("");
-    if(message?.message_replied?.endsWith(".png")){
+    console.log("message?.message_replied")
+    console.log(message?.message_replied)
+    
+    if(message?.message_replied?.endsWith(".png") || message?.message_replied?.endsWith(".jpg") || message?.message_replied?.endsWith(".jpeg") || message?.message_replied?.endsWith(".gif" || message?.message_replied?.endsWith(".bmp"))){
 
-      //const xxx = findMessageImageById(message._id)
       const arrGpoMessages = statex$.default.messages.get();
       const arrMessagesDepurated = arrGpoMessages.filter(function (gm) {
               return gm._id == message.id_message_replied;
@@ -62,9 +63,9 @@ export function ItemText(props) {
 
       setImg64Replied(arrMessagesDepurated[0].message);
     
-
-        setShowImagen(true)
-        
+      setShowImagen(true)
+    }else{
+      setShowImagen(false)
     }
     
     if(statex$.default.flags.offline.get()=='true'){
@@ -79,8 +80,6 @@ export function ItemText(props) {
     if(message.email_replied != null){
      // console.log("si hay mensaje replicado!!!")
       setReplicado(true);
-
-   
     }else{
      // console.log("no hay mensaje replicado!!")
       setReplicado(false);
@@ -248,14 +247,14 @@ export function ItemText(props) {
                   </Text>
 
                   <Pressable display={ showImagen ? "flex":"none"}  >
-                  <AutoHeightImage
-                    width={120}
-                    maxHeight={120}
-                    source={{ uri: img64Replied }}
-                    style={{flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',}}
-                  />
+                    <AutoHeightImage
+                      width={120}
+                      maxHeight={120}
+                      source={{ uri: img64Replied }}
+                      style={{flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',}}
+                    />
                 </Pressable>
 
                  

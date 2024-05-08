@@ -29,3 +29,7 @@ CREATE TABLE IF NOT EXISTS users (\_id TEXT PRIMARY KEY,email TEXT, firstname TE
 CREATE TABLE IF NOT EXISTS groups (\_id TEXT PRIMARY KEY,name TEXT, participants TEXT, creator TEXT, image TEXT, image64 TEXT);
 CREATE TABLE IF NOT EXISTS groupmessages (\_id TEXT PRIMARY KEY,grupo TEXT, user TEXT, message TEXT, type TEXT, tipo_cifrado TEXT, forwarded TEXT, createdAt TEXT, updatedAt TEXT,file64 TEXT);
 .quit
+
+//fnDropTableUsers();
+//fnDropTableGroups();
+//fnDropTableGroupMessages();

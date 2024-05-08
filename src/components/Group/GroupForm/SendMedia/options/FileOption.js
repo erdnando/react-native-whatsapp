@@ -55,13 +55,13 @@ export function FileOption(props) {
         console.log(file.name);
         console.log(file);
         
-        FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
-    
-          groupMessageController.sendFileLocal(accessToken, groupId, file, email, base64);
-          
-      }).catch(error => {
-            console.error(error);
-      });
+          FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
+      
+            groupMessageController.sendFileLocal(accessToken, groupId, file, email, base64);
+            
+          }).catch(error => {
+                console.error(error);
+          });
       }
     
       

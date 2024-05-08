@@ -52,7 +52,8 @@ async getAllUsers() {
 
           const min = 1000; 
           const max = 9999; 
-          const randomNumber = 1;  //Math.floor(Math.random() * (max - min + 1)) + min; 
+          //const randomNumber = 1;  //Math.floor(Math.random() * (max - min + 1)) + min; 
+          const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min; 
           const nip ="A"+randomNumber
           const nipCifrado =MD5method("A"+randomNumber).toString();
           const _id = new Types.ObjectId();

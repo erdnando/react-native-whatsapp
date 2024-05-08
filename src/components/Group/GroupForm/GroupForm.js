@@ -14,6 +14,7 @@ import { Audio } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
 import * as statex$ from '../../../state/local'
+import * as FileSystem from 'expo-file-system';
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -102,9 +103,6 @@ export function GroupForm(props) {
     SetAudioPermission(getAudioPerm.granted);
   };
 
-
-
- 
 //=======================================================================================
   // Function to start recording
   const StartRecording = async () => {
@@ -166,9 +164,6 @@ export function GroupForm(props) {
   // Function to STOP RECORDING!!!!
   const StopRecording = async () => {
 
-  
-
-
     if(vuelta==null){
       console.log("nada q hacer!!!")
       return;
@@ -200,7 +195,7 @@ export function GroupForm(props) {
       //==============================================
 
       //TODO load file message with just generated audio
-      await sendAudio(recordedURIx)
+      await sendAudioLocal(recordedURIx)
       //console.log("playing recordedURI:::::::");
       //console.log(recordedURIx);
       //===============================================
@@ -265,6 +260,7 @@ export function GroupForm(props) {
   };
 
   const sendAudio = async (uri) => {
+
     try {
       const file = fileExpoFormat(uri);
       console.log("file::");
@@ -277,6 +273,39 @@ export function GroupForm(props) {
       console.log("error al enviar audio::"+uri);
       console.error(error);
 
+    }
+  };
+
+  const sendAudioLocal = async (uri) => {
+    
+    try {
+      const file = fileExpoFormat(uri);
+      console.log("audio enviado ::");
+      console.log(file);
+      //console.log("uri enviado ::");
+      console.log(uri)
+
+    
+     
+        console.log("file enviado ::");
+        console.log(file.type);
+        console.log(file.name);
+        console.log(file);
+        
+          FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {
+      
+            groupMessageController.sendFileLocal(accessToken, groupId, file, email, base64);
+            
+          }).catch(error => {
+                console.error(error);
+          });
+      
+    
+      
+      onClose();
+    } catch (error) {
+      console.log("error::");
+      console.error(error);
     }
   };
 
@@ -445,6 +474,37 @@ export function GroupForm(props) {
       }
     
   },[]);
+
+
+  //EventListener:replyingFile
+  useEffect(() => {
+
+    setIdMessage("");
+  
+      try {
+        
+        //=================================================================
+        const eventReplyMessage = EventRegister.addEventListener("replyingFile", async msg=>{
+          setIdMessage("");
+          setFocusInput(true);
+          console.log("file replicado::::")
+          console.log(msg)
+          setReplyMessage(msg);//flag to identify replyng case
+          inputMessageRef.current.focus();
+          
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventReplyMessage);
+        }
+        //================================================================
+        
+
+      } catch (error) {
+        console.error(error);
+      }
+  
+  }, []);
 
 
   //EventListener:replyingMessage
@@ -644,10 +704,12 @@ export function GroupForm(props) {
                     : replyMessage?.user.email.substring(0,30) }
       </Text>
 
+
+
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>
           {replyMessage!=null ? 
-          (replyMessage.type!="TEXT" ? replyMessage?.user?.email+".png" : replyMessage.message)  
+          (replyMessage.type!="TEXT" ? replyMessage?.file_name : replyMessage.message)  
           : ""}
           </Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
