@@ -24,7 +24,7 @@ export function ItemFile(props) {
   const { user } = useAuth();
   const isMe = user._id === message.user._id;
   const styles = styled(isMe);
-  const createMessage = new Date(message.createdAt);
+  const createMessage = new Date(message.createdat);
   const navigation = useNavigation();
 
   const imageUriCrypted = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
@@ -179,8 +179,8 @@ const onOpenFilelocal= async () => {
       setOffline(false)
     }
 
-    if(message?.message.toString().endsWith(".jpg")||message?.message.toString().endsWith(".jpeg")||
-       message?.message.toString().endsWith(".png")||message?.message.toString().endsWith(".bpm")){
+    if(message?.message.toString().endsWith(".jpg")||message?.message?.toString().endsWith(".jpeg")||
+       message?.message.toString().endsWith(".png")||message?.message?.toString().endsWith(".bpm")){
         setRealImage(true)
     }
 
@@ -275,7 +275,7 @@ const onOpenFilelocal= async () => {
 
                     {/*any other file*/}
                     {/*left icono file*/}
-                    <View display={ (!message?.file_name.toString().endsWith(".mp3") ) ?"flex":"none"}>
+                    <View display={ (!message?.file_name?.toString().endsWith(".mp3") ) ?"flex":"none"}>
                         
                             <Icon display={isMe?"flex":"none"}
                                           as={MaterialCommunityIcons}
@@ -287,7 +287,7 @@ const onOpenFilelocal= async () => {
 
                     {/*just to mp3 files*/}
                       {/*left icono audio*/}
-                    <View display={  (message?.file_name.toString().endsWith(".mp3") ) ?"flex":"none"}>
+                    <View display={  (message?.file_name?.toString().endsWith(".mp3") ) ?"flex":"none"}>
                       
                         <Pressable onPress={PlayRecordedAudio}>
                           <View>

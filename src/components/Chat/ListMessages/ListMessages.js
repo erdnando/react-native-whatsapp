@@ -21,10 +21,10 @@ export function ListMessages(props) {
     >
       <View style={styles.content}>
         {map(messages, (message) => {
-          if (message.type === "TEXT") {
+          if (message.tipo === "TEXT") {
             return <ItemText key={message._id} message={message} />;
           }
-          if (message.type === "IMAGE") {
+          if (message.tipo === "IMAGE") {
             return <ItemImage key={message._id} message={message} />;
           }
         })}

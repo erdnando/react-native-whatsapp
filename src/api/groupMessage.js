@@ -179,6 +179,9 @@ export class GroupMessage {
       console.log("groupId")
       console.log(groupId)
       const arrUsers = statex$.default.users.get();
+      console.log("arrUsers")
+      console.log(arrUsers)
+
       let arrMessages=[];
 
 
@@ -194,9 +197,29 @@ export class GroupMessage {
         //1.- Recorre lista de grupos
         lstMessages.forEach( (gm) => {
 
-                const userMessage = (arrUsers).filter(function (u) {
-                  return u.email == gm.user?.email;
-                });
+          console.log("gm.user?.email")
+          console.log(gm.user?.email)
+
+          let userMessage =[];
+          if(gm.user?.email==undefined){
+
+            userMessage = (arrUsers).filter(function (u) {
+              return u._id == gm.user;
+            });
+
+          }else{
+
+            userMessage = (arrUsers).filter(function (u) {
+              return u.email == gm.user?.email;
+            });
+
+          }
+                
+
+                console.log("userMessage")
+                console.log(userMessage)
+                console.log("gm.id_message_replied")
+                console.log(gm.id_message_replied)
 
       
                 const newMessage={
@@ -204,17 +227,17 @@ export class GroupMessage {
                   grupo: gm.grupo,  //<-------------------------group or grupo
                   user: userMessage[0],
                   message: gm.message, 
-                  id_message_replied:gm.id_message_replied,
-                  message_replied:gm.message_replied,
-                  email_replied:gm.email_replied,
-                  tipo_cifrado_replied:gm.tipo_cifrado_replied,
-                  type: gm.type,
+                  id_message_replied:gm.id_message_replied==undefined?null:gm.id_message_replied,
+                  message_replied:gm.message_replied==undefined?null:gm.message_replied,
+                  email_replied:gm.email_replied==undefined?null:gm.email_replied,
+                  tipo_cifrado_replied:gm.tipo_cifrado_replied==undefined?null:gm.tipo_cifrado_replied,
+                  tipo: gm.tipo,
                   tipo_cifrado: gm.tipo_cifrado,
                   forwarded: gm.forwarded,
-                  createdAt: gm.createdAt,
-                  updatedAt: gm.updatedAt,
-                  file_name: gm.file_name,
-                  file_type: gm.file_type,
+                  createdat: gm.createdat,
+                  updatedat: gm.updatedat,
+                  file_name: gm.file_name=undefined?null:gm.file_name,
+                  file_type: gm.file_type=undefined?null:gm.file_type,
                   __v: 0
                 };
 
@@ -251,7 +274,7 @@ export class GroupMessage {
         console.log("---------------------------------------------")
 
         EventRegister.emit("loadingEvent",true);
-        let reenviado=false;
+        let reenviado="false";
         
         console.log("Enviando mensajes de texto");
         console.log("tiene replyMessage?");
@@ -265,10 +288,10 @@ export class GroupMessage {
             console.log(replyMessage)
 
 
-            if(replyMessage.type=="IMAGE"){
+            if(replyMessage.tipo=="IMAGE"){
               replyMessage.message = replyMessage._id+".png";
             }
-            if(replyMessage.type=="FILE"){
+            if(replyMessage.tipo=="FILE"){
               replyMessage.message = replyMessage.file_name;
             }
             //cifrando msg reenviado
@@ -299,15 +322,15 @@ export class GroupMessage {
           grupo  :groupId, //grupo al q pertenece el mensaje
           user  :userFiltrado[0], 
           message  : Encrypt(message,tipoCifrado), //se envia cifrado el mensaje, Siempre!!!!!!
-          type  :"TEXT", 
+          tipo  :"TEXT", 
           tipo_cifrado  :tipoCifrado, 
           id_message_replied:replyMessage==null ? null :replyMessage?._id,
           message_replied:replyMessage==null ? null :replyMessage?.message,
           email_replied:replyMessage==null ? null :replyMessage?.user.email,
           tipo_cifrado_replied:replyMessage==null ? null :replyMessage?.tipo_cifrado,
           forwarded:reenviado,
-          createdAt  :today, 
-          updatedAt  :today,
+          createdat  :today, 
+          updatedat  :today,
           image64  :"",
           grupoDestino  :gpoDestino
           };
@@ -526,14 +549,14 @@ export class GroupMessage {
             grupo  :groupId, //grupo al q pertenece el mensaje
             user  :userFiltrado[0], 
             message  : "", 
-            type  :"IMAGE", 
+            tipo  :"IMAGE", 
             tipo_cifrado  :"", 
             message_replied:null,
             email_replied:null,
             tipo_cifrado_replied:null,
-            forwarded:false,
-            createdAt  :today, 
-            updatedAt  :today,
+            forwarded:"false",
+            createdat  :today, 
+            updatedat  :today,
             image64  :"",//de inicio no se manda, se persiste hasta q llega al destino
             grupoDestino :null,
             file_name: file.name, //with extension
@@ -611,14 +634,14 @@ export class GroupMessage {
             grupo  :groupId, //grupo al q pertenece el mensaje
             user  :userFiltrado[0], 
             message  : "", 
-            type  :"FILE", 
+            tipo  :"FILE", 
             tipo_cifrado  :"", 
             message_replied:null,
             email_replied:null,
             tipo_cifrado_replied:null,
-            forwarded:false,
-            createdAt  :today, 
-            updatedAt  :today,
+            forwarded:"false",
+            createdat  :today, 
+            updatedat  :today,
             image64  :"",//de inicio no se manda, se persiste hasta q llega al destino
             grupoDestino :null,
             file_name: file.name, //with extension
@@ -679,10 +702,12 @@ export class GroupMessage {
             let response=null;
             const today = new Date().toISOString()
             
-            const file_name = msg.file_name == null ? "" : msg.file_mame;
+            const file_name = msg.file_name == null ? "" : msg.file_name;
             const file_type =msg.file_type== null ? "" : msg.file_type;
           //id_message_replied
-            await addMessage(msg._id, msg.group, msg.user._id, msg.message,msg.type,msg.tipo_cifrado,msg.forwarded, today,file_name,file_type  ).then(result =>{
+          console.log("guarda mensaje")
+          console.log(msg)
+            await addMessage(msg._id, msg.grupo, msg.user._id, msg.message,msg.tipo,msg.tipo_cifrado,msg.forwarded, today,file_name,file_type,msg.id_message_replied, msg.message_replied,msg.email_replied, msg.tipo_cifrado_replied  ).then(result =>{
 
           
           

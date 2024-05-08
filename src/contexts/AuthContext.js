@@ -40,8 +40,10 @@ useEffect(() => {
 
     async function fetchData() {
       console.log(" ")
-      
-      
+      /*
+      fnDropTableUsers();
+      fnDropTableGroups();
+      fnDropTableGroupMessages();*/
 
       fnCreateTableUsers();
       fnCreateTableGroups();
@@ -183,10 +185,10 @@ useEffect(() => {
       console.log(usersAllRef);
       statex$.default.users.set(usersAllRef);
 
-      //const messagesAllRef = await groupMessageController.getAllGroupMessage();
-      //console.log("getAllGroupMessage")
-      //console.log(messagesAllRef);
-      //statex$.default.messages.set(messagesAllRef);
+      const messagesAllRef = await groupMessageController.getAllGroupMessage();
+      console.log("getAllGroupMessage")
+      console.log(messagesAllRef);
+      statex$.default.messages.set(messagesAllRef);
 
 
 

@@ -70,7 +70,7 @@ export function GroupScreen() {
                     if(isCypher=="NO"){
                      // console.log("decifrando mensajes");
                       unlockedMessages.map((msg) => {
-                        if(msg.type=="TEXT"){
+                        if(msg.tipo=="TEXT"){
                             msg.message = Decrypt(msg.message,msg.tipo_cifrado);
                             
                             if(msg.email_replied != null){
@@ -81,10 +81,10 @@ export function GroupScreen() {
                       });
                     }else{
                       unlockedMessages.map((msg) => {
-                        if(msg.type=="IMAGE"){
+                        if(msg.tipo=="IMAGE"){
                           msg.message = "images/cryptedImagex.png";
                         }
-                        if(msg.type=="FILE"){
+                        if(msg.tipo=="FILE"){
                           msg.message = "images/cryptedImagex.png";
                         }
                        
@@ -207,13 +207,13 @@ export function GroupScreen() {
           //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
           let lockedMessages = response.messages;
           lockedMessages.map((msg) => {
-              if(msg.type=="IMAGE"){
+              if(msg.tipo=="IMAGE"){
                 console.log("=====imagen=========")
                 console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
 
-              if(msg.type=="FILE"){
+              if(msg.tipo=="FILE"){
                 console.log("=====file=========")
                 //console.log(msg.message)
                 //msg.message = "images/cryptedImagex.png";
@@ -230,14 +230,14 @@ export function GroupScreen() {
 
             unlockedMessages.map((msg) => {
       
-              if(msg.type=="TEXT"){
+              if(msg.tipo=="TEXT"){
                 msg.message = Decrypt(msg.message,msg.tipo_cifrado);
 
                 if(msg.email_replied != null){
                   msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
                 }
               }
-              /*else if(msg.type=="FILE"){
+              /*else if(msg.tipo=="FILE"){
                 console.log("========file=======================")
                 msg.message = "images/cryptedImagex.png";
                 console.log(msg.message);
@@ -325,7 +325,7 @@ export function GroupScreen() {
     
     let newMsg = { ...newMsgx };
 
-    if(newMsg.type=="TEXT"){
+    if(newMsg.tipo=="TEXT"){
       const cifrados = await authController.getCifrado(); 
       if(cifrados=="NO"){
         newMsg.message=Decrypt(newMsg.message,newMsg.tipo_cifrado);

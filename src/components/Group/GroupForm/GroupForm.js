@@ -585,7 +585,7 @@ export function GroupForm(props) {
           console.log("message.message:"+data.message);
           console.log("message.group:"+data.grupo);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-          console.log("message.type:"+data.type);
+          console.log("message.tipo:"+data.tipo);
           
           formik.setFieldValue("message", data.message);
           setFocusInput(true);
@@ -709,7 +709,7 @@ export function GroupForm(props) {
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>
           {replyMessage!=null ? 
-          (replyMessage.type!="TEXT" ? replyMessage?.file_name : replyMessage.message)  
+          (replyMessage.tipo!="TEXT" ? replyMessage?.file_name : replyMessage.message)  
           : ""}
           </Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 

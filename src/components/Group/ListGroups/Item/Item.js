@@ -160,7 +160,7 @@ export function Item(props) {
           {lastMessage ? (
             <Text style={styles.time}>
               {DateTime.fromISO(
-                new Date(lastMessage.createdAt).toISOString()
+                new Date(lastMessage.createdat).toISOString()
               ).toFormat("HH:mm")}
             </Text>
           ) : null}

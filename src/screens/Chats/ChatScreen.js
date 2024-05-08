@@ -36,7 +36,7 @@ export function ChatScreen() {
           accessToken,
           chatId
         );
-        setMessages(response.messages);
+        //setMessages(response.messages);
         unreadMessagesController.setTotalReadMessages(chatId, response.total);
       } catch (error) {
         console.error(error);

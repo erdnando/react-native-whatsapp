@@ -20,15 +20,15 @@ export function ItemText(props) {
   const { user } = useAuth();
   const isMe = user._id === message?.user._id;
   const styles = styled(isMe);
-  const createMessage = new Date(message.createdAt);
-  const updatedMessage = new Date(message.updatedAt);
+  const createMessage = new Date(message.createdat);
+  const updatedMessage = new Date(message.updatedat);
 
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
-  const [forwarded, setForwarded] = useState(false);
+  const [forwarded, setForwarded] = useState("false");
   const [offline,setOffline]=useState(false)
   const [showImagen,setShowImagen]=useState(false)
   const [img64Replied,setImg64Replied]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
@@ -52,7 +52,8 @@ export function ItemText(props) {
     console.log("message?.message_replied")
     console.log(message?.message_replied)
     
-    if(message?.message_replied?.endsWith(".png") || message?.message_replied?.endsWith(".jpg") || message?.message_replied?.endsWith(".jpeg") || message?.message_replied?.endsWith(".gif" || message?.message_replied?.endsWith(".bmp"))){
+    if(message?.message_replied?.endsWith(".png") || message?.message_replied?.endsWith(".jpg") || 
+       message?.message_replied?.endsWith(".jpeg") || message?.message_replied?.endsWith(".gif" || message?.message_replied?.endsWith(".bmp"))){
 
       const arrGpoMessages = statex$.default.messages.get();
       const arrMessagesDepurated = arrGpoMessages.filter(function (gm) {
@@ -64,6 +65,7 @@ export function ItemText(props) {
       setImg64Replied(arrMessagesDepurated[0].message);
     
       setShowImagen(true)
+
     }else{
       setShowImagen(false)
     }
@@ -78,10 +80,11 @@ export function ItemText(props) {
     
 
     if(message.email_replied != null){
-     // console.log("si hay mensaje replicado!!!")
+      console.log("si hay mensaje replicado!!!")
+      console.log(message.email_replied)
       setReplicado(true);
     }else{
-     // console.log("no hay mensaje replicado!!")
+      console.log("no hay mensaje replicado!!")
       setReplicado(false);
     }
   
@@ -280,7 +283,7 @@ export function ItemText(props) {
               </View>
 
               {/*message forwarded*/}
-              <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
+              <View display={forwarded=="true"?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
                 <Icon
                   style={{transform: [{rotateY: '180deg'}]}}
                   as={MaterialCommunityIcons}

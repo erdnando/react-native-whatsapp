@@ -11,7 +11,7 @@ export function ItemImage(props) {
   const { user } = useAuth();
   const isMe = user._id === message.user._id;
   const styles = styled(isMe);
-  const createMessage = new Date(message.createdAt);
+  const createMessage = new Date(message.createdat);
   const navigation = useNavigation();
 
   const imageUrl = `${ENV.BASE_PATH}/${message.message}`;
