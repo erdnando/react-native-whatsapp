@@ -32,6 +32,7 @@ export function Item(props) {
   useEffect(() => {
     (async () => {
       try {
+        //from state
         const totalMessages = await groupMessageController.getTotalLocal(
           group._id
         );
@@ -41,7 +42,7 @@ export function Item(props) {
         setTotalMembers(totalParticipants);
         
 
-
+        //from state
         const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
 
         setTotalUnreadMessages(totalMessages - totalReadMessages);

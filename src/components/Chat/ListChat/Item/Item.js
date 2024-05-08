@@ -78,13 +78,13 @@ export function Item(props) {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     socket.emit("subscribe", `${chat._id}_notify`);
     socket.on("message_notify", newMessage);
-  }, []);
+  }, []);*/
 
   const newMessage = async (newMessage) => {
-    if (newMessage.chat === chat._id) {
+    /*if (newMessage.chat === chat._id) {
       if (newMessage.user._id !== user._id) {
         upTopChat(newMessage.chat);
         setLastMessage(newMessage);
@@ -94,7 +94,7 @@ export function Item(props) {
           setTotalUnreadMessages((prevState) => prevState + 1);
         }
       }
-    }
+    }*/
   };
 
   return (

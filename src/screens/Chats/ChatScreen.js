@@ -49,7 +49,7 @@ export function ChatScreen() {
     };
   }, [chatId]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     socket.emit("subscribe", chatId);
     socket.on("message", newMessage);
 
@@ -57,10 +57,10 @@ export function ChatScreen() {
       socket.emit("unsubscribe", chatId);
       socket.off("message", newMessage);
     };
-  }, [chatId, messages]);
+  }, [chatId, messages]);*/
 
   const newMessage = (msg) => {
-    setMessages([...messages, msg]);
+    //setMessages([...messages, msg]);
   };
 
   return (
