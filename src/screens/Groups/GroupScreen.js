@@ -155,9 +155,6 @@ export function GroupScreen() {
     };
   }, [groupId, messages]);
 
- 
-
-
 
   //editAndReloadmsgs
   const editAndReloadmsgs = (msgEdited) => {
@@ -219,8 +216,6 @@ export function GroupScreen() {
 
               if(msg.tipo=="FILE"){
                 console.log("=====file=========")
-                //console.log(msg.message)
-                //msg.message = "images/cryptedImagex.png";
               }
 
             });
@@ -228,7 +223,6 @@ export function GroupScreen() {
             setMessages([]);
             setMessages(lockedMessages);
         }else{
-          //=======================Decifra los mensajes=======================================================
         
             let unlockedMessages = response.messages;
 
@@ -241,42 +235,21 @@ export function GroupScreen() {
                   msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
                 }
               }
-              /*else if(msg.tipo=="FILE"){
-                console.log("========file=======================")
-                msg.message = "images/cryptedImagex.png";
-                console.log(msg.message);
-              }*/
-              /*else{
-                console.log("========imagen=======================")
-                console.log(msg.message);
-              }*/
+            
             });
             setMessages([]);
             setMessages(unlockedMessages);
-
-           
 
             //here  sound because edited it
             console.log("playing audio................newmsg1");
 
             
-
             const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
             await sound.playAsync();
-            /*try {
-              await sound.playAsync();
-            } catch (error) {
-              console.log(error)
-            }*/
-           
-          //==============================================================================
+         
+    
         }
-       // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
-
-       
-
-
 
       } catch (error) {
         console.error(error);

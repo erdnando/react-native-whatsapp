@@ -41,7 +41,15 @@ export function GroupsScreen() {
       console.log('Is connected?', state.isConnected);
       statex$.default.flags.connectStatus.set(state.isConnected)
 
-      setConnectStatus(state.isConnected)
+     
+      console.log("connectStatus add Groupr")
+      console.log(statex$.default.flags.connectStatus.get())
+      if(statex$.default.flags.connectStatus.get()){
+       
+        setConnectStatus(true)//original true
+      }else{
+        setConnectStatus(false)
+      }
       
 
     });
@@ -77,22 +85,22 @@ export function GroupsScreen() {
           padding={3}
           onPress={() =>{
 
-            //offline validation
+            //offline validation!!!!!!
+            NetInfo.fetch().then(async state => {
+     
+              if(state.isConnected){
+                statex$.default.flags.connectStatus.set(true); //false
+                navigation.navigate(screens.tab.groups.createGroupScreen)
 
-         //================valida offline=============================
-         if(connectStatus){
-             navigation.navigate(screens.tab.groups.createGroupScreen)
-           
-          }else{
-
-            Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-            [{  text: 'Ok',
-                onPress: async ()=>{ }
-              } ]);
-
-           
-          }
-      //=======================================================
+              }else{
+                Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+                [{  text: 'Ok',
+                    onPress: async ()=>{
+                      statex$.default.flags.connectStatus.set(false);
+                    }
+                  } ]);
+              }
+            });
              
           } 
           }

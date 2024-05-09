@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { View } from "react-native";
 import { IconButton, CloseIcon, Icon } from "native-base";
-import { Camera, FlashMode, CameraType } from "expo-camera";
+import { Camera, FlashMode, CameraType } from "expo-camera/legacy";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { PhotoCapture } from "../../../components/Shared";

@@ -83,7 +83,7 @@ export function Options(props) {
 
       <TouchableOpacity
         style={[styles.item, styles.itemClose]}>
-        <Text style={styles.textClose}>`${ENV.VERSION}`</Text>
+        <Text style={styles.textClose}>{ENV.VERSION}</Text>
       </TouchableOpacity>
 
       {/* <TouchableOpacity

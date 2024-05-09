@@ -3919,10 +3919,10 @@ expo-asset@~10.0.6:
     invariant "^2.2.4"
     md5-file "^3.2.3"
 
-expo-av@^14.0.3:
-  version "14.0.3"
-  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-14.0.3.tgz#6bffabd97a73a0ceb5bbdee0b7751987aa4359f3"
-  integrity sha512-gOsTBEUxpg6IG+IGgRPA195vAzU7bI/8CyR35/gJUZ7IMBlymn1gVFFhLjCnDxcj7IE4L+c6p8poFgim4j5pHw==
+expo-av@^14.0.4:
+  version "14.0.4"
+  resolved "https://registry.yarnpkg.com/expo-av/-/expo-av-14.0.4.tgz#b9ab0496c271487f7a30063521aadd200fb950c0"
+  integrity sha512-R2UjERSVeqghma5dTPiTZbgf43zfLZAx/Ehd+s/VwNc2Cx2X34rWoEZcuT8XAq/NX0zpowsqVJeBrYSuzPfaLw==
 
 expo-camera@~15.0.5:
   version "15.0.5"
@@ -4024,10 +4024,10 @@ expo-web-browser@~13.0.3:
   resolved "https://registry.yarnpkg.com/expo-web-browser/-/expo-web-browser-13.0.3.tgz#dceb05dbc187b498ca937b02adf385b0232a4e92"
   integrity sha512-HXb7y82ApVJtqk8tManyudtTrCtx8xcUnVzmJECeHCB0SsWSQ+penVLZxJkcyATWoJOsFMnfVSVdrTcpKKGszQ==
 
-expo@^51.0.1:
-  version "51.0.1"
-  resolved "https://registry.yarnpkg.com/expo/-/expo-51.0.1.tgz#733e82390bc748a53e03170d6dab0f1181448efb"
-  integrity sha512-q+3cnPmNcgKhx4AK0NO9n2Y4VLpvkyRx1O1H5okdUE+3Z8paIMlQsPnl4SnQu6YRY7ar1OmS7txUqRAmr1Sxxg==
+expo@^51.0.2:
+  version "51.0.2"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-51.0.2.tgz#14de27d8d8addec5848285a6e4bd8792d07fc3f2"
+  integrity sha512-aRKrheMMQBcNDg2SBjW5kcSN5G58bdIpsxeSQ65Bx18DFLXjPv5UaU9kzIWRAcxaPtgictn9ut9IJQVZKChNxQ==
   dependencies:
     "@babel/runtime" "^7.20.0"
     "@expo/cli" "0.18.10"

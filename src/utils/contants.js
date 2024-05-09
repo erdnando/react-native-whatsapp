@@ -8,7 +8,7 @@ export const ENV = {
   API_URL: `https://${SERVER_IP}/api`,
   SOCKET_URL: `https://${SERVER_IP}`,
   UUID:'',
-  VERSION:'V1.2.0.0.3',
+  VERSION:'V1.2.0.0.4',
   ENDPOINTS: {
     AUTH: {
       REGISTER: "auth/register",
