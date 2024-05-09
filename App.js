@@ -6,18 +6,13 @@ import { AuthProvider } from "./src/contexts";
 import "intl";
 import "intl/locale-data/jsonp/es";
 
-
 export default function App() {
-
- 
-  
-
   return (
     <NavigationContainer>
       <NativeBaseProvider>
-        <AuthProvider>
-            <HandlerNavigation />
-        </AuthProvider>
+          <AuthProvider>
+              <HandlerNavigation />
+          </AuthProvider>
       </NativeBaseProvider>
     </NavigationContainer>
 

@@ -1,16 +1,28 @@
-//import { openDatabase } from '../sqlite/sqlite'
+//import { useSQLiteContext } from 'expo-sqlite/next';
+import * as SQLite from 'expo-sqlite/legacy';
+import { Asset } from 'expo-asset';
+import * as FileSystem from 'expo-file-system';
+
+const db = SQLite.openDatabase('db3.db');
 
 
-import * as SQLite from 'expo-sqlite';
+  export  async function loadDB(){
+  const dbName= "db3.db";
+  const dbAsset = require("../../assets/db3.db");
+  const dbUri = Asset.fromModule(dbAsset).uri;
+  const dbFilePath = `${FileSystem.documentDirectory}SQLite/${dbName}`;
+  
+  const fileInfo = await FileSystem.getInfoAsync(dbFilePath);
 
-
-const db = SQLite.openDatabase('chatappx');
-
+  if(!fileInfo.exists){
+    console.log("no existe, a recrear de nuevo")
+   await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`,{ intermediates: true });
+   await FileSystem.downloadAsync(dbUri, dbFilePath);
+  }
+}
 
 //==================================================================================================================================================================================
-export function fnDropTableUsers() {
-
-  //console.log('dropping tablas..users.....');
+export  function fnDropTableUsers() {
 
   return new Promise((resolve, reject) => {
     db.transaction(
@@ -22,9 +34,8 @@ export function fnDropTableUsers() {
 }
 
 //==================================================================================================================================================================================
-export function fnDropTableGroups() {
-
-  //console.log('dropping tablas..groups.....');
+export  function fnDropTableGroups() {
+  
 
   return new Promise((resolve, reject) => {
     db.transaction(
@@ -36,9 +47,8 @@ export function fnDropTableGroups() {
 }
 
 //==================================================================================================================================================================================
-export function fnDropTableGroupMessages() {
-
-  //console.log('dropping tablas..groupmessage.....');
+export  function fnDropTableGroupMessages() {
+ 
 
   return new Promise((resolve, reject) => {
     db.transaction(
@@ -50,8 +60,9 @@ export function fnDropTableGroupMessages() {
 }
 
 //==================================================================================================================================================================================
-export function fnCreateTableUsers() {
+export  function fnCreateTableUsers() {
 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -62,8 +73,9 @@ export function fnCreateTableUsers() {
 }
 
 //==================================================================================================================================================================================
-export function fnCreateTableGroups() {
-
+export  function fnCreateTableGroups() {
+ 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -75,8 +87,8 @@ export function fnCreateTableGroups() {
 }
 //==================================================================================================================================================================================
 
-export function fnCreateTableGroupMessages() {
-
+export  function fnCreateTableGroupMessages() {
+ 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -93,7 +105,8 @@ export function fnCreateTableGroupMessages() {
                  
 export  function findUsersByEmail(email) {
 
-  //console.log("SELECT * FROM users where email=\""+email+"\"")
+  
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -110,7 +123,7 @@ export  function findUsersByEmail(email) {
 }
 
 export  function findAllUsers() {
-
+ 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -127,7 +140,7 @@ export  function findAllUsers() {
 }
 
 export  function addUser(_id,email,hashPassword,nipCifrado,token,today,nipraw) {
- 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -150,7 +163,7 @@ export  function addUser(_id,email,hashPassword,nipCifrado,token,today,nipraw) {
 //==================================================================================================================================================================================
 
 export  function updateNip(nipraw,nipcifrado,email){
- 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -166,7 +179,7 @@ export  function updateNip(nipraw,nipcifrado,email){
 }
 
 export  function updateAlias(alias, email){
- 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -182,8 +195,8 @@ export  function updateAlias(alias, email){
 }
 //====================GROUPS========================================================================================================================================================
 
-export  function addGroup(_id, creatorId, usersId, name, today) {
- 
+export async function addGroup(_id, creatorId, usersId, name, today) {
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -221,7 +234,7 @@ export  function findAllGroups() {
 
 //===================MESSAGES=======================================================================================================================================================
 export  function addMessage(_id , group , user , message , tipo , tipo_cifrado , forwarded , today, file_name,file_type,id_message_replied ,message_replied ,email_replied ,tipo_cifrado_replied ) {
- 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -256,7 +269,7 @@ export  function deleteMessageById(_id ) {
 }
 
 export  function findAllGrupoMessages() {
-
+ 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -268,8 +281,7 @@ export  function findAllGrupoMessages() {
 }
 
 export  function updateMessage(_id,message,tip_cifrado,fechaActualizacion){
-  //editedMssage._id, editedMssage.message,editedMssage.tipo_cifrado, today 
- 
+
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -285,7 +297,7 @@ export  function updateMessage(_id,message,tip_cifrado,fechaActualizacion){
 }
 
 export  function updateMessageReplied(_id,id_message_replied, message_replied,email_replied, tipo_cifrado_replied){
- 
+  
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
@@ -301,9 +313,9 @@ export  function updateMessageReplied(_id,id_message_replied, message_replied,em
 }
 
 export async function findMessageImageById(_id){
-
+  
   return new Promise((resolve, reject) => {
-        db.transaction(
+    db.transaction(
           tx => {
             // Execute SQL operation
             tx.executeSql("SELECT message FROM messages where _id=?", [_id], (_, result) => resolve(result), (_, error) => reject(error) );

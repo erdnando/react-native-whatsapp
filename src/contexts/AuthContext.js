@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import { Auth, Group, GroupMessage } from "../api";
-import Constants from 'expo-constants';  
-//import db from '../sqlite/sqlite.js'
+//import Constants from 'expo-constants';  
 import NetInfo from '@react-native-community/netinfo';
 import { Alert } from 'react-native'
 import { observable } from "@legendapp/state";
@@ -13,8 +12,8 @@ import {
 } from '@legendapp/state/persist'
 import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { fnCreateTableUsers,fnCreateTableGroups,fnCreateTableGroupMessages,fnDropTableUsers ,fnDropTableGroups, fnDropTableGroupMessages } from '../hooks/useDA.js'
-
+import { loadDB,fnCreateTableUsers,fnCreateTableGroups,fnCreateTableGroupMessages,fnDropTableUsers ,fnDropTableGroups, fnDropTableGroupMessages } from '../hooks/useDA.js'
+import { Types } from 'mongoose';
 
 //const userController = new User();
 const authController = new Auth();
@@ -40,14 +39,25 @@ useEffect(() => {
 
     async function fetchData() {
       console.log(" ")
-      /*
-      fnDropTableUsers();
-      fnDropTableGroups();
-      fnDropTableGroupMessages();*/
+     
+      try{
 
-      fnCreateTableUsers();
-      fnCreateTableGroups();
-      fnCreateTableGroupMessages();
+          loadDB();
+          fnCreateTableUsers();
+          fnCreateTableGroups();
+          fnCreateTableGroupMessages();
+          init();
+       
+       
+      }catch(err){
+        console.log("err db ini")
+        console.log(err)
+      }
+
+      
+      
+         
+      
     }
 
     fetchData();
@@ -90,7 +100,7 @@ useEffect(() => {
   })
  
 
-     init();
+ 
 
   }, []);
 
@@ -100,10 +110,21 @@ useEffect(() => {
     console.log("=======parte 2 Iniciando verificacion login/registro================")
     console.log(" ")
 
-     //get UUID
-     const idApp = Constants.installationId;
-     // await authController.removeTokens();
 
+
+    let uuid = await authController.getUUID();
+    
+
+    if(uuid==null){
+      uuid = new Types.ObjectId().toString();
+     
+      await authController.setUUID(uuid);
+     
+    }
+     //get UUID
+     const idApp = uuid;//await authController.getUUID(); //Constants.installationId;
+
+     console.log("idApp")
      console.log(idApp)
      setEmail(idApp);
 

@@ -305,6 +305,17 @@ async setCifrado(valor) {
 async getCifrado() {
   return await AsyncStorage.getItem("cifrado");
 }
+
+
+
+async setUUID(valor) {
+  await AsyncStorage.setItem(ENV.UUID, valor);
+}
+
+async getUUID() {
+  return await AsyncStorage.getItem(ENV.UUID);
+}
+
 //========================================================================
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);

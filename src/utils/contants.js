@@ -7,6 +7,7 @@ export const ENV = {
   BASE_PATH: `https://${SERVER_IP}`,
   API_URL: `https://${SERVER_IP}/api`,
   SOCKET_URL: `https://${SERVER_IP}`,
+  UUID:'',
   ENDPOINTS: {
     AUTH: {
       REGISTER: "auth/register",
