@@ -2,12 +2,13 @@ import { View, Text, TouchableOpacity,Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { User } from "../../../api";
-import { imageExpoFormat, screens } from "../../../utils";
+import { imageExpoFormat, screens, ENV } from "../../../utils";
 import { styles } from "./Options.styles";
 
 import { Center, Flex, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as statex$ from '../../../state/local'
+
 
 const userController = new User();
 
@@ -82,7 +83,7 @@ export function Options(props) {
 
       <TouchableOpacity
         style={[styles.item, styles.itemClose]}>
-        <Text style={styles.textClose}>V1.2.0.0.2</Text>
+        <Text style={styles.textClose}>`${ENV.VERSION}`</Text>
       </TouchableOpacity>
 
       {/* <TouchableOpacity

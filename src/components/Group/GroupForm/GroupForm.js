@@ -51,6 +51,7 @@ export function GroupForm(props) {
   const [minutes, setMinutes] = useState(0);
   const [vuelta, setVuelta] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
+  const [connectStatus,setConnectStatus]=useState(false)
 
   const opacityx = useRef(new Animated.Value(0)).current; 
 
@@ -92,10 +93,24 @@ export function GroupForm(props) {
     useEffect(() => {
       GetPermission();
     
-    
+      if(statex$.default.flags.connectStatus.get()){
+        setConnectStatus(true)//original true
+      }else{
+        setConnectStatus(false)
+      }
       
     }, []);
       
+
+    const alertaNoInternet = ()=>{
+      Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+        [{  text: 'Ok',
+            onPress: async ()=>{
+              
+            }
+          } ]);
+    }
+
 
   // Function to get the audio permission
   const GetPermission = async () => {
@@ -426,13 +441,14 @@ export function GroupForm(props) {
 
 
   //EventListener:forwardingMessage 
+
   useEffect(() => {
 
       setIdMessage("");
     
       try { 
-        //=================================================================
-        const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
+          //=================================================================
+          const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
           console.log("grupo desde donde salio el forward::::")
           console.log(data.grupo);
           setForwardMessage(true);
@@ -463,12 +479,12 @@ export function GroupForm(props) {
               } catch (error) {
                 console.error(error);
               }
-        });
-    
-        return ()=>{
-          EventRegister.removeEventListener(eventForwardMessage);
-        }
-        //================================================================
+          });
+      
+          return ()=>{
+            EventRegister.removeEventListener(eventForwardMessage);
+          }
+          //================================================================
       } catch (error) {
         console.error(error);
       }
@@ -649,6 +665,17 @@ export function GroupForm(props) {
       try {
         setKeyboardHeight(0);
         Keyboard.dismiss();
+
+        //================valida offline=============================
+        if(!connectStatus){
+            Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+            [{  text: 'Ok',
+                onPress: async ()=>{ }
+              } ]);
+
+              return;
+        }
+        //=======================================================
        
         console.log("idMessage:::::::x")
         console.log(idMessage)
@@ -782,7 +809,7 @@ export function GroupForm(props) {
               <IconButton  icon={<Icon as={MaterialCommunityIcons} name="microphone"  color={IsRecording ? 'white': 'gray'}
               style={[IsRecording ? styles.iconAudioRecording : styles.iconAudio  ]}
               /> }  
-                onLongPress={ StartRecording} onPressOut={StopRecording} />
+                onLongPress={connectStatus ? StartRecording:null} onPressOut={connectStatus ? StopRecording: alertaNoInternet} />
 
           </View>
        </View>

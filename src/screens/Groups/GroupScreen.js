@@ -12,6 +12,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
 
+
+
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
@@ -59,7 +61,7 @@ export function GroupScreen() {
                     console.log('getAll===========origin')
                     console.log("groupId")
                     console.log(groupId)
-                    const response = await groupMessageController.getAllLocalDB(groupId);//offline support!
+                    const response = await groupMessageController.getAllLocalDB(groupId);
                    //==========================================
                     const unlockedMessages = response.messages;
                     console.log("isCypher")
@@ -152,6 +154,8 @@ export function GroupScreen() {
       socket.off("editAndReloadmsgs", editAndReloadmsgs);
     };
   }, [groupId, messages]);
+
+ 
 
 
 

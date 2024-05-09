@@ -1,7 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import { Auth, Group, GroupMessage } from "../api";
-//import Constants from 'expo-constants';  
-//import NetInfo from '@react-native-community/netinfo';
+import NetInfo from '@react-native-community/netinfo';
 import { Alert } from 'react-native'
 import { observable } from "@legendapp/state";
 import { observer } from "@legendapp/state/react";
@@ -68,20 +67,19 @@ useEffect(() => {
   useEffect(() => {
 
 
-    /*NetInfo.fetch().then(async state => {
+    NetInfo.fetch().then(async state => {
      
-
       if(state.isConnected){
-        statex$.default.flags.offline.set('false'); //false
+        statex$.default.flags.connectStatus.set(true); //false
       }else{
         Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
         [{  text: 'Ok',
             onPress: async ()=>{
-              statex$.default.flags.offline.set('true');
+              statex$.default.flags.connectStatus.set(false);
             }
           } ]);
       }
-    });*/
+    });
 
     configureObservablePersistence({
       // Use AsyncStorage in React Native

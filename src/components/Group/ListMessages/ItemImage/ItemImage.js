@@ -33,7 +33,7 @@ export function ItemImage(props) {
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
-  const [offline,setOffline]=useState(false)
+  const [connectStatus,setConnectStatus]=useState(false)
 
   const onEliminarMensaje = () => {
 
@@ -118,10 +118,10 @@ export function ItemImage(props) {
 
     async function fetchData() {
 
-      if(statex$.default.flags.offline.get()=='true'){
-        setOffline(true)
+      if(statex$.default.flags.connectStatus.get()){
+        setConnectStatus(true)
       }else{
-        setOffline(false)
+        setConnectStatus(false)
       }
 
 
@@ -157,7 +157,7 @@ export function ItemImage(props) {
 
                 <Menu display={isMe?"flex":"flex"} w="190" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={offline?"none":"flex"}
+                          <Icon display={connectStatus?"flex":"none"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -221,7 +221,7 @@ export function ItemImage(props) {
            <View style={styles.colFile}>
             {/*download button*/}
             <Pressable onPress={onOpenFilelocal}>
-                    <Icon style={{marginTop:-35,left:-5 }} display={offline?"none":"flex"}
+                    <Icon style={{marginTop:-35,left:-5 }} display={connectStatus?"flex":"none"}
                           as={MaterialCommunityIcons}
                           size="30"
                           name="download-circle"

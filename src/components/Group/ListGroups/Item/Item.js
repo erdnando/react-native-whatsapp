@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local'
+import NetInfo from '@react-native-community/netinfo';
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -28,6 +29,25 @@ export function Item(props) {
   const [lastMessage, setLastMessage] = useState(null);
 
   const navigation = useNavigation();
+
+useEffect(() => {
+  //============================================
+  NetInfo.fetch().then(async state => {
+     
+    if(state.isConnected){
+      statex$.default.flags.connectStatus.set(true); 
+    }else{
+      statex$.default.flags.connectStatus.set(false); 
+    }
+  });
+  //==================================================
+
+
+}, [])
+
+
+
+
 
   useEffect(() => {
     (async () => {

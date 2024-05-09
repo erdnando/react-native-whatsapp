@@ -17,7 +17,7 @@ const state$ = observable({
   imgReplicada:"",
   flags:{
     cifrado:true,
-    offline:'false'
+    offline:false
   },
 });
 

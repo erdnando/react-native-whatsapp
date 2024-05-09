@@ -123,38 +123,7 @@ async getAllUsers() {
       }
   }
 
-  /*async register(email, password) {
-    try {
 
-      
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.REGISTER}`;
-      const params = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      };
-
-      console.log("params registro")
-      console.log(params)
-
-      const response = await fetch(url, params).catch(e=> {
-        statex$.default.flags.offline.set('true');
-      })
-
-      const result = await response.json();
-
-      console.log("result registro")
-      console.log(result)
-
-      if (response.status !== 201) throw result;
-
-      return result;
-    } catch (error) {
-      throw error;
-    }
-  }*/
 
   async login(email, password) {
 
@@ -189,24 +158,6 @@ async getAllUsers() {
       console.log(result)
 
       if (response.status !== 200) throw result;
-
-
-      //=============================================================
-      //Offline cache
-      if (response.status == 200){
-        const arrLogins = statex$.default.login.get();
-
-        const newLogin={
-          user:email,
-          pwd:password,
-          access:result.access,
-          refresh:result.refresh
-        }
-          statex$.default.login.set({});
-          statex$.default.login.set(newLogin);
-      }
-      //=============================================================
-
       
 
       return result;
@@ -271,14 +222,6 @@ async getAllUsers() {
     return await AsyncStorage.getItem(ENV.JWT.ACCESS);
   }
 
-  //======================================================================
-  async setOffline(flag) {
-    await AsyncStorage.setItem("offline", flag);
-  }
-
-  async getOffline() {
-    return await AsyncStorage.getItem("offline");
-  }
 //========================================================================
   async setRefreshToken(token) {
     await AsyncStorage.setItem(ENV.JWT.REFRESH, token);
@@ -320,7 +263,6 @@ async getUUID() {
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);
     await AsyncStorage.removeItem(ENV.JWT.REFRESH);
-    await AsyncStorage.removeItem("offline");
     await AsyncStorage.removeItem("initial");
   }
 

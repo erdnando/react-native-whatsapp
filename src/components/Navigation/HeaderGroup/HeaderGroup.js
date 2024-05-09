@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { SafeAreaView, View, Text, Pressable, } from "react-native";
+import { SafeAreaView, View, Text, Pressable,StyleSheet } from "react-native";
 import { IconButton, ChevronLeftIcon, Avatar,Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Group,User,Auth } from "../../../api";
@@ -9,6 +9,8 @@ import { styles } from "./HeaderGroup.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Modal,FormControl,Input,Button } from "native-base";
 import { EventRegister } from "react-native-event-listeners"; 
+import * as statex$ from '../../../state/local'
+
 
 const userController = new User();
 const groupController = new Group();
@@ -25,8 +27,15 @@ export function HeaderGroup(props) {
   const [nip, setNip] = useState('');
   const [tituloModal, setTituloModal] = useState('Mensajes bloqueados por NIP');
   const [lock, setLock] = useState(true);
+  const [connectStatus, setConnectStatus] = useState(false);
 
   useEffect(() => {
+    if(statex$.default.flags.connectStatus.get()){
+      setConnectStatus(true)
+    }else{
+      setConnectStatus(false)
+    }
+    
 
     (async () => {
        const cifrado = await authController.getCifrado();
@@ -61,12 +70,7 @@ export function HeaderGroup(props) {
     
     //call api to validate nip 
     const response = await userController.getMeLocal(email);
-    //console.log("nip en DB");
-    //console.log(response.nip);
-    //console.log("nip ingresado");
-    //console.log(nip);
-    //console.log("nip ingresado MD5");
-   // console.log(MD5method(nip.toString() ));
+    
 
     if(MD5method(nip.toString()) == response.nip){
       console.log("NIP OK");
@@ -89,6 +93,18 @@ export function HeaderGroup(props) {
    
     
   };
+
+  const styleOffline = StyleSheet.create({
+    activo: {
+        color: '#41a4d8',
+        marginTop:5
+    },
+    desactivo: {
+        color: 'red',
+        marginTop:5
+    },
+    
+});
 
   return (
     <SafeAreaView style={styles.container}>
@@ -121,26 +137,30 @@ export function HeaderGroup(props) {
         </View>
 
 
-        {/*  candadito verde para bloquear y desbloquear  */}
-        <IconButton
-            icon={<Icon as={MaterialCommunityIcons} name={lock ? "lock" : "lock-open-variant"} style={styles.iconLocked} /> }
-            onPress={() => {
+        <View style={styles.iconosRight}>
 
-              if(lock ==false){
-                   //just change icon status
-                setLock(true);         
-                //emit evento para unlockMessages
-                EventRegister.emit("setCifrado","SI");
-              
-              }else{
-                
-                setTituloModal('Mensajes bloqueados por NIP');
-                setShowModal(true);
-              }
-              
-            }}
-          />
+                {/*  offline indicador  */}
+                <IconButton  icon={<Icon as={MaterialCommunityIcons} name={"wifi"} style={[connectStatus ? styleOffline.activo : styleOffline.desactivo]} /> }          
+                  />
 
+                {/*  candadito verde para bloquear y desbloquear  */}
+                <IconButton
+                    icon={<Icon as={MaterialCommunityIcons} name={lock ? "lock" : "lock-open-variant"} style={styles.iconLocked} /> }
+                    onPress={() => {
+                      if(lock ==false){
+                          //just change icon status
+                        setLock(true);         
+                        //emit evento para unlockMessages
+                        EventRegister.emit("setCifrado","SI");
+                      }else{
+                        setTituloModal('Mensajes bloqueados por NIP');
+                        setShowModal(true);
+                      }
+                    }}
+                  />
+
+                  
+        </View>
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <Modal.Content maxWidth="400px">

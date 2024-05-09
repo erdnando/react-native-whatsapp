@@ -16,6 +16,13 @@ export const styles = new StyleSheet.create({
   info: {
     flexDirection: "row",
     alignItems: "center",
+    width:'80%',
+  },
+  iconosRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    width:'20%',
+    marginLeft:-5
   },
   avatar: {
     marginLeft: 30,
@@ -26,16 +33,24 @@ export const styles = new StyleSheet.create({
     fontSize: 16,
   },
   iconLocked:{
-    color:'green',
+    color:'#41a4d8',
     fontSize:22,
     top:4,
-    marginRight:-10,
+    marginRight:0,
     width:25
+  },
+  iconOffline:{
+    color:'red',
+    fontSize:22,
+    top:4,
+    marginRight:-5,
+    position:'absolute'
   },
   iconPwdNip:{
     fontSize:22,
     top:4,
     marginRight:10,
     width:25
-  }
+  },
+ 
 });

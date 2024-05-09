@@ -29,7 +29,7 @@ export function ItemText(props) {
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState("false");
-  const [offline,setOffline]=useState(false)
+  const [connectStatus,setConnectStatus]=useState(false)
   const [showImagen,setShowImagen]=useState(false)
   const [img64Replied,setImg64Replied]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
 
@@ -70,10 +70,10 @@ export function ItemText(props) {
       setShowImagen(false)
     }
     
-    if(statex$.default.flags.offline.get()=='true'){
-      setOffline(true)
+    if(statex$.default.flags.connectStatus.get()){
+      setConnectStatus(true)
     }else{
-      setOffline(false)
+      setConnectStatus(false)
     }
     
     setForwarded(message.forwarded);
@@ -126,7 +126,7 @@ export function ItemText(props) {
 
                 <Menu w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={offline?"none":"flex"}
+                          <Icon display={connectStatus?"flex":"none"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"

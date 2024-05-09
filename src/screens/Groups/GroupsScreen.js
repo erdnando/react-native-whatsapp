@@ -11,6 +11,7 @@ import { ListGroups, Search } from "../../components/Group";
 import { EventRegister } from "react-native-event-listeners"; 
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
+import NetInfo from '@react-native-community/netinfo';
 
 const groupController = new Group();
 const authController = new Auth();
@@ -29,6 +30,23 @@ export function GroupsScreen() {
   const [totalMembers, setTotalMembers] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [nip, setNip] = useState("00000000");
+  const [connectStatus,setConnectStatus]=useState(false);
+
+
+   //subscribe netinfo
+   useEffect(() => {
+
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log('Connection type', state.type);
+      console.log('Is connected?', state.isConnected);
+      statex$.default.flags.connectStatus.set(state.isConnected)
+
+      setConnectStatus(state.isConnected)
+      
+
+    });
+  }, []);
+
 
   useEffect(() => {
   
@@ -56,9 +74,26 @@ export function GroupsScreen() {
       headerRight: () => (
         <IconButton
           icon={<AddIcon />}
-          padding={0}
+          padding={3}
           onPress={() =>{
-              navigation.navigate(screens.tab.groups.createGroupScreen)
+
+            //offline validation
+
+         //================valida offline=============================
+         if(connectStatus){
+             navigation.navigate(screens.tab.groups.createGroupScreen)
+           
+          }else{
+
+            Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+            [{  text: 'Ok',
+                onPress: async ()=>{ }
+              } ]);
+
+           
+          }
+      //=======================================================
+             
           } 
           }
         />
@@ -92,6 +127,15 @@ export function GroupsScreen() {
       })();
     }, [])
   );
+
+  const alertaNoInternet = ()=>{
+    Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+      [{  text: 'Ok',
+          onPress: async ()=>{
+            
+          }
+        } ]);
+  }
 
  
 

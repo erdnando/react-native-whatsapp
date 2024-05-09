@@ -41,7 +41,7 @@ export function ItemFile(props) {
   const [isPressed,setIsPressed]=useState(false)
   const [isHovered,setIsHovered]=useState(false)
   const [realImage,setRealImage]=useState(false)
-  const [offline,setOffline]=useState(false)
+  const [connectStatus,setConnectStatus]=useState(false)
 
 
   const onEliminarMensaje = () => {
@@ -173,11 +173,11 @@ const onOpenFilelocal= async () => {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
-    /*if(statex$.default.flags.offline.get()=='true'){
-      setOffline(true)
+    if(statex$.default.flags.connectStatus.get()){
+      setConnectStatus(true)
     }else{
-      setOffline(false)
-    }*/
+      setConnectStatus(false)
+    }
 
     if(message?.message.toString().endsWith(".jpg")||message?.message?.toString().endsWith(".jpeg")||
        message?.message.toString().endsWith(".png")||message?.message?.toString().endsWith(".bpm")){
@@ -221,7 +221,7 @@ const onOpenFilelocal= async () => {
 
                 <Menu display={isMe?"flex":"flex"} w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon display={offline?"none":"flex"}
+                          <Icon display={connectStatus?"flex":"none"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"
@@ -322,7 +322,7 @@ const onOpenFilelocal= async () => {
 
                     
                     {/*vista file download*/}
-                    <Pressable onPress={onOpenFilelocal}  display={offline ?"none":"flex"}> 
+                    <Pressable onPress={onOpenFilelocal}  display={connectStatus ?"flex":"none"}> 
                         <Icon  style={{marginTop:10}}
                                       as={MaterialCommunityIcons}
                                       size="30"
