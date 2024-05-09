@@ -236,11 +236,7 @@ export class Group {
 
       if (response.status !== 200) throw result;
 
-      //Offline cache
-      if (response.status == 200){
-        //caching grupos
-          statex$.default.getAll.set(result);
-      }
+      
 
       console.log("result getAll grupos")
       console.log(result)

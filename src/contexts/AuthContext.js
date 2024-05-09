@@ -1,7 +1,7 @@
 import { useState, useEffect, createContext } from "react";
 import { Auth, Group, GroupMessage } from "../api";
 //import Constants from 'expo-constants';  
-import NetInfo from '@react-native-community/netinfo';
+//import NetInfo from '@react-native-community/netinfo';
 import { Alert } from 'react-native'
 import { observable } from "@legendapp/state";
 import { observer } from "@legendapp/state/react";
@@ -42,7 +42,7 @@ useEffect(() => {
      
       try{
 
-          loadDB();
+          //loadDB();
           fnCreateTableUsers();
           fnCreateTableGroups();
           fnCreateTableGroupMessages();
@@ -68,7 +68,7 @@ useEffect(() => {
   useEffect(() => {
 
 
-    NetInfo.fetch().then(async state => {
+    /*NetInfo.fetch().then(async state => {
      
 
       if(state.isConnected){
@@ -81,7 +81,7 @@ useEffect(() => {
             }
           } ]);
       }
-    });
+    });*/
 
     configureObservablePersistence({
       // Use AsyncStorage in React Native

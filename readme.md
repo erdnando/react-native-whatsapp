@@ -36,3 +36,7 @@ sqlite> .quit
 //fnDropTableUsers();
 //fnDropTableGroups();
 //fnDropTableGroupMessages();
+
+eas build --platform android --local <----generate .aab and .apk>
+
+yarn start -c

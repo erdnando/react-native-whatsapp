@@ -80,6 +80,11 @@ export function Options(props) {
         </Flex>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        style={[styles.item, styles.itemClose]}>
+        <Text style={styles.textClose}>V1.2.0.0.2</Text>
+      </TouchableOpacity>
+
       {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}
         onPress={logout}

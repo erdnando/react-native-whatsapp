@@ -1,12 +1,12 @@
 //import { useSQLiteContext } from 'expo-sqlite/next';
 import * as SQLite from 'expo-sqlite/legacy';
-import { Asset } from 'expo-asset';
+//import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db3.db');
+const db = SQLite.openDatabase('db4.db');
 
 
-  export  async function loadDB(){
+/*  export  async function loadDB(){
   const dbName= "db3.db";
   const dbAsset = require("../../assets/db3.db");
   const dbUri = Asset.fromModule(dbAsset).uri;
@@ -19,7 +19,7 @@ const db = SQLite.openDatabase('db3.db');
    await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`,{ intermediates: true });
    await FileSystem.downloadAsync(dbUri, dbFilePath);
   }
-}
+}*/
 
 //==================================================================================================================================================================================
 export  function fnDropTableUsers() {

@@ -173,11 +173,11 @@ const onOpenFilelocal= async () => {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
-    if(statex$.default.flags.offline.get()=='true'){
+    /*if(statex$.default.flags.offline.get()=='true'){
       setOffline(true)
     }else{
       setOffline(false)
-    }
+    }*/
 
     if(message?.message.toString().endsWith(".jpg")||message?.message?.toString().endsWith(".jpeg")||
        message?.message.toString().endsWith(".png")||message?.message?.toString().endsWith(".bpm")){
