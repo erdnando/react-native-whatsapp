@@ -48,11 +48,11 @@ export function Info(props) {
 
   return (
     <View style={styles.content}>
-      <Pressable onPress={openGallery}>
+      <Pressable >
         <Avatar
           bg="cyan.500"
           size="xl"
-          source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+          source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
         />
       </Pressable>
 

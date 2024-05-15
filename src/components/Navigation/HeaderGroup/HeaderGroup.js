@@ -9,7 +9,6 @@ import { styles } from "./HeaderGroup.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Modal,FormControl,Input,Button } from "native-base";
 import { EventRegister } from "react-native-event-listeners"; 
-import * as statex$ from '../../../state/local.js'
 
 const userController = new User();
 const groupController = new Group();
@@ -19,7 +18,7 @@ export function HeaderGroup(props) {
 
   const { groupId } = props;
   const navigation = useNavigation();
-  const { accessToken,idAPPEmail } = useAuth();
+  const { accessToken } = useAuth();
   const [group, setGroup] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
@@ -30,8 +29,7 @@ export function HeaderGroup(props) {
   useEffect(() => {
 
     (async () => {
-       //const cifrado = await authController.getCifrado();
-       const cifrado = statex$.default.flags.cifrado.get();
+       const cifrado = await authController.getCifrado();
        if(cifrado=="SI"){
         setLock(true);
        }else{
@@ -44,7 +42,7 @@ export function HeaderGroup(props) {
 
     (async () => {
       try {
-        const response = await groupController.obtainGpoLocal(idAPPEmail, groupId);
+        const response = await groupController.obtain(accessToken, groupId);
         setGroup(response);
       } catch (error) {
         console.error(error);
@@ -59,28 +57,21 @@ export function HeaderGroup(props) {
   };
 
   const validateNIP = async () => {
-    //console.log("======validating NIP==================");
+    console.log("======validating NIP==================");
     
     //call api to validate nip 
-   // const response = await userController.getMe(accessToken);
-    const response = await userController.getMeLocal(idAPPEmail);
-    
-    //console.log("user :::::");
-    //console.log(response);
-
-    //console.log("nip raw");
+    const response = await userController.getMe(accessToken);
+    //console.log("nip en DB");
+    //console.log(response.nip);
+    //console.log("nip ingresado");
     //console.log(nip);
     //console.log("nip ingresado MD5");
-    //console.log(MD5method(nip).toString());
-    //console.log("response.nip")
-    //console.log(response.nip)
+   // console.log(MD5method(nip.toString() ));
 
-    //if(MD5method(nip.toString()) == response.nip){
-    if(nip == response.nip){
-      //console.log("NIP OK");
+    if(MD5method(nip.toString()) == response.nip){
+      console.log("NIP OK");
       //if, it is ok, unlock messages, reloading them
-      //await authController.setCifrado("NO");
-      statex$.default.flags.cifrado.set("NO");
+      await authController.setCifrado("NO");
       EventRegister.emit("setCifrado","NO");
       setLock(false);
      
@@ -88,13 +79,12 @@ export function HeaderGroup(props) {
 
     }else{
       //else, show an error message
-      //await authController.setCifrado("SI");
-      statex$.default.flags.cifrado.set("SI");
+      await authController.setCifrado("SI");
       EventRegister.emit("setCifrado","SI");
       setLock(true);
       
       setTituloModal("NIP Incorrecto!");
-      //console.log("NIP Incorrecto");
+      console.log("NIP Incorrecto");
     }
    
     
@@ -122,10 +112,10 @@ export function HeaderGroup(props) {
                 marginRight={3}
                 size="sm"
                 style={styles.avatar}
-                source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+                source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
               />
                {/*Nombre grupo */}
-              <Text style={styles.name}>{group?.name.substring(0,20) }</Text>
+              <Text style={styles.name}>{group.name.substring(0,20) }</Text>
             </Pressable>
           )}
         </View>

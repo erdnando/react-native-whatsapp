@@ -23,7 +23,7 @@ export const styled = (isMe) => {
       opacity: 0.4,
     },
     image: {
-      borderRadius: 10,
+      borderRadius: 10,marginTop:10,
       //   height: 100,
       //   width: "100%",
     },
@@ -33,7 +33,7 @@ export const styled = (isMe) => {
       right: 10,
       color: "#fff",
       fontSize: 12,
-      marginTop: 2,
+      marginTop: 0,
       textAlign: "right",
     },
     rowMenu:{
@@ -67,6 +67,15 @@ export const styled = (isMe) => {
       flexDirection:'row',
       justifyContent:'space-between',
       width:'100%',
-    }
+    },
+    cifrado: {
+      position:'absolute',
+      fontWeight:"bold",
+      color: "red",
+      fontSize: 12,
+      bottom: 30,
+      textAlign: "right",
+      top:15
+    },
   });
 };

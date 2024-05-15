@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   UserProfileScreen,
   CameraScreen,
-  ImageFullScreen,
+  ImageFullScreen,RecordCameraScreen
 } from "../screens/Global";
 import { ChatScreen } from "../screens/Chats";
 import {
@@ -91,6 +91,11 @@ export function AppNavigation() {
         <Stack.Screen
           name={screens.global.imageFullScreen}
           component={ImageFullScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={screens.global.recordCameraScreen}
+          component={RecordCameraScreen}
           options={{ headerShown: false }}
         />
       </Stack.Group>

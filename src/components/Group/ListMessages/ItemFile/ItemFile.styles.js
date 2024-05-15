@@ -13,14 +13,15 @@ export const styled = (isMe) => {
       maxWidth: "80%",
       borderRadius: 10,
       padding: 3,
-      paddingVertical: 6,
+      paddingBottom:10,
+      paddingTop:5,
       paddingHorizontal: 10,
     },
     identity: {
-      color: "#fff",
+      color: "black",
       marginBottom: 5,
       fontWeight: "bold",
-      opacity: 0.4,
+      opacity: 0.8,
     },
     image: {
       borderRadius: 10,
@@ -29,7 +30,7 @@ export const styled = (isMe) => {
     },
     date: {
       position: "absolute",
-      bottom: 10,
+      bottom: 8,
       right: 10,
       color: "#fff",
       fontSize: 12,
@@ -46,14 +47,15 @@ export const styled = (isMe) => {
       flexWrap: 'wrap',
       justifyContent:'space-between',
       marginBottom:25,
-      marginTop:20
+      marginTop:10
     },
     fileName: {
       color: "#fff",
       marginBottom: 5,
       fontWeight: "bold",
       opacity: 0.4,
-      width:"60%"
+      width:200,
+      marginLeft:5
     },
     menuItem:{
       flex:0,

@@ -7,7 +7,8 @@ import { useAuth } from "../../../../hooks";
 import { styled } from "./ItemText.styles";
 import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
-import * as statex$ from '../../../../state/local.js'
+import { ENV,Decrypt,Encrypt } from "../../../../utils";
+import AutoHeightImage from "react-native-auto-height-image";
 
 
 const authController = new Auth();
@@ -15,9 +16,8 @@ const authController = new Auth();
 export function ItemText(props) {
 
   const { message } = props;
-  const { user,idAPPEmail } = useAuth();
-  //const isMe = user._id === message?.user._id;
-  const isMe = idAPPEmail=== message?.user.email;
+  const { user } = useAuth();
+  const isMe = user._id === message?.user._id;
   const styles = styled(isMe);
   const createMessage = new Date(message.createdAt);
   const updatedMessage = new Date(message.updatedAt);
@@ -28,13 +28,15 @@ export function ItemText(props) {
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState(false);
+  const [showImagen,setShowImagen]=useState(false)
+  const [imageUri, setImageUri]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
   const onEliminarMensaje = () => {
 
     setShowAdvertencia(false);
-    //console.log("eliminando message:::::::::::");
+    console.log("eliminando message:::::::::::");
                          
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
     setMensajeEliminar(null);
@@ -43,19 +45,15 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-    //console.log("message itemText:::::::::::::::::::::::::::::::::::::::")
-    //console.log(message)
+   
     setForwarded(message.forwarded);
+    console.log("forwarded??")
+    console.log(message.forwarded)
     
 
     if(message.email_replied != null){
      // console.log("si hay mensaje replicado!!!")
       setReplicado(true);
-
-      //console.log(message.email_replied)
-      //console.log(message.tipo_cifrado_replied)
-      //console.log(message.message_replied)
-      //console.log(":::::::::::::::::::::::::::::::::::;:::::::::::");
     }else{
      // console.log("no hay mensaje replicado!!")
       setReplicado(false);
@@ -68,9 +66,27 @@ export function ItemText(props) {
     }
 
     async function fetchData() {
+
+      console.log("message::::::::::::::::")
+      console.log(message)
+      //just to validate if it should be shown a little image on replied message
+      if(message?.message_replied?.endsWith(".png") || message?.message_replied?.endsWith(".jpg") || 
+          message?.message_replied?.endsWith(".jpeg") || message?.message_replied?.endsWith(".gif" || message?.message_replied?.endsWith(".bmp"))){
+
+          setImageUri(`${ENV.BASE_PATH}/${message.message_replied}`);
+      
+        setShowImagen(true)
+
+      }else{
+        setShowImagen(false)
+      }
+
+
+
+
+
      // console.log("useEffect ItemText:::::");
-      //const cifrado = await authController.getCifrado();
-      const cifrado = statex$.default.flags.cifrado.get();
+      const cifrado = await authController.getCifrado();
      // console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
@@ -112,7 +128,7 @@ export function ItemText(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("responder message:::::::::::");
+                           //console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
@@ -131,7 +147,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("reenviando message:::::::::::");
+                           console.log("reenviando message:::::::::::");
                            EventRegister.emit("forwardingMessage",message);  //-->GroupForm
                         }}>
                     <View style={styles.contentMenuItem} >
@@ -149,7 +165,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("copiando message:::::::::::");
+                           console.log("copiando message:::::::::::");
                          
                            //set text message on the clipboard
                            Clipboard.setString(message.message);
@@ -169,7 +185,7 @@ export function ItemText(props) {
                     <Menu.Item display={isMe?'flex':'none'} style={styles.menuItem}  
                         onPress={() => {
                      
-                           //console.log("editando message:::::::::::");
+                           console.log("editando message:::::::::::");
                            EventRegister.emit("editingMessage",message);  //-->GroupForm
                         }}>
                     <View style={styles.contentMenuItem} >
@@ -219,9 +235,20 @@ export function ItemText(props) {
                 
 
                  {/*mensaje replicado*/}
-                 <Text style={styles.identityMsgReplica}>
+                 <Text display={ showImagen ? "none":"flex"} style={styles.identityMsgReplica}>
                   {message.message_replied }
                 </Text>
+
+                <Pressable display={ showImagen ? "flex":"none"}  >
+                    <AutoHeightImage
+                      width={120}
+                      maxHeight={120}
+                      source={{ uri: imageUri }}
+                      style={{flex: 1,
+                        justifyContent: 'center',
+                        alignItems: 'center',}}
+                    />
+                </Pressable>
 
               </View>
 

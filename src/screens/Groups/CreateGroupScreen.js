@@ -9,9 +9,8 @@ import { CreateGrupo, Search } from "../../components/Group";
 const userController = new User();
 
 export function CreateGroupScreen() {
-  
   const navigation = useNavigation();
-  const { accessToken, idAPPEmail } = useAuth();
+  const { accessToken } = useAuth();
   const [users, setUsers] = useState(null);
   const [usersResult, setUsersResult] = useState(null);
   const [step, setStep] = useState(1);
@@ -20,7 +19,7 @@ export function CreateGroupScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <IconButton style={{marginRight:20, marginLeft:5}}
+        <IconButton style={{margin:10, marginRight:15}}
           icon={<CloseIcon />}
           padding={0}
           onPress={navigation.goBack}
@@ -32,8 +31,7 @@ export function CreateGroupScreen() {
   useEffect(() => {
     (async () => {
       try {
-        //const response = await userController.getAll(accessToken);
-        const response = await userController.getAllLocaL(idAPPEmail);
+        const response = await userController.getAll(accessToken);
         setUsers(response);
         setUsersResult(response);
       } catch (error) {

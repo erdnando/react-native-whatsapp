@@ -35,7 +35,7 @@ export function UserProfileScreen() {
       <Avatar
         bg="cyan.500"
         size="xl"
-        source={{ uri: user.avatar && `${ENV.BASE_PATH}/${user.avatar}` }}
+        source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
       >
         {user.email.substring(0, 2).toUpperCase()}
       </Avatar>

@@ -7,11 +7,14 @@ import { ENV } from "../../../utils";
 import { styles } from "./ListUserAddParticipants.styles";
 
 export function ListUserAddParticipants(props) {
+  
   const { users, addParticipants } = props;
   const [ids, setIds] = useState([]);
   const navigation = useNavigation();
 
   useEffect(() => {
+  
+   // console.log(users)
     navigation.setOptions({
       headerRight: () => {
         if (size(ids) > 0) {
@@ -53,6 +56,7 @@ export function ListUserAddParticipants(props) {
   return (
     <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
       {map(users, (user) => (
+        
         <TouchableOpacity
           key={user._id}
           onPress={() => selectedUnselectdUser(user)}
@@ -61,7 +65,7 @@ export function ListUserAddParticipants(props) {
           <Avatar
             bg="cyan.500"
             marginRight={3}
-            source={{ uri: user.avatar && `${ENV.BASE_PATH}/${user.avatar}` }}
+            source={{ uri: `${ENV.BASE_PATH}/group/group1.png`}}
           >
             {user.email.substring(0, 2).toUpperCase()}
           </Avatar>

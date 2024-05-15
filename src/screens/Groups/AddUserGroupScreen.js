@@ -11,6 +11,7 @@ const groupController = new Group();
 
 export function AddUserGroupScreen() {
   const [users, setUsers] = useState(null);
+  const [usersSearch, setUserSearch] = useState(null);
   const [usersResult, setUsersResult] = useState(null);
   const { accessToken } = useAuth();
   const { params } = useRoute();
@@ -19,12 +20,15 @@ export function AddUserGroupScreen() {
   useEffect(() => {
     (async () => {
       try {
+        console.log("getting users, except member of this group")
+        console.log("grupo:")
+        console.log(params.groupId)
         const response = await userController.getUsersExeptParticipantsGroup(
           accessToken,
           params.groupId
         );
         setUsers(response);
-        setUsersResult(response);
+        setUsersResult([]);//response
       } catch (error) {
         console.error(error);
       }

@@ -4,7 +4,7 @@ import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
 import { Group,Auth,User } from "../../api";
-import { useAuth,useDB } from "../../hooks";
+import { useAuth } from "../../hooks";
 import { screens,MD5method } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
@@ -17,9 +17,9 @@ const userController = new User();
 
 export function GroupsScreen() {
   
-  //const { opendb,createTableBitacora, selectTableBitacora } = useDB();
+  //const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
-  const { accessToken,updateUser,idAPPEmail } = useAuth();
+  const { accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -28,17 +28,12 @@ export function GroupsScreen() {
 
   useEffect(() => {
   
-
-   // const db = opendb();
-   // console.log("db status::::")
-   // console.log(db)
-
     async function validateInitialModal() {
 
       const firtsTime=  await authController.getInitial();
 
       if(firtsTime=="1"){
-        /*console.log("NIP modal");
+        console.log("NIP modal");
 
 
         const min = 1000; 
@@ -55,14 +50,7 @@ export function GroupsScreen() {
 
         await userController.updateUser(accessToken, { nip: cifrado });
         //hash nip
-        updateUser("nip", cifrado);*/
-
-        const userRegistrado =  authController.loginLocal(idAPPEmail );
-        //console.log("userRegistrado nip:::::");
-        //console.log(userRegistrado[0]);
-        setNip(userRegistrado[0].nip);
-
-
+        updateUser("nip", cifrado);
         setShowModal(true);
         
 
@@ -105,8 +93,7 @@ export function GroupsScreen() {
       (async () => {
         try {
           //Get all messages
-          //const responsex = await groupController.getAll(accessToken);
-          const response = groupController.getAllLocal(idAPPEmail);
+          const response = await groupController.getAll(accessToken);
 
           const result = response.sort((a, b) => {
             return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
@@ -114,8 +101,6 @@ export function GroupsScreen() {
 
           setGroups(result);
           setGroupsResult(result);
-          //console.log("getAllLocal:::::::::::::::::::::::::::::::::::::::::::")
-          //console.log(result)
 
         } catch (error) {
           console.error(error);
@@ -128,19 +113,12 @@ export function GroupsScreen() {
 
   const upGroupChat = (groupId) => {
 
-    console.log("in upGroupChat")
-    console.log(groupId)
-    console.log(groupsResult)
-
     const data = groupsResult;
     const fromIndex = data.map((group) => group._id).indexOf(groupId);
     const toIndex = 0;
     const element = data.splice(fromIndex, 1)[0];
    
     data.splice(toIndex, 0, element);
-
-    console.group(data)
-    console.group("=============data groups======")
     setGroups([...data]);
    
 
@@ -157,7 +135,7 @@ export function GroupsScreen() {
 
 
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
 

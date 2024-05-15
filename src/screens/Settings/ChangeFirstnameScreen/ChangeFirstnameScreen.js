@@ -11,7 +11,7 @@ const userController = new User();
 
 export function ChangeFirstnameScreen() {
   const navigation = useNavigation();
-  const { accessToken, updateUser, idAPPEmail } = useAuth();
+  const { accessToken, updateUser } = useAuth();
 
   const formik = useFormik({
     initialValues: initialValues(),
@@ -19,12 +19,9 @@ export function ChangeFirstnameScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
-        const dataUser = { firstname: formValue.firstname };//email: formValue.firstname
-
-        //await userController.updateUser(accessToken, dataUser);
-        await userController.updateUserLocal(idAPPEmail, dataUser);
+        const dataUser = { firstname: formValue.firstname };//,email: formValue.firstname
+        await userController.updateUser(accessToken, dataUser);
         updateUser("firstname", formValue.firstname);
-
         navigation.goBack();
       } catch (error) {
         console.error(error);

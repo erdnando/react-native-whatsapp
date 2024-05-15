@@ -12,7 +12,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
-import * as statex$ from '../../../../state/local.js'
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
 
@@ -30,7 +29,7 @@ export function ItemFile(props) {
 
   const imageUri = `${ENV.BASE_PATH}/${"images/cryptedImagex.png"}`;
   const imageRealUri = `${ENV.BASE_PATH}/${message.message}`;
-  const [width, setWidth] = useState(240);
+  const [width, setWidth] = useState(340);
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const onCloseAdvertencia = () => setShowAdvertencia(false);
@@ -40,7 +39,7 @@ export function ItemFile(props) {
   const [isPressed,setIsPressed]=useState(false)
   const [isHovered,setIsHovered]=useState(false)
   const [realImage,setRealImage]=useState(false)
-
+  const [forwarded, setForwarded] = useState(false);
 
   const onEliminarMensaje = () => {
 
@@ -152,15 +151,20 @@ export function ItemFile(props) {
     }
   
     async function fetchData() {
+
+      setForwarded(message.forwarded);
+      console.log("forwarded??")
+      console.log(message.forwarded)
+
+
      // console.log("useEffect ItemText:::::");
-      //const cifrado = await authController.getCifrado();
-      const cifrado = statex$.default.flags.cifrado.get();
+      const cifrado = await authController.getCifrado();
       //console.log("cifrado image item:::::"+cifrado);
       if(cifrado=="SI"){
         setWidth(120);
         setmodoAvanzado(false);
       }else{
-        setWidth(240);
+        setWidth(340);
         setmodoAvanzado(true);
       }
     }
@@ -210,6 +214,24 @@ export function ItemFile(props) {
                           </View>
                          
                     </Menu.Item>
+                     {/*reenviar*/}
+                     <Menu.Item  style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("reenviando message:::::::::::");
+                           EventRegister.emit("forwardingMessage",message);  //-->GroupForm
+                        }}>
+                           <View style={styles.contentMenuItem} >
+                              <Text>Reenviar</Text>
+                              <Icon
+                              style={{transform: [{rotateY: '180deg'}]}}
+                              as={MaterialCommunityIcons}
+                              size="7"
+                              name="reply"
+                              color="black"
+                            />
+                          </View>
+                    </Menu.Item>
                     <Menu.Item  
                         onPress={() => {
                           setMensajeEliminar(message);
@@ -222,6 +244,21 @@ export function ItemFile(props) {
                             as={MaterialCommunityIcons}
                             size="7"
                             name="delete"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
+                    <Menu.Item  
+                        onPress={() => {
+                          onOpenFile();
+                        }}>
+                            <View style={styles.contentMenuItem} >
+                            <Text>Descargar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="download-circle"
                             color="red"
                           />
                           </View>
@@ -242,6 +279,8 @@ export function ItemFile(props) {
                                 color="black"
                               />
                 </View>
+
+                
                  {/*just to mp3 files*/}
                 <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
                   
@@ -277,14 +316,14 @@ export function ItemFile(props) {
 
                  
 
-                <Pressable onPress={onOpenFile} >
+                {/*<Pressable onPress={onOpenFile} >
                     <Icon  style={{marginTop:10}}
                                   as={MaterialCommunityIcons}
                                   size="30"
                                   name="download-circle"
                                   color="black"
                                 />
-                </Pressable>
+                      </Pressable>*/}
 
                   
               </View>
@@ -293,6 +332,21 @@ export function ItemFile(props) {
             <Text style={styles.date}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
             </Text>
+
+            {/*message forwarded*/}
+            <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
+                        <Icon
+                          style={{transform: [{rotateY: '180deg'}]}}
+                          as={MaterialCommunityIcons}
+                          size="7"
+                          name="reply"
+                          color="black"
+                        />
+
+                        <Text  style={styles.dateEditado}  >
+                          {"Reenviado"}
+                        </Text>
+                    </View>
           </View>
 
 

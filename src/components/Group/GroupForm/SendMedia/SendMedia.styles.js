@@ -11,6 +11,17 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 18,
   },
+  optionRecordText: {
+    color: "#fff",
+    fontSize: 18,
+    marginLeft:-2,
+marginTop:1
+  },
+  optionRecordIcon: {
+    color: "#fff",
+    fontSize: 18,
+    marginLeft:-14
+  },
   optionStart: {
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,

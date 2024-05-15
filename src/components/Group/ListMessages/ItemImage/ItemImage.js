@@ -12,7 +12,6 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { EventRegister } from "react-native-event-listeners";
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
-import * as statex$ from '../../../../state/local';
 import loadingImage from '../../../../assets/preloader.gif';
 
 const authController = new Auth();
@@ -32,6 +31,7 @@ export function ItemImage(props) {
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
+  const [forwarded, setForwarded] = useState(false);
 
   const onEliminarMensaje = () => {
 
@@ -88,9 +88,14 @@ export function ItemImage(props) {
    useEffect( () => {
 
     async function fetchData() {
+
+      setForwarded(message.forwarded);
+      console.log("forwarded??")
+      console.log(message.forwarded)
+
+
      // console.log("useEffect ItemText:::::");
-      //const cifrado = await authController.getCifrado();
-      const cifrado = statex$.default.flags.cifrado.get();
+      const cifrado = await authController.getCifrado();
       //console.log("cifrado image item:::::"+cifrado);
       if(cifrado=="SI"){
         setWidth(120);
@@ -146,6 +151,24 @@ export function ItemImage(props) {
                           </View>
                          
                     </Menu.Item>
+                    {/*reenviar*/}
+                    <Menu.Item  style={styles.menuItem}  
+                        onPress={() => {
+                     
+                           console.log("reenviando message:::::::::::");
+                           EventRegister.emit("forwardingMessage",message);  //-->GroupForm
+                        }}>
+                           <View style={styles.contentMenuItem} >
+                              <Text>Reenviar</Text>
+                              <Icon
+                              style={{transform: [{rotateY: '180deg'}]}}
+                              as={MaterialCommunityIcons}
+                              size="7"
+                              name="reply"
+                              color="black"
+                            />
+                          </View>
+                    </Menu.Item>
                     <Menu.Item  
                         onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
@@ -161,6 +184,21 @@ export function ItemImage(props) {
                             as={MaterialCommunityIcons}
                             size="7"
                             name="delete"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
+                    <Menu.Item  
+                        onPress={() => {
+                          onOpenFile();
+                        }}>
+                            <View style={styles.contentMenuItem} >
+                            <Text>Descargar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="download-circle"
                             color="red"
                           />
                           </View>
@@ -182,20 +220,32 @@ export function ItemImage(props) {
             </Pressable>
 
            <View style={styles.colFile}>
-            {/*download button*/}
-            <Pressable onPress={onOpenFile}>
-                    <Icon style={{marginTop:-35,left:-5 }}
-                          as={MaterialCommunityIcons}
-                          size="30"
-                          name="download-circle"
-                          color="black"
-                         />
-            </Pressable>
+                  
+                    <Text style={styles.cifrado}>{"BASE64"}</Text>
+                    <Text style={styles.date}>
+                      {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+                    </Text>
 
-            <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
-            </Text>
-            </View>
+
+
+                    {/*message forwarded*/}
+                    <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
+                        <Icon
+                          style={{transform: [{rotateY: '180deg'}]}}
+                          as={MaterialCommunityIcons}
+                          size="7"
+                          name="reply"
+                          color="black"
+                        />
+
+                        <Text  style={styles.dateEditado}  >
+                          {"Reenviado"}
+                        </Text>
+                    </View>
+
+
+
+                    </View>
 
           </View>
 

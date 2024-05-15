@@ -5,18 +5,22 @@ import { useNavigation } from "@react-navigation/native";
 import { screens } from "../../../../../utils";
 import { styles } from "../SendMedia.styles";
 
-export function CameraOption(props) {
+export function RecordOption(props) {
   const { onClose, groupId } = props;
   const navigation = useNavigation();
 
   const openCamera = async () => {
     const { status } = await Camera.requestCameraPermissionsAsync();
+    const micro = await Camera.requestMicrophonePermissionsAsync()
 
-    if (status !== "granted") {
-      console.error("No has acepatdo los permisos de la camara");
+    console.log("micro")
+    console.log(micro)
+
+    if (status !== "granted" && micro.status !="granted") {
+      console.error("No has acepatdo los permisos de la camara y el microfono");
     } else {
       onClose();
-      navigation.navigate(screens.global.cameraScreen, {
+      navigation.navigate(screens.global.recordCameraScreen, {
         type: "group",
         id: groupId,
       });
@@ -25,19 +29,19 @@ export function CameraOption(props) {
 
   return (
     <Actionsheet.Item
-      style={[styles.option, styles.optionStart]}
-      _text={styles.optionText}
+      style={[styles.option, styles.optionRecordIcon]}
+      _text={styles.optionRecordText}
       onPress={openCamera}
       startIcon={
         <Icon
           as={MaterialCommunityIcons}
-          size="6"
-          name="camera"
+          size="10"
+          name="record-rec"
           color="white"
         />
       }
     >
-      Camara
+    Video
     </Actionsheet.Item>
   );
 }

@@ -7,6 +7,7 @@ const auth = {
 const global = {
   userProfileScreen: "UserProfileScreen",
   cameraScreen: "CameraScreen",
+  recordCameraScreen: "RecordCameraScreen",
   imageFullScreen: "ImageFullScreen",
   chatScreen: "ChatScreen",
   groupScreen: "GroupScreen",

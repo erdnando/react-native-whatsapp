@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { IconButton, Icon,AddIcon, Actionsheet } from "native-base";
 import { useAuth } from "../../../../hooks";
-import { GalleryOption, CameraOption, FileOption } from "./options";
+import { CameraOption, FileOption,RecordOption } from "./options";
 import { styles } from "./SendMedia.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -26,7 +26,9 @@ export function SendMedia(props) {
             groupId={groupId}
             accessToken={accessToken}
           />
-  */}
+       */}
+
+          <RecordOption onClose={onOpenClose} groupId={groupId} ></RecordOption>
 
           <FileOption 
             onClose={onOpenClose}

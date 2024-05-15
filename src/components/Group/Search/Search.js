@@ -10,7 +10,13 @@ export function Search(props) {
 
   const onSearch = (text) => {
     const resultSearch = data.filter(createFilter(text, KEYS_TO_FILTERS));
-    setData(resultSearch);
+
+    if(text.trim() ==""){
+      setData([]);
+    }else{
+      setData(resultSearch);
+    }
+   
   };
 
   return (
