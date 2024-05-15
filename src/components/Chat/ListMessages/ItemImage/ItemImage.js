@@ -32,7 +32,7 @@ export function ItemImage(props) {
           />
         </Pressable>
         <Text style={styles.date}>
-          {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+          {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
         </Text>
       </View>
     </View>

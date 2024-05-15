@@ -159,7 +159,7 @@ export function Item(props) {
             <Text style={styles.time}>
               {DateTime.fromISO(
                 new Date(lastMessage.createdAt).toISOString()
-              ).toFormat("HH:mm")}
+              ).toFormat("dd/MM/yy    HH:mm")}
             </Text>
           ) : null}
 

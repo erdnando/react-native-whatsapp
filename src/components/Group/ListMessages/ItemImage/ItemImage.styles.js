@@ -17,10 +17,10 @@ export const styled = (isMe) => {
       paddingHorizontal: 10,
     },
     identity: {
-      color: "#fff",
+      color: "black",
       marginBottom: 5,
       fontWeight: "bold",
-      opacity: 0.4,
+      opacity: 0.8,
     },
     image: {
       borderRadius: 10,marginTop:10,

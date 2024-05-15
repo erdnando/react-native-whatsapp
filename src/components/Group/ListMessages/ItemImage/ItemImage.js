@@ -221,9 +221,9 @@ export function ItemImage(props) {
 
            <View style={styles.colFile}>
                   
-                    <Text style={styles.cifrado}>{"BASE64"}</Text>
+                    <Text style={styles.cifrado}>{"AES"}</Text>
                     <Text style={styles.date}>
-                      {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+                      {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
                     </Text>
 
 
@@ -293,7 +293,7 @@ export function ItemImage(props) {
               />
             </Pressable>
             <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+              {DateTime.fromISO(createMessage.toISOString()).toFormat("Hdd/MM/yy    H:mm")}
             </Text>
           </View>
         </View>

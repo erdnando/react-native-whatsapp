@@ -15,7 +15,7 @@ export function ItemText(props) {
       <View style={styles.message}>
         <Text style={styles.text}>{message.message}</Text>
         <Text style={styles.date}>
-          {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+          {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
         </Text>
       </View>
     </View>

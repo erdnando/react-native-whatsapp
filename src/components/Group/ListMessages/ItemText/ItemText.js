@@ -262,12 +262,12 @@ export function ItemText(props) {
               <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
               {/*hora del mensaje*/}
               <Text style={styles.date}>
-                {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
               </Text>
                {/*hora del mensaje editado*/}
                <View display={editado?"flex":"none"}>
                 <Text  style={styles.dateEditado}  >
-                  {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("HH:mm")}
+                  {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
                 </Text>
               </View>
 
@@ -325,7 +325,7 @@ export function ItemText(props) {
             <Text style={styles.text}>{message.message}</Text>
             <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
             <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
           </View>
         </View>

@@ -73,6 +73,16 @@ export const styled = (isMe) => {
       flexDirection:'row',
       justifyContent:'space-between',
       width:'100%',
-    }
+    },
+    cifrado: {
+     
+      fontWeight:"bold",
+      color: "red",
+      fontSize: 12,
+      top: -12,
+      textAlign: "right",
+      marginTop:-5,
+      marginBottom:6
+    },
   });
 };

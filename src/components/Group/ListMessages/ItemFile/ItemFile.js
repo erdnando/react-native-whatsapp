@@ -328,9 +328,9 @@ export function ItemFile(props) {
                   
               </View>
 
-       
+              <Text style={styles.cifrado}>{"AES"}</Text>
             <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
 
             {/*message forwarded*/}
@@ -392,8 +392,10 @@ export function ItemFile(props) {
                 style={styles.image}
               />
             </Pressable>
+
+            
             <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("HH:mm")}
+              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
           </View>
         </View>
