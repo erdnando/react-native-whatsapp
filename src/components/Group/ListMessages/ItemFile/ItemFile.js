@@ -57,52 +57,54 @@ export function ItemFile(props) {
   };
 
 
-  const AudioPlayer = useRef(new Audio.Sound());
- 
-   // Function to play the recorded audio
-   const PlayRecordedAudio = async () => {
+  //const AudioPlayer = useRef(new Audio.Sound());
+  //==========================================================================================
+  const PlayRecordedAudio = async () => {
+
+    const soundObject = new Audio.Sound();
+    let duracionAudio=0;
     try {
       setIsPressed(true);
 
-      console.log("playing recordedURI:::::::2");
-      
+      console.log("playing recordedURI:::::::");
+
       const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
-      //const recordedURIx=urlFile.replace("files/","");
       console.log(recordedURIx);
 
-      //release resources
-      try {
-       
-        if(AudioPlayer?.current)
-          await AudioPlayer?.current.unloadAsync();
-       
-       
-      } catch (error) {
-       
-        console.log("maybe it fails if it;s the first time")
-        console.log(error);
-      }
       console.log("playing audio..");
-      // Load the Recorded URI
-      await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
 
-      // Get Player Status
-      const playerStatus = await AudioPlayer.current.getStatusAsync();
+      try {
+        await soundObject.loadAsync({ uri: recordedURIx });
+        const playerStatus = await soundObject.getStatusAsync();
+        console.log("playerStatus")
+        console.log(playerStatus.durationMillis)
+        duracionAudio=playerStatus.durationMillis;
 
-      // Play if song is loaded successfully
-      if (playerStatus.isLoaded) {
-        if (playerStatus.isPlaying === false) {
-          AudioPlayer.current.playAsync();
-          SetIsPLaying(true);
-        }
+
+        SetIsPLaying(true)
+        await soundObject.playAsync();
+        
+        await sleepNow(duracionAudio+500)
+        
+        SetIsPLaying(false);
+        await soundObject.unloadAsync();
+        
+        
+      } catch (error) {
+        console.log(error)
       }
+
     } catch (error) {
       console.log("Error on PlayingRecording")
       console.log(error)
     }
 
     setIsPressed(false);
-  };
+  }
+
+  const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+  //--------------------------------------------------------------------------------------------
+
 
 //open file function
   const onOpenFile= async () => {
@@ -267,11 +269,11 @@ export function ItemFile(props) {
 
               </View>
 
-              {/*vista file download*/}
+              {/*vista file  iconos y nombre del archivo*/}
               <View style={styles.rowFile}>
 
                 {/*any other file*/}
-                <View display={message?.message.toString().endsWith(".mp3") ?"none":"flex"}>
+                <View display={message?.message.toString().endsWith(".mp3") ? "none":"flex"}>
                    <Icon display={isMe?"flex":"none"}
                                 as={MaterialCommunityIcons}
                                 size="39"
@@ -282,20 +284,18 @@ export function ItemFile(props) {
 
                 
                  {/*just to mp3 files*/}
-                <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"}>
+                <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"} >
                   
                     <Pressable onPress={PlayRecordedAudio}>
                       <View>
-                        <Icon  style={{color:isPressed ? "gray":"black",   transform: [{scale: isPressed ? 0.96 : 1.2 }]}}
+                        <Icon  style={{color:IsPLaying ? "red":"black",   transform: [{scale: isPressed ? 1.4 : 1.2 }]}}
                             as={MaterialCommunityIcons}
                             size="49"
                             name="play"
                             color="black"
                           />
-                      </View>
-                      
-                      </Pressable>
-                      
+                      </View>   
+                    </Pressable>
                 </View>
                 
                  {/*just to img files*/}
@@ -310,28 +310,18 @@ export function ItemFile(props) {
                     </Pressable>
                 </View>
 
+               {/*Nombre del archicvo*/}
                <Text display={realImage ?"none":"flex"} style={styles.fileName}>
                   {message.message.replace("files/","") }
                 </Text>
 
                  
-
-                {/*<Pressable onPress={onOpenFile} >
-                    <Icon  style={{marginTop:10}}
-                                  as={MaterialCommunityIcons}
-                                  size="30"
-                                  name="download-circle"
-                                  color="black"
-                                />
-                      </Pressable>*/}
-
-                  
               </View>
 
               <Text style={styles.cifrado}>{"AES"}</Text>
-            <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
-            </Text>
+              <Text style={styles.date}>
+                {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
+              </Text>
 
             {/*message forwarded*/}
             <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>

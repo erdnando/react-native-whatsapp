@@ -189,18 +189,11 @@ export function GroupScreen() {
             setMessages([]);
             setMessages(unlockedMessages);
 
-            //here  sound because edited it
-            console.log("playing audio................newmsg1");
-
-            
+           
 
             const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
             await sound.playAsync();
-            /*try {
-              await sound.playAsync();
-            } catch (error) {
-              console.log(error)
-            }*/
+           
            
           //==============================================================================
         }

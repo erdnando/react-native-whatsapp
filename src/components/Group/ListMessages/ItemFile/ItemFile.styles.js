@@ -47,7 +47,7 @@ export const styled = (isMe) => {
       flexWrap: 'wrap',
       justifyContent:'space-between',
       marginBottom:25,
-      marginTop:10
+      marginTop:10,
     },
     fileName: {
       color: "#fff",
