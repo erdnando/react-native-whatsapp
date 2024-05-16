@@ -51,4 +51,12 @@ export const styles = new StyleSheet.create({
     marginTop:-3
 
   },
+  iconInnerAudio:{
+    position:'relative',
+    marginLeft:10,
+    marginTop:13,
+    fontSize:18,
+    color:'red',
+    transform: [{scaleX: 1.8},{scaleY:1.8}],
+  },
 });

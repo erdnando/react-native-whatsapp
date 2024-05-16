@@ -87,9 +87,6 @@ export function GroupForm(props) {
     // Initial Load to get the audio permission
     useEffect(() => {
       GetPermission();
-    
-    
-      
     }, []);
       
 
@@ -98,10 +95,6 @@ export function GroupForm(props) {
     const getAudioPerm = await Audio.requestPermissionsAsync();
     SetAudioPermission(getAudioPerm.granted);
   };
-
-
-
- 
 //=======================================================================================
   // Function to start recording
   const StartRecording = async () => {
@@ -216,10 +209,7 @@ export function GroupForm(props) {
           console.log("maybe it fails if it;s the first time")
           console.log(error);
         }
-         
         
-        
-
         // Load the Recorded URI
         await AudioPlayer.current.loadAsync({ uri: recordedURIx }, {}, true);
   
