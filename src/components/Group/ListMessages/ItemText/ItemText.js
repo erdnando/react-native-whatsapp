@@ -9,7 +9,7 @@ import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
 import { ENV,Decrypt,Encrypt } from "../../../../utils";
 import AutoHeightImage from "react-native-auto-height-image";
-
+import * as statex$ from '../../../../state/local'
 
 const authController = new Auth();
 
@@ -30,6 +30,7 @@ export function ItemText(props) {
   const [forwarded, setForwarded] = useState(false);
   const [showImagen,setShowImagen]=useState(false)
   const [imageUri, setImageUri]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
+  const [isConnected,setIsConnected]=useState(false) 
 
   const onCloseAdvertencia = () => setShowAdvertencia(false);
  
@@ -45,7 +46,7 @@ export function ItemText(props) {
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
-   
+    setIsConnected(statex$.default.isConnected.get())
     setForwarded(message.forwarded);
     //console.log("forwarded??")
     //console.log(message.forwarded)
@@ -114,7 +115,7 @@ export function ItemText(props) {
                     : message.user.email.substring(0,30) }
                 </Text>
 
-                <Menu w="180" trigger={triggerProps => {
+                <Menu display={isConnected?"flex":"none"} w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon
                             as={MaterialCommunityIcons}

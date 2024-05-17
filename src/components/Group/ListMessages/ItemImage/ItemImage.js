@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import mime from 'mime';
 import * as FileSystem from 'expo-file-system';
 import loadingImage from '../../../../assets/preloader.gif';
+import * as statex$ from '../../../../state/local'
 
 const authController = new Auth();
 
@@ -32,6 +33,7 @@ export function ItemImage(props) {
   const onCloseAdvertencia = () => setShowAdvertencia(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
   const [forwarded, setForwarded] = useState(false);
+  const [isConnected,setIsConnected]=useState(false)    
 
   const onEliminarMensaje = () => {
 
@@ -89,6 +91,8 @@ export function ItemImage(props) {
 
     async function fetchData() {
 
+      setIsConnected(statex$.default.isConnected.get())
+
       setForwarded(message.forwarded);
      // console.log("forwarded??")
      // console.log(message.forwarded)
@@ -123,7 +127,7 @@ export function ItemImage(props) {
                     : message.user.email.substring(0,23) }
                 </Text>
 
-                <Menu display={isMe?"flex":"flex"} w="190" trigger={triggerProps => {
+                <Menu display={isConnected?"flex":"none"} w="190" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon display={isMe?"flex":"flex"}
                             as={MaterialCommunityIcons}

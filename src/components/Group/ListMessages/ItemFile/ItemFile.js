@@ -14,6 +14,7 @@ import * as FileSystem from 'expo-file-system';
 import { Audio } from 'expo-av';
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
+import * as statex$ from '../../../../state/local'
 
 
 const authController = new Auth();
@@ -40,6 +41,7 @@ export function ItemFile(props) {
   const [isHovered,setIsHovered]=useState(false)
   const [realImage,setRealImage]=useState(false)
   const [forwarded, setForwarded] = useState(false);
+  const [isConnected,setIsConnected]=useState(false)
 
   const onEliminarMensaje = () => {
 
@@ -147,6 +149,10 @@ export function ItemFile(props) {
    //Identifica modo avanzado basado en el estatus de cifrado
    useEffect( () => {
 
+    
+      setIsConnected(statex$.default.isConnected.get())
+    
+
     if(message?.message.toString().endsWith(".jpg")||message?.message.toString().endsWith(".jpeg")||
        message?.message.toString().endsWith(".png")||message?.message.toString().endsWith(".bpm")){
         setRealImage(true)
@@ -188,7 +194,7 @@ export function ItemFile(props) {
                     : message.user.email.substring(0,23) }
                 </Text>
 
-                <Menu display={isMe?"flex":"flex"} w="180" trigger={triggerProps => {
+                <Menu display={isConnected?"flex":"none"} w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon display={isMe?"flex":"flex"}
                             as={MaterialCommunityIcons}
@@ -234,6 +240,7 @@ export function ItemFile(props) {
                             />
                           </View>
                     </Menu.Item>
+                    {/*eliminar*/}
                     <Menu.Item  
                         onPress={() => {
                           setMensajeEliminar(message);
@@ -250,6 +257,7 @@ export function ItemFile(props) {
                           />
                           </View>
                     </Menu.Item>
+                    {/*descargar*/}
                     <Menu.Item  
                         onPress={() => {
                           onOpenFile();
