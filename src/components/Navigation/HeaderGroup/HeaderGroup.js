@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, Pressable, } from "react-native";
 import { IconButton, ChevronLeftIcon, Avatar,Icon } from "native-base";
 import { useNavigation } from "@react-navigation/native";
-import { Group,User,Auth } from "../../../api";
+import { Group,User,Auth,GroupMessage } from "../../../api";
 import { useAuth } from "../../../hooks";
 import { ENV, screens,MD5method } from "../../../utils";
 import { styles } from "./HeaderGroup.styles";
@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 const userController = new User();
 const groupController = new Group();
 const authController = new Auth();
+const groupMessageController = new GroupMessage();
 
 export function HeaderGroup(props) {
 
@@ -51,9 +52,31 @@ export function HeaderGroup(props) {
   }, [groupId]);
 
   const goToGroupProfile = () => {
+  
     navigation.navigate(screens.global.groupProfileScreen, {
       groupId,
     });
+  };
+
+  const updateMessagesInDB = async () => {
+  
+     //==========================================================
+/*
+     try {
+          //Get all messages
+          if(statex$.default.isConnected.get()){
+
+              response = await groupMessageController.getAll(accessToken, groupId);
+
+              console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
+              console.log(JSON.stringify(response))
+              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
+          }
+        } catch (error) {
+            console.log(error)
+          }*/
+    //==========================================================     
+    return navigation.goBack();
   };
 
   const validateNIP = async () => {
@@ -101,7 +124,7 @@ export function HeaderGroup(props) {
           <IconButton
             icon={<ChevronLeftIcon />}
             padding={0}
-            onPress={navigation.goBack}
+            onPress={updateMessagesInDB}
           />
 
          {/*logo group Back */}

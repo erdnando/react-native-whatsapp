@@ -3,7 +3,7 @@ import * as SQLite from 'expo-sqlite/legacy';
 //import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db10.db');
+const db = SQLite.openDatabase('db0.db');
 
 
 /*  export  async function loadDB(){
@@ -39,7 +39,7 @@ export  function CREATE_STATE_AUTHLOGIN() {
       db.transaction(
         tx => {
 
-            tx.executeSql("DELETE from STATE_AUTHLOGIN;" , (_, result) => resolve(result), (_, error) => reject(error));
+          tx.executeSql("DELETE from STATE_AUTHLOGIN;" , (_, result) => resolve(result), (_, error) => reject(error));
           tx.executeSql('INSERT INTO STATE_AUTHLOGIN (valor) values(?)', [valor], (_, result) => resolve(result), (_, error) => reject(error) );
         }
       );
@@ -84,7 +84,7 @@ export  function CREATE_STATE_GETME() {
       db.transaction(
         tx => {
 
-            tx.executeSql("DELETE from STATE_GETME;" , (_, result) => resolve(result), (_, error) => reject(error));
+          tx.executeSql("DELETE from STATE_GETME;" , (_, result) => resolve(result), (_, error) => reject(error));
           tx.executeSql('INSERT INTO STATE_GETME (valor) values(?)', [valor], (_, result) => resolve(result), (_, error) => reject(error) );
         }
       );
@@ -127,9 +127,17 @@ export  function CREATE_STATE_GETME() {
     return new Promise((resolve, reject) => {
       db.transaction(
         tx => {
-
-            tx.executeSql("DELETE from STATE_ALLGROUPS;" , (_, result) => resolve(result), (_, error) => reject(error));
           tx.executeSql('INSERT INTO STATE_ALLGROUPS (valor) values(?)', [valor], (_, result) => resolve(result), (_, error) => reject(error) );
+        }
+      );
+    });    
+  }
+  export  function UPDATE_STATE_ALLGROUPS(valor) {
+
+    return new Promise((resolve, reject) => {
+      db.transaction(
+        tx => {
+          tx.executeSql('UPDATE STATE_ALLGROUPS set valor=?', [valor],  (_, result) => resolve(result), (_, error) => reject(error) );
         }
       );
     });    
@@ -152,8 +160,6 @@ export  function CREATE_STATE_GETME() {
       );
     });     
   }
-
-
 //==================================================================================================================================================================================
 
 export  function CREATE_STATE_ALLMESSAGES() {
@@ -167,14 +173,23 @@ export  function CREATE_STATE_ALLMESSAGES() {
   });
 }
 
+export  function UPDATE_STATE_ALLMESSAGES(valor) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE STATE_ALLMESSAGES set valor=?', [valor],  (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
 export  function ADD_STATE_ALLMESSAGES(valor) {
 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-
-          tx.executeSql("DELETE from STATE_ALLMESSAGES;" , (_, result) => resolve(result), (_, error) => reject(error));
-        tx.executeSql('INSERT INTO STATE_ALLALLMESSAGES (valor) values(?)', [valor], (_, result) => resolve(result), (_, error) => reject(error) );
+        tx.executeSql('INSERT INTO STATE_ALLMESSAGES (valor) values(?)', [valor], (_, result) => resolve(result), (_, error) => reject(error) );
       }
     );
   });    
@@ -186,13 +201,7 @@ export  function GET_STATE_ALLMESSAGES() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        // Execute SQL operation
-        tx.executeSql("SELECT * FROM STATE_ALLMESSAGES;", [], 
-          // Success callback
-          (_, result) => resolve(result),
-          // Error callback
-          (_, error) => reject(error)
-        );
+        tx.executeSql("SELECT * FROM STATE_ALLMESSAGES;", [], (_, result) => resolve(result),(_, error) => reject(error) );
       }
     );
   });     

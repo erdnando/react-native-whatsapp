@@ -40,8 +40,9 @@ export class Auth {
   }
 
   async login(email, password) {
-  console.log("isConnected - login")
-  console.log(statex$.default.isConnected.get())
+
+    console.log("isConnected - login")
+    console.log(statex$.default.isConnected.get())
     
 
     if(statex$.default.isConnected.get()){
@@ -69,7 +70,7 @@ export class Auth {
 
             console.log("Persistiendo ADD_STATE_AUTHLOGIN")
             console.log(result)
-            ADD_STATE_AUTHLOGIN(result)
+            ADD_STATE_AUTHLOGIN(JSON.stringify(result))
 
             return result;
           } catch (error) {
@@ -80,15 +81,12 @@ export class Auth {
       //offline
       let resp=null;
       await GET_STATE_AUTHLOGIN().then(result =>{
-        resp=result.rows._array
-        
+        resp= result.rows._array;
       }); 
 
       console.log("GET_STATE_AUTHLOGIN")
-      console.log(JSON.parse(resp[0]?.valor))
-      return JSON.parse(resp[0]?.valor);
-
-    
+      console.log(JSON.parse(resp[0].valor))
+      return JSON.parse(resp[0].valor);
     }
   }
 
@@ -170,6 +168,10 @@ async getIdApp() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);
     await AsyncStorage.removeItem(ENV.JWT.REFRESH);
     await AsyncStorage.removeItem("initial");
+
+    await AsyncStorage.removeItem(ENV.UUID);
+    await AsyncStorage.removeItem("cifrado");
+    await AsyncStorage.removeItem("idApp");
   }
 
 

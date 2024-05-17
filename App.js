@@ -2,16 +2,22 @@ import { NavigationContainer } from "@react-navigation/native";
 import { NativeBaseProvider } from "native-base";
 import { HandlerNavigation } from "./src/navigations";
 import { AuthProvider } from "./src/contexts";
+import NetInfo from '@react-native-community/netinfo';
+import * as statex$ from './src/state/local'
 
-
-import "intl";
-import "intl/locale-data/jsonp/es";
+//import "intl";
+//import "intl/locale-data/jsonp/es";
 
 
 export default function App() {
 
  
-  
+  const unsubscribe = NetInfo.addEventListener(state => {
+    //console.log('Connection type', state.type);
+    console.log('Is connected?', state.isConnected);
+    statex$.default.isConnected.set(state.isConnected)
+    
+  });
 
   return (
     <NavigationContainer>

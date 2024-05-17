@@ -4,7 +4,7 @@ import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
 import Constants from 'expo-constants';  
 import { Types } from 'mongoose';
-import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, CREATE_STATE_ALLGROUPS } from '../hooks/useDA.js';
+import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, CREATE_STATE_ALLGROUPS,CREATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES,ADD_STATE_ALLGROUPS } from '../hooks/useDA.js';
   import { observable } from "@legendapp/state";
   import { observer } from "@legendapp/state/react";
   import * as statex$ from '../state/local.js'
@@ -33,20 +33,6 @@ export function AuthProvider(props) {
   const [usuario, setUsuario] = useState(null);
 
 
-  useEffect(() => {
-    //Intial status
-
-    NetInfo.fetch().then((state) => {
-        statex$.default.isConnected.set(state.isInternetReachable)
-    });
-
-    //Internet connection listener
-    NetInfo.addEventListener((state) => {
-      console.warn('called');
-      console.warn(state.isInternetReachable);
-      statex$.default.isConnected.set(state.isInternetReachable)
-    });
-  }, []);
 
 
 
@@ -58,15 +44,12 @@ export function AuthProvider(props) {
      
       try{
 
-        /*
-          fnDropTableUsers();
-          fnDropTableGroups();
-          fnDropTableGroupMessages();
-          fnDropTableMessages64();*/
-          
-          CREATE_STATE_AUTHLOGIN();
-          CREATE_STATE_GETME();
-          CREATE_STATE_ALLGROUPS();
+          CREATE_STATE_AUTHLOGIN();//ok
+          CREATE_STATE_GETME();//ok
+          CREATE_STATE_ALLGROUPS();//ok
+          CREATE_STATE_ALLMESSAGES();//ok
+          ADD_STATE_ALLGROUPS("ggg")
+          ADD_STATE_ALLMESSAGES("mmm")
        
 
      
@@ -101,6 +84,11 @@ export function AuthProvider(props) {
      console.log("Login inicial")
      console.log(statex$.default.isConnected.get())
      const userRegistrado = await authController.login(idApp, idApp );
+
+     console.log("userRegistrado")
+     console.log(userRegistrado  )
+
+
      const { access, refresh } = userRegistrado;
 
      console.log("accessTokenx:" + access);
@@ -114,7 +102,8 @@ export function AuthProvider(props) {
      if(access=="" || access == undefined){
       //if it's not registered, registered it
       console.log("Registrando: " + idApp);
-      
+      //reset asyncStorage
+     // await authController.removeTokens();
       //
       await authController.setIdApp(idApp);
 
@@ -201,14 +190,14 @@ export function AuthProvider(props) {
 
         console.log("Persistiendo ADD_STATE_GETME")
         console.log(response)
-        ADD_STATE_GETME(response)
+        ADD_STATE_GETME(JSON.stringify(response))
 
       }else{
        
         await GET_STATE_GETME().then(result =>{
         response=result.rows._array;
 
-        response =JSON.parse(response[0]?.valor);
+        response = JSON.parse(response[0].valor);
       }); 
       }
       

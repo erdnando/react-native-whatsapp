@@ -13,7 +13,7 @@ import { styles } from "./Item.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
-
+import * as statex$ from '../../../../state/local'
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -94,8 +94,10 @@ export function Item(props) {
 
   //send message to socket IO
   useEffect(() => {
-    socket.emit("subscribe", `${group._id}_notify`);
-    socket.on("message_notify", newMessage);
+    if(statex$.default.isConnected.get()){
+      socket.emit("subscribe", `${group._id}_notify`);
+      socket.on("message_notify", newMessage);
+    }
   }, []);
 
 

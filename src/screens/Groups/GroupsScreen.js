@@ -11,7 +11,7 @@ import { ListGroups, Search } from "../../components/Group";
 import { EventRegister } from "react-native-event-listeners"; 
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
-import { ADD_STATE_ALLGROUPS, GET_STATE_ALLGROUPS } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS } from '../../hooks/useDA';
 
 
 const groupController = new Group();
@@ -122,15 +122,13 @@ export function GroupsScreen() {
 
               console.log("Persistiendo ADD_STATE_ALLGROUPS")
               console.log(response)
-              ADD_STATE_ALLGROUPS(response);
+              UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
           }else{
               await GET_STATE_ALLGROUPS().then(result =>{
               response=result.rows._array;
-              response =JSON.parse(response[0]?.valor);
+              response =JSON.parse(response[0].valor);
               });
           }
-
-
 
           const result = response.sort((a, b) => {
             return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );

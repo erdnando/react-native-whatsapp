@@ -10,6 +10,7 @@ import { useAuth } from "../../../../hooks";
 import { ENV, socket, screens } from "../../../../utils";
 import { AlertConfirm } from "../../../../components/Shared";
 import { styles } from "./Item.styles";
+import * as statex$ from '../../../../state/local'
 
 const chatController = new Chat();
 const chatMessageController = new ChatMessage();
@@ -78,8 +79,11 @@ export function Item(props) {
   };
 
   useEffect(() => {
-    socket.emit("subscribe", `${chat._id}_notify`);
-    socket.on("message_notify", newMessage);
+
+    if(statex$.default.isConnected.get()){
+        socket.emit("subscribe", `${chat._id}_notify`);
+        socket.on("message_notify", newMessage);
+    }
   }, []);
 
   const newMessage = async (newMessage) => {

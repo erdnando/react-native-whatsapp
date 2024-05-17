@@ -11,14 +11,21 @@ import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
-import { ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGES } from '../../hooks/useDA';
-
+import { UPDATE_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGES } from '../../hooks/useDA';
+import NetInfo from '@react-native-community/netinfo';
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
 
 export function GroupScreen() {
+
+  const unsubscribe = NetInfo.addEventListener(state => {
+    //console.log('Connection type', state.type);
+    console.log('Is connected?', state.isConnected);
+    statex$.default.isConnected.set(state.isConnected)
+    
+  });
 
   const { params: { groupId }, } = useRoute();
   const { accessToken } = useAuth();
@@ -116,48 +123,55 @@ export function GroupScreen() {
 
   //subscribe sockets
   useEffect(() => {
-    socket.emit("subscribe", groupId);
-    socket.on("message", newMessage);
-    socket.on("reloadmsgs", getAllMessages);
 
-    return () => {
-      socket.emit("unsubscribe", groupId);
-      socket.off("message", newMessage);
-      socket.off("reloadmsgs", getAllMessages);
-    };
+    if(statex$.default.isConnected.get()){
+      
+      socket.emit("subscribe", groupId);
+      socket.on("message", newMessage);
+      socket.on("reloadmsgs", getAllMessages);
+
+      return () => {
+        socket.emit("unsubscribe", groupId);
+        socket.off("message", newMessage);
+        socket.off("reloadmsgs", getAllMessages);
+      };
+    }
+
   }, [groupId, messages]);
 
 
   //get all messages
   const getAllMessages = () => {
-    console.log("reloading message:::GroupScreen");
+   // console.log("reloading message:::GroupScreen");
     //=================================================================================
     (async () => {
 
       let response = null;
       try {
         const cifrados = await authController.getCifrado(); 
-        console.log("cifrados");
-        console.log(cifrados);
+       // console.log("cifrados");
+       // console.log(cifrados);
 
         if( statex$.default.isConnected.get() ){
+          console.log("online, getting from internet db")
           response = await groupMessageController.getAll(accessToken, groupId);
 
-          console.log("Persistiendo ADD_STATE_ALLMESSAGES")
-          console.log(response)
-          ADD_STATE_ALLMESSAGES(response)
+          console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
+          console.log(JSON.stringify(response))
+          UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
 
 
         }else{
+          console.log("offline, getting from local db")
             await GET_STATE_ALLMESSAGES().then(result =>{
             response=result.rows._array;
-            response =JSON.parse(response[0]?.valor);
+            response =JSON.parse(response[0].valor);
             }); 
         }
        
 
-        console.log("mensajes del grupo")
-        console.log(response)
+        //console.log("mensajes del grupo")
+        //console.log(response)
 
         if(cifrados=="SI"){
           //====================Mantiene cifrados los TXT y coloca imagen q represente un cifrado========================================================
@@ -187,8 +201,8 @@ export function GroupScreen() {
       
               if(msg.type=="TEXT"){
                 msg.message = Decrypt(msg.message,msg.tipo_cifrado);
-                console.log("========texto=======================")
-                console.log(msg);
+                //console.log("========texto=======================")
+               // console.log(msg);
 
                 if(msg.email_replied != null){
                   msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
@@ -196,7 +210,7 @@ export function GroupScreen() {
               }
 
                if(msg.type=="IMAGE" || msg.type=="FILE"){
-                    console.log("========imagen or file=======================")
+                   // console.log("========imagen or file=======================")
                     msg.message =msg.message;
                     console.log(msg);
               }
@@ -252,6 +266,26 @@ export function GroupScreen() {
     console.log("===========================================")
     console.log(msg);
     console.log("===========================================")
+
+
+     //==========================================================
+
+     try {
+          //Get all messages
+          if(statex$.default.isConnected.get()){
+
+              response = await groupMessageController.getAll(accessToken, groupId);
+
+              console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
+              console.log(JSON.stringify(response))
+              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
+              }
+          } catch (error) {
+        
+      }
+//==========================================================     
+
+
     //============Always decifra mensaje======================
   
     if(msg.type=="TEXT"){

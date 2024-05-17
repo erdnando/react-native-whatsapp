@@ -6,12 +6,17 @@ import { User } from "../../../api";
 import { imageExpoFormat, screens } from "../../../utils";
 import { styles } from "./Options.styles";
 import * as statex$ from '../../../state/local'
-import { Center, Flex, Icon } from "native-base";
+import { Center, Flex, Icon, AlertDialog,Button ,TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { GET_STATE_ALLMESSAGES } from '../../../hooks/useDA';
 
 const userController = new User();
 
 export function Options(props) {
+
+  const [isOpen, setIsOpen] = useState(false);
+  const [datos, setDatos] = useState(false);
+
   const { accessToken, logout, updateUser } = props;
   const navigation = useNavigation();
  // const [isConnected, setIsConected] = useState(false);
@@ -22,6 +27,8 @@ export function Options(props) {
   
   }, [])
   
+
+  const onClose = () => setIsOpen(false);
 
   const openGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -53,6 +60,18 @@ export function Options(props) {
     navigation.navigate(screens.tab.settings.changeLastnameScreen);
   };
 
+  
+  const goDataView = async () => {
+    //get data
+    await GET_STATE_ALLMESSAGES().then(result =>{
+      let response=result.rows._array;
+      response =JSON.stringify(response[0].valor);
+      setDatos(response)
+      }); 
+
+    setIsOpen(true)
+  };
+
   return (
     <View style={styles.content}>
 
@@ -81,12 +100,48 @@ export function Options(props) {
         </Flex>
       </TouchableOpacity>
 
+      {/*<TouchableOpacity style={styles.item} onPress={goDataView}>
+      <Flex direction="row"   >
+          <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
+          <Center size={3}></Center>
+          <Text style={styles.text}>Ver Data</Text>
+        </Flex>
+      </TouchableOpacity>*/}
+
       {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}
         onPress={logout}
       >
         <Text style={styles.textClose}>Cerrar sesión</Text>
       </TouchableOpacity> */}
+
+
+
+
+
+            <AlertDialog  isOpen={isOpen} onClose={onClose}>
+              <AlertDialog.Content>
+                <AlertDialog.CloseButton />
+                <AlertDialog.Header>Datos</AlertDialog.Header>
+                <AlertDialog.Body>
+                
+                <TextArea h={500} placeholder="Text Area Placeholder" w="100%" maxW="300">
+                  {datos}
+                </TextArea>
+
+                </AlertDialog.Body>
+                <AlertDialog.Footer>
+                  <Button.Group space={2}>
+                    <Button variant="unstyled" colorScheme="coolGray" onPress={onClose} >
+                      Cancelar
+                    </Button>
+                   
+                  </Button.Group>
+                </AlertDialog.Footer>
+              </AlertDialog.Content>
+            </AlertDialog>
+
+
     </View>
   );
 }

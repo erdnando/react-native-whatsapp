@@ -8,6 +8,7 @@ import { HeaderChat } from "../../components/Navigation";
 import { LoadingScreen } from "../../components/Shared";
 import { ListMessages, ChatForm } from "../../components/Chat";
 import { ENV, socket } from "../../utils";
+import * as statex$ from '../../state/local'
 
 const chatMessageController = new ChatMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -50,13 +51,17 @@ export function ChatScreen() {
   }, [chatId]);
 
   useEffect(() => {
-    socket.emit("subscribe", chatId);
-    socket.on("message", newMessage);
+    if(statex$.default.isConnected.get()){
 
-    return () => {
-      socket.emit("unsubscribe", chatId);
-      socket.off("message", newMessage);
-    };
+      socket.emit("subscribe", chatId);
+      socket.on("message", newMessage);
+
+      return () => {
+        socket.emit("unsubscribe", chatId);
+        socket.off("message", newMessage);
+      };
+      
+    }
   }, [chatId, messages]);
 
   const newMessage = (msg) => {

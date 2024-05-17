@@ -155,8 +155,8 @@ export function ItemFile(props) {
     async function fetchData() {
 
       setForwarded(message.forwarded);
-      console.log("forwarded??")
-      console.log(message.forwarded)
+     // console.log("forwarded??")
+     // console.log(message.forwarded)
 
 
      // console.log("useEffect ItemText:::::");

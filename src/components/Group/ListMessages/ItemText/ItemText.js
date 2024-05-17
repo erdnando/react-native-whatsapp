@@ -47,8 +47,8 @@ export function ItemText(props) {
 
    
     setForwarded(message.forwarded);
-    console.log("forwarded??")
-    console.log(message.forwarded)
+    //console.log("forwarded??")
+    //console.log(message.forwarded)
     
 
     if(message.email_replied != null){
@@ -67,8 +67,8 @@ export function ItemText(props) {
 
     async function fetchData() {
 
-      console.log("message::::::::::::::::")
-      console.log(message)
+     // console.log("message::::::::::::::::")
+     // console.log(message)
       //just to validate if it should be shown a little image on replied message
       if(message?.message_replied?.endsWith(".png") || message?.message_replied?.endsWith(".jpg") || 
           message?.message_replied?.endsWith(".jpeg") || message?.message_replied?.endsWith(".gif" || message?.message_replied?.endsWith(".bmp"))){
