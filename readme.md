@@ -46,4 +46,6 @@ yarn start -c
 git tag versionOfflineOK
 git push origin --tags
 
+#----------------------------------------
+
 git push --force origin main

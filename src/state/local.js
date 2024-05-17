@@ -30,6 +30,8 @@ configureObservablePersistence({
   })*/
 
 const state$ = observable({
+  isConnected:true,
+  AUTHLOGIN:{},
   user:[{
      _id :"0",
      email :"",

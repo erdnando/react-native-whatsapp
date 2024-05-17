@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as statex$ from '../state/local'
 import { ENV } from "../utils";
-
+import { ADD_STATE_AUTHLOGIN, GET_STATE_AUTHLOGIN } from '../hooks/useDA'
 
 
 
@@ -39,31 +40,55 @@ export class Auth {
   }
 
   async login(email, password) {
-    try {
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
-      const params = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      };
+  console.log("isConnected - login")
+  console.log(statex$.default.isConnected.get())
+    
 
-      console.log("login")
-      console.log(url)
-      console.log(params)
-      const response = await fetch(url, params);
-      const result = await response.json();
-      console.log("=======================================")
-      console.log("result login")
-      
-      console.log(result)
+    if(statex$.default.isConnected.get()){
+          try {
+            const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
+            const params = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ email, password }),
+            };
 
-      if (response.status !== 200) throw result;
+            console.log("login")
+            console.log(url)
+            console.log(params)
+            const response = await fetch(url, params);
+            const result = await response.json();
+            console.log("=======================================")
+            console.log("result login")
+            
+            console.log(result)
 
-      return result;
-    } catch (error) {
-      throw error;
+            if (response.status !== 200) throw result;
+
+            console.log("Persistiendo ADD_STATE_AUTHLOGIN")
+            console.log(result)
+            ADD_STATE_AUTHLOGIN(result)
+
+            return result;
+          } catch (error) {
+            throw error;
+          }
+
+    }else{
+      //offline
+      let resp=null;
+      await GET_STATE_AUTHLOGIN().then(result =>{
+        resp=result.rows._array
+        
+      }); 
+
+      console.log("GET_STATE_AUTHLOGIN")
+      console.log(JSON.parse(resp[0]?.valor))
+      return JSON.parse(resp[0]?.valor);
+
+    
     }
   }
 
@@ -129,6 +154,15 @@ async setUUID(valor) {
 
 async getUUID() {
   return await AsyncStorage.getItem(ENV.UUID);
+}
+
+
+async setIdApp(valor) {
+  await AsyncStorage.setItem("idApp", valor);
+}
+
+async getIdApp() {
+  return await AsyncStorage.getItem("idApp");
 }
 
 //========================================================================

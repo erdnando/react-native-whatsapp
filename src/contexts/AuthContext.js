@@ -1,8 +1,21 @@
 import { useState, useEffect, createContext } from "react";
+import {  Alert} from 'react-native';
 import { User, Auth, Group } from "../api";
 import { hasExpiredToken } from "../utils";
 import Constants from 'expo-constants';  
 import { Types } from 'mongoose';
+import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, CREATE_STATE_ALLGROUPS } from '../hooks/useDA.js';
+  import { observable } from "@legendapp/state";
+  import { observer } from "@legendapp/state/react";
+  import * as statex$ from '../state/local.js'
+  import {
+    configureObservablePersistence,
+    persistObservable,
+  } from '@legendapp/state/persist'
+  import { ObservablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage'
+  import AsyncStorage from '@react-native-async-storage/async-storage';
+  import NetInfo from '@react-native-community/netinfo';
+  
 
 const userController = new User();
 const authController = new Auth();
@@ -21,28 +34,89 @@ export function AuthProvider(props) {
 
 
   useEffect(() => {
+    //Intial status
+
+    NetInfo.fetch().then((state) => {
+        statex$.default.isConnected.set(state.isInternetReachable)
+    });
+
+    //Internet connection listener
+    NetInfo.addEventListener((state) => {
+      console.warn('called');
+      console.warn(state.isInternetReachable);
+      statex$.default.isConnected.set(state.isInternetReachable)
+    });
+  }, []);
+
+
+
+
+  useEffect(() => {
+
+    async function fetchData() {
+      console.log(" ")
+     
+      try{
+
+        /*
+          fnDropTableUsers();
+          fnDropTableGroups();
+          fnDropTableGroupMessages();
+          fnDropTableMessages64();*/
+          
+          CREATE_STATE_AUTHLOGIN();
+          CREATE_STATE_GETME();
+          CREATE_STATE_ALLGROUPS();
+       
+
+     
+       
+      }catch(err){
+        console.log("err db ini")
+        console.log(err)
+      }
+    }
+
+    fetchData();
+
+}, [])
+
+
+
+  useEffect(() => {
     (async () => {
 
       let uuid = await authController.getUUID();
-    if(uuid==null){
-      uuid = new Types.ObjectId().toString();
-     
-      await authController.setUUID(uuid);
-     
-    }
+      if(uuid==null){
+        uuid = new Types.ObjectId().toString();
+      
+        await authController.setUUID(uuid);
+      
+      }
     
      //get UUID
      const idApp = uuid;//Constants.installationId;
-      //await authController.removeTokens();
+     //await authController.removeTokens();
 
-     const userRegistrado = await authController.login(idApp, idApp  );
+     console.log("Login inicial")
+     console.log(statex$.default.isConnected.get())
+     const userRegistrado = await authController.login(idApp, idApp );
      const { access, refresh } = userRegistrado;
 
      console.log("accessTokenx:" + access);
+     
+/*
+     if( (access=="" || access == undefined) && isConnected==false){
+      Alert.alert('La app esta sin acceso a internet. Por favor intentelo de nuevo cuando tenga conexion');
+      return;
+     }*/
 
      if(access=="" || access == undefined){
       //if it's not registered, registered it
       console.log("Registrando: " + idApp);
+      
+      //
+      await authController.setIdApp(idApp);
 
       await authController.register(idApp, idApp);
 
@@ -70,22 +144,30 @@ export function AuthProvider(props) {
         );
         //-------------------------------------------------------------
        
+
+
+
         //show alert with initial NIP
         await authController.setInitial("1");
         //1a vez, bandera de mensajes cifrados
         await authController.setCifrado("SI");
         
-        
         await login(access);
+
+
+
        
     }else{
       console.log("Accessing directly");
       console.log("login::")
       console.log(access)
       await authController.setInitial("0");
+      await authController.setIdApp(idApp);
       //siempre cifrados cuando entra
       await authController.setAccessToken(access);
       await authController.setRefreshToken(refresh);
+
+
       await login(access);  
     }
 
@@ -94,6 +176,8 @@ export function AuthProvider(props) {
   }, []);
 
   
+ 
+
   const reLogin = async (refreshToken) => {
     try {
       const { accessToken } = await authController.refreshAccessToken(
@@ -107,10 +191,32 @@ export function AuthProvider(props) {
   };
 
   const login = async (accessToken) => {
+
+    let response = null;
     try {
       setLoading(true);
 
-      const response = await userController.getMe(accessToken);
+      if(statex$.default.isConnected.get()){
+        response = await userController.getMe(accessToken);
+
+        console.log("Persistiendo ADD_STATE_GETME")
+        console.log(response)
+        ADD_STATE_GETME(response)
+
+      }else{
+       
+        await GET_STATE_GETME().then(result =>{
+        response=result.rows._array;
+
+        response =JSON.parse(response[0]?.valor);
+      }); 
+      }
+      
+
+
+      
+
+
       setUser(response);
       setToken(accessToken);
 

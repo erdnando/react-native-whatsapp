@@ -1,10 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import { User } from "../../../api";
 import { imageExpoFormat, screens } from "../../../utils";
 import { styles } from "./Options.styles";
-
+import * as statex$ from '../../../state/local'
 import { Center, Flex, Icon } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -13,6 +14,14 @@ const userController = new User();
 export function Options(props) {
   const { accessToken, logout, updateUser } = props;
   const navigation = useNavigation();
+ // const [isConnected, setIsConected] = useState(false);
+
+  useEffect(() => {
+    
+   // setIsConected(statex$.default.isConnected.get())
+  
+  }, [])
+  
 
   const openGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +64,7 @@ export function Options(props) {
         </Flex>
   </TouchableOpacity>*/}
 
-      <TouchableOpacity style={styles.item} onPress={goChangeFirstname}>
+      <TouchableOpacity style={styles.item} onPress={statex$.default.isConnected.get() ? goChangeFirstname : null}>
         <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="tooltip-edit-outline" style={styles.iconOptions} />   
           <Center size={3}></Center>
@@ -64,7 +73,7 @@ export function Options(props) {
        
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.item} onPress={goChangeLastname}>
+      <TouchableOpacity style={styles.item} onPress={statex$.default.isConnected.get() ? goChangeLastname : null}>
       <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
           <Center size={3}></Center>

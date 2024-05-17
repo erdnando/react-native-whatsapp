@@ -33,6 +33,10 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 15,
   },
+  messagelista: {
+    color: "#fff",
+    fontSize: 13,
+  },
   text: {
     opacity: 0.4,
   },

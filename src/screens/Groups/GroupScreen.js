@@ -10,6 +10,9 @@ import { ENV, socket,Decrypt,Encrypt } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
+import * as statex$ from '../../state/local'
+import { ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGES } from '../../hooks/useDA';
+
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -20,11 +23,15 @@ export function GroupScreen() {
   const { params: { groupId }, } = useRoute();
   const { accessToken } = useAuth();
   const [messages, setMessages] = useState(null);
+
  
 
   //EventListener:: decifra mensajes
   useEffect(() => {
-  
+    console.log("statex$.default.isConnected.get()")
+    console.log(statex$.default.isConnected.get())
+    
+
        const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
          
               try {
@@ -126,11 +133,28 @@ export function GroupScreen() {
     console.log("reloading message:::GroupScreen");
     //=================================================================================
     (async () => {
+
+      let response = null;
       try {
         const cifrados = await authController.getCifrado(); 
         console.log("cifrados");
         console.log(cifrados);
-        const response = await groupMessageController.getAll(accessToken, groupId);
+
+        if( statex$.default.isConnected.get() ){
+          response = await groupMessageController.getAll(accessToken, groupId);
+
+          console.log("Persistiendo ADD_STATE_ALLMESSAGES")
+          console.log(response)
+          ADD_STATE_ALLMESSAGES(response)
+
+
+        }else{
+            await GET_STATE_ALLMESSAGES().then(result =>{
+            response=result.rows._array;
+            response =JSON.parse(response[0]?.valor);
+            }); 
+        }
+       
 
         console.log("mensajes del grupo")
         console.log(response)

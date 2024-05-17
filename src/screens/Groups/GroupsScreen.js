@@ -10,6 +10,9 @@ import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
 import { EventRegister } from "react-native-event-listeners"; 
 import { Modal,FormControl,Button } from "native-base";
+import * as statex$ from '../../state/local'
+import { ADD_STATE_ALLGROUPS, GET_STATE_ALLGROUPS } from '../../hooks/useDA';
+
 
 const groupController = new Group();
 const authController = new Auth();
@@ -25,8 +28,14 @@ export function GroupsScreen() {
   const [totalMembers, setTotalMembers] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [nip, setNip] = useState("00000000");
+  //const [isConnected, setIsConected] = useState(false);
 
   useEffect(() => {
+
+    console.log("statex$.default.isConnected.get()")
+    console.log(statex$.default.isConnected.get())
+    
+    //setIsConected(statex$.default.isConnected.get())
   
     async function validateInitialModal() {
 
@@ -67,33 +76,61 @@ export function GroupsScreen() {
   useEffect(() => {
 
     async function fetchData() {
-     // deleteTable('USERS');
-     //createTableBitacora('BITACORA');//initialize table
-     //addUser('erdnando@gmail.com');
-     //selectTableBitacora();
+  
     }
     fetchData();
 
-    navigation.setOptions({
-      headerRight: () => (
-        <IconButton
-          icon={<AddIcon />}
-          padding={0}
-          onPress={() =>
-            navigation.navigate(screens.tab.groups.createGroupScreen)
-          }
-        />
-      ),
-    });
+    if(statex$.default.isConnected.get()==true){
+      navigation.setOptions({
+        headerRight: () => (
+          <IconButton
+            icon={<AddIcon />}
+            padding={0}
+            onPress={() => {
+             navigation.navigate(screens.tab.groups.createGroupScreen) 
+           }}
+          />
+        ),
+      });
+    }else{
+      navigation.setOptions({
+        headerRight: () => (
+          <IconButton
+            icon={<AddIcon />}
+            padding={0}
+           
+          />
+        ),
+      });
+    }
+    
 
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       (async () => {
+
+        let response = null;
+
         try {
-          //Get all messages
-          const response = await groupController.getAll(accessToken);
+
+          //Get all groups
+          if(statex$.default.isConnected.get()){
+
+             response = await groupController.getAll(accessToken);
+
+              console.log("Persistiendo ADD_STATE_ALLGROUPS")
+              console.log(response)
+              ADD_STATE_ALLGROUPS(response);
+          }else{
+              await GET_STATE_ALLGROUPS().then(result =>{
+              response=result.rows._array;
+              response =JSON.parse(response[0]?.valor);
+              });
+          }
+
+
 
           const result = response.sort((a, b) => {
             return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );

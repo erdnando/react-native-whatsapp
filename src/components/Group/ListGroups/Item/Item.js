@@ -135,17 +135,16 @@ export function Item(props) {
         size="lg"
         marginRight={3}
         style={styles.avatar}
-       
         source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
       />
 
       <View style={styles.infoContent}>
         <View style={styles.info}>
           <Text style={styles.name}>{group.name}</Text>
-          <Text style={styles.message} numberOfLines={2}>
+          <Text style={styles.messagelista} numberOfLines={2}>
             <Text>
               {lastMessage
-                ? `${lastMessage.user.email.substring(0,20) +"... comento:"} `
+                ? `${lastMessage.user.email.substring(0,20) +"... comento"} `
                 : ""}
             </Text>
            {/*  <Text style={styles.text}>
@@ -159,7 +158,7 @@ export function Item(props) {
             <Text style={styles.time}>
               {DateTime.fromISO(
                 new Date(lastMessage.createdAt).toISOString()
-              ).toFormat("dd/MM/yy    HH:mm")}
+              ).toFormat("HH:mm")}
             </Text>
           ) : null}
 
