@@ -115,9 +115,9 @@ export function ItemText(props) {
                     : message.user.email.substring(0,30) }
                 </Text>
 
-                <Menu display={isConnected?"flex":"none"} w="180" trigger={triggerProps => {
-                  return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
-                          <Icon
+                <Menu  w="180" trigger={triggerProps => {
+                  return <Pressable  style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
+                          <Icon display={statex$.default.isConnected.get()?"flex":"none"}
                             as={MaterialCommunityIcons}
                             size="7"
                             name="arrow-down-drop-circle"

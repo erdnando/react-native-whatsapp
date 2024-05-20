@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { View, Text } from "react-native";
+import { View, Alert } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
@@ -34,6 +34,12 @@ export function GroupsScreen() {
 
     console.log("statex$.default.isConnected.get()")
     console.log(statex$.default.isConnected.get())
+
+    
+    if(!statex$.default.isConnected){
+      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+      [{  text: 'Ok',      } ]);
+    }
     
     //setIsConected(statex$.default.isConnected.get())
   
@@ -80,7 +86,7 @@ export function GroupsScreen() {
     }
     fetchData();
 
-    if(statex$.default.isConnected.get()==true){
+    if(statex$.default.isConnected.get()){
       navigation.setOptions({
         headerRight: () => (
           <IconButton
@@ -98,7 +104,10 @@ export function GroupsScreen() {
           <IconButton
             icon={<AddIcon />}
             padding={0}
-           
+            onPress={() => {
+              Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+      [{  text: 'Ok',      } ]);
+            }}
           />
         ),
       });
@@ -115,13 +124,14 @@ export function GroupsScreen() {
 
         try {
 
-          //Get all groups
+          //Get all GRUPOS!!!!
           if(statex$.default.isConnected.get()){
 
              response = await groupController.getAll(accessToken);
 
               console.log("Persistiendo ADD_STATE_ALLGROUPS")
-              console.log(response)
+              //console.log(response)
+              console.log(JSON.stringify(response))
               UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
           }else{
               await GET_STATE_ALLGROUPS().then(result =>{

@@ -163,6 +163,8 @@ async getIdApp() {
   return await AsyncStorage.getItem("idApp");
 }
 
+
+
 //========================================================================
   async removeTokens() {
     await AsyncStorage.removeItem(ENV.JWT.ACCESS);

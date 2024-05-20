@@ -1,5 +1,5 @@
 import { useState, useEffect,useRef } from "react";
-import { View, Keyboard, Platform,TextInput,Text,Animated } from "react-native";
+import { View, Keyboard, Platform,TextInput,Text,Animated, Alert } from "react-native";
 import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,
           useTheme,Center,Box,Heading,HStack,Spinner } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -13,6 +13,7 @@ import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
+import * as statex$ from '../../../state/local'
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -31,6 +32,7 @@ export function GroupForm(props) {
   const [forwardMessage, setForwardMessage] = useState(false);
   const [groups, setGroups] = useState(null);
   const [canForward, setCanForward] = useState(false);
+
   
   // Refs for the audio
   const AudioRecorder = useRef(new Audio.Recording());
@@ -318,7 +320,12 @@ export function GroupForm(props) {
           }
             
              //here  sound
-      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'));
+
+             const initialStatus = {
+              volume: 1,
+            };
+            console.log("playing audio........1")
+      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
       await sound.playAsync();
         } 
       });
@@ -549,6 +556,15 @@ export function GroupForm(props) {
     validationSchema: validationSchema(),
     validateOnChange: false,
     onSubmit: async (formValue) => {
+
+      if(!statex$.default.isConnected.get()){
+        Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+        [{  text: 'Ok',      } ]);
+
+        return;
+      }
+
+
       //onSendMessage
       try {
         setKeyboardHeight(0);

@@ -11,7 +11,7 @@ import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGES } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 
 const groupMessageController = new GroupMessage();
@@ -156,16 +156,34 @@ export function GroupScreen() {
           console.log("online, getting from internet db")
           response = await groupMessageController.getAll(accessToken, groupId);
 
-          console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
-          console.log(JSON.stringify(response))
-          UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
+          console.log("mensajes en el server del grupo" + groupId)
+          
 
+          let resAux=null;
+          await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
+                resAux=result.rows._array;
+                console.log("resAux.length grupos");
+                console.log(resAux.length);
+                console.log(resAux);
+
+                if(resAux.length==0){
+                  //add it
+                  console.log("ADD_STATE_ALLMESSAGES " + groupId);
+                  ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'');
+                }else{
+                  console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
+                  UPDATE_STATE_ALLMESSAGES(JSON.stringify(response), groupId);
+                }
+              
+            }); 
 
         }else{
-          console.log("offline, getting from local db")
-            await GET_STATE_ALLMESSAGES().then(result =>{
-            response=result.rows._array;
-            response =JSON.parse(response[0].valor);
+            console.log("offline, getting from local db");
+            console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
+
+            await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
+                  response=result.rows._array;
+                  response =JSON.parse(response[0].valor);
             }); 
         }
        
@@ -228,8 +246,11 @@ export function GroupScreen() {
             setMessages(unlockedMessages);
 
            
-
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));//'../../assets/newmsg.wav'
+            const initialStatus = {
+              volume: 0.1,
+            };
+            console.log("playing audio........2")
+            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);//'../../assets/newmsg.wav'
             await sound.playAsync();
            
            
@@ -278,7 +299,7 @@ export function GroupScreen() {
 
               console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
               console.log(JSON.stringify(response))
-              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
+              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
               }
           } catch (error) {
         
@@ -311,7 +332,11 @@ export function GroupScreen() {
 
       }
       //here  sound
-      const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'));
+      const initialStatus = {
+        volume: 1,
+      };
+      console.log("playing audio........3")
+      const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);
       await sound.playAsync();
       
     }

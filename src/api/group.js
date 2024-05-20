@@ -1,8 +1,9 @@
 import { ENV } from "../utils";
+import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID } from '../hooks/useDA';
 
 export class Group {
 
-  async create(accessToken, creatorId, usersId, name, image) {
+  async create(accessToken, creatorId, usersId, name, image, llave) {
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -21,10 +22,24 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-
+      console.log("Respuesta, id grupo creado;;;;;;;;")
+      console.log(result._id)
+      //let grupoCreado=result[0]._id;
+      console.log("llave")
+      console.log(llave)
       if (response.status !== 201) throw result;
 
+
+      console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo")
+      if(llave !=""){
+        //persist locally into STATE_ALLMESSAGES table, locally by GroupId
+        ADD_STATE_ALLMESSAGES( '', result._id, llave );
+      }else{
+        ADD_STATE_ALLMESSAGES( '', result._id, '' );
+      }
+
       return result;
+      
     } catch (error) {
       throw error;
     }
@@ -47,7 +62,7 @@ export class Group {
         body: formData,
       };
 
-      console.log("creacion automatica dle grupo")
+      console.log("creacion automatica del grupo")
       const response = await fetch(url, params);
       console.log("response creacion automatica")
       console.log(response)
@@ -55,6 +70,9 @@ export class Group {
       const result = await response.json();
 
       if (response.status !== 201) throw result;
+
+      console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo auto")
+      ADD_STATE_ALLMESSAGES( '', result._id, '' );
 
       return result;
     } catch (error) {
@@ -103,6 +121,9 @@ export class Group {
   }
 
   async exit(accessToken, groupId) {
+    console.log("Saliendo del grupo:::")
+    console.log(groupId)
+    console.log(accessToken)
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_EXIT}/${groupId}`;
       const params = {

@@ -65,7 +65,8 @@ export function Options(props) {
     //get data
     await GET_STATE_ALLMESSAGES().then(result =>{
       let response=result.rows._array;
-      response =JSON.stringify(response[0].valor);
+      console.log(response)
+      response =JSON.stringify(response);
       setDatos(response)
       }); 
 
@@ -100,13 +101,13 @@ export function Options(props) {
         </Flex>
       </TouchableOpacity>
 
-      {/*<TouchableOpacity style={styles.item} onPress={goDataView}>
+      <TouchableOpacity style={styles.item} onPress={goDataView}>
       <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
           <Center size={3}></Center>
           <Text style={styles.text}>Ver Data</Text>
         </Flex>
-      </TouchableOpacity>*/}
+      </TouchableOpacity>
 
       {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}

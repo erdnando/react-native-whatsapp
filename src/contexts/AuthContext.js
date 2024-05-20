@@ -49,7 +49,7 @@ export function AuthProvider(props) {
           CREATE_STATE_ALLGROUPS();//ok
           CREATE_STATE_ALLMESSAGES();//ok
           ADD_STATE_ALLGROUPS("ggg")
-          ADD_STATE_ALLMESSAGES("mmm")
+         // ADD_STATE_ALLMESSAGES("mmm")
        
 
      

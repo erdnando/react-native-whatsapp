@@ -60,22 +60,7 @@ export function HeaderGroup(props) {
 
   const updateMessagesInDB = async () => {
   
-     //==========================================================
-/*
-     try {
-          //Get all messages
-          if(statex$.default.isConnected.get()){
 
-              response = await groupMessageController.getAll(accessToken, groupId);
-
-              console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
-              console.log(JSON.stringify(response))
-              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response))
-          }
-        } catch (error) {
-            console.log(error)
-          }*/
-    //==========================================================     
     return navigation.goBack();
   };
 

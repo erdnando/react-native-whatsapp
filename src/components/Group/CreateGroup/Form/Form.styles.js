@@ -19,6 +19,7 @@ export const styles = new StyleSheet.create({
     color: "#fff",
     fontSize: 18,
     marginVertical: 5,
+  
   },
   inputError: {
     backgroundColor: "#270C0D",

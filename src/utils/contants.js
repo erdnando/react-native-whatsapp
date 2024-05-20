@@ -1,5 +1,6 @@
 const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app"; // DEV nube
 //const SERVER_IP = "node-express-sockets-whatsapp-production-a1d6.up.railway.app";  //QA nube
+//
 //const SERVER_IP = "192.168.0.100:3977"; //DEV local
 
 export const ENV = {
@@ -24,7 +25,7 @@ export const ENV = {
     CHAT_MESSAGE_TOTAL: "chat/message/total",
     GROUP: "group",
     GROUPAUTO: "groupauto",
-    GROUP_EXIT: "group/exi//t",
+    GROUP_EXIT: "group/exit",
     GROUP_BAN: "group/ban",
     GROUP_ADD_PARTICIPANTS: "group/add_participants",
     GROUP_MESSAGE: "group/message",
