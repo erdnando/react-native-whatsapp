@@ -32,14 +32,16 @@ export function ListUserAddParticipants(props) {
   }, [ids]);
 
   const selectedUnselectdUser = (user) => {
-    const isFound = ids.includes(user._id);
+//validate if this group is close or open
+    setIds(user._id)
+    /*const isFound = ids.includes(user._id);
 
     if (isFound) {
       const newArray = ids.filter((userId) => userId !== user._id);
       setIds(newArray);
     } else {
       setIds((prevState) => [...prevState, user._id]);
-    }
+    }*/
   };
 
   const isSelectedUser = (userId) => {
@@ -47,10 +49,7 @@ export function ListUserAddParticipants(props) {
   };
 
   const onAddParticipants = () => {
-
     addParticipants(ids);
-   
-
   };
 
   return (

@@ -10,6 +10,7 @@ const userController = new User();
 const groupController = new Group();
 
 export function AddUserGroupScreen() {
+
   const [users, setUsers] = useState(null);
   const [usersSearch, setUserSearch] = useState(null);
   const [usersResult, setUsersResult] = useState(null);
@@ -22,6 +23,7 @@ export function AddUserGroupScreen() {
       try {
         console.log("getting users, except member of this group")
         console.log("grupo:")
+        console.log(params)
         console.log(params.groupId)
         const response = await userController.getUsersExeptParticipantsGroup(
           accessToken,

@@ -38,6 +38,7 @@ export const styled = (isMe) => {
     text: {
       color: "#fff",
       fontSize: 16,
+      marginBottom:25
     },
     date: {
       opacity: 0.6,

@@ -1,4 +1,4 @@
-import { useEffect,useState, useRef } from "react";
+import { useEffect,useState } from "react";
 import { View, Text } from "react-native";
 import { Avatar, Input, Icon, IconButton, CheckIcon,Checkbox } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -14,12 +14,13 @@ import { styles } from "./Form.styles";
 const groupController = new Group();
 
 export function Form(props) {
+
   const { usersId } = props;
   const navigation = useNavigation();
   const { accessToken, user } = useAuth();
 
   const [isChecked, setIschecked] = useState(false);
- // const txtLlave = useRef();
+
 
   const formik = useFormik({
     initialValues: initialValues() ,
@@ -28,6 +29,7 @@ export function Form(props) {
     onSubmit: async (formValue) => {
       try {
         const { name, image, llave } = formValue;
+        
         await groupController.create(
           accessToken,
           user._id,

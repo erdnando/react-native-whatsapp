@@ -13,13 +13,16 @@ import { styles } from "./Item.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
-import * as statex$ from '../../../../state/local'
+import * as statex$ from '../../../../state/local';
+import { GET_STATE_ALLMESSAGESBYID } from '../../../../hooks/useDA';
+
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 
 
 export function Item(props) {
+
   const { group, upGroupChat } = props;
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
@@ -29,6 +32,7 @@ export function Item(props) {
   const navigation = useNavigation();
 
   useEffect(() => {
+
     (async () => {
       try {
         const totalMessages = await groupMessageController.getTotal(
@@ -103,8 +107,8 @@ export function Item(props) {
 
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
-    console.log("new cypher message:::item");
-    console.log(newMsg);
+    //console.log("new cypher message:::item");
+   // console.log(newMsg);
 
     if (newMsg.group === group._id) {
       if (newMsg.user._id !== user._id) {
@@ -124,20 +128,36 @@ export function Item(props) {
 
   const  openGroup = async () => {
     console.log("openning group.."+group._id );
+
+    let resAux=null;
+    await GET_STATE_ALLMESSAGESBYID(group._id).then(result =>{
+          resAux=result.rows._array;
+          console.log("datos del grupo", group._id);
+          
+          console.log(resAux);
+          console.log("llave del grupo:"+ group._id + ":::" + resAux[0]?.llave);
+          statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
+
+         
+        
+      }); 
+
+
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo });
   };
 
   return (
     <TouchableOpacity style={styles.content} onPress={openGroup}>
-      <Avatar
-        bg="cyan.500"
+
+      {/*Logo del grupo*/}
+      <Avatar  bg="cyan.500"
         size="lg"
         marginRight={3}
         style={styles.avatar}
-        source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+        source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }} 
       />
 
       <View style={styles.infoContent}>
@@ -172,23 +192,29 @@ export function Item(props) {
             </View>
           ) : null}
 
-           {/*Miembros en un grupo*/}
+           {/*Icono del tipo de grupo, 1 miembro, varios miembro o cerrado**/}
             <View >
            
-              { totalMembers> 1 ? (
+              { group?.tipo=="cerrado" ? (
+                <Icon
+                as={MaterialCommunityIcons}
+                name={"key"}
+                color={"#646464"}
+                size={25}
+              />
+                ) : totalMembers > 1 ? (
                 <Icon
                 as={MaterialCommunityIcons}
                 name={"account-group"}
                 color={"#646464"}
                 size={25}
-              />
-                ) : 
-                <Icon
+              /> ) :
+              <Icon
                 as={MaterialCommunityIcons}
                 name={"account"}
                 color={"#646464"}
                 size={25}
-              />
+              /> 
               
               }
             </View>
@@ -198,6 +224,7 @@ export function Item(props) {
 
 
       </View>
+
     </TouchableOpacity>
   );
 }

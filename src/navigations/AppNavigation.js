@@ -67,9 +67,7 @@ export function AppNavigation() {
           component={GroupProfileScreen}
           options={{ headerShown: true,
             headerLeft: () => (
-              
               <IconButton icon={<ChevronLeftIcon />} padding={0} marginRight={5} onPress={regresar} />
-              
             ),
             title: "Info. del grupo", }}
         />
@@ -81,7 +79,7 @@ export function AppNavigation() {
         <Stack.Screen
           name={screens.global.changeNameGroupScreen}
           component={ChangeNameGroupScreen}
-          options={{ title: "Cambiar nombre del grupo" }}
+          options={{ title: "Cambiar datos del grupo" }}
         />
         <Stack.Screen
           name={screens.global.cameraScreen}

@@ -10,6 +10,7 @@ import { styles } from "./Info.styles";
 const groupController = new Group();
 
 export function Info(props) {
+
   const { group, setGroup } = props;
   const { accessToken } = useAuth();
   const navigation = useNavigation();
@@ -43,23 +44,25 @@ export function Info(props) {
     navigation.navigate(screens.global.changeNameGroupScreen, {
       groupId: group._id,
       groupName: group.name,
+      tipo: group.tipo,
     });
   };
 
   return (
     <View style={styles.content}>
-      <Pressable >
+     
         <Avatar
           bg="cyan.500"
           size="xl"
           source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
         />
-      </Pressable>
-
-      <Text style={styles.name} onPress={openChangeNameGroup}>
+     
+     <Pressable style={styles.contentEdit} onPress={openChangeNameGroup} >
+      <Text style={styles.name} >
         {group.name} <InfoIcon />
       </Text>
-      <Text style={styles.type}>Grupo</Text>
+      <Text style={styles.type}>(Presione para editar)</Text>
+      </Pressable>
     </View>
   );
 }

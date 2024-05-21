@@ -4,12 +4,16 @@ import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBY
 export class Group {
 
   async create(accessToken, creatorId, usersId, name, image, llave) {
+
     try {
+
+      
       const formData = new FormData();
       formData.append("name", name);
       formData.append("image", image);
       formData.append("creator", creatorId);
       formData.append("participants", JSON.stringify([...usersId, creatorId]));
+      formData.append("tipo", llave!="" ? "cerrado":"abierto");
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}`;
       const params = {
@@ -33,9 +37,9 @@ export class Group {
       console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo")
       if(llave !=""){
         //persist locally into STATE_ALLMESSAGES table, locally by GroupId
-        ADD_STATE_ALLMESSAGES( '', result._id, llave );
+        ADD_STATE_ALLMESSAGES( '', result._id, llave, result.tipo );
       }else{
-        ADD_STATE_ALLMESSAGES( '', result._id, '' );
+        ADD_STATE_ALLMESSAGES( '', result._id, '', result.tipo );
       }
 
       return result;
@@ -52,6 +56,7 @@ export class Group {
       //formData.append("image", image);
       formData.append("creator", creatorId);
       formData.append("participants", JSON.stringify([...usersId, creatorId]));
+      formData.append("tipo","abierto");
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUPAUTO}`;
       const params = {
@@ -72,7 +77,7 @@ export class Group {
       if (response.status !== 201) throw result;
 
       console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo auto")
-      ADD_STATE_ALLMESSAGES( '', result._id, '' );
+      ADD_STATE_ALLMESSAGES( '', result._id, '','abierto' );
 
       return result;
     } catch (error) {
@@ -146,9 +151,16 @@ export class Group {
 
   async update(accessToken, groupId, data) {
     try {
+      console.log("data update grupo")
+      console.log(data)
+
       const formData = new FormData();
       if (data.file) formData.append("image", data.file);
       if (data.name) formData.append("name", data.name);
+
+      console.log("formData update grupo")
+      console.log(formData)
+      //if(data.tipo=="cerrado")formData.append("tipo", data.tipo);
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}/${groupId}`;
       const params = {

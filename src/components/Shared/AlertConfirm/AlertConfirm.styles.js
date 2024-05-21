@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
   header: {
-    backgroundColor: "#171717",
-    borderBottomColor: "#171717",
+    backgroundColor: "#0891b2",
+    borderBottomColor: "#0891b2",
   },
   titleText: {
     color: "#fff",
@@ -11,18 +11,18 @@ export const styles = new StyleSheet.create({
     fontSize: 16,
   },
   body: {
-    backgroundColor: "#171717",
+    backgroundColor: "#f9f4f4",
   },
   messageText: {
-    color: "#fff",
-    opacity: 0.6,
+    color: "black",
+    opacity: 0.9,
   },
   footer: {
-    backgroundColor: "#171717",
-    borderTopColor: "#171717",
+    backgroundColor: "#f9f4f4",
+    borderTopColor: "#f9f4f4",
   },
   cancel: {
-    color: "#fff",
-    opacity: 0.6,
+    color: "black",
+    opacity: 1,
   },
 });

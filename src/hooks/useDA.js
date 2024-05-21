@@ -3,7 +3,7 @@ import * as SQLite from 'expo-sqlite/legacy';
 //import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db03.db');
+const db = SQLite.openDatabase('db05.db');
 
 
 /*  export  async function loadDB(){
@@ -167,7 +167,7 @@ export  function CREATE_STATE_ALLMESSAGES() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_ALLMESSAGES (valor TEXT, groupId TEXT, llave TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_ALLMESSAGES (valor TEXT, groupId TEXT, llave TEXT, tipo TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
   });
@@ -195,12 +195,12 @@ export  function UPDATE_STATE_ALLMESSAGES_LLAVE(llave, groupId) {
   });    
 }
 
-export  function ADD_STATE_ALLMESSAGES(valor,groupId,llave) {
+export  function ADD_STATE_ALLMESSAGES(valor,groupId,llave, tipo) {
 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql('INSERT INTO STATE_ALLMESSAGES (valor,groupId,llave) values(?,?,?)', [valor,groupId,llave], (_, result) => resolve(result), (_, error) => reject(error) );
+        tx.executeSql('INSERT INTO STATE_ALLMESSAGES (valor,groupId,llave,tipo) values(?,?,?,?)', [valor,groupId,llave,tipo], (_, result) => resolve(result), (_, error) => reject(error) );
       }
     );
   });    
@@ -212,7 +212,7 @@ export  function GET_STATE_ALLMESSAGESBYID(groupId) {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("SELECT valor, llave, groupId  FROM STATE_ALLMESSAGES WHERE groupId=?;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
+        tx.executeSql("SELECT valor, llave, groupId,tipo  FROM STATE_ALLMESSAGES WHERE groupId=?;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
       }
     );
   });     
@@ -223,7 +223,7 @@ export  function GET_STATE_ALLMESSAGES() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("SELECT valor, llave, groupId  FROM STATE_ALLMESSAGES;", [], (_, result) => resolve(result),(_, error) => reject(error) );
+        tx.executeSql("SELECT valor, llave, groupId, tipo  FROM STATE_ALLMESSAGES;", [], (_, result) => resolve(result),(_, error) => reject(error) );
       }
     );
   });     

@@ -49,7 +49,6 @@ export function AuthProvider(props) {
           CREATE_STATE_ALLGROUPS();//ok
           CREATE_STATE_ALLMESSAGES();//ok
           ADD_STATE_ALLGROUPS("ggg")
-         // ADD_STATE_ALLMESSAGES("mmm")
        
 
      
@@ -81,7 +80,8 @@ export function AuthProvider(props) {
      const idApp = uuid;//Constants.installationId;
      //await authController.removeTokens();
 
-     console.log("Login inicial")
+     console.log("Login user:")
+     console.log(idApp)
      console.log(statex$.default.isConnected.get())
      const userRegistrado = await authController.login(idApp, idApp );
 

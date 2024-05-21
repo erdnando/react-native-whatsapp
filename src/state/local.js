@@ -31,6 +31,7 @@ configureObservablePersistence({
 
 const state$ = observable({
   isConnected:true,
+  llaveGrupoSelected:"",
   AUTHLOGIN:{},
   user:[{
      _id :"0",

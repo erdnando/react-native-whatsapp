@@ -1,8 +1,9 @@
 import * as Yup from "yup";
 
-export function initialValues(name) {
+export function initialValues(name, llave) {
   return {
     name,
+    llave
   };
 }
 

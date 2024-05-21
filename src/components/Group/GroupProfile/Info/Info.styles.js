@@ -4,16 +4,23 @@ export const styles = new StyleSheet.create({
   content: {
     alignItems: "center",
   },
+  contentEdit: {
+    alignItems: "center",
+    backgroundColor:'white',
+    opacity:0.9,
+    borderRadius:8,
+    padding:4
+  },
   name: {
-    color: "#fff",
-    fontSize: 26,
+    color: "black",
+    fontSize: 24,
     fontWeight: "bold",
     marginTop: 20,
   },
   type: {
-    color: "#fff",
-    fontSize: 16,
+    color: "black",
+    fontSize: 14,
     marginTop: 10,
-    opacity: 0.6,
+    opacity: 0.9,
   },
 });

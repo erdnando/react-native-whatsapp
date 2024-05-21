@@ -20,7 +20,7 @@ const groupController = new Group();
 
 export function GroupForm(props) {
 
-  const { groupId } = props;
+  const { groupId, tipo } = props;
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const { accessToken,user } = useAuth();
   let [tipoCifrado, setTipoCifrado] = useState("AES");
@@ -585,11 +585,11 @@ export function GroupForm(props) {
         console.log("=======================================")
         //if replyMessage is null, then it's a normal message
         //else it's a reply
-        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage );
+        await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, tipo );
        }else{
         //edicion de mensaje
         setIdMessage("");
-        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage );
+        await groupMessageController.sendTextEditado(accessToken , groupId , formValue.message , tipoCifrado,idMessage, tipo );
        }
        setFocusInput(false);
        setReplyMessage(null);

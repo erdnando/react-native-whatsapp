@@ -27,7 +27,7 @@ export function GroupScreen() {
     
   });
 
-  const { params: { groupId }, } = useRoute();
+  const { params: { groupId, tipo }, } = useRoute();
   const { accessToken } = useAuth();
   const [messages, setMessages] = useState(null);
 
@@ -58,10 +58,10 @@ export function GroupScreen() {
                      // console.log("decifrando mensajes");
                       unlockedMessages.map((msg) => {
                         if(msg.type=="TEXT"){
-                            msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                            msg.message = Decrypt(msg.message,msg.tipo_cifrado,tipo);
                             
                             if(msg.email_replied != null){
-                              msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+                              msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied,tipo);
                             }
                         }
                        
@@ -162,14 +162,14 @@ export function GroupScreen() {
           let resAux=null;
           await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
                 resAux=result.rows._array;
-                console.log("resAux.length grupos");
+                console.log("resAux.length grupos????????");
                 console.log(resAux.length);
                 console.log(resAux);
 
                 if(resAux.length==0){
                   //add it
                   console.log("ADD_STATE_ALLMESSAGES " + groupId);
-                  ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'');
+                  ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'','abierto');
                 }else{
                   console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
                   UPDATE_STATE_ALLMESSAGES(JSON.stringify(response), groupId);
@@ -218,12 +218,14 @@ export function GroupScreen() {
             unlockedMessages.map((msg) => {
       
               if(msg.type=="TEXT"){
-                msg.message = Decrypt(msg.message,msg.tipo_cifrado);
+                console.log("========texto=======================")
+                console.log(msg);
+                msg.message = Decrypt(msg.message,msg.tipo_cifrado, tipo);
                 //console.log("========texto=======================")
                // console.log(msg);
 
                 if(msg.email_replied != null){
-                  msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+                  msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
                 }
               }
 
@@ -232,15 +234,7 @@ export function GroupScreen() {
                     msg.message =msg.message;
                     console.log(msg);
               }
-              /*else if(msg.type=="FILE"){
-                console.log("========file=======================")
-                msg.message = "images/cryptedImagex.png";
-                console.log(msg.message);
-              }*/
-              /*else{
-                console.log("========imagen=======================")
-                console.log(msg.message);
-              }*/
+             
             });
             setMessages([]);
             setMessages(unlockedMessages);
@@ -273,9 +267,6 @@ export function GroupScreen() {
       unreadMessagesController.setTotalReadMessages(groupId, response.total);
     };
    //=================================================================================
-
-
-  
   };
 
   //when newMessage is required, call this instruction
@@ -301,7 +292,7 @@ export function GroupScreen() {
               console.log(JSON.stringify(response))
               UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
               }
-          } catch (error) {
+      } catch (error) {
         
       }
 //==========================================================     
@@ -310,16 +301,16 @@ export function GroupScreen() {
     //============Always decifra mensaje======================
   
     if(msg.type=="TEXT"){
-      msg.message=Decrypt(msg.message, msg.tipo_cifrado);
+      msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
 
       if(msg.email_replied != null){
-        msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied);
+        msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
 
         //find message original and decryp it on message array
         try{
           messages.map((msgx) => {
 
-            if( Decrypt(msgx.message,msgx.tipo_cifrado) == msg.message_replied){
+            if( Decrypt(msgx.message,msgx.tipo_cifrado, tipo) == msg.message_replied){
               msgx.message = msg.message_replied;
             }
            
@@ -340,15 +331,8 @@ export function GroupScreen() {
       await sound.playAsync();
       
     }
-    /*if(msg.type=="FILE"){
-      msg.message = "images/cryptedImagex.png";
-    }*/
+   
     //==================================================
-
-
-
-
-
       const cifrados = await authController.getCifrado(); 
 
       if(cifrados=="SI"){
@@ -362,17 +346,12 @@ export function GroupScreen() {
       }
      
       setMessages([...messages, msg]);
-
-     
     })();
 
-
-   
   };
 
   if (!messages) return <LoadingScreen />;
 
-  
 
   return (
     <>
@@ -380,7 +359,7 @@ export function GroupScreen() {
 
       <View style={{ flex: 1 }}>
         <ListMessages messages={messages} />
-        <GroupForm groupId={groupId} />
+        <GroupForm groupId={groupId} tipo={tipo} />
       </View>
 
     </>

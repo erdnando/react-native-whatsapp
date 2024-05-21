@@ -11,6 +11,7 @@ export function Search(props) {
   const onSearch = (text) => {
     const resultSearch = data.filter(createFilter(text, KEYS_TO_FILTERS));
 
+    console.log(resultSearch)
     if(text.trim() ==""){
       setData([]);
     }else{
@@ -22,7 +23,7 @@ export function Search(props) {
   return (
     <View style={styles.content}>
       <Input
-        placeholder="Buscar"
+        placeholder="Ingrese el ID del participante"
         onChangeText={onSearch}
         style={styles.input}
         variant="unstyled"
