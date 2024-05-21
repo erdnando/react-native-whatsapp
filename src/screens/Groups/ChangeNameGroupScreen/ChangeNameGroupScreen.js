@@ -19,12 +19,23 @@ export function ChangeNameGroupScreen() {
 
   const navigation = useNavigation();
   const { params } = useRoute();
-  const { accessToken } = useAuth();
+  const { accessToken, user } = useAuth();
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [nombreG, setNombreG] = useState('');
   const [nuevaLlaveG, setNuevaLlaveG] = useState('');
+  const [isGroupCreator, setIsGroupCreator] = useState(false);
 
-
+  useEffect(() => {
+    
+    console.log("Datos de usuarios")
+    console.log(user._id)
+    console.log(params.creator)
+    if(user._id === params.creator){
+      console.log("Bienvenido creator del grupo")
+      setIsGroupCreator(true)
+    }
+  }, [])
+  
 
 
   const openCloseAdvertencia = () => setShowAdvertencia((prevState) => !prevState);
@@ -130,14 +141,17 @@ export function ChangeNameGroupScreen() {
         style={[styles.input, formik.errors.name && styles.inputError]}
       />
 
-      <Input display={ params?.tipo=="cerrado" ? 'flex': 'none'}
-        placeholder="Nueva llave de cifrado del grupo"
-        variant="unstyled"
-        multiline={true}
-        value={formik.values.llave}
-        onChangeText={(text) => formik.setFieldValue("llave", text)}
-        style={[styles.input, formik.errors.llave && styles.inputError]}
-      />
+      <View display={isGroupCreator ? 'flex': 'none'} style={{width:'100%', marginTop:20}}>
+        <Input display={ params?.tipo=="cerrado" ? 'flex': 'none'}
+                placeholder="Nueva llave de cifrado del grupo"
+                variant="unstyled"
+                multiline={true}
+                value={formik.values.llave}
+                onChangeText={(text) => formik.setFieldValue("llave", text)}
+                style={[styles.input, formik.errors.llave && styles.inputError]}
+              />
+      </View>
+     
 
       <Button
         onPress={formik.handleSubmit}

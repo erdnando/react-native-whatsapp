@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GroupMessage, UnreadMessages } from "../../../../api";
+import { GroupMessage, UnreadMessages,Auth } from "../../../../api";
 import { useAuth } from "../../../../hooks";
 import { ENV, screens, socket } from "../../../../utils";
 import { styles } from "./Item.styles";
@@ -19,7 +19,7 @@ import { GET_STATE_ALLMESSAGESBYID } from '../../../../hooks/useDA';
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
-
+const authController = new Auth();
 
 export function Item(props) {
 
@@ -33,8 +33,11 @@ export function Item(props) {
 
   useEffect(() => {
 
+   
     (async () => {
       try {
+       
+
         const totalMessages = await groupMessageController.getTotal(
           accessToken,
           group._id
@@ -127,14 +130,22 @@ export function Item(props) {
   };
 
   const  openGroup = async () => {
+
     console.log("openning group.."+group._id );
+    console.log("_id creator group.."+group.creator._id );
+    console.log("tipo group.."+group.tipo );
+
+    if(group.tipo=="cerrado"){
+      await authController.setCifrado("SI");
+    }
+    
 
     let resAux=null;
     await GET_STATE_ALLMESSAGESBYID(group._id).then(result =>{
           resAux=result.rows._array;
           console.log("datos del grupo", group._id);
           
-          console.log(resAux);
+          //console.log(resAux);
           console.log("llave del grupo:"+ group._id + ":::" + resAux[0]?.llave);
 
           if(resAux[0]?.llave==""){
@@ -143,7 +154,8 @@ export function Item(props) {
             statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
           }
 
-         
+         console.log("Llave:")
+         console.log(statex$.default.llaveGrupoSelected.get())
         
       }); 
 
@@ -153,6 +165,8 @@ export function Item(props) {
 
     navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo });
   };
+
+
 
   return (
     <TouchableOpacity style={styles.content} onPress={openGroup}>
@@ -168,6 +182,7 @@ export function Item(props) {
       <View style={styles.infoContent}>
         <View style={styles.info}>
           <Text style={styles.name}>{group.name}</Text>
+         
           <Text style={styles.messagelista} numberOfLines={2}>
             <Text>
               {lastMessage

@@ -212,7 +212,7 @@ export  function GET_STATE_ALLMESSAGESBYID(groupId) {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("SELECT valor, llave, groupId,tipo  FROM STATE_ALLMESSAGES WHERE groupId=?;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
+        tx.executeSql("SELECT valor, llave, groupId,tipo  FROM STATE_ALLMESSAGES WHERE groupId=? LIMIT 1;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
       }
     );
   });     

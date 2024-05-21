@@ -23,6 +23,7 @@ export function Form(props) {
 
 
   const formik = useFormik({
+    
     initialValues: initialValues() ,
     validationSchema: !isChecked ? validationSchema(): validationSchemaLlave(),
     validateOnChange: false,
@@ -108,13 +109,18 @@ export function Form(props) {
         onChangeText={(text) => formik.setFieldValue("name", text)}
         style={[styles.input, formik.errors.name && styles.inputError]}
       />
+ 
 
-      {/*<View style={{width:'100%', marginTop:10, marginBottom:10}}>
+    {/*checkbox grupo uno a uno*/}
+      <View style={{width:'100%', marginTop:10, marginBottom:10}}>
+
         <Checkbox shadow={2} size="lg" style={{}}  isChecked={isChecked}  onChange={() => handleTipoGrupoChange()} value={isChecked} aria-label={"xxxxxx"}
         icon={<Icon style={{transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }]  }} as={<MaterialCommunityIcons name="key" />}  />}    >
+
           <Text style={{color:'white'}}>Grupo uno a uno</Text>
+
         </Checkbox>
-  </View>*/}
+      </View>
 
       <Input display = {!isChecked ? "none":"flex"}
         maxLength={150}

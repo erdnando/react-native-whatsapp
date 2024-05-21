@@ -41,10 +41,13 @@ export function Info(props) {
   };
 
   const openChangeNameGroup = () => {
+    console.log("group detail::::")
+    console.log(group)
     navigation.navigate(screens.global.changeNameGroupScreen, {
       groupId: group._id,
       groupName: group.name,
       tipo: group.tipo,
+      creator: group.creator
     });
   };
 

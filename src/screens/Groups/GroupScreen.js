@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View } from "native-base";
+import { View, Fab, Icon } from "native-base";
 import { useRoute } from "@react-navigation/native";
 import { GroupMessage, UnreadMessages,Auth } from "../../api";
 import { useAuth } from "../../hooks";
@@ -13,6 +13,7 @@ import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
 import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -359,6 +360,10 @@ export function GroupScreen() {
 
       <View style={{ flex: 1 }}>
         <ListMessages messages={messages} />
+
+        <Fab renderInPortal={false} shadow={2}   bottom={120} size="sm" 
+             icon={<Icon color="white" as={MaterialCommunityIcons} name="key" size="4" />} label="Su llave" />
+
         <GroupForm groupId={groupId} tipo={tipo} />
       </View>
 

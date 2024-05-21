@@ -41,7 +41,7 @@ export function Participants(props) {
 
   return (
     <View style={styles.content}>
-      <Text style={styles.title}>{size(participants)} participantes</Text>
+      <Text style={styles.title}>{size(participants)} participante(s)</Text>
       <View style={styles.list}>
         <TouchableOpacity
           style={styles.participant}

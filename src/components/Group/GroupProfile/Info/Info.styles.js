@@ -13,7 +13,7 @@ export const styles = new StyleSheet.create({
   },
   name: {
     color: "black",
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     marginTop: 20,
   },
