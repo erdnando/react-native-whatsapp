@@ -136,7 +136,12 @@ export function Item(props) {
           
           console.log(resAux);
           console.log("llave del grupo:"+ group._id + ":::" + resAux[0]?.llave);
-          statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
+
+          if(resAux[0]?.llave==""){
+            statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0")
+          }else{
+            statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
+          }
 
          
         

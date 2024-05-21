@@ -9,7 +9,7 @@ import { initialValues, validationSchema } from "./ChangeNameGroupScreen.form";
 import { styles } from "./ChangeNameGroupScreen.styles";
 import { AlertConfirm } from "../../../components/Shared";
 import { UPDATE_STATE_ALLMESSAGES_LLAVE } from '../../../hooks/useDA';
-import { DecryptWithLlave } from "../../../utils";
+import { Decrypt, DecryptWithLlave } from "../../../utils";
 import * as statex$ from '../../../state/local';
 
 const groupController = new Group();
@@ -57,7 +57,7 @@ export function ChangeNameGroupScreen() {
       
             if(msg.type=="TEXT"){
               //decrypt message
-              msg.message = DecryptWithLlave(msg.message, msg.tipo_cifrado, statex$.default.llaveGrupoSelected.get());
+              msg.message = Decrypt(msg.message, msg.tipo_cifrado), //DecryptWithLlave(msg.message, msg.tipo_cifrado, statex$.default.llaveGrupoSelected.get());
               console.log("mensaje decifrado")
               console.log(msg.message)
               //apply new crypted message
@@ -67,14 +67,14 @@ export function ChangeNameGroupScreen() {
 
           });
 
-
+          statex$.default.llaveGrupoSelected.set(nuevaLlaveG)
           //update new key at local db
           await UPDATE_STATE_ALLMESSAGES_LLAVE(nuevaLlaveG, params.groupId).then(result =>{
 
             statex$.default.llaveGrupoSelected.set(nuevaLlaveG)
 
             console.log("actualizando nueva llave")
-        console.log(statex$.default.llaveGrupoSelected.get())
+            console.log(statex$.default.llaveGrupoSelected.get())
             navigation.goBack();
             navigation.goBack();
             navigation.goBack();

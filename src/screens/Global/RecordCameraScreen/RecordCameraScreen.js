@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { View, Text, Button, Pressable, Animated } from "react-native";
+import { View, Text, Pressable, Animated } from "react-native";
 import { IconButton, CloseIcon, Icon } from "native-base";
-import { Camera, FlashMode, CameraType } from "expo-camera/legacy";
+import { Camera } from "expo-camera/legacy";
 import useInterval from 'use-interval'
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -14,8 +14,6 @@ export function RecordCameraScreen() {
   const { params } = useRoute();
   const [video, setVideo] = useState(null);
   const [msgrecord, setMsgrecord] = useState("Grabar video");
- // const [flashOn, setFlashOn] = useState(false);
-  //const [cameraBack, setCameraBack] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
 
   const [seconds, setSeconds] = useState(0);
@@ -26,8 +24,6 @@ export function RecordCameraScreen() {
   const cameraRef = useRef();
 
   const onClose = () => navigation.goBack();
-  //const onOffFlash = () => setFlashOn((prevState) => !prevState);
-  //const changeTypeCamera = () => setCameraBack((prevState) => !prevState);
 
   const opacityx = useRef(new Animated.Value(1)).current; 
 
@@ -83,9 +79,10 @@ export function RecordCameraScreen() {
     
     //0` means compress for small size, and `1` means compress for maximum quality.
     //const options = { quality: 0.1,base64:true };//quality from 0.1 to 1.0
+   
     const options={
       maxDuration: 60, //seconds
-      quality: "720p",//"1080p",
+      quality: "480p",//"1080p",720p,480p
       mute: false,
       }
     const newVideo = await cameraRef.current.recordAsync(options).then((recordedVideo) => {

@@ -173,7 +173,7 @@ export function ItemImage(props) {
                             />
                           </View>
                     </Menu.Item>
-                    <Menu.Item  
+                    <Menu.Item display={isMe?'flex':'none'}  
                         onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
                           setMensajeEliminar(message);

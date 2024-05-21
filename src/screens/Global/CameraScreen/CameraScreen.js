@@ -22,7 +22,11 @@ export function CameraScreen() {
   const changeTypeCamera = () => setCameraBack((prevState) => !prevState);
 
   const captureImage = async () => {
-    const options = { quality: 1 };
+    const options = { quality: 0.2,skipProcessing: true };
+
+    //quality: 0.5, // Adjust this value (0.0 - 1.0) for picture quality
+    //skipProcessing: true, // Set to true to skip processing
+
     const newPhoto = await cameraRef.current.takePictureAsync(options);
     setPhoto(newPhoto);
   };

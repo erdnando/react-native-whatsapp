@@ -241,7 +241,7 @@ export function ItemFile(props) {
                           </View>
                     </Menu.Item>
                     {/*eliminar*/}
-                    <Menu.Item  
+                    <Menu.Item display={isMe?'flex':'none'}   
                         onPress={() => {
                           setMensajeEliminar(message);
                           setShowAdvertencia(true);
@@ -282,7 +282,7 @@ export function ItemFile(props) {
 
                 {/*any other file*/}
                 <View display={message?.message.toString().endsWith(".mp3") ? "none":"flex"}>
-                   <Icon display={isMe?"flex":"none"}
+                   <Icon 
                                 as={MaterialCommunityIcons}
                                 size="39"
                                 name="file"

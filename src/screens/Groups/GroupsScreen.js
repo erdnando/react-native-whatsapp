@@ -36,7 +36,7 @@ export function GroupsScreen() {
     console.log(statex$.default.isConnected.get())
 
     
-    if(!statex$.default.isConnected){
+    if(!statex$.default.isConnected.get()){
       Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
       [{  text: 'Ok',      } ]);
     }

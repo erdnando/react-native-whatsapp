@@ -104,7 +104,7 @@ export class GroupMessage {
 
   if(replyMessage!=null){
     console.log("cifrando 1")
-    replyMessage.message = Encrypt(replyMessage?.message, replyMessage?.tipo_cifrado, tipox );
+    replyMessage.message = Encrypt(replyMessage?.message, replyMessage?.tipo_cifrado );
   }
   if(message.startsWith("reenviado::")){
     reenviado=true;
@@ -124,7 +124,7 @@ export class GroupMessage {
         },
         body: JSON.stringify({
           group_id: groupId,
-          message: Encrypt(message,tipoCifrado, tipox),
+          message: Encrypt(message,tipoCifrado),
           tipo_cifrado: tipoCifrado,
           replied_message:replyMessage==null ? '' :replyMessage,
           forwarded:reenviado
@@ -261,7 +261,7 @@ export class GroupMessage {
           },
           body: JSON.stringify({
             group_id: groupId,
-            message: Encrypt(message,tipoCifrado, tipox),
+            message: Encrypt(message,tipoCifrado),
             tipo_cifrado: tipoCifrado,
             idMessage: idMessage
           }),
@@ -410,15 +410,16 @@ export class GroupMessage {
       console.log(params);
 
     try {
-      const response = await fetch(url, params);
-    
-      //console.log(response);
-      const result = await response.json();
-      console.log("result call api file");
-      console.log(result);
+          const response = await fetch(url, params);
+        
+          //console.log(response);
+          const result = await response.json();
+          console.log("result call api file");
+          console.log(result);
 
-      EventRegister.emit("loadingEvent",false);
-      if (response.status !== 201) throw result;
+          EventRegister.emit("loadingEvent",false);
+          if (response.status !== 201) throw result;
+
     } catch (error) {
       console.log("Error al enviar archivo al grupo")
       console.log(error);

@@ -14,22 +14,13 @@ crypto-js/evpkdf
 */
 
 
-const Encrypt = (word,tipo, tipox) =>{
+const Encrypt = (word,tipo) =>{
 
-  let qey="";
+  let qey=statex$.default.llaveGrupoSelected.get()
   let cifrado='';
 
-  if(tipox=="cerrado"){
-    qey = statex$.default.llaveGrupoSelected.get()
-    //console.log("Encryptando con llave::" + qey)
-    //cifrado=CryptoJS.AES.encrypt(word,qey).toString(); 
-    //return cifrado;
-  }
-  else{
-    qey="3rdn4nd03rdn4nd03rdn4nd03rdn4nd0";
-  }
-   
-  console.log("Encryptando con llave generica::" + qey)
+
+  console.log("Encryptando con llave::" + statex$.default.llaveGrupoSelected.get())
   switch (tipo) {
     case 'AES': cifrado=CryptoJS.AES.encrypt(word,qey).toString(); break;
     case '3DES': cifrado=CryptoJS.TripleDES.encrypt(word,qey).toString(); break;
@@ -42,22 +33,13 @@ const Encrypt = (word,tipo, tipox) =>{
   return cifrado;
 }
 //===================================================================================================
-const Decrypt = (word, tipo, tipox) =>{
+const Decrypt = (word, tipo) =>{
 
   let decifrado='';
-  let qey="";
+  let qey=statex$.default.llaveGrupoSelected.get()
 
-  if(tipox=="cerrado"){
-    qey = statex$.default.llaveGrupoSelected.get()
-    //console.log("Decriptando con llave::" + qey)
-   // decifrado=CryptoJS.AES.decrypt(word,qey).toString(CryptoJS.enc.Utf8);
-   // return decifrado;
-  }
-  else{
-    qey="3rdn4nd03rdn4nd03rdn4nd03rdn4nd0";
-  }
-  
-  console.log("Decriptando con llave generica::" + tipo + ":::" + qey + " word:::" + word)
+ 
+  console.log("Decriptando con llave generica::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
   
   switch (tipo) {
     case 'AES': decifrado=CryptoJS.AES.decrypt(word,qey).toString(CryptoJS.enc.Utf8); break;
