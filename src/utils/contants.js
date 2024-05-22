@@ -32,6 +32,7 @@ export const ENV = {
     GROUP_MESSAGE_FORWARD_IMAGE:"group/message/forward_image",
     GROUP_MESSAGE_FORWARD_FILE: "group/message/forward_file",
     GROUP_MESSAGE_EDIT: "group/message/edit",
+    GROUP_MESSAGE_CRYPT: "group/message/crypt",
     GROUP_MESSAGE_DELETE: "group/message/delete",
     GROUP_MESSAGE_IMAGE: "group/message/image",
     GROUP_MESSAGE_FILE: "group/message/file",

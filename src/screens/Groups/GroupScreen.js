@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { View, Fab, Icon } from "native-base";
-import { useRoute } from "@react-navigation/native";
+import { View, Fab,Modal, Icon, FormControl,Input,Button, Text } from "native-base";
+import {  Alert } from "react-native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { GroupMessage, UnreadMessages,Auth } from "../../api";
 import { useAuth } from "../../hooks";
 import { HeaderGroup } from "../../components/Navigation";
@@ -11,9 +12,11 @@ import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
@@ -21,6 +24,7 @@ const authController = new Auth();
 
 export function GroupScreen() {
 
+  const navigation = useNavigation();
   const unsubscribe = NetInfo.addEventListener(state => {
     //console.log('Connection type', state.type);
     console.log('Is connected?', state.isConnected);
@@ -28,11 +32,14 @@ export function GroupScreen() {
     
   });
 
-  const { params: { groupId, tipo }, } = useRoute();
-  const { accessToken } = useAuth();
+  const { params: { groupId, tipo, creator }, } = useRoute();
+  const { accessToken, user } = useAuth();
   const [messages, setMessages] = useState(null);
-
- 
+  const [isGroupCreator, setIsGroupCreator] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [nuevaLlave, setNuevaLlave] = useState("");
+  const [tituloModal, setTituloModal] = useState('');
+  const [ lblMensaje, setLblMensaje] = useState('')
 
   //EventListener:: decifra mensajes
   useEffect(() => {
@@ -351,6 +358,101 @@ export function GroupScreen() {
 
   };
 
+  const presentaModal = ()=>{
+    console.log("Aplicando llave")
+    
+
+    console.log("Datos")
+
+    console.log("llave actual")
+    console.log(statex$.default.llaveGrupoSelected.get())
+    console.log('user._id')
+    console.log(user._id)
+    console.log("groupId")
+    console.log(groupId)
+    console.log("creator._id")
+    console.log(creator._id)
+
+    if(user._id === creator._id){
+      console.log("Bienvenido creator del grupo")
+      setIsGroupCreator(true)
+      setTituloModal("Modifique la llave")
+      setLblMensaje('Asegurese de notificar al otro miembro del grupo del cambio para que puedan seguir interactuando');
+    }else{
+      setTituloModal("Ingrese la llave compartida")
+      setLblMensaje('Ingrese la llave y no la comparta con nadie')
+    }
+
+    setShowModal(true)
+
+    
+  }
+  const aplicaLLave =async ()=>{
+
+
+    if(nuevaLlave.length < 10){
+          Alert.alert ('Llave invalida. ','La llave es requerida y debe ser de al menos 50 caracteres',
+            [{  text: 'Ok',      } ]);
+
+            return;
+    }
+
+
+    console.log("Aplicando llave")
+    
+
+    console.log("Datos")
+
+    console.log("llave actual")
+    console.log(statex$.default.llaveGrupoSelected.get())
+    console.log('user._id')
+    console.log(user._id)
+    console.log("groupId")
+    console.log(groupId)
+    console.log("creator._id")
+    console.log(creator._id)
+   
+    if(user._id === creator._id){
+      //TODO update all group's messages by decrypting and crypt again with the new key
+      //=========================================================================================
+       //get all messages of the group
+       const respAllMessages = await groupMessageController.getAll(accessToken, groupId);
+
+       console.log("decifrando con llave vieja")
+       console.log(statex$.default.llaveGrupoSelected.get())
+
+       const unlockedMessages = respAllMessages.messages;
+         //loop group's messages and apply new crypted key, one by one
+         unlockedMessages.map(async (msg) => {
+     
+           if(msg.type=="TEXT"){
+             //decrypt message
+             msg.message = Decrypt(msg.message, msg.tipo_cifrado), //DecryptWithLlave(msg.message, msg.tipo_cifrado, statex$.default.llaveGrupoSelected.get());
+             console.log("mensaje decifrado")
+             console.log(msg.message)
+             //apply new crypted message
+
+             await groupMessageController.updateCifrados(accessToken, groupId, msg.message,msg.tipo_cifrado,msg._id, "cerrado", nuevaLlave);
+           }
+
+         });
+
+         UPDATE_STATE_GROUP_LLAVE(groupId, nuevaLlave);
+         statex$.default.llaveGrupoSelected.set(nuevaLlave);
+
+         
+      //=========================================================================================
+    }else{
+      //Set new key in state and update local db
+      UPDATE_STATE_GROUP_LLAVE(groupId, nuevaLlave);
+      statex$.default.llaveGrupoSelected.set(nuevaLlave);
+     
+    }
+    setShowModal(false)
+    //getAllMessages()
+    navigation.goBack();
+  }
+
   if (!messages) return <LoadingScreen />;
 
 
@@ -361,11 +463,60 @@ export function GroupScreen() {
       <View style={{ flex: 1 }}>
         <ListMessages messages={messages} />
 
-        <Fab renderInPortal={false} shadow={2}   bottom={120} size="sm" 
+        <Fab renderInPortal={false} shadow={2}   bottom={120} size="sm" onPress={presentaModal}
              icon={<Icon color="white" as={MaterialCommunityIcons} name="key" size="4" />} label="Su llave" />
 
         <GroupForm groupId={groupId} tipo={tipo} />
       </View>
+
+
+
+
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content maxWidth="400px">
+          <Modal.CloseButton />
+
+          <Modal.Header>{tituloModal}</Modal.Header>
+
+          <Modal.Body>
+            <FormControl>
+             
+              <Input w={{base: "100%", md: "25%"}} type="text" multiline={true} maxLength={200}
+               onChangeText={(text) => setNuevaLlave(text)}
+              InputRightElement={  <Icon as={<Icon as={MaterialCommunityIcons} name="key" 
+              style={{ 
+                fontSize:22,
+                top:4,
+                marginRight:6,
+                width:25
+              }} /> } size={8} mr="8" color="muted.400" />
+                                } placeholder="Su llave" />
+
+              <Text  style={{marginTop:10}}>{lblMensaje}</Text>
+
+            </FormControl>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                
+              setShowModal(false);
+            }}>
+                Cancelar
+              </Button>
+              <Button               
+              onPress={() => {
+                aplicaLLave();
+            }}>
+                Aplicar
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+
+
+        </Modal.Content>
+      </Modal>
 
     </>
   );

@@ -29,18 +29,18 @@ export class Group {
       console.log("Respuesta, id grupo creado;;;;;;;;")
       console.log(result._id)
       //let grupoCreado=result[0]._id;
-      console.log("llave")
-      console.log(llave)
+      //console.log("llave")
+      //console.log(llave)
       if (response.status !== 201) throw result;
 
 
-      console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo")
+      /*console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo")
       if(llave !=""){
         //persist locally into STATE_ALLMESSAGES table, locally by GroupId
         ADD_STATE_ALLMESSAGES( '', result._id, llave, result.tipo );
       }else{
         ADD_STATE_ALLMESSAGES( '', result._id, '', result.tipo );
-      }
+      }*/
 
       return result;
       

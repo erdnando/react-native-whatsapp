@@ -439,7 +439,7 @@ export class GroupMessage {
  
     EventRegister.emit("loadingEvent",true);
       try {
-        const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_EDIT}`;
+        const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_CRYPT}`;
         const params = {
           method: "PUT",
           headers: {

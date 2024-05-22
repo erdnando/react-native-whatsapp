@@ -8,7 +8,7 @@ import { styles } from "./Options.styles";
 import * as statex$ from '../../../state/local'
 import { Center, Flex, Icon, AlertDialog,Button ,TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { GET_STATE_ALLMESSAGES } from '../../../hooks/useDA';
+import { GET_STATE_ALLMESSAGES,GET_STATE_ALLGROUP_LLAVE } from '../../../hooks/useDA';
 
 const userController = new User();
 
@@ -63,7 +63,7 @@ export function Options(props) {
   
   const goDataView = async () => {
     //get data
-    await GET_STATE_ALLMESSAGES().then(result =>{
+    await GET_STATE_ALLGROUP_LLAVE().then(result =>{
       let response=result.rows._array;
       console.log(response)
       response =JSON.stringify(response);
@@ -101,13 +101,13 @@ export function Options(props) {
         </Flex>
       </TouchableOpacity>
 
-      {/*<TouchableOpacity style={styles.item} onPress={goDataView}>
+      <TouchableOpacity style={styles.item} onPress={goDataView}>
       <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
           <Center size={3}></Center>
           <Text style={styles.text}>Ver Data</Text>
         </Flex>
-</TouchableOpacity>*/}
+      </TouchableOpacity>
 
       {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}

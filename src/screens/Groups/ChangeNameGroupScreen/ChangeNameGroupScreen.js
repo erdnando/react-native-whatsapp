@@ -53,7 +53,7 @@ export function ChangeNameGroupScreen() {
       
 
        //update llave on local db
-       if(params.tipo=="cerrado" && nuevaLlaveG.length>1){
+       /*if(params.tipo=="cerrado" && nuevaLlaveG.length>1){
 
 
         //get all messages of the group
@@ -91,10 +91,12 @@ export function ChangeNameGroupScreen() {
             navigation.goBack();
           }); 
        }else{
+        
+       }*/
+
+       navigation.goBack();
         navigation.goBack();
         navigation.goBack();
-        navigation.goBack();
-       }
 
            
     } catch (error) {
@@ -141,7 +143,7 @@ export function ChangeNameGroupScreen() {
         style={[styles.input, formik.errors.name && styles.inputError]}
       />
 
-      <View display={isGroupCreator ? 'flex': 'none'} style={{width:'100%', marginTop:20}}>
+      {/*<View display={isGroupCreator ? 'flex': 'none'} style={{width:'100%', marginTop:20}}>
         <Input display={ params?.tipo=="cerrado" ? 'flex': 'none'}
                 placeholder="Nueva llave de cifrado del grupo"
                 variant="unstyled"
@@ -150,7 +152,7 @@ export function ChangeNameGroupScreen() {
                 onChangeText={(text) => formik.setFieldValue("llave", text)}
                 style={[styles.input, formik.errors.llave && styles.inputError]}
               />
-      </View>
+      </View>*/}
      
 
       <Button

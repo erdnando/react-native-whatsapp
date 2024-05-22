@@ -133,6 +133,9 @@ export function GroupsScreen() {
               //console.log(response)
               console.log(JSON.stringify(response))
               UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
+
+              //==============================================
+              
           }else{
               await GET_STATE_ALLGROUPS().then(result =>{
               response=result.rows._array;

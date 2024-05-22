@@ -14,7 +14,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local';
-import { GET_STATE_ALLMESSAGESBYID } from '../../../../hooks/useDA';
+import { GET_STATE_GROUP_LLAVE } from '../../../../hooks/useDA';
 
 
 const groupMessageController = new GroupMessage();
@@ -136,34 +136,25 @@ export function Item(props) {
     console.log("tipo group.."+group.tipo );
 
     if(group.tipo=="cerrado"){
-      await authController.setCifrado("SI");
-    }
-    
 
-    let resAux=null;
-    await GET_STATE_ALLMESSAGESBYID(group._id).then(result =>{
-          resAux=result.rows._array;
-          console.log("datos del grupo", group._id);
+        await authController.setCifrado("SI");
+
+        let resAux=null;
+        await GET_STATE_GROUP_LLAVE(group._id).then(result =>{
+              resAux=result.rows._array;
           
-          //console.log(resAux);
-          console.log("llave del grupo:"+ group._id + ":::" + resAux[0]?.llave);
+              statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
+        }); 
 
-          if(resAux[0]?.llave==""){
-            statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0")
-          }else{
-            statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
-          }
-
-         console.log("Llave:")
-         console.log(statex$.default.llaveGrupoSelected.get())
-        
-      }); 
-
-
+    }else{
+        statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
+    }
+      
+    console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
     
     setTotalUnreadMessages(0);
 
-    navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo });
+    navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo, creator: group.creator });
   };
 
 

@@ -3,7 +3,7 @@ import * as SQLite from 'expo-sqlite/legacy';
 //import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db05.db');
+const db = SQLite.openDatabase('db06.db');
 
 
 /*  export  async function loadDB(){
@@ -132,6 +132,7 @@ export  function CREATE_STATE_GETME() {
       );
     });    
   }
+
   export  function UPDATE_STATE_ALLGROUPS(valor) {
 
     return new Promise((resolve, reject) => {
@@ -160,6 +161,77 @@ export  function CREATE_STATE_GETME() {
       );
     });     
   }
+
+
+//==================================================================================================================================================================================
+
+export  function CREATE_STATE_GROUP_LLAVE() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_GROUP_LLAVE (groupId TEXT, llave TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+export  function ADD_STATE_GROUP_LLAVE(groupId, llave) {
+  
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('INSERT INTO STATE_GROUP_LLAVE (groupId, llave) values(?,?)', [groupId, llave], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function UPDATE_STATE_GROUP_LLAVE(groupId, llave) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE STATE_GROUP_LLAVE set llave=? WHERE groupId=?', [llave, groupId],  (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function GET_STATE_GROUP_LLAVE(groupId) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM STATE_GROUP_LLAVE where groupId=?;", [groupId], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
+
+export  function GET_STATE_ALLGROUP_LLAVE() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM STATE_GROUP_LLAVE;", [], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
+
 //==================================================================================================================================================================================
 
 export  function CREATE_STATE_ALLMESSAGES() {

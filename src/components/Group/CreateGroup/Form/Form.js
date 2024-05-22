@@ -10,6 +10,7 @@ import { useAuth } from "../../../../hooks";
 import { imageExpoFormat, ENV } from "../../../../utils";
 import { initialValues,validationSchemaLlave, validationSchema } from "./Form.form";
 import { styles } from "./Form.styles";
+import { ADD_STATE_GROUP_LLAVE } from '../../../../hooks/useDA'
 
 const groupController = new Group();
 
@@ -23,7 +24,7 @@ export function Form(props) {
 
 
   const formik = useFormik({
-    
+
     initialValues: initialValues() ,
     validationSchema: !isChecked ? validationSchema(): validationSchemaLlave(),
     validateOnChange: false,
@@ -31,7 +32,7 @@ export function Form(props) {
       try {
         const { name, image, llave } = formValue;
         
-        await groupController.create(
+        const grupoCreado =await groupController.create(
           accessToken,
           user._id,
           usersId,
@@ -39,6 +40,10 @@ export function Form(props) {
           image,
           llave
         );
+
+        //=====persist llave-group relation when a private group is created
+        console.log(grupoCreado)
+        ADD_STATE_GROUP_LLAVE(grupoCreado._id, llave);
 
         navigation.goBack();
       } catch (error) {

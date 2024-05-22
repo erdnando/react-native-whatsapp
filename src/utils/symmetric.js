@@ -39,7 +39,7 @@ const Decrypt = (word, tipo) =>{
   let qey=statex$.default.llaveGrupoSelected.get()
 
  
-  console.log("Decriptando con llave generica::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
+  console.log("Decriptando con llave::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
   
   switch (tipo) {
     case 'AES': decifrado=CryptoJS.AES.decrypt(word,qey).toString(CryptoJS.enc.Utf8); break;
