@@ -1,7 +1,7 @@
 import { useState, useEffect,useRef } from "react";
 import { View, Keyboard, Platform,TextInput,Text,Animated, Alert } from "react-native";
 import {  IconButton, Icon, Select,Actionsheet,useDisclose,Checkbox,VStack,Button,ScrollView,
-          useTheme,Center,Box,Heading,HStack,Spinner } from "native-base";
+          useTheme,Center,Box,Heading,HStack,Spinner, useToast } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFormik } from "formik";
 import { GroupMessage,Group } from "../../../api";
@@ -32,7 +32,7 @@ export function GroupForm(props) {
   const [forwardMessage, setForwardMessage] = useState(false);
   const [groups, setGroups] = useState(null);
   const [canForward, setCanForward] = useState(false);
-
+  const toast = useToast();
   
   // Refs for the audio
   const AudioRecorder = useRef(new Audio.Recording());
@@ -552,6 +552,7 @@ export function GroupForm(props) {
   
   //formik definition & onsubmit
   const formik = useFormik({
+
     initialValues: initialValues(),
     validationSchema: validationSchema(),
     validateOnChange: false,
@@ -560,6 +561,21 @@ export function GroupForm(props) {
       if(!statex$.default.isConnected.get()){
         Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
         [{  text: 'Ok',      } ]);
+
+        return;
+      }
+
+      if(formValue.message.trim().length==0){
+
+        toast.show({
+          placement: "top",
+          render: () => {
+            return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
+                  <Text style={{color:'white'}}>No puede enviar mensajes vacios!</Text>
+  
+                  </Box>;
+          }
+        });
 
         return;
       }
@@ -672,7 +688,7 @@ export function GroupForm(props) {
               onEndEditing={!formik.isSubmitting && formik.handleSubmit}
             />
             <IconButton display={showIconSendText ? 'flex':'none'}
-              icon={<Icon as={MaterialCommunityIcons} name="send-lock-outline"  /> }
+              icon={<Icon as={MaterialCommunityIcons} name="send"  /> }
               style={styles.iconSend}
               onPress={!formik.isSubmitting && formik.handleSubmit}
             />

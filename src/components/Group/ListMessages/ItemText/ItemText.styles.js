@@ -41,14 +41,14 @@ export const styled = (isMe) => {
       marginBottom:25
     },
     date: {
-      opacity: 0.6,
+      opacity: 1,
       color: "#fff",
       fontSize: 12,
       marginTop: 2,
       textAlign: "right",
     },
     dateEditado: {
-      opacity: 0.6,
+      opacity: 1,
       color: "black",
       fontSize: 12,
       marginTop: 2,

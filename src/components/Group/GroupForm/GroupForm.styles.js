@@ -60,7 +60,8 @@ export const styles = new StyleSheet.create({
   iconSend: {
     position: "relative",
     right:38,
-    color:'white'
+    color:'white',
+    opacity:1,
   },
   iconCrypto: {
     position: "absolute",

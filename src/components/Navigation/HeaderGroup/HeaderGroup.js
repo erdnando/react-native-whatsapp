@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { SafeAreaView, View, Text, Pressable, } from "react-native";
-import { IconButton, ChevronLeftIcon, Avatar,Icon } from "native-base";
+import { IconButton, ChevronLeftIcon, Avatar,Icon,useToast, Box } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { Group,User,Auth,GroupMessage } from "../../../api";
 import { useAuth } from "../../../hooks";
@@ -17,6 +17,7 @@ const groupMessageController = new GroupMessage();
 
 export function HeaderGroup(props) {
 
+
   const { groupId } = props;
   const navigation = useNavigation();
   const { accessToken } = useAuth();
@@ -26,6 +27,9 @@ export function HeaderGroup(props) {
   const [nip, setNip] = useState('');
   const [tituloModal, setTituloModal] = useState('Mensajes bloqueados por NIP');
   const [lock, setLock] = useState(true);
+
+  const toast = useToast();
+
 
   useEffect(() => {
 
@@ -93,6 +97,16 @@ export function HeaderGroup(props) {
       
       setTituloModal("NIP Incorrecto!");
       console.log("NIP Incorrecto");
+
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
+                <Text style={{color:'white'}}>NIP incorrecto!</Text>
+                 
+                </Box>;
+        }
+      }); 
     }
    
     

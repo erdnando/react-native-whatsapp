@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Fab,Modal, Icon, FormControl,Input,Button, Text } from "native-base";
+import { View, Fab,Modal, Icon, FormControl,Input,Button, Text, useToast, Box } from "native-base";
 import {  Alert } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { GroupMessage, UnreadMessages,Auth } from "../../api";
@@ -12,7 +12,7 @@ import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE,GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -40,6 +40,8 @@ export function GroupScreen() {
   const [nuevaLlave, setNuevaLlave] = useState("");
   const [tituloModal, setTituloModal] = useState('');
   const [ lblMensaje, setLblMensaje] = useState('')
+  const toast = useToast();
+  
 
   //EventListener:: decifra mensajes
   useEffect(() => {
@@ -63,17 +65,46 @@ export function GroupScreen() {
                     //console.log(unlockedMessages);
 
                     if(isCypher=="NO"){
-                     // console.log("decifrando mensajes");
-                      unlockedMessages.map((msg) => {
-                        if(msg.type=="TEXT"){
-                            msg.message = Decrypt(msg.message,msg.tipo_cifrado,tipo);
-                            
-                            if(msg.email_replied != null){
-                              msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied,tipo);
+                     //=========================================================================================
+                     let estatusLLave =true;
+                          unlockedMessages.map((msg) => {
+
+                            if(msg.type=="TEXT"){
+                                  //================================================================================
+                                    msg.message = Decrypt(msg.message,msg.tipo_cifrado,tipo);
+                                   console.log("->"+msg.message +"<-")
+                                    if(msg.message===""){
+                                      console.log("seteando mal decifrado")
+                                      estatusLLave=false
+                                      msg.message="Llave no valida ☠️"
+                                    }
+                                    
+                                    if(msg.email_replied != null){
+                                      msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied,tipo);
+
+                                      if(msg.message===""){
+                                        console.log("seteando mal decifrado")
+                                        msg.message="Llave no valida ☠️"
+                                        estatusLLave=false
+                                      }
+                                    }
+                                  //================================================================================
+                            }else{
+                                  //==================================================================================
+                                  console.log("msg.message imagen o  archivo")
+                                  console.log(estatusLLave)
+
+                                  if(estatusLLave==false){
+                                    msg.message="Llave no valida ☠️"
+                                  console.log("msg.message imagen o  archivo hay q mantenerlo encryptado")
+                                  }else
+                                  console.log(msg.message)
+                                  //todo bien con lo archivos
+                                  //==================================================================================
                             }
-                        }
-                       
-                      });
+                          
+                          });
+                      //=========================================================================================
                     }else{
                       unlockedMessages.map((msg) => {
                         if(msg.type=="IMAGE"){
@@ -391,8 +422,17 @@ export function GroupScreen() {
 
 
     if(nuevaLlave.length < 10){
-          Alert.alert ('Llave invalida. ','La llave es requerida y debe ser de al menos 50 caracteres',
-            [{  text: 'Ok',      } ]);
+         
+      toast.show({
+        placement: "top",
+        render: () => {
+          return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
+                <Text style={{color:'white'}}>La llave es requerida y debe ser de al menos 50 caracteres!</Text>
+                 
+                </Box>;
+        }
+      });
+
 
             return;
     }
@@ -443,8 +483,23 @@ export function GroupScreen() {
          
       //=========================================================================================
     }else{
-      //Set new key in state and update local db
-      UPDATE_STATE_GROUP_LLAVE(groupId, nuevaLlave);
+      //check if it exists, otherwise add it
+      let responsex=[];
+      await GET_STATE_GROUP_LLAVE(groupId).then(result =>{
+            responsex=result.rows._array;
+            console.log(responsex)
+            console.log(responsex.length)
+            //response =JSON.parse(response[0].valor);
+            if(responsex.length==0){
+                //Set new key in state and update local db
+                ADD_STATE_GROUP_LLAVE(groupId, nuevaLlave);
+            }else{
+                //Set new key in state and update local db
+                UPDATE_STATE_GROUP_LLAVE(groupId, nuevaLlave);
+            }
+      }); 
+
+     
       statex$.default.llaveGrupoSelected.set(nuevaLlave);
      
     }

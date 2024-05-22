@@ -1,5 +1,5 @@
 import { useState, useEffect,useCallback } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Avatar } from "native-base";
 import { isEmpty } from "lodash";
 import { DateTime } from "luxon";
@@ -133,6 +133,7 @@ export function Item(props) {
 
     console.log("openning group.."+group._id );
     console.log("_id creator group.."+group.creator._id );
+    console.log("user id conectado.."+user._id );
     console.log("tipo group.."+group.tipo );
 
     if(group.tipo=="cerrado"){
@@ -151,6 +152,12 @@ export function Item(props) {
     }
       
     console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
+
+
+    if(group.creator._id != user._id &&  statex$.default.llaveGrupoSelected.get() == undefined){
+          Alert.alert ('Grupo cerrado. ','Para poder acceder a los mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido. En caso contrario no podra ver los mensajes',
+          [{  text: 'Ok',      } ]);
+    }
     
     setTotalUnreadMessages(0);
 
