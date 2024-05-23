@@ -141,7 +141,7 @@ export function GroupForm(props) {
             await AudioRecorder.current.startAsync();
             SetIsRecording(true);
           } catch (error) {
-            console.log("Error on preparing audio obj")
+           // console.log("Error on preparing audio obj")
             console.log(error);
           }
         } else {

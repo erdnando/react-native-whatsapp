@@ -26,8 +26,8 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-      console.log("Respuesta, id grupo creado;;;;;;;;")
-      console.log(result._id)
+      //console.log("Respuesta, id grupo creado;;;;;;;;")
+      //console.log(result._id)
       //let grupoCreado=result[0]._id;
       //console.log("llave")
       //console.log(llave)
@@ -67,16 +67,16 @@ export class Group {
         body: formData,
       };
 
-      console.log("creacion automatica del grupo")
+     // console.log("creacion automatica del grupo")
       const response = await fetch(url, params);
-      console.log("response creacion automatica")
-      console.log(response)
+    //  console.log("response creacion automatica")
+    //  console.log(response)
 
       const result = await response.json();
 
       if (response.status !== 201) throw result;
 
-      console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo auto")
+     // console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo auto")
       ADD_STATE_ALLMESSAGES( '', result._id, '','abierto' );
 
       return result;
@@ -116,7 +116,7 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-      console.log(groupId);
+      //console.log(groupId);
       if (response.status !== 200) throw result;
 
       return result;
@@ -126,9 +126,9 @@ export class Group {
   }
 
   async exit(accessToken, groupId) {
-    console.log("Saliendo del grupo:::")
-    console.log(groupId)
-    console.log(accessToken)
+   // console.log("Saliendo del grupo:::")
+   // console.log(groupId)
+   // console.log(accessToken)
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_EXIT}/${groupId}`;
       const params = {
@@ -151,15 +151,15 @@ export class Group {
 
   async update(accessToken, groupId, data) {
     try {
-      console.log("data update grupo")
-      console.log(data)
+     // console.log("data update grupo")
+     // console.log(data)
 
       const formData = new FormData();
       if (data.file) formData.append("image", data.file);
       if (data.name) formData.append("name", data.name);
 
-      console.log("formData update grupo")
-      console.log(formData)
+     // console.log("formData update grupo")
+     // console.log(formData)
       //if(data.tipo=="cerrado")formData.append("tipo", data.tipo);
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}/${groupId}`;

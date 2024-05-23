@@ -8,10 +8,10 @@ import { useAuth } from "../../hooks";
 import { screens,MD5method } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
-import { EventRegister } from "react-native-event-listeners"; 
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
 import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS } from '../../hooks/useDA';
+
 
 
 const groupController = new Group();
@@ -20,7 +20,6 @@ const userController = new User();
 
 export function GroupsScreen() {
   
-  //const { createTableBitacora, selectTableBitacora } = useDB();
   const navigation = useNavigation();
   const { accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);
@@ -28,151 +27,151 @@ export function GroupsScreen() {
   const [totalMembers, setTotalMembers] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [nip, setNip] = useState("00000000");
-  //const [isConnected, setIsConected] = useState(false);
 
-  useEffect(() => {
-
-    console.log("statex$.default.isConnected.get()")
-    console.log(statex$.default.isConnected.get())
-
-    
-    if(!statex$.default.isConnected.get()){
-      Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-      [{  text: 'Ok',      } ]);
-    }
-    
-    //setIsConected(statex$.default.isConnected.get())
-  
-    async function validateInitialModal() {
-
-      const firtsTime=  await authController.getInitial();
-
-      if(firtsTime=="1"){
-        console.log("NIP modal");
-
-
-        const min = 1000; 
-        const max = 9999; 
-        const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
-
-        console.log("set nip:::::");
-        console.log(randomNumber);
-        console.log("accessToken:::::"+accessToken);
-
-        console.log("setShowModal:::::");
-        setNip("A"+randomNumber);
-       const cifrado =MD5method("A"+randomNumber).toString();
-
-        await userController.updateUser(accessToken, { nip: cifrado });
-        //hash nip
-        updateUser("nip", cifrado);
-        setShowModal(true);
-        
-
-       
-      }
-    }
-    validateInitialModal();
-   
-
-
-}, []);
-
-
-  useEffect(() => {
-
-    async function fetchData() {
-  
-    }
-    fetchData();
-
-    if(statex$.default.isConnected.get()){
-      navigation.setOptions({
-        headerRight: () => (
-          <IconButton
-            icon={<AddIcon />}
-            padding={0}
-            onPress={() => {
-             navigation.navigate(screens.tab.groups.createGroupScreen) 
-           }}
-          />
-        ),
-      });
-    }else{
-      navigation.setOptions({
-        headerRight: () => (
-          <IconButton
-            icon={<AddIcon />}
-            padding={0}
-            onPress={() => {
-              Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
-      [{  text: 'Ok',      } ]);
-            }}
-          />
-        ),
-      });
-    }
-    
-
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-
-        let response = null;
-
-        try {
-
-          //Get all GRUPOS!!!!
-          if(statex$.default.isConnected.get()){
-
-             response = await groupController.getAll(accessToken);
-
-              console.log("Persistiendo ADD_STATE_ALLGROUPS")
-              //console.log(response)
-              console.log(JSON.stringify(response))
-              UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
-
-              //==============================================
-              
-          }else{
-              await GET_STATE_ALLGROUPS().then(result =>{
-              response=result.rows._array;
-              response =JSON.parse(response[0].valor);
-              });
-          }
-
-          const result = response.sort((a, b) => {
-            return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
-          });
-
-          setGroups(result);
-          setGroupsResult(result);
-
-        } catch (error) {
-          console.error(error);
-        }
-      })();
-    }, [])
-  );
 
  
 
-  const upGroupChat = (groupId) => {
+    useEffect(() => {
 
-    const data = groupsResult;
-    const fromIndex = data.map((group) => group._id).indexOf(groupId);
-    const toIndex = 0;
-    const element = data.splice(fromIndex, 1)[0];
+      console.log("statex$.default.isConnected.get()")
+      console.log(statex$.default.isConnected.get())
+
+      
+      if(!statex$.default.isConnected.get()){
+        Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+        [{  text: 'Ok',      } ]);
+      }
+      
+    
+      async function validateInitialModal() {
+
+        const firtsTime=  await authController.getInitial();
+
+        if(firtsTime=="1"){
+          console.log("NIP modal");
+
+
+          const min = 1000; 
+          const max = 9999; 
+          const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
+
+          console.log("set nip:::::");
+          console.log(randomNumber);
+          console.log("accessToken:::::"+accessToken);
+
+          console.log("setShowModal:::::");
+          setNip("A"+randomNumber);
+        const cifrado =MD5method("A"+randomNumber).toString();
+
+          await userController.updateUser(accessToken, { nip: cifrado });
+          //hash nip
+          updateUser("nip", cifrado);
+          setShowModal(true);
+          
+
+        
+        }
+      }
+      validateInitialModal();
+    
+
+
+  }, []);
+
+
+    useEffect(() => {
+
+      async function fetchData() {
+    
+      }
+      fetchData();
+
+      if(statex$.default.isConnected.get()){
+        navigation.setOptions({
+          headerRight: () => (
+            <IconButton
+              icon={<AddIcon />}
+              padding={0}
+              onPress={() => {
+              navigation.navigate(screens.tab.groups.createGroupScreen) 
+            }}
+            />
+          ),
+        });
+      }else{
+        navigation.setOptions({
+          headerRight: () => (
+            <IconButton
+              icon={<AddIcon />}
+              padding={0}
+              onPress={() => {
+                Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+        [{  text: 'Ok',      } ]);
+              }}
+            />
+          ),
+        });
+      }
+      
+
+    }, []);
+
+    useFocusEffect(
+      useCallback(() => {
+        (async () => {
+
+          let response = null;
+
+          try {
+
+            //Get all GRUPOS!!!!
+            if(statex$.default.isConnected.get()){
+
+              response = await groupController.getAll(accessToken);
+
+                console.log("Persistiendo ADD_STATE_ALLGROUPS")
+                //console.log(response)
+                console.log(JSON.stringify(response))
+                UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
+
+                //==============================================
+                
+            }else{
+                await GET_STATE_ALLGROUPS().then(result =>{
+                response=result.rows._array;
+                response =JSON.parse(response[0].valor);
+                });
+            }
+
+            const result = response.sort((a, b) => {
+              return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+            });
+
+            setGroups(result);
+            setGroupsResult(result);
+
+          } catch (error) {
+            console.error(error);
+          }
+        })();
+      }, [])
+    );
+
    
-    data.splice(toIndex, 0, element);
-    setGroups([...data]);
-   
+    const upGroupChat = (groupId) => {
 
-  };
+      const data = groupsResult;
+      const fromIndex = data.map((group) => group._id).indexOf(groupId);
+      const toIndex = 0;
+      const element = data.splice(fromIndex, 1)[0];
+    
+      data.splice(toIndex, 0, element);
+      setGroups([...data]);
+    
 
-  if (!groupsResult) return <LoadingScreen />;
+    };
+
+    if (!groupsResult) return <LoadingScreen />;
 
   return (
     <View>
@@ -181,9 +180,7 @@ export function GroupsScreen() {
                   upGroupChat={upGroupChat}
       />
 
-
-
-<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
         <Modal.Content maxWidth="400px">
           <Modal.CloseButton />
 

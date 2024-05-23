@@ -23,7 +23,7 @@ export function Search(props) {
   return (
     <View style={styles.content}>
       <Input
-        placeholder="Ingrese el ID del participante"
+        placeholder="Ingrese el ID del canal"
         onChangeText={onSearch}
         style={styles.input}
         variant="unstyled"

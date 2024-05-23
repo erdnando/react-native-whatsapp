@@ -22,14 +22,14 @@ export class Auth {
         body: JSON.stringify({ email, password }),
       };
 
-      console.log("params registro")
-      console.log(params)
+      //console.log("params registro")
+      //console.log(params)
 
       const response = await fetch(url, params);
       const result = await response.json();
 
-      console.log("result registro")
-      console.log(result)
+      //console.log("result registro")
+      //console.log(result)
 
       if (response.status !== 201) throw result;
 
@@ -41,7 +41,7 @@ export class Auth {
 
   async login(email, password) {
 
-    console.log("isConnected - login")
+    //console.log("isConnected - login")
     console.log(statex$.default.isConnected.get())
     
 
@@ -56,20 +56,20 @@ export class Auth {
               body: JSON.stringify({ email, password }),
             };
 
-            console.log("login")
-            console.log(url)
-            console.log(params)
+            //console.log("login")
+            //console.log(url)
+           // console.log(params)
             const response = await fetch(url, params);
             const result = await response.json();
-            console.log("=======================================")
-            console.log("result login")
+            //console.log("=======================================")
+            //console.log("result login")
             
-            console.log(result)
+           // console.log(result)
 
             if (response.status !== 200) throw result;
 
-            console.log("Persistiendo ADD_STATE_AUTHLOGIN")
-            console.log(result)
+            //console.log("Persistiendo ADD_STATE_AUTHLOGIN")
+            //console.log(result)
             ADD_STATE_AUTHLOGIN(JSON.stringify(result))
 
             return result;
@@ -84,8 +84,8 @@ export class Auth {
         resp= result.rows._array;
       }); 
 
-      console.log("GET_STATE_AUTHLOGIN")
-      console.log(JSON.parse(resp[0].valor))
+      //console.log("GET_STATE_AUTHLOGIN")
+     // console.log(JSON.parse(resp[0].valor))
       return JSON.parse(resp[0].valor);
     }
   }

@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { Types } from 'mongoose';
 import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, 
   CREATE_STATE_ALLGROUPS,CREATE_STATE_ALLMESSAGES,CREATE_STATE_GROUP_LLAVE, 
-  ADD_STATE_ALLMESSAGES,ADD_STATE_ALLGROUPS } from '../hooks/useDA.js';
+  ADD_STATE_ALLGROUPS } from '../hooks/useDA.js';
   import { observable } from "@legendapp/state";
   import { observer } from "@legendapp/state/react";
   import * as statex$ from '../state/local.js'
@@ -189,6 +189,7 @@ export function AuthProvider(props) {
       setLoading(true);
 
       if(statex$.default.isConnected.get()){
+
         response = await userController.getMe(accessToken);
 
         console.log("Persistiendo ADD_STATE_GETME")
@@ -204,18 +205,14 @@ export function AuthProvider(props) {
       }); 
       }
       
-
-
-      
-
-
       setUser(response);
       setToken(accessToken);
 
       setLoading(false);
+
     } catch (error) {
-      console.error(error);
-      setLoading(false);
+         console.log(error);
+         setLoading(false);
     }
   };
 

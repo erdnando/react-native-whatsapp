@@ -26,10 +26,8 @@ export function GroupScreen() {
 
   const navigation = useNavigation();
   const unsubscribe = NetInfo.addEventListener(state => {
-    //console.log('Connection type', state.type);
     console.log('Is connected?', state.isConnected);
     statex$.default.isConnected.set(state.isConnected)
-    
   });
 
   const { params: { groupId, tipo, creator }, } = useRoute();
@@ -257,8 +255,8 @@ export function GroupScreen() {
             unlockedMessages.map((msg) => {
       
               if(msg.type=="TEXT"){
-                console.log("========texto=======================")
-                console.log(msg);
+               // console.log("========texto=======================")
+                //console.log(msg);
                 msg.message = Decrypt(msg.message,msg.tipo_cifrado, tipo);
                 //console.log("========texto=======================")
                // console.log(msg);
@@ -292,10 +290,6 @@ export function GroupScreen() {
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
-       
-
-
-
       } catch (error) {
         console.error(error);
       }
@@ -314,9 +308,9 @@ export function GroupScreen() {
     (async () => {
 
     console.log("identificando nuevo mensaje:::::")
-    console.log("===========================================")
-    console.log(msg);
-    console.log("===========================================")
+   // console.log("===========================================")
+   // console.log(msg);
+   // console.log("===========================================")
 
 
      //==========================================================
@@ -328,7 +322,7 @@ export function GroupScreen() {
               response = await groupMessageController.getAll(accessToken, groupId);
 
               console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
-              console.log(JSON.stringify(response))
+              //console.log(JSON.stringify(response))
               UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
               }
       } catch (error) {
@@ -336,9 +330,6 @@ export function GroupScreen() {
       }
 //==========================================================     
 
-
-    //============Always decifra mensaje======================
-  
     if(msg.type=="TEXT"){
       msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
 
@@ -377,7 +368,6 @@ export function GroupScreen() {
       if(cifrados=="SI"){
         //setCryptMessage(true);
         if(msg.type=="TEXT"){
-          console.log("cifrando 5")
           msg.message=Encrypt(msg.message,msg.tipo_cifrado);
         }else{ //img or filr
           msg.message = "images/cryptedImagex.png";
@@ -428,21 +418,15 @@ export function GroupScreen() {
         render: () => {
           return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
                 <Text style={{color:'white'}}>La llave es requerida y debe ser de al menos 50 caracteres!</Text>
-                 
                 </Box>;
         }
       });
 
-
-            return;
+      return;
     }
 
-
     console.log("Aplicando llave")
-    
-
     console.log("Datos")
-
     console.log("llave actual")
     console.log(statex$.default.llaveGrupoSelected.get())
     console.log('user._id')
@@ -453,7 +437,6 @@ export function GroupScreen() {
     console.log(creator._id)
    
     if(user._id === creator._id){
-      //TODO update all group's messages by decrypting and crypt again with the new key
       //=========================================================================================
        //get all messages of the group
        const respAllMessages = await groupMessageController.getAll(accessToken, groupId);
@@ -467,7 +450,7 @@ export function GroupScreen() {
      
            if(msg.type=="TEXT"){
              //decrypt message
-             msg.message = Decrypt(msg.message, msg.tipo_cifrado), //DecryptWithLlave(msg.message, msg.tipo_cifrado, statex$.default.llaveGrupoSelected.get());
+             msg.message = Decrypt(msg.message, msg.tipo_cifrado)
              console.log("mensaje decifrado")
              console.log(msg.message)
              //apply new crypted message
@@ -487,9 +470,7 @@ export function GroupScreen() {
       let responsex=[];
       await GET_STATE_GROUP_LLAVE(groupId).then(result =>{
             responsex=result.rows._array;
-            console.log(responsex)
-            console.log(responsex.length)
-            //response =JSON.parse(response[0].valor);
+
             if(responsex.length==0){
                 //Set new key in state and update local db
                 ADD_STATE_GROUP_LLAVE(groupId, nuevaLlave);
@@ -504,7 +485,7 @@ export function GroupScreen() {
      
     }
     setShowModal(false)
-    //getAllMessages()
+    
     navigation.goBack();
   }
 
@@ -518,7 +499,7 @@ export function GroupScreen() {
       <View style={{ flex: 1 }}>
         <ListMessages messages={messages} />
 
-        <Fab renderInPortal={false} shadow={2}   bottom={120} size="sm" onPress={presentaModal}
+        <Fab display={tipo=="cerrado"? 'flex':'none'} renderInPortal={false} shadow={2}   bottom={120} size="sm" onPress={presentaModal}
              icon={<Icon color="white" as={MaterialCommunityIcons} name="key" size="4" />} label="Su llave" />
 
         <GroupForm groupId={groupId} tipo={tipo} />

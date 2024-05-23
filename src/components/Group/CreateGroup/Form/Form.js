@@ -42,7 +42,7 @@ export function Form(props) {
         );
 
         //=====persist llave-group relation when a private group is created
-        console.log(grupoCreado)
+       // console.log(grupoCreado)
         ADD_STATE_GROUP_LLAVE(grupoCreado._id, llave);
 
         navigation.goBack();

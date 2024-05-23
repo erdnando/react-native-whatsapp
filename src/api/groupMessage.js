@@ -96,14 +96,14 @@ export class GroupMessage {
 
     EventRegister.emit("loadingEvent",true);
     let reenviado=false;
-    console.log("enviando msg:::::::::::::::::::::")
-    console.log(message);
-    console.log(tipoCifrado);
-    console.log(tipox);
+    //console.log("enviando msg:::::::::::::::::::::")
+   // console.log(message);
+   // console.log(tipoCifrado);
+   // console.log(tipox);
     //cifrando msg reenviado
 
   if(replyMessage!=null){
-    console.log("cifrando 1")
+   // console.log("cifrando 1")
     replyMessage.message = Encrypt(replyMessage?.message, replyMessage?.tipo_cifrado );
   }
   if(message.startsWith("reenviado::")){
@@ -131,8 +131,8 @@ export class GroupMessage {
         }),
       };
 
-      console.log("sending...."+url);
-      console.log(params);
+      //console.log("sending...."+url);
+      //console.log(params);
 
       const response = await fetch(url, params);
       const result = await response.json();
@@ -147,7 +147,7 @@ export class GroupMessage {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-      console.log("Error a enviar el mensaje...")
+      //console.log("Error a enviar el mensaje...")
       throw error;
     }
   }
@@ -156,8 +156,8 @@ export class GroupMessage {
 
     EventRegister.emit("loadingEvent",true);
   
-    console.log("reenviando file:::::::::::::::::::::")
-    console.log(message);
+    //console.log("reenviando file:::::::::::::::::::::")
+    //console.log(message);
   
     
     try {
@@ -177,13 +177,13 @@ export class GroupMessage {
         }),
       };
 
-      console.log("sending...."+url);
-      console.log("params");
-      console.log(params)
+    //  console.log("sending...."+url);
+     // console.log("params");
+    //  console.log(params)
 
       const response = await fetch(url, params);
       const result = await response.json();
-      console.log(result)
+      //console.log(result)
 
       //get group messages and persist
     // await selectTable('BITACORA');
@@ -195,7 +195,7 @@ export class GroupMessage {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-      console.log("Error a enviar el file...")
+     // console.log("Error a enviar el file...")
       throw error;
     }
   }
@@ -204,8 +204,8 @@ export class GroupMessage {
 
     EventRegister.emit("loadingEvent",true);
   
-    console.log("reenviando img:::::::::::::::::::::")
-    console.log(message);
+    //console.log("reenviando img:::::::::::::::::::::")
+    //console.log(message);
   
     
     try {
@@ -225,13 +225,13 @@ export class GroupMessage {
         }),
       };
 
-      console.log("sending...."+url);
-      console.log("params");
-      console.log(params)
+    //  console.log("sending...."+url);
+     // console.log("params");
+    //  console.log(params)
 
       const response = await fetch(url, params);
       const result = await response.json();
-      console.log(result)
+     // console.log(result)
 
       //get group messages and persist
     // await selectTable('BITACORA');
@@ -243,7 +243,7 @@ export class GroupMessage {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-      console.log("Error a enviar el mensaje...")
+      //console.log("Error a enviar el mensaje...")
       throw error;
     }
   }
@@ -267,14 +267,14 @@ export class GroupMessage {
           }),
         };
 
-        console.log("sending...."+url);
-        console.log(params);
+       // console.log("sending...."+url);
+       // console.log(params);
 
         const response = await fetch(url, params);
         const result = await response.json();
 
-        console.log("==========After updating====================");
-        console.log(result);
+       // console.log("==========After updating====================");
+       // console.log(result);
 
         //get group messages and persist
       // await selectTable('BITACORA');
@@ -308,14 +308,14 @@ export class GroupMessage {
         }),
       };
 
-      console.log("sending...."+url);
-      console.log(params);
+     // console.log("sending...."+url);
+     // console.log(params);
 
       const response = await fetch(url, params);
       const result = await response.json();
 
-      console.log("==========After updating====================");
-      console.log(result);
+      //console.log("==========After updating====================");
+      //console.log(result);
 
       //get group messages and persist
     // await selectTable('BITACORA');
@@ -360,19 +360,19 @@ export class GroupMessage {
             const response = await fetch(url, params);
             //console.log(response);
             const result = await response.json();
-            console.log(result);
+           // console.log(result);
 
             EventRegister.emit("loadingEvent",false);
             if (response.status !== 201) throw result;
           } catch (error) {
-            console.log("Error al enviar imagen al grupo")
+           // console.log("Error al enviar imagen al grupo")
             console.log(error);
           }
       
 
         return true;
       } catch (error) {
-        console.log("Error general al enviar imagen al grupo")
+       // console.log("Error general al enviar imagen al grupo")
         EventRegister.emit("loadingEvent",false);
         throw error;
       }
@@ -383,15 +383,15 @@ export class GroupMessage {
 
     EventRegister.emit("loadingEvent",true);
     try {
-      console.log("sending file from telephone...")
-      console.log(file);
+      //console.log("sending file from telephone...")
+      //console.log(file);
 
       const formData = new FormData();
       formData.append("group_id", groupId);
       formData.append("file", file);
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILE}`;
-      console.log(url);
+     // console.log(url);
 
       //"Content-Type": "application/json",
       //multipart/form-data
@@ -406,22 +406,22 @@ export class GroupMessage {
         body: formData,
       };
 
-      console.log("params");
-      console.log(params);
+     // console.log("params");
+     // console.log(params);
 
     try {
           const response = await fetch(url, params);
         
           //console.log(response);
           const result = await response.json();
-          console.log("result call api file");
-          console.log(result);
+         // console.log("result call api file");
+         // console.log(result);
 
           EventRegister.emit("loadingEvent",false);
           if (response.status !== 201) throw result;
 
     } catch (error) {
-      console.log("Error al enviar archivo al grupo")
+      //console.log("Error al enviar archivo al grupo")
       console.log(error);
     }
     
@@ -454,14 +454,14 @@ export class GroupMessage {
           }),
         };
 
-        console.log("sending...."+url);
-        console.log(params);
+      //  console.log("sending...."+url);
+       // console.log(params);
 
         const response = await fetch(url, params);
         const result = await response.json();
 
-        console.log("==========After updating====================");
-        console.log(result);
+        //console.log("==========After updating====================");
+       // console.log(result);
 
         //get group messages and persist
       // await selectTable('BITACORA');

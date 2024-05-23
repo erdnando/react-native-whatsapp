@@ -31,6 +31,7 @@ configureObservablePersistence({
 
 const state$ = observable({
   isConnected:true,
+  expoPushToken:{},
   llaveGrupoSelected:"",
   AUTHLOGIN:{},
   user:[{

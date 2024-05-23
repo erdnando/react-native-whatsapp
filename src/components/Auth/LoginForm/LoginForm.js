@@ -22,7 +22,7 @@ export function LoginForm() {
           formValue.password
         );
 
-        console.log(response);
+       // console.log(response);
 
         const { access, refresh } = response;
 
