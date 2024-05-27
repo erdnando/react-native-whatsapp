@@ -16,7 +16,7 @@ export function ListMessages(props) {
       alwaysBounceVertical={false}
       ref={scrollViewRef}
       onContentSizeChange={() => {
-        scrollViewRef.current.scrollToEnd({ animated: true });
+        scrollViewRef.current.scrollToEnd({ animated: false });
       }}
     >
       <View style={styles.content}>

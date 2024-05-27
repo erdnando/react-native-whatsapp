@@ -29,6 +29,7 @@ export function AppNavigation() {
 
   const navigation = useNavigation();
   const regresar = async () => {
+    console.log("regresar.......")
     navigation.goBack();
    
   };
@@ -67,7 +68,7 @@ export function AppNavigation() {
           component={GroupProfileScreen}
           options={{ headerShown: true,
             headerLeft: () => (
-              <IconButton icon={<ChevronLeftIcon />} padding={0} marginRight={5} onPress={regresar} />
+              <IconButton icon={<ChevronLeftIcon />} padding={3} marginRight={5} onPress={regresar} />
             ),
             title: "Info. del grupo", }}
         />

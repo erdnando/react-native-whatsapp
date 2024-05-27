@@ -7,7 +7,7 @@ export function IconBack() {
   return (
     <IconButton
       icon={<ChevronLeftIcon />}
-      padding={0}
+      padding={3}
       onPress={navigation.goBack}
     />
   );

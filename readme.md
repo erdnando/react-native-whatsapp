@@ -1,3 +1,10 @@
+nvm install v20.11.1
+
+nvm use v20.11.1
+
+yarn install
+
+
 yarn add expo@latest
 
 yarn start
@@ -52,6 +59,7 @@ git push --force origin main
 
 //--------merge de MAIN a QA---- (lo normal es q sea al reves)------
 git checkout qa pasar de main a qa
+
 git merge main desde qa hacer merge con main
 git add .
 git merge main

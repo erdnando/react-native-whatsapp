@@ -18,7 +18,7 @@ export const styled = (isMe) => {
       paddingHorizontal: 10,
     },
     identity: {
-      color: "black",
+      color: isMe ? "black" : "gray",
       marginBottom: 5,
       fontWeight: "bold",
       opacity: 0.8,
@@ -77,7 +77,7 @@ export const styled = (isMe) => {
     cifrado: {
      
       fontWeight:"bold",
-      color: "red",
+      color: "black",
       fontSize: 12,
       top: -12,
       textAlign: "right",

@@ -57,7 +57,7 @@ export function HeaderChat(props) {
           <View style={styles.info}>
             <IconButton
               icon={<ChevronLeftIcon />}
-              padding={0}
+              padding={3}
               onPress={navigation.goBack}
             />
 

@@ -4,7 +4,7 @@ import { Item } from "./Item";
 import { styles } from "./ListGroups.styles";
 
 export function ListGroups(props) {
-  const { groups, upGroupChat } = props;
+  const { groups, upGroupChat, upAllGroups } = props;
   
 
 
@@ -17,7 +17,7 @@ export function ListGroups(props) {
           </Text>
         ) : (
           map(groups, (group) => (
-            <Item key={group._id} group={group} upGroupChat={upGroupChat} />
+            <Item key={group._id} group={group} upGroupChat={upGroupChat} upAllGroups={upAllGroups} />
           ))
         )}
       </View>

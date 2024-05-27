@@ -17,6 +17,8 @@ crypto-js/evpkdf
 const Encrypt = (word,tipo) =>{
 
   let qey=statex$.default.llaveGrupoSelected.get()
+
+  
   let cifrado='';
 
 

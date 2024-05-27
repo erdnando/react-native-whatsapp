@@ -13,10 +13,19 @@ import { EventRegister } from "react-native-event-listeners";
 import { Audio } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
-import * as statex$ from '../../../state/local'
+import * as statex$ from '../../../state/local';
+import * as Notifications from "expo-notifications";
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export function GroupForm(props) {
 
@@ -297,6 +306,13 @@ export function GroupForm(props) {
 
   //Evento que lanza el forwarding, basado en los grupos seleccioandos
   const handleForward= ()=>{
+
+    if(statex$.default.llaveGrupoSelected.get()==undefined){
+
+      Alert.alert ('LLave requerida. ','Para poder enviar mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido',
+      [{  text: 'Ok',      } ]);
+      return;
+    }
               
       console.log("sending msg into selected group:::::::::::");
     
@@ -319,14 +335,34 @@ export function GroupForm(props) {
             await groupMessageController.sendTextForwardFile(accessToken , gpo._id , forwardMessage.message, "BASE64" );
           }
             
-             //here  sound
-
-             const initialStatus = {
+            //here  sound
+            /*const initialStatus = {
               volume: 1,
             };
-            console.log("playing audio........1")
-      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
-      await sound.playAsync();
+            
+            const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
+            await sound.playAsync();*/
+            
+            //TODO, it seems this sound, never will be sent
+            /*console.log("playing audio........1")
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Secure chat: Un nuevo mensaje!",
+                body: forwardMessage.message,
+                sound: true,//true // or sound: "default"
+              },
+              trigger: {
+                seconds: 1,
+              },
+            });*/
+      
+           /* await Notifications.setNotificationChannelAsync('default', {
+              name: 'default',
+              importance: Notifications.AndroidImportance.MAX,
+              vibrationPattern: [0, 250, 250, 250],
+              lightColor: '#FF231F7C',
+            });*/
+
         } 
       });
       onClose();
@@ -557,6 +593,13 @@ export function GroupForm(props) {
     validationSchema: validationSchema(),
     validateOnChange: false,
     onSubmit: async (formValue) => {
+
+      if(statex$.default.llaveGrupoSelected.get()==undefined){
+
+        Alert.alert ('LLave requerida. ','Para poder enviar mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido',
+        [{  text: 'Ok',      } ]);
+        return;
+      }
 
       if(!statex$.default.isConnected.get()){
         Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',

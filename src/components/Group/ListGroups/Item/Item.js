@@ -25,11 +25,11 @@ import Constants from 'expo-constants';
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
-
+/*
 async function sendPushNotification(expoPushToken, msg) {
 
   //ExponentPushToken[_8KiTQAUGGwPGKxxcjixN7]
@@ -100,7 +100,7 @@ async function registerForPushNotificationsAsync() {
   } else {
     handleRegistrationError('Must use physical device for push notifications');
   }
-}
+}*/
 //=====================================================================================================
 
 
@@ -110,16 +110,27 @@ const authController = new Auth();
 
 export function Item(props) {
 
-  const { group, upGroupChat } = props;
+  const { group, upGroupChat, upAllGroups } = props;
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [arrMessagesSent, setArrMessagesSent] = useState([]);
 
   const navigation = useNavigation();
 
   //===============push notification=============================================================================
 
+  /*useEffect(() => {
+    
+    registerForPushNotificationsAsync().then(
+      (token) => token && setExpoPushToken(token),
+    );
+  }, [])*/
+  
+
+/*
   const [expoPushToken, setExpoPushToken] = useState('');
   const [notification, setNotification] = useState(undefined);
   const notificationListener = useRef(Notifications?.Subscription);//>({});
@@ -146,7 +157,7 @@ export function Item(props) {
       responseListener.current &&  Notifications.removeNotificationSubscription(responseListener.current);
     };
   }, []);
-  
+  */
   //=======================================================================================================
 
   useEffect(() => {
@@ -222,10 +233,72 @@ export function Item(props) {
     if(statex$.default.isConnected.get()){
       socket.emit("subscribe", `${group._id}_notify`);
       socket.on("message_notify", newMessage);
+
+
+      socket.emit("subscribe", user._id);
+      socket.on("message_invite", newInvite);
+      socket.on("pushing_notification", newPushnotification);
+     
     }
   }, []);
 
 
+
+  const newPushnotification = async (msg) => {
+    console.log("New push notification!!!!")
+    console.log(msg)
+
+    if (msg.user._id !== user._id) {
+
+          Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Secure chat: Nuevo mensaje!",
+              body: "Grupo: "+msg.message,
+              sound: true,//true // or sound: "default"
+            },
+            trigger: {
+              seconds: 1,
+            },
+          });
+    }
+
+  }
+
+  const newInvite = async (newData) => {
+    console.log("New group invite to participate, please reload group list!!!!")
+    console.log(newData)
+
+   
+
+    //if(user._id != newData._id){
+
+        Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Secure chat: Invitacion nuevo grupo!",
+            body: "Grupo: "+newData.name,
+            sound: true,//true // or sound: "default"
+          },
+          trigger: {
+            seconds: 1,
+          },
+        });
+    /*r
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });*/
+    
+    
+       
+        upAllGroups();
+    //}
+    
+   
+
+
+  }
 //when newMessage is required, call this instruction
   const newMessage = async (newMsg) => {
     
@@ -241,9 +314,29 @@ export function Item(props) {
 
       if (newMsg.user._id !== user._id) {
 
-        console.log("expoPushToken")
-        console.log(statex$.default.expoPushToken.get())
-        await sendPushNotification(statex$.default.expoPushToken.get(), newMsg.message);
+        ////console.log("expoPushToken")
+        //console.log(statex$.default.expoPushToken.get())
+        //await sendPushNotification(statex$.default.expoPushToken.get(), newMsg.message);
+        //console.log("recibo, aun q este en otro grupo????")
+
+
+        /*Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Secure chat: Un nuevo mensaje!",
+            body: newMsg.message,
+            sound: true,//true // or sound: "default"
+          },
+          trigger: {
+            seconds: 1,
+          },
+        });*/
+  
+        /*await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FF231F7C',
+        });*/
 
 
         upGroupChat(newMsg.group);
@@ -263,7 +356,7 @@ export function Item(props) {
   const  openGroup = async () => {
 
     //console.log("expoPushToken openGroup")
-    statex$.default.expoPushToken.set(expoPushToken)
+    //statex$.default.expoPushToken.set(expoPushToken)
     //console.log(expoPushToken)
     //await sendPushNotification(expoPushToken, group._id );
     
@@ -301,6 +394,55 @@ export function Item(props) {
     navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo, creator: group.creator });
   };
 
+  const registerForPushNotificationsAsync = async()=> {
+    let token;
+  
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+  
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== 'granted') {
+        alert('Failed to get push token for push notification!');
+        return;
+      }
+      // Learn more about projectId:
+      // https://docs.expo.dev/push-notifications/push-notifications-setup/#configure-projectid
+      // EAS projectId is used here.
+      try {
+        const projectId =
+          Constants?.expoConfig?.extra?.eas?.projectId ??
+          Constants?.easConfig?.projectId;
+        if (!projectId) {
+          throw new Error('Project ID not found');
+        }
+        token = (
+          await Notifications.getExpoPushTokenAsync({
+            projectId,
+          })
+        ).data;
+        console.log(token);
+      } catch (e) {
+        token = `${e}`;
+      }
+    } else {
+      alert('Must use physical device for Push Notifications');
+    }
+  
+    return token;
+  }
 
 
   return (

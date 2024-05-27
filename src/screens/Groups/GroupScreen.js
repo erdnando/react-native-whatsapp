@@ -15,12 +15,21 @@ import * as statex$ from '../../state/local'
 import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE,GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 
 
 
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export function GroupScreen() {
 
@@ -273,16 +282,36 @@ export function GroupScreen() {
               }
              
             });
-            setMessages([]);
             setMessages(unlockedMessages);
+           // setMessages(unlockedMessages);
 
-           
-            const initialStatus = {
+            
+            /*const initialStatus = {
               volume: 0.1,
             };
-            console.log("playing audio........2")
+            
             const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);//'../../assets/newmsg.wav'
-            await sound.playAsync();
+            await sound.playAsync();*/
+
+            /*console.log("playing audio........2")
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Secure chat: Un nuevo mensaje!",
+                body: "Recargando mensajes",
+                sound: true,//true // or sound: "default"
+              },
+              trigger: {
+                seconds: 1,
+              },
+            });
+      
+            await Notifications.setNotificationChannelAsync('default', {
+              name: 'default',
+              importance: Notifications.AndroidImportance.MAX,
+              vibrationPattern: [0, 250, 250, 250],
+              lightColor: '#FF231F7C',
+            });*/
+
            
            
           //==============================================================================
@@ -329,8 +358,9 @@ export function GroupScreen() {
         
       }
 //==========================================================     
-
+    let msgOriginal=msg.message;;
     if(msg.type=="TEXT"){
+
       msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
 
       if(msg.email_replied != null){
@@ -352,13 +382,49 @@ export function GroupScreen() {
         
 
       }
+
+
+
       //here  sound
-      const initialStatus = {
-        volume: 1,
-      };
-      console.log("playing audio........3")
-      const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);
-      await sound.playAsync();
+     // const initialStatus = {
+      //  volume: 1,
+      //};
+      console.log("playing audio..on target......3")
+     
+      
+      
+      const isMe = user._id === msg.user._id;
+      console.log(msg.user._id)
+      console.log(user._id)
+      console.log(isMe)
+
+      if(!isMe){
+          //const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);
+          //await sound.playAsync();
+
+          //TODO validate, just target should be notified!!!!!
+            /*Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Secure chat: Un nuevo mensaje!",
+                body: msgOriginal,
+                sound: true,//true // or sound: "default"
+              },
+              trigger: {
+                seconds: 1,
+              },
+            });*/
+      
+            /*await Notifications.setNotificationChannelAsync('default', {
+              name: 'default',
+              importance: Notifications.AndroidImportance.MAX,
+              vibrationPattern: [0, 250, 250, 250],
+              lightColor: '#FF231F7C',
+            });*/
+  
+      }
+      
+     
+
       
     }
    

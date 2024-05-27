@@ -157,6 +157,44 @@ export function GroupsScreen() {
       }, [])
     );
 
+    const upAllGroups=async ()=>{
+
+      let response = null;
+
+      try {
+
+        //Get all GRUPOS!!!!
+        if(statex$.default.isConnected.get()){
+
+          response = await groupController.getAll(accessToken);
+
+            console.log("Persistiendo ADD_STATE_ALLGROUPS")
+            //console.log(response)
+            console.log(JSON.stringify(response))
+            UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
+
+            //==============================================
+            
+        }else{
+            await GET_STATE_ALLGROUPS().then(result =>{
+            response=result.rows._array;
+            response =JSON.parse(response[0].valor);
+            });
+        }
+
+        const result = response.sort((a, b) => {
+          return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+        });
+
+        setGroups(result);
+        setGroupsResult(result);
+
+      } catch (error) {
+        console.error(error);
+      }
+
+      
+    }
    
     const upGroupChat = (groupId) => {
 
@@ -177,7 +215,7 @@ export function GroupsScreen() {
     <View>
       {size(groups) > 0 && <Search data={groups} setData={setGroupsResult} />}
       <ListGroups groups={size(groups) === size(groupsResult) ? groups : groupsResult}
-                  upGroupChat={upGroupChat}
+                  upGroupChat={upGroupChat} upAllGroups={upAllGroups}
       />
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>

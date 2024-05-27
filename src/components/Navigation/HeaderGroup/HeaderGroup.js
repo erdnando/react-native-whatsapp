@@ -120,9 +120,9 @@ export function HeaderGroup(props) {
        {/*icono del lado izquierdo */}
         <View style={styles.info}>
         {/*icono Back */}
-          <IconButton
+          <IconButton style={{backgroundColor:'transparent'}}
             icon={<ChevronLeftIcon />}
-            padding={0}
+            padding={3}
             onPress={updateMessagesInDB}
           />
 

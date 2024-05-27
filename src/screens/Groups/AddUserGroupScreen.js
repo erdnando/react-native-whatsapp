@@ -21,10 +21,10 @@ export function AddUserGroupScreen() {
   useEffect(() => {
     (async () => {
       try {
-        console.log("getting users, except member of this group")
-        console.log("grupo:")
-        console.log(params)
-        console.log(params.groupId)
+       // console.log("getting users, except member of this group")
+       // console.log("grupo:")
+       // console.log(params)
+       // console.log(params.groupId)
         const response = await userController.getUsersExeptParticipantsGroup(
           accessToken,
           params.groupId
