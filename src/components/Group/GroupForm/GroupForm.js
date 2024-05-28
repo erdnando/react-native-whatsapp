@@ -10,7 +10,7 @@ import { SendMedia } from "./SendMedia";
 import { initialValues, validationSchema } from "./GroupForm.form";
 import { styles } from "./GroupForm.styles";
 import { EventRegister } from "react-native-event-listeners";
-import { Audio } from 'expo-av';
+import { Audio, InterruptionModeAndroid } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
 import * as statex$ from '../../../state/local';
@@ -594,6 +594,18 @@ export function GroupForm(props) {
     validateOnChange: false,
     onSubmit: async (formValue) => {
 
+
+
+ 
+
+      //here  sound
+      /*const initialStatus = {
+        volume: 0.1,
+      };
+      
+      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
+      await sound.playAsync();*/
+
       if(statex$.default.llaveGrupoSelected.get()==undefined){
 
         Alert.alert ('LLave requerida. ','Para poder enviar mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido',
@@ -690,7 +702,7 @@ export function GroupForm(props) {
                   {replyMessage?.user.firstname || replyMessage?.user.lastname
                     ? `${replyMessage?.user.firstname || ""} ${replyMessage?.user.lastname || ""}`
                     : replyMessage?.user.email.substring(0,30) }
-        </Text>
+      </Text>
       <View display={replyMessage!=null?"flex":"none"} style={{flexDirection: 'row', marginLeft:5,marginRight:30,width:'90%' ,backgroundColor:'black',padding:10 }}>
         <Text style={styles.textReply}>{replyMessage!=null ? replyMessage.message: ""}</Text>
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 

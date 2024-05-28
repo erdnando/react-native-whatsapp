@@ -5,6 +5,6 @@ export const styles = new StyleSheet.create({
     paddingTop: 20,
   },
   content: {
-    paddingBottom: 150,
+    paddingBottom: 90,//150,
   },
 });

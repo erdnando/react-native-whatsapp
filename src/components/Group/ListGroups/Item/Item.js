@@ -365,10 +365,11 @@ export function Item(props) {
     console.log("_id creator group.."+group.creator._id );
     console.log("user id conectado.."+user._id );
     console.log("tipo group.."+group.tipo );
+    await authController.setCifrado("SI");
 
     if(group.tipo=="cerrado"){
 
-        await authController.setCifrado("SI");
+        //await authController.setCifrado("SI");
 
         let resAux=null;
         await GET_STATE_GROUP_LLAVE(group._id).then(result =>{

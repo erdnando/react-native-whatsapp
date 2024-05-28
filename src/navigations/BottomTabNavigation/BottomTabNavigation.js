@@ -16,6 +16,8 @@ export function BottomTabNavigation() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        headerTintColor:'white',
+ 
         tabBarStyle: styles.tabBarStyle,
         tabBarInactiveTintColor: "#646464",
         tabBarActiveTintColor: "#0891b2",
@@ -30,7 +32,7 @@ export function BottomTabNavigation() {
       <Tab.Screen
         name={screens.tab.groups.root}
         component={GroupsNavigation}
-        options={{ title: "Canales" }}
+        options={{ title: "Canales",  }}
       />
       <Tab.Screen
         name={screens.tab.settings.root}

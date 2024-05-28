@@ -113,8 +113,8 @@ export function HeaderGroup(props) {
   };
 
   return (
+   
     <SafeAreaView style={styles.container}>
-
       <View style={styles.content}>
 
        {/*icono del lado izquierdo */}
@@ -164,46 +164,47 @@ export function HeaderGroup(props) {
           />
 
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <Modal.Content maxWidth="400px">
-          <Modal.CloseButton />
+        <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+          <Modal.Content maxWidth="400px">
+            <Modal.CloseButton />
 
-          <Modal.Header>{tituloModal}</Modal.Header>
+            <Modal.Header>{tituloModal}</Modal.Header>
 
-          <Modal.Body>
-            <FormControl>
-             
-              <Input w={{base: "100%", md: "25%"}} type={showPwd ? "text" : "password"}
-               onChangeText={(text) => setNip(text)}
-              InputRightElement={<Pressable onPress={() => setShowPwd(!showPwd)}>
-                                    <Icon as={<Icon as={MaterialCommunityIcons} name={showPwd ? "eye" : "eye-off"} style={styles.iconPwdNip} /> } size={8} mr="8" color="muted.400" />
-                                </Pressable>} placeholder="Su NIP" />
+            <Modal.Body>
+              <FormControl>
+              
+                <Input w={{base: "100%", md: "25%"}} type={showPwd ? "text" : "password"}
+                onChangeText={(text) => setNip(text)}
+                InputRightElement={<Pressable onPress={() => setShowPwd(!showPwd)}>
+                                      <Icon as={<Icon as={MaterialCommunityIcons} name={showPwd ? "eye" : "eye-off"} style={styles.iconPwdNip} /> } size={8} mr="8" color="muted.400" />
+                                  </Pressable>} placeholder="Su NIP" />
 
-            </FormControl>
-          </Modal.Body>
+              </FormControl>
+            </Modal.Body>
 
-          <Modal.Footer>
-            <Button.Group space={2}>
-              <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                
-              setShowModal(false);
-            }}>
-                Cancelar
-              </Button>
-              <Button               
-              onPress={() => {
-                validateNIP();
-            }}>
-                Desbloquear
-              </Button>
-            </Button.Group>
-          </Modal.Footer>
+            <Modal.Footer>
+              <Button.Group space={2}>
+                <Button variant="ghost" colorScheme="blueGray" onPress={() => {
+                  
+                setShowModal(false);
+              }}>
+                  Cancelar
+                </Button>
+                <Button               
+                onPress={() => {
+                  validateNIP();
+              }}>
+                  Desbloquear
+                </Button>
+              </Button.Group>
+            </Modal.Footer>
 
 
-        </Modal.Content>
-      </Modal>
+          </Modal.Content>
+        </Modal>
 
       </View>
-    </SafeAreaView>
+      </SafeAreaView>
   );
 }
+

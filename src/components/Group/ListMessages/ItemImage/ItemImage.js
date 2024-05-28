@@ -49,6 +49,7 @@ export function ItemImage(props) {
   }
 
   const onOpenImage = () => {
+    console.log(imageUri)
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
 
@@ -173,6 +174,22 @@ export function ItemImage(props) {
                             />
                           </View>
                     </Menu.Item>
+                   
+                    <Menu.Item  
+                        onPress={() => {
+                          onOpenFile();
+                        }}>
+                            <View style={styles.contentMenuItem} >
+                            <Text>Descargar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="download-circle"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
                     <Menu.Item display={isMe?'flex':'none'}  
                         onPress={() => {
                          // alert('Eliminar: [  '+message.message+"  ]");
@@ -188,21 +205,6 @@ export function ItemImage(props) {
                             as={MaterialCommunityIcons}
                             size="7"
                             name="delete"
-                            color="red"
-                          />
-                          </View>
-                    </Menu.Item>
-                    <Menu.Item  
-                        onPress={() => {
-                          onOpenFile();
-                        }}>
-                            <View style={styles.contentMenuItem} >
-                            <Text>Descargar</Text>
-                            <Icon
-                            style={{marginTop:-5}}
-                            as={MaterialCommunityIcons}
-                            size="7"
-                            name="download-circle"
                             color="red"
                           />
                           </View>

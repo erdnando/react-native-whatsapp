@@ -15,8 +15,9 @@ import {
 } from "../screens/Groups";
 import { screens, initSockets } from "../utils";
 import { styles } from "./Styles.styles";
-import { Button } from "react-native";
+import { Button, View, Text } from "react-native";
 import { AddIcon, IconButton, ChevronLeftIcon } from "native-base";
+import { StatusBar } from 'expo-status-bar';
 
 initSockets();
 
@@ -35,13 +36,21 @@ export function AppNavigation() {
   };
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator >
 
       <Stack.Screen
         name={screens.tab.root}
         component={BottomTabNavigation}
-        options={{ headerShown: false }}
+        options={{ header: (props) =>
+          (
+            <View style={{ height: 60, backgroundColor:'black',  }}>
+            <StatusBar style="light" />
+            </View> 
+          ),  }}
       />
+
+      {/* headerShown: true, title:'', backgroundColor:'white', headerTintColor:'white',*/}
+
 
       {/*<Stack.Screen
         name={screens.global.chatScreen}
@@ -51,8 +60,12 @@ export function AppNavigation() {
       <Stack.Screen
         name={screens.global.groupScreen}
         component={GroupScreen}
-        options={{ headerShown: false, ...styles.stackNavigationStyles }}
+        options={{header: (props) =>
+          (
+            <StatusBar style="light" />
+          ), ...styles.stackNavigationStyles }}
       />
+      {/*headerShown: true,title:'',backgroundColor:'black', headerTintColor:'white', */}
 
 
       <Stack.Group

@@ -6,7 +6,7 @@ export const styles = new StyleSheet.create({
     position:'relative',
     paddingLeft:20,
     paddingTop: 15,
-    paddingBottom: 40,
+    paddingBottom: 20,//40
     backgroundColor: "#171717",
     borderTopWidth: 1,
     borderTopColor: "#333",

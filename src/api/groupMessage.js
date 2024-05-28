@@ -391,11 +391,7 @@ export class GroupMessage {
       formData.append("file", file);
 
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILE}`;
-     // console.log(url);
-
-      //"Content-Type": "application/json",
-      //multipart/form-data
-      //"Content-Type": file.type,
+     
       const params = {
         method: "POST",
         headers: {
@@ -406,8 +402,8 @@ export class GroupMessage {
         body: formData,
       };
 
-     // console.log("params");
-     // console.log(params);
+      console.log("params");
+      console.log(params);
 
     try {
           const response = await fetch(url, params);
@@ -421,7 +417,7 @@ export class GroupMessage {
           if (response.status !== 201) throw result;
 
     } catch (error) {
-      //console.log("Error al enviar archivo al grupo")
+      console.log("Error al enviar archivo al grupo")
       console.log(error);
     }
     

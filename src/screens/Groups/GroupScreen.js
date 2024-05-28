@@ -19,6 +19,7 @@ import * as Notifications from "expo-notifications";
 
 
 
+
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
@@ -560,9 +561,9 @@ export function GroupScreen() {
 
   return (
     <>
-      <HeaderGroup groupId={groupId} />
+      <HeaderGroup groupId={groupId}  />
 
-      <View style={{ flex: 1 }}>
+      <View flex={1} >
         <ListMessages messages={messages} />
 
         <Fab display={tipo=="cerrado"? 'flex':'none'} renderInPortal={false} shadow={2}   bottom={120} size="sm" onPress={presentaModal}

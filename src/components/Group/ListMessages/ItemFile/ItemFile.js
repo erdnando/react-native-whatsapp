@@ -240,23 +240,6 @@ export function ItemFile(props) {
                             />
                           </View>
                     </Menu.Item>
-                    {/*eliminar*/}
-                    <Menu.Item display={isMe?'flex':'none'}   
-                        onPress={() => {
-                          setMensajeEliminar(message);
-                          setShowAdvertencia(true);
-                        }}>
-                            <View style={styles.contentMenuItem} >
-                            <Text>Eliminar</Text>
-                            <Icon
-                            style={{marginTop:-5}}
-                            as={MaterialCommunityIcons}
-                            size="7"
-                            name="delete"
-                            color="red"
-                          />
-                          </View>
-                    </Menu.Item>
                     {/*descargar*/}
                     <Menu.Item  
                         onPress={() => {
@@ -269,6 +252,23 @@ export function ItemFile(props) {
                             as={MaterialCommunityIcons}
                             size="7"
                             name="download-circle"
+                            color="red"
+                          />
+                          </View>
+                    </Menu.Item>
+                     {/*eliminar*/}
+                     <Menu.Item display={isMe?'flex':'none'}   
+                        onPress={() => {
+                          setMensajeEliminar(message);
+                          setShowAdvertencia(true);
+                        }}>
+                            <View style={styles.contentMenuItem} >
+                            <Text>Eliminar</Text>
+                            <Icon
+                            style={{marginTop:-5}}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="delete"
                             color="red"
                           />
                           </View>
