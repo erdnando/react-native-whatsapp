@@ -10,30 +10,12 @@ import {
   import AsyncStorage from '@react-native-async-storage/async-storage'
   
 
-/*
-configureObservablePersistence({
-    // Use AsyncStorage in React Native
-    pluginLocal: ObservablePersistAsyncStorage,
-    local:'storex',
-    localOptions: {
-      asyncStorage: {
-        // The AsyncStorage plugin needs to be given the implementation of AsyncStorage
-        AsyncStorage,
-      },
-    },
-  });
-
-
-  persistObservable(state, {
-    pluginLocal: ObservablePersistAsyncStorage,
-    local: 'localState', // Unique name
-  })*/
-
 const state$ = observable({
   isConnected:true,
   expoPushToken:{},
   llaveGrupoSelected:"",
   AUTHLOGIN:{},
+  lastPushNotification:"",
   user:[{
      _id :"0",
      email :"",
