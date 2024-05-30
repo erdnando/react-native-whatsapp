@@ -44,11 +44,13 @@ export function ChangeNameGroupScreen() {
     try {
       console.log("cambios al grupo")
       console.log(params)
-      console.log(nombreG)
-      console.log(nuevaLlaveG)
+      //console.log(nombreG)
+      //console.log(nuevaLlaveG)
+      console.log(statex$.default.nombreG.get())
+      console.log(statex$.default.llaveG.get())
 
       //actualizando nombre del grupo, si es q se modifico
-       await groupController.update(accessToken, params.groupId, {name: nombreG}  );
+       await groupController.update(accessToken, params.groupId, {name: statex$.default.nombreG.get()}  );
 
       
 
@@ -112,11 +114,19 @@ export function ChangeNameGroupScreen() {
     onSubmit: async (formValue) => {
       try {
         console.log("Datos del forulario q se actualizan::::::")
+        statex$.default.nombreG.set('')
+        statex$.default.llaveG.set('')
            console.log(formValue.name)
            console.log(formValue.llave)
 
+
            setNombreG(formValue.name)
            setNuevaLlaveG(formValue.llave)
+           statex$.default.nombreG.set(formValue.name)
+           statex$.default.llaveG.set(formValue.llave)
+
+           console.log("nombreG")
+           console.log(nombreG)
 
            if(params.tipo=="abierto"){
             cambiosGrupo();//cambio dorecto del nombre del grupo

@@ -62,7 +62,7 @@ export function Options(props) {
 
   
   const goDataView = async () => {
-    //get data
+    //get data STATE_GROUP_LLAVE
     await GET_STATE_ALLGROUP_LLAVE().then(result =>{
       let response=result.rows._array;
       console.log(response)

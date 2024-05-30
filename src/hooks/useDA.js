@@ -1,9 +1,7 @@
-//import { useSQLiteContext } from 'expo-sqlite/next';
 import * as SQLite from 'expo-sqlite/legacy';
-//import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db06.db');
+const db = SQLite.openDatabase('db07.db');
 
 
 /*  export  async function loadDB(){
@@ -170,18 +168,18 @@ export  function CREATE_STATE_GROUP_LLAVE() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_GROUP_LLAVE (groupId TEXT, llave TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_GROUP_LLAVE (groupId TEXT, llave TEXT, tipo TEXT, fechaAlta TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
   });
 }
 
-export  function ADD_STATE_GROUP_LLAVE(groupId, llave) {
+export  function ADD_STATE_GROUP_LLAVE(groupId, llave, tipo, fechaAlta) {
   
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql('INSERT INTO STATE_GROUP_LLAVE (groupId, llave) values(?,?)', [groupId, llave], (_, result) => resolve(result), (_, error) => reject(error) );
+        tx.executeSql('INSERT INTO STATE_GROUP_LLAVE (groupId, llave, tipo, fechaAlta) values(?,?,?,?)', [groupId, llave, tipo, fechaAlta], (_, result) => resolve(result), (_, error) => reject(error) );
       }
     );
   });    
@@ -232,6 +230,27 @@ export  function GET_STATE_ALLGROUP_LLAVE() {
   });     
 }
 
+export  function DELETE_STATE_GROUP_LLAVE() {
+  
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('DELETE FROM STATE_GROUP_LLAVE', [], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function DELETE_STATE_GROUP_LLAVE_BY_ID(groupId) {
+  
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('DELETE FROM STATE_GROUP_LLAVE WHERE groupId=?', [groupId], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
 //==================================================================================================================================================================================
 
 export  function CREATE_STATE_ALLMESSAGES() {

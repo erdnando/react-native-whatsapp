@@ -13,11 +13,8 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local';
-import { GET_STATE_GROUP_LLAVE } from '../../../../hooks/useDA';
-
-import * as Device from 'expo-device';
+import { GET_STATE_GROUP_LLAVE, ADD_STATE_GROUP_LLAVE, DELETE_STATE_GROUP_LLAVE_BY_ID } from '../../../../hooks/useDA';
 import * as Notifications from 'expo-notifications';
-import Constants from 'expo-constants';
 
 
 //====================PUSH NOTIFICATIONS=================================================================================
@@ -132,23 +129,101 @@ export function Item(props) {
 
 
     //send message to socket IO
-    useEffect(() => {
+   /* useEffect(() => {
       // if(statex$.default.isConnected.get()){
  
    
          socket.emit("subscribe", user._id);
          socket.on("message_invite", newInvite);
          socket.on("pushing_notification", newPushnotification);
+         socket.on("group_banned", bannedGroup);
+         
 
          return () => {
           socket.emit("unsubscribe", user._id);
           socket.off("message_invite", newInvite);
+          socket.off("pushing_notification", newPushnotification);
+          socket.off("group_banned", bannedGroup);
+        };
+        
+      // }
+     }, []);*/
+
+     useEffect(() => {
+      // if(statex$.default.isConnected.get()){
+         socket.emit("subscribe", `${user._id}_invite`);
+         socket.on("message_invite", newInvite);
+        
+        
+        
+      // }
+     }, []);
+
+     useEffect(() => {
+      // if(statex$.default.isConnected.get()){
+         socket.emit("subscribe", user._id);
+         socket.on("pushing_notification", newPushnotification);
+       
+         return () => {
+          socket.emit("unsubscribe", user._id);
           socket.off("pushing_notification", newPushnotification);
         };
         
       // }
      }, []);
 
+
+     useEffect(() => {
+      // if(statex$.default.isConnected.get()){
+         socket.emit("subscribe", `${user._id}_banned`);
+         socket.on("group_banned", bannedGroup);
+
+         
+        
+      // }
+     }, []);
+
+
+     const bannedGroup = async (newData) => {
+      console.log("si quiero banearte....")
+      if( statex$.default.lastBannedRequest.get() !=  newData.message){
+
+                console.log("Banned from group, please reload group list!!!!")
+                statex$.default.lastBannedRequest.set(newData.message);
+                console.log("push notification realmente enviada!!!!")
+
+                console.log(newData)
+        
+                await Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Secure chat: Ha sido removido del grupo!",
+                    body: "Grupo: "+newData.name,
+                    sound: true,
+                  },
+                  trigger: {
+                    seconds: 1,
+                  },
+                });
+          
+                try {
+                  console.log("Removing relacion grupo-llave en la invitacion")
+                  console.log("Grupo id")
+                  console.log(newData._id)
+        
+                  DELETE_STATE_GROUP_LLAVE_BY_ID(newData._id);
+        
+                } catch (error) {
+                  console.log("Error al eliminar relacion grupo, llave")
+                  console.log(error)
+                }
+              
+            
+              
+                upAllGroups();
+
+        }
+      
+    }
 
 
   const newPushnotification = async (msg) => {
@@ -179,33 +254,51 @@ export function Item(props) {
   }
 
   const newInvite = async (newData) => {
-    console.log("New group invite to participate, please reload group list!!!!")
-    console.log(newData)
-
+    
+    
+      console.log("si quiero invitarte....")
     //if(user._id != newData._id){
+      if( statex$.default.lastGroupInvitation.get() !=  newData.message){
 
-        Notifications.scheduleNotificationAsync({
-          content: {
-            title: "Secure chat: Invitacion nuevo grupo!",
-            body: "Grupo: "+newData.name,
-            sound: true,//true // or sound: "default"
-          },
-          trigger: {
-            seconds: 1,
-          },
-        });
-    /*r
-        await Notifications.setNotificationChannelAsync('default', {
-          name: 'default',
-          importance: Notifications.AndroidImportance.MAX,
-          vibrationPattern: [0, 250, 250, 250],
-          lightColor: '#FF231F7C',
-        });*/
-    
-    
-       
-        upAllGroups();
-    //}
+            console.log("New group invite to participate, please reload group list!!!!")
+            console.log(newData)
+            statex$.default.lastGroupInvitation.set(newData.message);
+
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Secure chat: Invitacion nuevo grupo!",
+                body: "Grupo: "+newData.name,
+                sound: true,//true // or sound: "default"
+              },
+              trigger: {
+                seconds: 1,
+              },
+            });
+      
+            try {
+              console.log("Anadiendo relacion grupo-llave en la invitacion")
+            
+            
+              let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
+              console.log("llaveIni")
+              console.log(llaveIni)
+              console.log("Grupo id")
+              console.log(newData._id)
+              console.log(newData.tipo)
+
+              const fechaAlta = new Date().toISOString();
+              ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
+
+            } catch (error) {
+              console.log("Error al insertar relacion grupo, llave")
+              console.log(error)
+            }
+          
+        
+          
+            upAllGroups();
+        //}
+      }
     
    
 
@@ -236,10 +329,20 @@ export function Item(props) {
 
   const  openGroup = async () => {
 
-    //console.log("expoPushToken openGroup")
-    //statex$.default.expoPushToken.set(expoPushToken)
-    //console.log(expoPushToken)
-    //await sendPushNotification(expoPushToken, group._id );
+   
+    let resGpoSelected=null;
+
+    //Getting key and date that this group need to get and decrypt messages
+    await GET_STATE_GROUP_LLAVE(group._id).then(result =>{
+        resGpoSelected=result.rows._array;      
+        statex$.default.llaveGrupoSelected.set(resGpoSelected[0]?.llave);
+        statex$.default.fechaAltaGrupoSelected.set(resGpoSelected[0]?.fechaAlta);
+    }); 
+
+    if(statex$.default.fechaAltaGrupoSelected.get()==undefined){
+      statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
+    }
+    
     
 
     console.log("openning group.."+group._id );
@@ -247,8 +350,13 @@ export function Item(props) {
     console.log("user id conectado.."+user._id );
     console.log("tipo group.."+group.tipo );
     await authController.setCifrado("SI");
+    //TODO: use this date to get messages
+    console.log("Fecha alta al grupo")
+    console.log(statex$.default.fechaAltaGrupoSelected.get())
+    console.log("llave del grupo")
+    console.log(statex$.default.llaveGrupoSelected.get())
 
-    if(group.tipo=="cerrado"){
+    /*if(group.tipo=="cerrado"){
 
         //await authController.setCifrado("SI");
 
@@ -261,7 +369,7 @@ export function Item(props) {
 
     }else{
         statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
-    }
+    }*/
       
     console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
 

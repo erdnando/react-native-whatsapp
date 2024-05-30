@@ -189,6 +189,12 @@ export function GroupsScreen() {
         setGroups(result);
         setGroupsResult(result);
 
+
+        const d = new Date();
+        let ms = d.getMilliseconds();
+        statex$.default.lastBannedRequest.set(ms)
+        statex$.default.lastGroupInvitation.set(ms)
+
       } catch (error) {
         console.error(error);
       }

@@ -7,6 +7,7 @@ import { useAuth } from "../../../../hooks";
 import { ENV, screens } from "../../../../utils";
 import { styles } from "./Participants.styles";
 import { EventRegister } from "react-native-event-listeners";
+import * as statex$ from '../../../../state/local'
 
 const groupController = new Group();
 
@@ -23,6 +24,9 @@ export function Participants(props) {
 
   const banFromGroup = async (participant) => {
     try {
+      const d = new Date();
+      let ms = d.getMilliseconds();
+      statex$.default.lastBannedRequest.set(ms)//clean flag
       await groupController.ban(accessToken, _id, participant._id);
       onReload();
 

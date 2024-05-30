@@ -1,6 +1,6 @@
 import { ENV,Encrypt,EncryptWithLlave } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
-
+import * as statex$ from '../state/local';
 
 export class GroupMessage {
 
@@ -69,7 +69,15 @@ export class GroupMessage {
   async getAll(accessToken, groupId) {
     try {
       EventRegister.emit("loadingEvent",true);
-      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`;
+      //TODO: pass this value statex$.default.fechaAltaGrupoSelected.get(), by modifying the method or clonning
+      //const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`; //<----
+      //createdAt  2024-05-21T18:12:29.222+00:00
+      let fecha=statex$.default.fechaAltaGrupoSelected.get();
+      console.log("fecha")
+      console.log(fecha)
+      const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILTERED}/${groupId}/${fecha}`; 
+      
+
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,

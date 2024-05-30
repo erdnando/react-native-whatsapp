@@ -5,6 +5,7 @@ import { User, Group } from "../../api";
 import { useAuth } from "../../hooks";
 import { Search, ListUserAddParticipants } from "../../components/Group";
 import { EventRegister } from "react-native-event-listeners";
+import * as statex$ from '../../state/local'
 
 const userController = new User();
 const groupController = new Group();
@@ -39,6 +40,10 @@ export function AddUserGroupScreen() {
 
   const addParticipants = async (ids) => {
     try {
+      const d = new Date();
+      let ms = d.getMilliseconds();
+      statex$.default.lastGroupInvitation.set(ms);//clean flag
+
       await groupController.addParticipants(accessToken, params.groupId, ids);
       
      

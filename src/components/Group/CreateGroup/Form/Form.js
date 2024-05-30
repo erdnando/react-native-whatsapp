@@ -42,8 +42,10 @@ export function Form(props) {
         );
 
         //=====persist llave-group relation when a private group is created
-       // console.log(grupoCreado)
-        ADD_STATE_GROUP_LLAVE(grupoCreado._id, llave);
+      
+       //TODO add creation date and type fields and reply with open groups, not just closed ones
+       const fechaAlta = new Date().toISOString();
+       ADD_STATE_GROUP_LLAVE(grupoCreado._id, llave,"cerrado",fechaAlta);//abierto
 
         navigation.goBack();
       } catch (error) {

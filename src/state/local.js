@@ -14,8 +14,13 @@ const state$ = observable({
   isConnected:true,
   expoPushToken:{},
   llaveGrupoSelected:"",
+  fechaAltaGrupoSelected:"",
   AUTHLOGIN:{},
   lastPushNotification:"",
+  lastBannedRequest:"",
+  lastGroupInvitation:"",
+  nombreG:"",
+  llaveG:"",
   user:[{
      _id :"0",
      email :"",

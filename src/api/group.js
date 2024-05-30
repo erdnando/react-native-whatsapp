@@ -1,5 +1,6 @@
 import { ENV } from "../utils";
-import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID } from '../hooks/useDA';
+import { ADD_STATE_ALLMESSAGES, ADD_STATE_GROUP_LLAVE } from '../hooks/useDA';
+import * as statex$ from '../state/local';
 
 export class Group {
 
@@ -26,21 +27,11 @@ export class Group {
 
       const response = await fetch(url, params);
       const result = await response.json();
-      //console.log("Respuesta, id grupo creado;;;;;;;;")
-      //console.log(result._id)
-      //let grupoCreado=result[0]._id;
-      //console.log("llave")
-      //console.log(llave)
+    
       if (response.status !== 201) throw result;
 
 
-      /*console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo")
-      if(llave !=""){
-        //persist locally into STATE_ALLMESSAGES table, locally by GroupId
-        ADD_STATE_ALLMESSAGES( '', result._id, llave, result.tipo );
-      }else{
-        ADD_STATE_ALLMESSAGES( '', result._id, '', result.tipo );
-      }*/
+     
 
       return result;
       
@@ -51,6 +42,7 @@ export class Group {
 
   async createAuto(accessToken, creatorId, usersId, name, image) {
     try {
+      statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
       const formData = new FormData();
       formData.append("name", name);
       //formData.append("image", image);
@@ -78,6 +70,10 @@ export class Group {
 
      // console.log("ADD_STATE_ALLMESSAGES, persisiendo al crear grupo auto")
       ADD_STATE_ALLMESSAGES( '', result._id, '','abierto' );
+
+      //Adding open group to control table
+      const fechaAlta = new Date().toISOString();
+      ADD_STATE_GROUP_LLAVE(result._id, statex$.default.llaveGrupoSelected.get(),"abierto",fechaAlta);//abierto
 
       return result;
     } catch (error) {

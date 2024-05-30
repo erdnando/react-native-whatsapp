@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { Types } from 'mongoose';
 import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, 
   CREATE_STATE_ALLGROUPS,CREATE_STATE_ALLMESSAGES,CREATE_STATE_GROUP_LLAVE, 
-  ADD_STATE_ALLGROUPS } from '../hooks/useDA.js';
+  ADD_STATE_ALLGROUPS, DELETE_STATE_GROUP_LLAVE } from '../hooks/useDA.js';
   import { observable } from "@legendapp/state";
   import { observer } from "@legendapp/state/react";
   import * as statex$ from '../state/local.js'
@@ -52,8 +52,12 @@ export function AuthProvider(props) {
           CREATE_STATE_ALLMESSAGES();//ok
           CREATE_STATE_GROUP_LLAVE();
           ADD_STATE_ALLGROUPS("ggg")
+          //DELETE_STATE_GROUP_LLAVE();
        
-
+          console.log("--------------------------------")
+          console.log(new Date().toISOString())
+    
+          console.log("--------------------------------")
      
        
       }catch(err){
