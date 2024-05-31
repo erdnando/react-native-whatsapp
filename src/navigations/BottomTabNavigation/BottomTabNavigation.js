@@ -8,12 +8,15 @@ import {
 } from "../stacks";
 import { screens } from "../../utils";
 import { styles } from "./BottomTabNavigation.styles";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
 export function BottomTabNavigation() {
+  const navigation = useNavigation();
+
   return (
-    <Tab.Navigator
+    <Tab.Navigator 
       screenOptions={({ route }) => ({
         headerShown: false,
         headerTintColor:'white',
@@ -33,6 +36,20 @@ export function BottomTabNavigation() {
         name={screens.tab.groups.root}
         component={GroupsNavigation}
         options={{ title: "Canales",  }}
+        listeners={{
+          tabPress: e =>{
+            try{
+              navigation.pop(1);
+             
+            }catch(error){
+             console.log(error)
+            }
+              
+           
+
+            
+          }
+        }}
       />
       <Tab.Screen
         name={screens.tab.settings.root}

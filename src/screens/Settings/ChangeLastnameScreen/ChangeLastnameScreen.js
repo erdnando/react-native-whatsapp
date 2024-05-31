@@ -1,5 +1,6 @@
-import { View } from "react-native";
-import { Input, Button,Pressable,Icon } from "native-base";
+import { View, Pressable, Text } from "react-native";
+import { useState, useEffect } from "react";
+import { Input, Button,Icon, AlertDialog } from "native-base";
 import { useNavigation } from "@react-navigation/native";
 import { useFormik } from "formik";
 import { User } from "../../../api";
@@ -7,18 +8,46 @@ import { useAuth } from "../../../hooks";
 import { initialValues, validationSchema } from "./ChangeLastnameScreen.form";
 import { styles } from "./ChangeLastnameScreen.styles";
 import { MD5method } from "../../../utils";
-import { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const userController = new User();
 
 export function ChangeLastnameScreen() {
   const navigation = useNavigation();
   const { accessToken, updateUser } = useAuth();
+  const [showPwd, setShowPwd] = useState(false);
+  const [nip, setNip] = useState('');
+  const [nipError, setNipError] = useState(false);
   const [show, setShow] = useState(false);
-
+  const [showAdvertencia, setShowAdvertencia] = useState(true);
+  const onCloseAdvertencia = () => {
+    setShowAdvertencia(false);
+    navigation.goBack();
+  }
 
   const handleClick = () => setShow((prevState) => !prevState);
+
+
+  const onValidateNIP = async () => {
+
+    console.log("validando nip:::::::::::");
+    //call api to validate nip 
+    const response = await userController.getMe(accessToken);
+
+    if(MD5method(nip.toString()) == response.nip){
+        console.log("NIP OK");
+        setShowAdvertencia(false);
+        setNipError(false)
+        
+    }else{
+      setNipError(true)
+    }
+
+
+
+    
+  }
 
   const formik = useFormik({
     initialValues: initialValues(),
@@ -61,6 +90,40 @@ export function ChangeLastnameScreen() {
       >
         Aplicar
       </Button>
+
+
+
+
+
+
+      <AlertDialog  isOpen={showAdvertencia} onClose={onCloseAdvertencia}>
+              <AlertDialog.Content>
+                <AlertDialog.CloseButton />
+                <AlertDialog.Header>Ingrese NIP anterior</AlertDialog.Header>
+                <AlertDialog.Body>
+
+                    <Input w={{base: "100%", md: "25%"}} type={showPwd ? "text" : "password"}
+                  onChangeText={(text) => setNip(text)}
+                  InputRightElement={<Pressable onPress={() => setShowPwd(!showPwd)}>
+                                        <Icon as={<Icon as={MaterialCommunityIcons} name={showPwd ? "eye" : "eye-off"} style={styles.iconPwdNip} /> } size={8} mr="8" color="muted.400" />
+                                    </Pressable>} placeholder="Su NIP" />
+
+                    <Text display={nipError? 'flex':'none'} style={{color:'red'}}>NIP incorrecto, intente otra vez!</Text>
+                </AlertDialog.Body>
+                <AlertDialog.Footer>
+                  <Button.Group space={2}>
+                    <Button variant="unstyled" colorScheme="coolGray" onPress={onCloseAdvertencia} >
+                      Cancelar
+                    </Button>
+                   <Button colorScheme="danger" onPress={onValidateNIP}>
+                      Validar NIP
+                    </Button>
+                  </Button.Group>
+                </AlertDialog.Footer>
+              </AlertDialog.Content>
+            </AlertDialog>
+
+
     </View>
   );
 }

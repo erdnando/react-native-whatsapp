@@ -8,8 +8,9 @@ export const styles = new StyleSheet.create({
     height: 80,
   },
   avatar: {
-    width: 60,
-    height: 60,
+    width: 40,
+    height: 40,
+    marginTop:-35
   },
   infoContent: {
     flex: 1,

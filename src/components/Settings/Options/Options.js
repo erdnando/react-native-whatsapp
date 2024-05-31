@@ -76,13 +76,13 @@ export function Options(props) {
   return (
     <View style={styles.content}>
 
-      {/*<TouchableOpacity style={styles.item} onPress={openGallery}>
+      <TouchableOpacity style={styles.item} onPress={openGallery}>
         <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="text-recognition" style={styles.iconOptions} />   
           <Center size={3}></Center>
           <Text style={styles.text}>Cambiar foto de perfil</Text>
         </Flex>
-  </TouchableOpacity>*/}
+  </TouchableOpacity>
 
       <TouchableOpacity style={styles.item} onPress={statex$.default.isConnected.get() ? goChangeFirstname : null}>
         <Flex direction="row"   >

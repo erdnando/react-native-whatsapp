@@ -54,17 +54,18 @@ export function Info(props) {
   return (
     <View style={styles.content}>
      
+     <Pressable onPress={openGallery}>
         <Avatar
           bg="cyan.500"
           size="xl"
-          source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+          source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+          //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
         />
+        </Pressable>
      
      <Pressable style={styles.contentEdit} onPress={openChangeNameGroup} >
-      <Text style={styles.name} >
-        {group.name} <InfoIcon />
-      </Text>
-      <Text style={styles.type}>(Presione para editar)</Text>
+      <Text style={styles.name} >{group.name} <InfoIcon />  </Text>
+      {/*<Text style={styles.type}>(Presione para editar)</Text>*/}
       </Pressable>
     </View>
   );

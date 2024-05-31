@@ -13,7 +13,8 @@ export function UserInfo(props) {
         marginRight={3}
         size="xl"
         style={styles.avatar}
-        source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+        source={{ uri: user.avatar && `${ENV.BASE_PATH}/${user.avatar}` }}
+        //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
       >
         {user.email.substring(0, 2).toUpperCase()}
       </Avatar>

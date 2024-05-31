@@ -17,4 +17,10 @@ export const styles = new StyleSheet.create({
   inputError: {
     backgroundColor: "#270C0D",
   },
+  iconPwdNip:{
+    fontSize:20,
+    top:4,
+    marginRight:10,
+    width:25
+  }
 });

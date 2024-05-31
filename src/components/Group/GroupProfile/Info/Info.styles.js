@@ -6,20 +6,20 @@ export const styles = new StyleSheet.create({
   },
   contentEdit: {
     alignItems: "center",
-    backgroundColor:'white',
+    backgroundColor:'transparent',
     opacity:0.9,
     borderRadius:8,
     padding:4
   },
   name: {
-    color: "black",
-    fontSize: 18,
+    color: "white",
+    fontSize: 22,
     fontWeight: "bold",
     marginTop: 20,
   },
   type: {
-    color: "black",
-    fontSize: 14,
+    color: "white",
+    fontSize: 16,
     marginTop: 10,
     opacity: 0.9,
   },

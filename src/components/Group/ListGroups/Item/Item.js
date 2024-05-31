@@ -392,10 +392,11 @@ export function Item(props) {
 
       {/*Logo del grupo*/}
       <Avatar  bg="cyan.500"
-        size="lg"
+        size="sm"
         marginRight={3}
         style={styles.avatar}
-        source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }} 
+        source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+        //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }} 
       />
 
       <View style={styles.infoContent}>

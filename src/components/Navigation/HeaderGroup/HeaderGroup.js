@@ -132,9 +132,10 @@ export function HeaderGroup(props) {
               <Avatar
                 bg="cyan.500"
                 marginRight={3}
-                size="sm"
+                size="xs"
                 style={styles.avatar}
-                source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+                source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+                //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
               />
                {/*Nombre grupo */}
               <Text style={styles.name}>{group.name.substring(0,20) }</Text>

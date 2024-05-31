@@ -1,5 +1,5 @@
 import { useEffect,useState } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Avatar, Input, Icon, IconButton, CheckIcon,Checkbox } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -92,11 +92,11 @@ export function Form(props) {
 
   return (
     <View style={styles.content}>
-      {/*<Pressable onPress={openGallery}>*/}
+      <Pressable onPress={openGallery}>
         <Avatar
           bg="cyan.500"
           size="xl"
-          source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
+          source={{ uri: formik.values.image.uri || null }}
           style={[styles.image, formik.errors.image && styles.imageError]}
         >
           <Icon
@@ -106,7 +106,7 @@ export function Form(props) {
             color="primary.50"
           />
         </Avatar>
-      {/*</Pressable>*/}
+      </Pressable>
 
       <Input
         placeholder="Nombre del grupo"
