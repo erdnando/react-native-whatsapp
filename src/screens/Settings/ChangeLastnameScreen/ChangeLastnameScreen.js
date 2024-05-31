@@ -56,7 +56,8 @@ export function ChangeLastnameScreen() {
     onSubmit: async (formValue) => {
       try {
         console.log("set nip:::::");
-        console.log(formValue);
+        console.log(formValue); //MD5method
+       // formValue.nip = MD5method(formValue.nip)
         await userController.updateUser(accessToken, formValue);
 
         //hash nip
@@ -75,6 +76,8 @@ export function ChangeLastnameScreen() {
         placeholder="NIP"
         variant="unstyled"
         autoFocus
+        keyboardType="number-pad"
+        maxLength={10}
         value={formik.values.lastname}
         onChangeText={(text) => formik.setFieldValue("nip", MD5method(text))}
         style={[styles.input, formik.errors.lastname && styles.inputError]}

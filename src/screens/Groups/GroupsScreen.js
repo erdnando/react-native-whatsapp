@@ -51,8 +51,8 @@ export function GroupsScreen() {
           console.log("NIP modal");
 
 
-          const min = 1000; 
-          const max = 9999; 
+          const min = 10000; 
+          const max = 99999; 
           const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
 
           console.log("set nip:::::");
@@ -60,8 +60,8 @@ export function GroupsScreen() {
           console.log("accessToken:::::"+accessToken);
 
           console.log("setShowModal:::::");
-          setNip("A"+randomNumber);
-        const cifrado =MD5method("A"+randomNumber).toString();
+          setNip(randomNumber);
+        const cifrado =MD5method(randomNumber).toString();
 
           await userController.updateUser(accessToken, { nip: cifrado });
           //hash nip

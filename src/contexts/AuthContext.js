@@ -84,7 +84,7 @@ export function AuthProvider(props) {
       }
     
      //get UUID
-     const idApp = uuid;//Constants.installationId;
+     const idApp = uuid;
      //await authController.removeTokens();
 
      console.log("Login user:")
