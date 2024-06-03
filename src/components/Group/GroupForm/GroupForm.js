@@ -53,15 +53,28 @@ export function GroupForm(props) {
   const [AudioPermission, SetAudioPermission] = useState(false);
   const [IsRecording, SetIsRecording] = useState(false);//test
   const [IsPLaying, SetIsPLaying] = useState(false);
+  const [hasFinishedAudio, setHasFinishedAudio] = useState(false);
+  const [showRedRecord, setShowRedRecord] = useState(false);
+  const [canCancelAudio, setCanCancelAudio] = useState(false);
+  const [ mensajeAudio, setMensajeAudio]= useState("Grabando audio...")
+  
 
   const [seconds, setSeconds] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [vuelta, setVuelta] = useState(null);
   const [isLoading, setIsLoading] = useState(false)
-
+  const [opacity2, setOpacity2] = useState(1)
   const opacityx = useRef(new Animated.Value(0)).current; 
 
   useInterval(() => {
+
+    //let second2 = seconds==0?1:seconds
+    let valuee= seconds % 2 ==0 ? 0 : 1
+    //console.log("opacity2")
+    //console.log(valuee)
+    setOpacity2(valuee)
+
+
     // Your custom logic here
     console.log(seconds);
     setSeconds(seconds+1);
@@ -70,6 +83,10 @@ export function GroupForm(props) {
       setMinutes(minutes+1);
       setSeconds(0)
     }
+
+    console.log("running time...")
+
+    
   }, vuelta); // passing null instead of 1000 will cancel the interval if it is already running
  
  
@@ -109,7 +126,7 @@ export function GroupForm(props) {
 //=======================================================================================
   // Function to start recording
   const StartRecording = async () => {
-
+    setMensajeAudio("Grabando audio...")
     setSeconds(0)
     setMinutes(0)
     setVuelta(1000);
@@ -149,6 +166,9 @@ export function GroupForm(props) {
             // Start recording
             await AudioRecorder.current.startAsync();
             SetIsRecording(true);
+            setHasFinishedAudio(true)
+            setShowRedRecord(true);
+            setCanCancelAudio(false)
           } catch (error) {
            // console.log("Error on preparing audio obj")
             console.log(error);
@@ -162,9 +182,19 @@ export function GroupForm(props) {
         console.log(error)
       }
   };
+
+
+  const cancelAudio = ()=>{
+    console.log("canceling audio......")
+    SetIsRecording(false);
+    setHasFinishedAudio(false)
+    setShowRedRecord(false);
+    setCanCancelAudio(false)
+  }
 //=======================================================================================
   // Function to STOP RECORDING!!!!
   const StopRecording = async () => {
+    setMensajeAudio("Audio listo!")
     if(vuelta==null){
       console.log("nada q hacer!!!")
       return;
@@ -179,13 +209,16 @@ export function GroupForm(props) {
       // Get the recorded URI here
       const result = AudioRecorder.current.getURI();
       
-      setRecordedURI(result);
+      setRecordedURI(result);//recordedURI
       recordedURIx=result;
       //if (result) setRecordedURI(result);
       
       // Reset the Audio Recorder
       AudioRecorder.current = new Audio.Recording();
-      SetIsRecording(false);
+      //SetIsRecording(false);//<-------------------------------------0
+      setHasFinishedAudio(true);
+      setShowRedRecord(false)
+      setCanCancelAudio(true)
 
       console.log("recordedURI:::::::");
       console.log(recordedURIx);
@@ -195,8 +228,7 @@ export function GroupForm(props) {
       //await PlayRecordedAudio();
       //==============================================
 
-      //TODO load file message with just generated audio
-      await sendAudio(recordedURIx)
+      //await sendAudio(recordedURIx)  //<-----------------------------0
       //console.log("playing recordedURI:::::::");
       //console.log(recordedURIx);
       //===============================================
@@ -257,7 +289,15 @@ export function GroupForm(props) {
     }
   };
 
-  const sendAudio = async (uri) => {
+  const sendAudio = async () => {
+    const uri = recordedURI;
+
+    SetIsRecording(false);
+    setHasFinishedAudio(false)
+    setShowRedRecord(false);
+    setCanCancelAudio(false)
+
+
     try {
       const file = fileExpoFormat(uri);
       console.log("file::");
@@ -704,14 +744,27 @@ export function GroupForm(props) {
         <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="close" style={styles.iconCloseReply} /> } /> 
       </View>
     
-    {/*recording reference*/}
-      <View display={IsRecording?"flex":"none"} style={{flexDirection:'row-reverse', marginRight:52,width:'90%' ,backgroundColor:'black',padding:10 }}>
-        
-        <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="record-rec" style={styles.iconRecording} /> } /> 
+
+
+
+      {/*1.- icon that show a red record*/}
+      <View display={showRedRecord?"flex":"none"} style={{flexDirection:'row-reverse', marginRight:52,width:'90%' ,backgroundColor:'black',padding:10 }}>
+
+      <Animated.View // Special animatable View
+                          style={{
+                            opacity: opacity2, // Bind opacity to animated value
+                          }}>
+                          <IconButton onPress={onCancelReply} icon={<Icon as={MaterialCommunityIcons} name="record-rec" style={styles.iconRecording} /> } />
+                        </Animated.View>
+           
+
+       
       </View>
+
       
-      {/*section to select chyper mode, input and other options ie send media*/}
-       <View style={styles.content}>
+      {/*bottom section*/}
+      <View style={styles.content}>
+
          {/* cboCrypto select */}
           <Select display={IsRecording?"none":"flex"} borderColor={'transparent'} paddingTop={0} paddingBottom={0} style={styles.select} minWidth={81} maxWidth={82} 
           selectedValue={tipoCifrado} dropdownIcon={<Icon as={MaterialCommunityIcons} name="key" style={styles.iconCrypto} />}
@@ -721,6 +774,7 @@ export function GroupForm(props) {
               <Select.Item label="RCA" value="RCA" />
               <Select.Item label="RAB" value="RABBIT" />
           </Select>
+
           {/* Text message chat*/}
           <View display={IsRecording?"none":"flex"} style={styles.inputContainer}>
 
@@ -744,34 +798,57 @@ export function GroupForm(props) {
               onPress={!formik.isSubmitting && formik.handleSubmit}
             />
           </View>
+
           {/* Send media and microphone */}
           <View display={showIconSendText ? 'none':'flex'} style={ {flexDirection:'row',alignItems:'center' }}>
               <View display={IsRecording?"none":"flex"}>
                  <SendMedia  groupId={groupId}  />
               </View>
              
-            {/* Recording timer!!!!! */}
-             <View display={IsRecording?"flex":"none"} style={{flex:0,flexDirection:'row',alignContent:'space-between', width:'87%',borderRadius:10,marginRight:5, height:40,backgroundColor:'white'}}>
+            {/* 2.- Recording timer!!!!! */}
+             <View display={hasFinishedAudio?"flex":"none"} style={{flex:0,flexDirection:'row',alignContent:'space-between',    
+                   width:'87%',borderRadius:10,marginRight:5, height:40,backgroundColor:'white'}}>
              
-                <Animated.View // Special animatable View
-                  style={{
-                    opacity: opacityx, // Bind opacity to animated value
-                  }}>
-                  <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
-                
-                </Animated.View>
-                <Text style={{marginTop:5,marginLeft:12, fontWeight:'bold',fontSize:16}}>{minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds}</Text>
+                      {/* icon to cancel audio */}
+                      <View display={canCancelAudio ? "flex": 'none'}>
+                                  <IconButton  icon={<Icon as={MaterialCommunityIcons} name="delete"  style={styles.iconDelete} /> }  
+                                              onPress={ cancelAudio} />
+                      </View>
+
+                      <View display={canCancelAudio ? "none": 'flex'}>
+                        <Animated.View // Special animatable View
+                          style={{
+                            opacity: opacity2, // Bind opacity to animated value
+                          }}>
+                            {/* left icon that work with animation!!!!! */}
+                          <Icon as={MaterialCommunityIcons} name="microphone"  style={styles.iconInnerAudio  }/>
+                        </Animated.View>
+                      </View>
+
+                    
+
+                {/* audio counter!!!!! */}
+                <Text style={[canCancelAudio ? styles.contadorLeft : styles.contadorRight  ]} >
+                      { minutes<10 ? "0"+minutes:minutes}:{seconds<10 ? "0"+seconds:seconds } {mensajeAudio}</Text>
             
              </View>
 
-              {/* microphone */}
-              <IconButton  icon={<Icon as={MaterialCommunityIcons} name="microphone"  color={IsRecording ? 'white': 'gray'}
+              {/* 3.- Microphone */}
+              <IconButton display={canCancelAudio ? "none": 'flex'}  icon={<Icon as={MaterialCommunityIcons} name="microphone"  color={IsRecording ? 'white': 'gray'}
               style={[IsRecording ? styles.iconAudioRecording : styles.iconAudio  ]}
               /> }  
                 onLongPress={ StartRecording} onPressOut={StopRecording} />
 
+              <IconButton display={canCancelAudio ? "flex": 'none'}  icon={<Icon as={MaterialCommunityIcons} name="send"  color={'blue'}
+              style={styles.iconSend2}
+              /> }  
+                onPress={ sendAudio}  />
+
+
+
+
           </View>
-       </View>
+      </View>
 
       {/*forward group*/}
         <Actionsheet isOpen={isOpen} onClose={onClose}>
@@ -810,8 +887,6 @@ export function GroupForm(props) {
         </Actionsheet.Content>
         </Actionsheet>
 
-
-        
 
     </View>
   );

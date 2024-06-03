@@ -225,35 +225,35 @@ export function ItemImage(props) {
               />
             </Pressable>
 
-           <View style={styles.colFile}>
-                  
-                    <Text style={styles.cifrado}>{"AES"}</Text>
-                    <Text style={styles.date}>
-                      {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
+            <View style={styles.colFile}>
+                    
+                <Text style={styles.cifrado}>{"AES"}</Text>
+                <Text style={styles.date}>
+                  {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
+                </Text>
+
+
+
+                {/*message forwarded*/}
+                <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
+                    <Icon
+                      style={{transform: [{rotateY: '180deg'}]}}
+                      as={MaterialCommunityIcons}
+                      size="7"
+                      name="reply"
+                      color="black"
+                    />
+
+                    <Text  style={styles.dateEditado}  >
+                      {"Reenviado"}
                     </Text>
+                </View>
 
 
 
-                    {/*message forwarded*/}
-                    <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
-                        <Icon
-                          style={{transform: [{rotateY: '180deg'}]}}
-                          as={MaterialCommunityIcons}
-                          size="7"
-                          name="reply"
-                          color="black"
-                        />
+                </View>
 
-                        <Text  style={styles.dateEditado}  >
-                          {"Reenviado"}
-                        </Text>
-                    </View>
-
-
-
-                    </View>
-
-          </View>
+            </View>
 
 
           <AlertDialog  isOpen={showAdvertencia} onClose={onCloseAdvertencia}>

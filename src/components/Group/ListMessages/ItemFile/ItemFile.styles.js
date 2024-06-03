@@ -84,5 +84,36 @@ export const styled = (isMe) => {
       marginTop:-5,
       marginBottom:6
     },
+    containerVideo: {
+      position: "relative",
+      backgroundColor:'black'
+    },
+    video: {
+      height: "95%",
+      width: "100%",
+    },
+    topActions: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      position: "absolute",
+      width: "100%",
+      top: 0,
+      left: 0,
+      padding: 10,
+    },
+    bottomActions: {
+      flexDirection: "row",
+      justifyContent: 'center',
+      alignItems: "center",
+      position: "absolute",
+      width: "100%",
+      bottom: 50,
+      left: 0,
+      padding: 10,
+    },
+    icon: {
+      color: "#fff",
+    },
   });
 };

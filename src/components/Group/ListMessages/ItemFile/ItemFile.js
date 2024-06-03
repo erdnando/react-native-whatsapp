@@ -1,5 +1,5 @@
-import { View, Text, Pressable } from "react-native";
-import { Menu,Icon,AlertDialog,Button,Box } from 'native-base';
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { Menu,Icon,AlertDialog,Button,Modal, IconButton, CloseIcon, Spinner,  } from 'native-base';
 import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
@@ -15,7 +15,7 @@ import { Audio } from 'expo-av';
 import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
 import * as statex$ from '../../../../state/local'
-
+import { Video } from 'expo-av';
 
 const authController = new Auth();
 
@@ -41,7 +41,10 @@ export function ItemFile(props) {
   const [isHovered,setIsHovered]=useState(false)
   const [realImage,setRealImage]=useState(false)
   const [forwarded, setForwarded] = useState(false);
-  const [isConnected,setIsConnected]=useState(false)
+  const [isConnected,setIsConnected]=useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [videoUri, setVideoUri] = useState(null);
 
   const onEliminarMensaje = () => {
 
@@ -102,6 +105,69 @@ export function ItemFile(props) {
     }
 
     setIsPressed(false);
+  }
+
+
+
+
+
+
+
+  const handleVideoRef = async component => {
+
+    const playbackObject = component;
+    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+    if (playbackObject) {
+        await playbackObject.loadAsync( { uri: urlFile },  );
+    }
+
+  };
+
+
+  const callback = downloadProgress => {
+    /*setTotalSize(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+
+   */
+
+    var progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+    progress = progress.toFixed(2) * 100
+
+    console.log(progress.toFixed(0))
+    if(progress.toFixed(0)==100)setLoading(false);
+  };
+
+
+//  const downloadResumable = FileSystem.createDownloadResumable( videoUri, FileSystem.documentDirectory + 'small.mp4',  {},  callback );
+
+
+  const PlayRecordedVideo = async () =>{
+    
+    console.log("openning video client...")
+
+    setShowModal(true);
+    setLoading(true);
+    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+    setVideoUri(urlFile)
+    const filename=message.message.replace("files/","");
+    
+    let mimetype =mime.getType(filename);
+    console.log("mimetype::::::")
+    console.log(mimetype)
+    console.log(urlFile)
+    console.log(filename)
+    
+    //const downloadResumable = FileSystem.createDownloadResumable( urlFile, FileSystem.documentDirectory + filename,  {},  callback );
+   // const { urix } = await downloadResumable.downloadAsync();
+    //console.log('Finished downloading to ', urix);
+    setLoading(false);
+   
+    
+
+    
+
+
+    
+    
   }
 
   const sleepNow = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
@@ -277,23 +343,37 @@ export function ItemFile(props) {
 
               </View>
 
-              {/*vista file  iconos y nombre del archivo*/}
+              {/*Vista file  iconos y nombre del archivo*/}
               <View style={styles.rowFile}>
 
-                {/*any other file*/}
-                <View display={message?.message.toString().endsWith(".mp3") ? "none":"flex"}>
+                {/*any other file different mp3 or mp4*/}
+                <View display={message?.message.toString().endsWith(".mp3") || message?.message.toString().endsWith(".mp4") ? "none":"flex"}>
                    <Icon 
-                                as={MaterialCommunityIcons}
-                                size="39"
-                                name="file"
-                                color="black"
-                              />
+                      as={MaterialCommunityIcons}
+                      size="39"
+                      name="file"
+                      color="black"
+                    />
                 </View>
 
                 
-                 {/*just to mp3 files*/}
+                 {/*just to mp4 files*/}
+                 <View display={message?.message.toString().endsWith(".mp4") ?"flex":"none"} >
+                    <Pressable onPress={PlayRecordedVideo}>
+                      <View>
+                        <Icon  style={{ color:"black",borderWidth:1, borderRadius:8, shadowOffset:{width:-4, height:4}, shadowOpacity:0.4, shadowRadius:3  }}
+                            as={MaterialCommunityIcons}
+                            size="49"
+                            name="movie-open-play"
+                            color="black"
+                          />
+                      </View>   
+                    </Pressable>
+                </View>
+
+
+                {/*just to mp3 files*/}
                 <View display={message?.message.toString().endsWith(".mp3") ?"flex":"none"} >
-                  
                     <Pressable onPress={PlayRecordedAudio}>
                       <View>
                         <Icon  style={{color:IsPLaying ? "red":"black",   transform: [{scale: isPressed ? 1.4 : 1.2 }]}}
@@ -318,10 +398,10 @@ export function ItemFile(props) {
                     </Pressable>
                 </View>
 
-               {/*Nombre del archicvo*/}
+               {/*Nombre del archivo*/}
                <Text display={realImage ?"none":"flex"} style={styles.fileName}>
                   {message.message.replace("files/","") }
-                </Text>
+               </Text>
 
                  
               </View>
@@ -344,7 +424,7 @@ export function ItemFile(props) {
                         <Text  style={styles.dateEditado}  >
                           {"Reenviado"}
                         </Text>
-                    </View>
+            </View>
           </View>
 
 
@@ -366,8 +446,27 @@ export function ItemFile(props) {
                   </Button.Group>
                 </AlertDialog.Footer>
               </AlertDialog.Content>
-            </AlertDialog>
+          </AlertDialog>
 
+
+          <Modal isOpen={showModal} onClose={() => setShowModal(false)} presentationStyle="fullScreen" style={{flex: 1, alignItems: 'center', justifyContent: 'center',marginTop: -60,}}>
+                  <Modal.Content  width="100%" height="100%" >
+                      <Modal.CloseButton />
+
+                      <Modal.Header style={{backgroundColor:'#0891b2',  }}>Video</Modal.Header>
+                          <View style={styles.containerVideo}>
+                                <Video 
+                                  source={{ uri: `${ENV.BASE_PATH}/${message.message}` }}
+                                  alt="video" style={styles.video}
+                                  useNativeControls
+                                  resizeMode="cover"
+                                  shouldPlay={true}
+                                  isLooping>
+                                  <ActivityIndicator size={"small"} ></ActivityIndicator>
+                                </Video>
+                          </View>
+                  </Modal.Content>
+          </Modal>
 
         </View>
       );
@@ -399,6 +498,10 @@ export function ItemFile(props) {
         </View>
       );
 }
+
+
+
+
 
 
 }

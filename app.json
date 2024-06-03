@@ -22,7 +22,12 @@
       "supportsTablet": true
     },
     "android": {
-      "permissions": [ "RECORD_AUDIO","CAMERA", "WRITE_EXTERNAL_STORAGE", "CAMERA_ROLL" ],
+      "permissions": [
+        "RECORD_AUDIO",
+        "CAMERA",
+        "WRITE_EXTERNAL_STORAGE",
+        "CAMERA_ROLL"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -59,7 +64,8 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": true
         }
-      ]
+      ],
+      "expo-video"
     ]
   }
 }

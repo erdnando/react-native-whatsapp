@@ -63,6 +63,12 @@ export const styles = new StyleSheet.create({
     color:'white',
     opacity:1,
   },
+  iconSend2: {
+   color:'#0891b2',
+   fontSize:25,
+   width:25,
+   
+  },
   iconCrypto: {
     position: "absolute",
     top: 17,
@@ -82,6 +88,15 @@ export const styles = new StyleSheet.create({
     fontSize:22,
     color:'gray',
     transform: [{scaleX: 1.2},{scaleY:1.2}],
+  },
+  
+  iconDelete:{
+    position:'relative',
+    right:12,
+    marginLeft:10,
+    fontSize:22,
+    color:'red',
+    
   },
   iconInnerAudio:{
     position:'relative',
@@ -139,6 +154,12 @@ marginRight:8
   contentBottomSheet:{
     flex: 1,
     alignItems: 'center',
+  },
+  contadorLeft:{
+    marginTop:5,marginLeft:-12, fontWeight:'bold',fontSize:16
+  },
+  contadorRight:{
+    marginTop:5,marginLeft:12, fontWeight:'bold',fontSize:16
   }
  
 
