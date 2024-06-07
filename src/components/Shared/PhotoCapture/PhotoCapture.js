@@ -21,6 +21,7 @@ export function PhotoCapture(props) {
     try {
       setLoading(true);
       const file = imageExpoFormat(photo.uri);
+      console.log(file)
 
       if (type === "chat") {
         await chatMessageController.sendImage(accessToken, id, file);

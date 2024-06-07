@@ -724,7 +724,7 @@ export function GroupForm(props) {
             alignItems: "center",}}>
           <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.500" />
           <Heading color="white" fontSize="lg">
-          Cargando...
+          Enviando...
           </Heading>
         </View>
         );  }

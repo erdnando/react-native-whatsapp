@@ -1,5 +1,5 @@
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import { Menu,Icon,AlertDialog,Button,Modal, IconButton, CloseIcon, Spinner,  } from 'native-base';
+import { Menu,Icon,AlertDialog,Button,Modal, Center, Box, Spinner,  } from 'native-base';
 import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { DateTime } from "luxon";
@@ -16,6 +16,7 @@ import { shareAsync } from 'expo-sharing';
 import mime from 'mime';
 import * as statex$ from '../../../../state/local'
 import { Video } from 'expo-av';
+import { Progress } from 'native-base';
 
 const authController = new Auth();
 
@@ -45,6 +46,9 @@ export function ItemFile(props) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [videoUri, setVideoUri] = useState(null);
+  const [totalSize, setTotalSize] = useState(0)
+  const [progressValue, setProgressValue] = useState(0)
+  const [showProgressBar, setShowProgressBar] = useState(false)
 
   const onEliminarMensaje = () => {
 
@@ -108,11 +112,6 @@ export function ItemFile(props) {
   }
 
 
-
-
-
-
-
   const handleVideoRef = async component => {
 
     const playbackObject = component;
@@ -174,8 +173,8 @@ export function ItemFile(props) {
   //--------------------------------------------------------------------------------------------
 
 
-//open file function
-  const onOpenFile= async () => {
+  //onDownload function
+  const onDownload= async () => {
     
     const urlFile = `${ENV.BASE_PATH}/${message.message}`;
     const filename=message.message.replace("files/","");
@@ -204,10 +203,101 @@ export function ItemFile(props) {
       });
 
     }
-    //else{
-     // await shareAsync(uri);
-    //}
    
+
+  };
+
+
+
+
+
+  const formatBytes =(bytes, decimals = 2)=> {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  
+  
+
+  const onDownloadIndicator= async () => {
+
+    try{
+    setProgressValue(0)
+    setShowProgressBar(true)
+
+    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+    const filename=message.message.replace("files/","");
+    
+    let mimetype =mime.getType(filename);
+    console.log("mimetype::::::")
+    console.log(mimetype);
+    //=============================================================
+
+    const callbackx = (downloadProgress) => {
+      setTotalSize(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+  
+      var progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+      progress = progress.toFixed(2) * 100
+      setProgressValue(progress.toFixed(0))
+  
+      console.log("Descargando archivo...")
+      console.log(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+      console.log(progress.toFixed(0))
+    };
+
+    
+    const downloadResumable = FileSystem.createDownloadResumable(
+      urlFile,
+      FileSystem.documentDirectory + filename,
+      {},
+      callbackx
+    );
+
+    
+
+    
+
+    const { uri } = await downloadResumable.downloadAsync();
+
+
+    // Download the file and get its local URI
+    //const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
+
+   // let fileInfo = await FileSystem.getInfoAsync(uri);
+   // console.log("fileInfo");
+   // console.log(fileInfo);
+
+    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+    if(permissions.granted){
+
+      const base64 = await FileSystem.readAsStringAsync(uri,{encoding:FileSystem.EncodingType.Base64});
+      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,filename,mimetype).then(async (uri)=>{
+        await FileSystem.writeAsStringAsync(uri,base64,{encoding:FileSystem.EncodingType.Base64})
+      }).catch( e => {
+        console.log(e)
+        setProgressValue(0)
+        setShowProgressBar(false)
+      });
+
+    }else{
+      setProgressValue(0)
+      setShowProgressBar(false)
+    }
+    setProgressValue(0)
+    setShowProgressBar(false)
+
+  }catch(exx){
+    setProgressValue(0)
+    setShowProgressBar(false)
+  }
 
   };
 
@@ -260,7 +350,7 @@ export function ItemFile(props) {
                     : message.user.email.substring(0,23) }
                 </Text>
 
-                <Menu  w="180" trigger={triggerProps => {
+                <Menu   w="180" trigger={triggerProps => {
                   return <Pressable style={styles.menu}  accessibilityLabel="More options menu" {...triggerProps}>
                           <Icon display={statex$.default.isConnected.get()?"flex":"none"}
                             as={MaterialCommunityIcons}
@@ -309,7 +399,7 @@ export function ItemFile(props) {
                     {/*descargar*/}
                     <Menu.Item  
                         onPress={() => {
-                          onOpenFile();
+                          onDownloadIndicator();
                         }}>
                             <View style={styles.contentMenuItem} >
                             <Text>Descargar</Text>
@@ -400,12 +490,22 @@ export function ItemFile(props) {
 
                {/*Nombre del archivo*/}
                <Text display={realImage ?"none":"flex"} style={styles.fileName}>
-                  {message.message.replace("files/","") }
+                  {message.message.replace("files/","")}
                </Text>
-
                  
               </View>
 
+              {/*Indicator just to mp4 files*/}
+              <View display={ showProgressBar ? "flex":"none"} >
+                   <Box w="93%" maxW="400">
+                     <Progress colorScheme="secondary" value={progressValue} mx="4" style={{marginTop:-11, marginLeft:60}} />
+                   </Box>
+                
+               </View>
+
+
+
+              <Text display={ showProgressBar ? "flex":"none"} style={styles.totalSize} >{totalSize}</Text>
               <Text style={styles.cifrado}>{"AES"}</Text>
               <Text style={styles.date}>
                 {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}

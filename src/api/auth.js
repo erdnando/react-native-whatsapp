@@ -3,8 +3,6 @@ import * as statex$ from '../state/local'
 import { ENV } from "../utils";
 import { ADD_STATE_AUTHLOGIN, GET_STATE_AUTHLOGIN } from '../hooks/useDA'
 
-
-
 export class Auth {
 
 
@@ -41,11 +39,14 @@ export class Auth {
 
   async login(email, password) {
 
+   
+
     //console.log("isConnected - login")
     console.log(statex$.default.isConnected.get())
     
 
     if(statex$.default.isConnected.get()){
+      console.log("trying to connect to api..")
           try {
             const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
             const params = {
@@ -59,6 +60,8 @@ export class Auth {
             //console.log("login")
             //console.log(url)
            // console.log(params)
+          
+
             const response = await fetch(url, params);
             const result = await response.json();
             //console.log("=======================================")
@@ -74,6 +77,7 @@ export class Auth {
 
             return result;
           } catch (error) {
+            console.log(error)
             throw error;
           }
 

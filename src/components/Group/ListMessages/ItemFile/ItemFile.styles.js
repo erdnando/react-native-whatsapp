@@ -115,5 +115,14 @@ export const styled = (isMe) => {
     icon: {
       color: "#fff",
     },
+    totalSize: {
+      fontWeight:"bold",
+      color: "black",
+      fontSize: 12,
+      top: 0,
+      textAlign: "left",
+      marginTop:-15,
+      marginBottom:0
+    },
   });
 };

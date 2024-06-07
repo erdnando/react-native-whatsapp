@@ -2,6 +2,7 @@
 const SERVER_IP = "node-express-sockets-whatsapp-production-a1d6.up.railway.app";  //QA nube
 
 //const SERVER_IP = "192.168.0.100:3977"; //DEV local
+//const SERVER_IP = "192.168.0.34";  //FEDORA
 
 export const ENV = {
   SERVER_IP: SERVER_IP,

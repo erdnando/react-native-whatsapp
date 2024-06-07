@@ -1,6 +1,7 @@
 import { ENV,Encrypt,EncryptWithLlave } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../state/local';
+import { manipulateAsync } from 'expo-image-manipulator';
 
 export class GroupMessage {
 
@@ -341,11 +342,23 @@ export class GroupMessage {
   async sendImage(accessToken, groupId, file) {
 
       EventRegister.emit("loadingEvent",true);
+      console.log("file")
+      console.log(file)
+      const manipulateResult = await manipulateAsync(file.uri, [], { compress: 0.1 });
+      console.log("manipulateResult")
+      console.log(manipulateResult)
+
+      const filex = {
+        name:file.name,
+        type:file.type,
+        uri: manipulateResult.uri,
+
+      }
   
       try {
         const formData = new FormData();
         formData.append("group_id", groupId);
-        formData.append("image", file);
+        formData.append("image", filex);//file
       
 
         const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE}`;

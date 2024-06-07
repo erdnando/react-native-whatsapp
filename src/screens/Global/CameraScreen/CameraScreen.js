@@ -7,7 +7,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { PhotoCapture } from "../../../components/Shared";
 import { styles } from "./CameraScreen.styles";
 
+
+
 export function CameraScreen() {
+
   const navigation = useNavigation();
   const { params } = useRoute();
   const [photo, setPhoto] = useState(null);
@@ -22,16 +25,20 @@ export function CameraScreen() {
   const changeTypeCamera = () => setCameraBack((prevState) => !prevState);
 
   const captureImage = async () => {
-    const options = { quality: 0.2,skipProcessing: true };
+    const options = { quality: 0.1, skipProcessing: true };
 
     //quality: 0.5, // Adjust this value (0.0 - 1.0) for picture quality
     //skipProcessing: true, // Set to true to skip processing
-
     const newPhoto = await cameraRef.current.takePictureAsync(options);
     setPhoto(newPhoto);
   };
 
   if (photo) {
+    
+
+
+
+
     return <PhotoCapture photo={photo} type={params.type} id={params.id} />;
   }
 
@@ -45,46 +52,33 @@ export function CameraScreen() {
       <View style={styles.topActions}>
         <IconButton
           icon={<CloseIcon style={styles.icon} />}
-          onPress={onClose}
-        />
+          onPress={onClose} />
         <IconButton
           onPress={onOffFlash}
-          icon={
-            <Icon
-              as={MaterialCommunityIcons}
-              size="6"
-              name={flashOn ? "flash" : "flash-off"}
-              style={styles.icon}
-            />
-          }
-        />
+          icon={<Icon
+            as={MaterialCommunityIcons}
+            size="6"
+            name={flashOn ? "flash" : "flash-off"}
+            style={styles.icon} />} />
       </View>
 
       <View style={styles.bottomActions}>
         <IconButton icon={null} />
         <IconButton
           onPress={captureImage}
-          icon={
-            <Icon
-              as={MaterialCommunityIcons}
-              size="20"
-              name="circle-outline"
-              style={styles.icon}
-            />
-          }
-        />
+          icon={<Icon
+            as={MaterialCommunityIcons}
+            size="20"
+            name="circle-outline"
+            style={styles.icon} />} />
         <IconButton
           onPress={changeTypeCamera}
           style={styles.iconBackground}
-          icon={
-            <Icon
-              as={MaterialCommunityIcons}
-              size="6"
-              name="camera-flip"
-              style={styles.icon}
-            />
-          }
-        />
+          icon={<Icon
+            as={MaterialCommunityIcons}
+            size="6"
+            name="camera-flip"
+            style={styles.icon} />} />
       </View>
     </Camera>
   );

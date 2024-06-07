@@ -73,6 +73,11 @@ export function AuthProvider(props) {
 
 
   useEffect(() => {
+
+
+   
+
+
     (async () => {
 
       let uuid = await authController.getUUID();
