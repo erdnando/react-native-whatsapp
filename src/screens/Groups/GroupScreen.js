@@ -12,7 +12,8 @@ import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Audio } from 'expo-av';
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE,GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBYID,UPDATE_STATE_GROUP_LLAVE,
+  GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE, ADD_STATE_MY_DELETED_MESSAGES } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
@@ -167,6 +168,43 @@ export function GroupScreen() {
    getAllMessages();
 
   }, [groupId]);
+
+
+  //EventListener:deletingMessage for me
+  useEffect(() => {
+
+      try {
+        
+         //=================================================================
+         const eventDeleteMessageForMe = EventRegister.addEventListener("deletingMessageForMe", async data=>{
+          
+          console.log("Deleteing for me message")
+          console.log("message._id:"+data._id);
+          console.log("message.message:"+data.message);
+          console.log("message.group:"+data.group);
+          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+          console.log("message.type:"+data.type);
+         
+          //======================================================
+          ADD_STATE_MY_DELETED_MESSAGES(data._id)
+
+          
+          
+    
+          getAllMessages();
+          
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventDeleteMessageForMe);
+        }
+        //================================================================
+
+      } catch (error) {
+        console.error(error);
+      }
+   // })();
+  }, []);
 
   //subscribe sockets
   useEffect(() => {

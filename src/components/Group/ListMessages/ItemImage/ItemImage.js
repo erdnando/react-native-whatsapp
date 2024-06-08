@@ -48,6 +48,15 @@ export function ItemImage(props) {
     setMensajeEliminar(null);
   }
 
+  const onEliminarMensajeParaMi = () => {
+
+    setShowAdvertencia(false);
+    console.log("eliminando message para mi:::::::::::");
+                         
+    EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
+    setMensajeEliminar(null);
+  }
+
   const onOpenImage = () => {
     console.log(imageUri)
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
@@ -268,8 +277,11 @@ export function ItemImage(props) {
                     <Button variant="unstyled" colorScheme="coolGray" onPress={onCloseAdvertencia} >
                       Cancelar
                     </Button>
-                   <Button colorScheme="danger" onPress={onEliminarMensaje}>
-                      Eliminar imagen
+                    <Button colorScheme="warning" onPress={onEliminarMensajeParaMi}>
+                      Para mi
+                    </Button>
+                    <Button colorScheme="danger" onPress={onEliminarMensaje}>
+                      Para todos
                     </Button>
                   </Button.Group>
                 </AlertDialog.Footer>

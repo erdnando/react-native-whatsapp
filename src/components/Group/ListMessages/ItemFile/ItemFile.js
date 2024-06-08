@@ -61,6 +61,15 @@ export function ItemFile(props) {
     setMensajeEliminar(null);
   }
 
+  const onEliminarMensajeParaMi = () => {
+
+    setShowAdvertencia(false);
+    console.log("eliminando message para mi:::::::::::");
+                         
+    EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
+    setMensajeEliminar(null);
+  }
+
   const onOpenImage = () => {
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
@@ -540,8 +549,11 @@ export function ItemFile(props) {
                     <Button variant="unstyled" colorScheme="coolGray" onPress={onCloseAdvertencia} >
                       Cancelar
                     </Button>
-                   <Button colorScheme="danger" onPress={onEliminarMensaje}>
-                      Eliminar archivo
+                    <Button colorScheme="warning" onPress={onEliminarMensajeParaMi}>
+                      Para mi
+                    </Button>
+                    <Button colorScheme="danger" onPress={onEliminarMensaje}>
+                      Para todos
                     </Button>
                   </Button.Group>
                 </AlertDialog.Footer>

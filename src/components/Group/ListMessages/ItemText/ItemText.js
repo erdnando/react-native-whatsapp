@@ -43,6 +43,16 @@ export function ItemText(props) {
     setMensajeEliminar(null);
   }
 
+  
+  const onEliminarMensajeParaMi = () => {
+
+    setShowAdvertencia(false);
+    console.log("eliminando message para mi:::::::::::");
+                         
+    EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
+    setMensajeEliminar(null);
+  }
+
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
@@ -301,8 +311,11 @@ export function ItemText(props) {
                     <Button variant="unstyled" colorScheme="coolGray" onPress={onCloseAdvertencia} >
                       Cancelar
                     </Button>
+                    <Button colorScheme="warning" onPress={onEliminarMensajeParaMi}>
+                      Para mi
+                    </Button>
                     <Button colorScheme="danger" onPress={onEliminarMensaje}>
-                      Eliminar mensaje
+                      Para todos
                     </Button>
                   </Button.Group>
                 </AlertDialog.Footer>

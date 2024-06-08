@@ -8,7 +8,7 @@ import { styles } from "./Options.styles";
 import * as statex$ from '../../../state/local'
 import { Center, Flex, Icon, AlertDialog,Button ,TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { GET_STATE_ALLMESSAGES,GET_STATE_ALLGROUP_LLAVE } from '../../../hooks/useDA';
+import { GET_STATE_ALLMESSAGES,GET_STATE_ALLGROUP_LLAVE,GET_STATE_MY_DELETED_MESSAGES } from '../../../hooks/useDA';
 
 const userController = new User();
 
@@ -63,7 +63,8 @@ export function Options(props) {
   
   const goDataView = async () => {
     //get data STATE_GROUP_LLAVE
-    await GET_STATE_ALLGROUP_LLAVE().then(result =>{
+    //GET_STATE_ALLGROUP_LLAVE
+    await GET_STATE_MY_DELETED_MESSAGES().then(result =>{
       let response=result.rows._array;
       console.log(response)
       response =JSON.stringify(response);

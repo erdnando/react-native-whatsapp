@@ -2,6 +2,8 @@ import { ENV,Encrypt,EncryptWithLlave } from "../utils";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../state/local';
 import { manipulateAsync } from 'expo-image-manipulator';
+//
+import { GET_STATE_MY_DELETED_MESSAGES } from '../hooks/useDA';
 
 export class GroupMessage {
 
@@ -70,9 +72,7 @@ export class GroupMessage {
   async getAll(accessToken, groupId) {
     try {
       EventRegister.emit("loadingEvent",true);
-      //TODO: pass this value statex$.default.fechaAltaGrupoSelected.get(), by modifying the method or clonning
-      //const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE}/${groupId}`; //<----
-      //createdAt  2024-05-21T18:12:29.222+00:00
+     
       let fecha=statex$.default.fechaAltaGrupoSelected.get();
       console.log("fecha")
       console.log(fecha)
@@ -86,14 +86,42 @@ export class GroupMessage {
       };
 
       const response = await fetch(url, params);
-      const result = await response.json();
+      let resultAPI = await response.json();
 
       //console.log("getting all messages by group");
-      //console.log(result);
+      //console.log(resultAPI);
       EventRegister.emit("loadingEvent",false);
-      if (response.status !== 200) throw result;
+      if (response.status !== 200) throw resultAPI;
      
-      return result;
+      //TODO: remove black list messages before returning
+      //=================================================
+      let blackList=null;
+      let filteredResult=null;
+
+      console.log("resultAPI")
+      console.log(resultAPI)
+      console.log("Add idMessage to local black list")
+      await GET_STATE_MY_DELETED_MESSAGES().then(result =>{
+        blackList=result.rows._array;      
+        console.log("blackList")
+        console.log(blackList)
+
+
+       const listMsgs = resultAPI.messages;
+       console.log("all messages")
+       console.log(listMsgs);
+
+       filteredResult = listMsgs.filter(lm => 
+        blackList.every(bl => bl.idMessage !== lm._id));
+       
+        
+    }); 
+
+    resultAPI.messages= filteredResult;
+
+      console.log("resultAPI")
+      console.log(resultAPI)
+      return resultAPI;
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       throw error;

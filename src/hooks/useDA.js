@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite/legacy';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db07.db');
+const db = SQLite.openDatabase('db08.db');
 
 
 /*  export  async function loadDB(){
@@ -319,7 +319,40 @@ export  function GET_STATE_ALLMESSAGES() {
     );
   });     
 }
-//==================================================================================================================================================================================
+//======================BLACK LIST============================================================================================================================================================
+export  function CREATE_STATE_MY_DELETED_MESSAGES() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_MY_DELETED_MESSAGES (idMessage TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+export  function ADD_STATE_MY_DELETED_MESSAGES(idMessage) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('INSERT INTO STATE_MY_DELETED_MESSAGES (idMessage) values(?)', [idMessage], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function GET_STATE_MY_DELETED_MESSAGES() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("SELECT idMessage  FROM STATE_MY_DELETED_MESSAGES ;", [], (_, result) => resolve(result),(_, error) => reject(error) );
+      }
+    );
+  });     
+}
+
 //======================USERS=======================================================================================================================================================
                  
 export  function findUsersByEmail(email) {
