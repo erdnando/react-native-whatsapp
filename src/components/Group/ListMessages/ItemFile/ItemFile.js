@@ -1,4 +1,4 @@
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
+import { View, Text, Pressable, ActivityIndicator, Alert } from "react-native";
 import { Menu,Icon,AlertDialog,Button,Modal, Center, Box, Spinner,  } from 'native-base';
 import { useState, useEffect,useRef } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -152,6 +152,13 @@ export function ItemFile(props) {
     
     console.log("openning video client...")
 
+    if(!statex$.default.isConnected.get()){
+      Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
+      [{  text: 'Ok',      } ]);
+
+      return;
+    }
+
     setShowModal(true);
     setLoading(true);
     const urlFile = `${ENV.BASE_PATH}/${message.message}`;
@@ -169,12 +176,6 @@ export function ItemFile(props) {
     //console.log('Finished downloading to ', urix);
     setLoading(false);
    
-    
-
-    
-
-
-    
     
   }
 

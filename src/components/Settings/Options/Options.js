@@ -77,7 +77,7 @@ export function Options(props) {
   return (
     <View style={styles.content}>
 
-      <TouchableOpacity style={styles.item} onPress={openGallery}>
+      <TouchableOpacity style={styles.item} onPress={statex$.default.isConnected.get() ? openGallery : null} >
         <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="text-recognition" style={styles.iconOptions} />   
           <Center size={3}></Center>

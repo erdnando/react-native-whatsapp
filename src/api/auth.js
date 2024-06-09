@@ -168,6 +168,13 @@ async getIdApp() {
 }
 
 
+async setNip(valor) {
+  await AsyncStorage.setItem("nip", valor);
+}
+
+async getNip() {
+  return await AsyncStorage.getItem("nip");
+}
 
 //========================================================================
   async removeTokens() {

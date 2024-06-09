@@ -67,8 +67,44 @@ export function GroupScreen() {
                   //setCryptMessage(data);
                   await authController.setCifrado(isCypher);
 
+                  let response=null;
                   try {
-                    const response = await groupMessageController.getAll(accessToken, groupId);
+                    //Validation offline
+                    if( statex$.default.isConnected.get() ){
+                       response = await groupMessageController.getAll(accessToken, groupId);
+
+                       //validatin if exists data sociated to this groupId locally
+                       //====================================================================================
+                        let resAux=null;
+                        await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
+                              resAux=result.rows._array;
+                              console.log("resAux.length grupos????????");
+                              console.log(resAux.length);
+                              console.log(resAux);
+
+                              if(resAux.length==0){
+                                //add it
+                                console.log("ADD_STATE_ALLMESSAGES " + groupId);
+                                ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'','abierto');
+                              }else{
+                                console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
+                                UPDATE_STATE_ALLMESSAGES(JSON.stringify(response), groupId);
+                              }
+                            
+                          });
+                        //====================================================================================
+
+                    }else{
+                      //======================================================================================
+                      console.log("offline, getting from local db");
+                      console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
+          
+                      await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
+                            response=result.rows._array;
+                            response =JSON.parse(response[0].valor);
+                      }); 
+                     //======================================================================================
+                    }
                    //==========================================
                     const unlockedMessages = response.messages;
                     //console.log(unlockedMessages);
@@ -131,7 +167,7 @@ export function GroupScreen() {
                     //console.log(unlockedMessages);
                    // console.log("===============================");
                    // setMessages(unlockedMessages);
-                   setMessages([]);
+                    setMessages([]);
                     setMessages( unlockedMessages);
                     unreadMessagesController.setTotalReadMessages(groupId, response.total);
 

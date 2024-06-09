@@ -71,6 +71,7 @@ export class GroupMessage {
 //=====================================================================================================
   async getAll(accessToken, groupId) {
     try {
+      //TODO: add to local db
       EventRegister.emit("loadingEvent",true);
      
       let fecha=statex$.default.fechaAltaGrupoSelected.get();

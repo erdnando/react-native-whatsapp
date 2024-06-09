@@ -9,6 +9,7 @@ import { styles } from "./HeaderGroup.styles";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Modal,FormControl,Input,Button } from "native-base";
 import { EventRegister } from "react-native-event-listeners"; 
+import * as statex$ from '../../../state/local'
 
 const userController = new User();
 const groupController = new Group();
@@ -70,44 +71,50 @@ export function HeaderGroup(props) {
 
   const validateNIP = async () => {
     console.log("======validating NIP==================");
-    
-    //call api to validate nip 
-    const response = await userController.getMe(accessToken);
-    //console.log("nip en DB");
-    //console.log(response.nip);
-    //console.log("nip ingresado");
-    //console.log(nip);
-    //console.log("nip ingresado MD5");
-   // console.log(MD5method(nip.toString() ));
+    console.log(statex$.default.isConnected.get())
 
-    if(MD5method(nip.toString()) == response.nip){
-      console.log("NIP OK");
-      //if, it is ok, unlock messages, reloading them
-      await authController.setCifrado("NO");
-      EventRegister.emit("setCifrado","NO");
-      setLock(false);
-     
-      setShowModal(false);
+    let response=null;
+     if(statex$.default.isConnected.get()){
+          //call api to validate nip 
+          response = await userController.getMe(accessToken);
+          await authController.setNip(response.nip);
+      }//connected
+      else{
+        response={nip: await authController.getNip()}
 
-    }else{
-      //else, show an error message
-      await authController.setCifrado("SI");
-      EventRegister.emit("setCifrado","SI");
-      setLock(true);
-      
-      setTituloModal("NIP Incorrecto!");
-      console.log("NIP Incorrecto");
+        console.log("response.nip fron local storage")
+        console.log(response.nip)
+      }
 
-      toast.show({
-        placement: "top",
-        render: () => {
-          return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
-                <Text style={{color:'white'}}>NIP incorrecto!</Text>
-                 
-                </Box>;
-        }
-      }); 
-    }
+          if(MD5method(nip.toString()) == response.nip){
+            console.log("NIP OK");
+            //if, it is ok, unlock messages, reloading them
+            await authController.setCifrado("NO");
+            EventRegister.emit("setCifrado","NO");
+            setLock(false);
+          
+            setShowModal(false);
+
+          }else{
+            //else, show an error message
+            await authController.setCifrado("SI");
+            EventRegister.emit("setCifrado","SI");
+            setLock(true);
+            
+            setTituloModal("NIP Incorrecto!");
+            console.log("NIP Incorrecto");
+
+            toast.show({
+              placement: "top",
+              render: () => {
+                return <Box bg="#0891b2" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
+                      <Text style={{color:'white'}}>NIP incorrecto!</Text>
+                      
+                      </Box>;
+              }
+            }); 
+          }
+ 
    
     
   };
