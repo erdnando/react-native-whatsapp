@@ -19,6 +19,7 @@ export const ENV = {
     ME: "user/me",
     USER: "user",
     ALIAS: "user/alias",
+    GROUPALIAS: "group/alias",
     USER_EXCEPT_PARTICIPANTS_GROUP: "users_exept_participants_group",
     CHAT: "chat",
     CHAT_MESSAGE: "chat/message",

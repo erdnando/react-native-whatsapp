@@ -236,7 +236,7 @@ export function GroupsScreen() {
             <Modal.Header  alignItems={"center"} width={"100%"}  >{nip}</Modal.Header>
             
             </FormControl>
-            Recuerde que puede modificar su NIP en el apartado de ajustes en cualquier momento.
+            Recuerde que puede modificar su NIP, Alias de participante y foto en el apartado de ajustes en cualquier momento.
           </Modal.Body>
 
           <Modal.Footer>

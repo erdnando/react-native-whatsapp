@@ -128,34 +128,10 @@ export function Item(props) {
   }, []);
 
 
-    //send message to socket IO
-   /* useEffect(() => {
-      // if(statex$.default.isConnected.get()){
- 
-   
-         socket.emit("subscribe", user._id);
-         socket.on("message_invite", newInvite);
-         socket.on("pushing_notification", newPushnotification);
-         socket.on("group_banned", bannedGroup);
-         
-
-         return () => {
-          socket.emit("unsubscribe", user._id);
-          socket.off("message_invite", newInvite);
-          socket.off("pushing_notification", newPushnotification);
-          socket.off("group_banned", bannedGroup);
-        };
-        
-      // }
-     }, []);*/
-
      useEffect(() => {
       // if(statex$.default.isConnected.get()){
          socket.emit("subscribe", `${user._id}_invite`);
          socket.on("message_invite", newInvite);
-        
-        
-        
       // }
      }, []);
 
@@ -168,7 +144,6 @@ export function Item(props) {
           socket.emit("unsubscribe", user._id);
           socket.off("pushing_notification", newPushnotification);
         };
-        
       // }
      }, []);
 
@@ -177,9 +152,6 @@ export function Item(props) {
       // if(statex$.default.isConnected.get()){
          socket.emit("subscribe", `${user._id}_banned`);
          socket.on("group_banned", bannedGroup);
-
-         
-        
       // }
      }, []);
 
@@ -400,6 +372,7 @@ export function Item(props) {
       />
 
       <View style={styles.infoContent}>
+
         <View style={styles.info}>
           <Text style={styles.name}>{group.name}</Text>
          
@@ -458,11 +431,7 @@ export function Item(props) {
               
               }
             </View>
-          
-
         </View>
-
-
       </View>
 
     </TouchableOpacity>

@@ -17,7 +17,7 @@ export function GroupsNavigation() {
         name={screens.tab.groups.createGroupScreen}
         component={CreateGroupScreen}
         options={{
-          title: "Nuevo grupo",
+          title: "Nuevo canal",
           presentation: "modal",
           ...styles.modelStyles,
         }}

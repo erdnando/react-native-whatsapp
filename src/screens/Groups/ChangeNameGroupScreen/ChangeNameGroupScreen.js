@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { View } from "react-native";
-import { Button, Input } from "native-base";
+import { View, Text } from "react-native";
+import { Button, Input, Box, useToast  } from "native-base";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useFormik } from "formik";
 import { Group, GroupMessage } from "../../../api";
@@ -20,6 +20,8 @@ export function ChangeNameGroupScreen() {
   const navigation = useNavigation();
   const { params } = useRoute();
   const { accessToken, user } = useAuth();
+  const toast = useToast();
+
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [nombreG, setNombreG] = useState('');
   const [nuevaLlaveG, setNuevaLlaveG] = useState('');
@@ -40,6 +42,11 @@ export function ChangeNameGroupScreen() {
 
   const openCloseAdvertencia = () => setShowAdvertencia((prevState) => !prevState);
 
+  const onTextChanged = (value) => {
+    //code to remove non-numeric characters from text
+    formik.setFieldValue("name", value.replace(/[- #$@!%^&()+="'?:*;,.<>\{\}\[\]\\\/]/gi, ''))
+  }
+
   const cambiosGrupo = async () => {
     try {
       console.log("cambios al grupo")
@@ -48,6 +55,26 @@ export function ChangeNameGroupScreen() {
       //console.log(nuevaLlaveG)
       console.log(statex$.default.nombreG.get())
       console.log(statex$.default.llaveG.get())
+
+
+       //TODO: validat eif this channel exists previously
+       const aliasResponse = await groupController.validateAlias(accessToken, statex$.default.nombreG.get());
+       console.log(aliasResponse)
+
+       if(aliasResponse.length>0){
+         //==================================================================================================================
+             console.log("El alias ya existe, favor de utilizar otro....")
+            // setIsLoading(false);
+             toast.show({
+               placement: "top",
+               render: () => {
+                 return <Box bg="#ff5733" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
+                       <Text style={{color:'white'}}>Lo sentimos, este nombre de canal ya ha sido utilizado. favor de utilizar otro 😓 </Text>
+                       </Box>;
+               }
+             });
+         //==================================================================================================================
+       }else{
 
       //actualizando nombre del grupo, si es q se modifico
        await groupController.update(accessToken, params.groupId, {name: statex$.default.nombreG.get()}  );
@@ -96,11 +123,11 @@ export function ChangeNameGroupScreen() {
         
        }*/
 
-       navigation.goBack();
+        navigation.goBack();
         navigation.goBack();
         navigation.goBack();
 
-           
+      }//else
     } catch (error) {
       console.error(error);
     }
@@ -113,6 +140,10 @@ export function ChangeNameGroupScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
+
+       //TODO: validat eif this channel exists previously
+
+
         console.log("Datos del forulario q se actualizan::::::")
         statex$.default.nombreG.set('')
         statex$.default.llaveG.set('')
@@ -146,10 +177,10 @@ export function ChangeNameGroupScreen() {
   return (
     <View style={styles.content}>
       <Input
-        placeholder="Nombre del grupo"
+        placeholder="Nombre del canal"
         variant="unstyled"
         value={formik.values.name}
-        onChangeText={(text) => formik.setFieldValue("name", text)}
+        onChangeText={(text) => onTextChanged(text)}
         style={[styles.input, formik.errors.name && styles.inputError]}
       />
 

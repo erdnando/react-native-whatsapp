@@ -93,7 +93,7 @@ export function AppNavigation() {
         <Stack.Screen
           name={screens.global.changeNameGroupScreen}
           component={ChangeNameGroupScreen}
-          options={{ title: "Cambiar datos del grupo" }}
+          options={{ title: "Cambiar datos del canal" }}
         />
         <Stack.Screen
           name={screens.global.cameraScreen}

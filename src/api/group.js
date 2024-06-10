@@ -81,6 +81,29 @@ export class Group {
     }
   }
 
+  async validateAlias(accessToken, alias) {
+
+    try {
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUPALIAS}/${alias}`;
+      console.log(url)
+      const params = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await fetch(url, params);
+      const result = await response.json();
+
+      if (response.status !== 200) throw result;
+
+      return result;
+    } catch (error) {
+      console.log("error al consultar api de group alias")
+      throw error;
+    }
+  }
+
   async getAll(accessToken) {
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP}`;

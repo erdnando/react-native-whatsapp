@@ -44,7 +44,7 @@ export function ChangeFirstnameScreen() {
               placement: "top",
               render: () => {
                 return <Box bg="#ff5733" px="4" py="3" rounded="md" mb={8} style={{borderTopColor:'white', borderTopWidth:3,color:'white', zIndex:3000 }}>
-                      <Text style={{color:'white'}}>Lo sentimos, este alias ya ha sido utilizado. favor deutilizar otro 😓 </Text>
+                      <Text style={{color:'white'}}>Lo sentimos, este alias ya ha sido utilizado. favor de utilizar otro 😓 </Text>
                       </Box>;
               }
             });
