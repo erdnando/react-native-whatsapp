@@ -64,7 +64,7 @@ export function ListUserAddParticipants(props) {
           <Avatar
             bg="cyan.500"
             marginRight={3}
-            source={{ uri: `${ENV.BASE_PATH}/group/group1.png`}}
+            source={{ uri:  user.avatar && `${ENV.BASE_PATH}/${user.avatar}`,  }}  >
           >
             {user.email.substring(0, 2).toUpperCase()}
           </Avatar>

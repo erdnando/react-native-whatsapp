@@ -379,7 +379,9 @@ export function Item(props) {
           <Text style={styles.messagelista} numberOfLines={2}>
             <Text>
               {lastMessage
-                ? `${lastMessage.user.email.substring(0,20) +"... comento"} `
+                ? `${lastMessage?.user.firstname || lastMessage?.user.lastname
+                  ? `${lastMessage?.user.firstname +"... comento" || ""} ${lastMessage?.user.lastname  || ""}`
+                  : lastMessage?.user.email.substring(0,20) +"... comento"} `
                 : ""}
             </Text>
            {/*  <Text style={styles.text}>
