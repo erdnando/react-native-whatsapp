@@ -67,6 +67,8 @@ export function Item(props) {
 
 
         const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
+
+        //get total number of messages and discount read messages counter
         setTotalUnreadMessages(totalMessages - totalReadMessages);
 
 

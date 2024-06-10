@@ -98,7 +98,7 @@ export function Options(props) {
       <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
           <Center size={3}></Center>
-          <Text style={styles.text}>Definir NIP</Text>
+          <Text style={styles.text}>Definir su nuevo NIP</Text>
         </Flex>
       </TouchableOpacity>
 

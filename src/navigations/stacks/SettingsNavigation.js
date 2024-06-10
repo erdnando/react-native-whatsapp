@@ -34,7 +34,7 @@ export function SettingsNavigation() {
         name={screens.tab.settings.changeLastnameScreen}
         component={ChangeLastnameScreen}
         options={{
-          title: "Definir NIP",
+          title: "Definir su nuevo NIP",
           presentation: "modal",
         }}
       />
