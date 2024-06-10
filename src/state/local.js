@@ -21,6 +21,7 @@ const state$ = observable({
   lastGroupInvitation:"",
   nombreG:"",
   llaveG:"",
+  moveScroll:true,
   user:[{
      _id :"0",
      email :"",

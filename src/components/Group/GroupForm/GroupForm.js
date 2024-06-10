@@ -15,6 +15,7 @@ import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
 import * as statex$ from '../../../state/local';
 import * as Notifications from "expo-notifications";
+import * as Haptics from 'expo-haptics';
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
@@ -68,6 +69,9 @@ export function GroupForm(props) {
 
   useInterval(() => {
 
+    Haptics.notificationAsync(
+      Haptics.NotificationFeedbackType.Success
+    )
     //let second2 = seconds==0?1:seconds
     let valuee= seconds % 2 ==0 ? 0 : 1
     //console.log("opacity2")
@@ -126,6 +130,11 @@ export function GroupForm(props) {
 //=======================================================================================
   // Function to start recording
   const StartRecording = async () => {
+
+    Haptics.notificationAsync(
+      Haptics.NotificationFeedbackType.Success
+    )
+
     setMensajeAudio("Grabando audio...")
     setSeconds(0)
     setMinutes(0)
@@ -814,7 +823,7 @@ export function GroupForm(props) {
              
                       {/* icon to cancel audio */}
                       <View display={canCancelAudio ? "flex": 'none'}>
-                                  <IconButton  icon={<Icon as={MaterialCommunityIcons} name="delete"  style={styles.iconDelete} /> }  
+                                  <IconButton  icon={<Icon as={MaterialCommunityIcons} name="delete-forever"  style={styles.iconDelete} /> }  
                                               onPress={ cancelAudio} />
                       </View>
 
@@ -842,8 +851,7 @@ export function GroupForm(props) {
               /> }  
                 onLongPress={ StartRecording} onPressOut={StopRecording} />
 
-              <IconButton display={canCancelAudio ? "flex": 'none'}  icon={<Icon as={MaterialCommunityIcons} name="send"  color={'blue'}
-              style={styles.iconSend2}
+              <IconButton display={canCancelAudio ? "flex": 'none'}  icon={<Icon as={MaterialCommunityIcons} name="send" style={styles.iconSend2}
               /> }  
                 onPress={ sendAudio}  />
 

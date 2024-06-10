@@ -237,77 +237,76 @@ export function ItemFile(props) {
   
 
   const onDownloadIndicator= async () => {
+            //not move scrool
+            statex$.default.moveScroll.set(false);
 
-    try{
-    setProgressValue(0)
-    setShowProgressBar(true)
+            try{
+            setProgressValue(0)
+            setShowProgressBar(true)
 
-    const urlFile = `${ENV.BASE_PATH}/${message.message}`;
-    const filename=message.message.replace("files/","");
-    
-    let mimetype =mime.getType(filename);
-    console.log("mimetype::::::")
-    console.log(mimetype);
-    //=============================================================
+            const urlFile = `${ENV.BASE_PATH}/${message.message}`;
+            const filename=message.message.replace("files/","");
+            
+            let mimetype =mime.getType(filename);
+            console.log("mimetype::::::")
+            console.log(mimetype);
+            //=============================================================
 
-    const callbackx = (downloadProgress) => {
-      setTotalSize(formatBytes(downloadProgress.totalBytesExpectedToWrite))
-  
-      var progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
-      progress = progress.toFixed(2) * 100
-      setProgressValue(progress.toFixed(0))
-  
-      console.log("Descargando archivo...")
-      console.log(formatBytes(downloadProgress.totalBytesExpectedToWrite))
-      console.log(progress.toFixed(0))
-    };
+            const callbackx = (downloadProgress) => {
+              setTotalSize(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+          
+              var progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+              progress = progress.toFixed(2) * 100
+              setProgressValue(progress.toFixed(0))
+          
+              console.log("Descargando archivo...")
+              console.log(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+              console.log(progress.toFixed(0))
+            };
 
-    
-    const downloadResumable = FileSystem.createDownloadResumable(
-      urlFile,
-      FileSystem.documentDirectory + filename,
-      {},
-      callbackx
-    );
+            
+            const downloadResumable = FileSystem.createDownloadResumable(
+              urlFile,
+              FileSystem.documentDirectory + filename,
+              {},
+              callbackx
+            );
 
-    
+            const { uri } = await downloadResumable.downloadAsync();
 
-    
+            const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
-    const { uri } = await downloadResumable.downloadAsync();
+            if(permissions.granted){
 
+              const base64 = await FileSystem.readAsStringAsync(uri,{encoding:FileSystem.EncodingType.Base64});
+              await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,filename,mimetype).then(async (uri)=>{
+                await FileSystem.writeAsStringAsync(uri,base64,{encoding:FileSystem.EncodingType.Base64})
 
-    // Download the file and get its local URI
-    //const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
+                statex$.default.moveScroll.set(true);
+              }).catch( e => {
+                console.log(e)
+                setProgressValue(0)
+                setShowProgressBar(false)
+                statex$.default.moveScroll.set(true);
+              });
 
-   // let fileInfo = await FileSystem.getInfoAsync(uri);
-   // console.log("fileInfo");
-   // console.log(fileInfo);
+            }else{
+              setProgressValue(0)
+              setShowProgressBar(false)
+              statex$.default.moveScroll.set(true);
+            }
 
-    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+            setProgressValue(0)
+            setShowProgressBar(false)
+            statex$.default.moveScroll.set(true);
 
-    if(permissions.granted){
+          }catch(exx){
+            setProgressValue(0)
+            setShowProgressBar(false)
+            statex$.default.moveScroll.set(true);
+          }
 
-      const base64 = await FileSystem.readAsStringAsync(uri,{encoding:FileSystem.EncodingType.Base64});
-      await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri,filename,mimetype).then(async (uri)=>{
-        await FileSystem.writeAsStringAsync(uri,base64,{encoding:FileSystem.EncodingType.Base64})
-      }).catch( e => {
-        console.log(e)
-        setProgressValue(0)
-        setShowProgressBar(false)
-      });
-
-    }else{
-      setProgressValue(0)
-      setShowProgressBar(false)
-    }
-    setProgressValue(0)
-    setShowProgressBar(false)
-
-  }catch(exx){
-    setProgressValue(0)
-    setShowProgressBar(false)
-  }
+         
 
   };
 

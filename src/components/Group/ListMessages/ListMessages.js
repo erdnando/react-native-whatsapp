@@ -5,6 +5,7 @@ import { ItemText } from "./ItemText";
 import { ItemImage } from "./ItemImage";
 import { ItemFile } from "./ItemFile";
 import { styles } from "./ListMessages.styles";
+import * as statex$ from '../../../state/local'
 
 export function ListMessages(props) {
   const { messages } = props;
@@ -16,7 +17,14 @@ export function ListMessages(props) {
       alwaysBounceVertical={false}
       ref={scrollViewRef}
       onContentSizeChange={() => {
-        scrollViewRef.current.scrollToEnd({ animated: false });
+
+        console.log("moving to bottom")
+        console.log(statex$.default.moveScroll.get())
+        if(statex$.default.moveScroll.get()){
+          scrollViewRef.current.scrollToEnd({ animated: false });
+        }
+       
+       
       }}
     >
       <View style={styles.content}>

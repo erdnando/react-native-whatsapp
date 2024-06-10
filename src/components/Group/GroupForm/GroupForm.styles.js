@@ -60,14 +60,14 @@ export const styles = new StyleSheet.create({
   iconSend: {
     position: "relative",
     right:38,
-    color:'white',
-    opacity:1,
   },
   iconSend2: {
+   paddingTop:10,
+   left:-6,
    color:'#0891b2',
-   fontSize:25,
-   width:25,
-   
+   fontSize:30,
+   width:30,
+   height:30,
   },
   iconCrypto: {
     position: "absolute",
@@ -92,9 +92,10 @@ export const styles = new StyleSheet.create({
   
   iconDelete:{
     position:'relative',
-    right:12,
-    marginLeft:10,
-    fontSize:22,
+    right:14,
+    marginLeft:6,
+    marginTop:-1,
+    fontSize:26,
     color:'red',
     
   },
