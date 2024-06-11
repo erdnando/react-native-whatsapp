@@ -28,8 +28,6 @@ Notifications.setNotificationHandler({
 });
 
 //=====================================================================================================
-
-
 const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
@@ -41,62 +39,60 @@ export function Item(props) {
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
-  
   const navigation = useNavigation();
 
 
   useEffect(() => {
 
-   
     (async () => {
       try {
        
+            const totalMessages = await groupMessageController.getTotal(
+              accessToken,
+              group._id
+            );
+          
 
-        const totalMessages = await groupMessageController.getTotal(
-          accessToken,
-          group._id
-        );
-      
+            const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+              accessToken,
+              group._id
+            );
+            setTotalMembers(totalParticipants);
+            
 
-        const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-          accessToken,
-          group._id
-        );
-        setTotalMembers(totalParticipants);
+
+            const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
+
+            console.log("Getting total number of messages of group on render group list:", group._id)
+            //get total number of messages and discount read messages counter
+            setTotalUnreadMessages(totalMessages - totalReadMessages);
+            unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
+
+            //=================================================================
+            const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
+              console.log("group list updated...");
+            
+                  try {
+                    const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
+                      accessToken,
+                      group._id
+                    );
+                    setTotalMembers(totalParticipants);
+                    console.log("group and groupResult updated...");
+                  } catch (error) {
+                    console.error(error);
+                  }
+            });
         
-
-
-        const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
-
-        //get total number of messages and discount read messages counter
-        setTotalUnreadMessages(totalMessages - totalReadMessages);
-
-
-        //=================================================================
-        const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-          console.log("group list updated...");
-        
-              try {
-                const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
-                  accessToken,
-                  group._id
-                );
-                setTotalMembers(totalParticipants);
-                console.log("group and groupResult updated...");
-              } catch (error) {
-                console.error(error);
-              }
-        });
-    
-        return ()=>{
-          EventRegister.removeEventListener(eventGrupo);
-        }
-        
-        
-        //================================================================
+            return ()=>{
+              EventRegister.removeEventListener(eventGrupo);
+            }
+            
+            
+            //================================================================
 
       } catch (error) {
-        console.error(error);
+           console.error(error);
       }
     })();
   }, [group._id]);
@@ -130,74 +126,90 @@ export function Item(props) {
   }, []);
 
 
-     useEffect(() => {
-      // if(statex$.default.isConnected.get()){
-         socket.emit("subscribe", `${user._id}_invite`);
-         socket.on("message_invite", newInvite);
-      // }
-     }, []);
+  useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+      socket.emit("subscribe", `${user._id}_invite`);
+      socket.on("message_invite", newInvite);
+  // }
+  }, []);
 
-     useEffect(() => {
-      // if(statex$.default.isConnected.get()){
-         socket.emit("subscribe", user._id);
-         socket.on("pushing_notification", newPushnotification);
-       
-         return () => {
-          socket.emit("unsubscribe", user._id);
-          socket.off("pushing_notification", newPushnotification);
-        };
-      // }
-     }, []);
+  useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+      socket.emit("subscribe", user._id);
+      socket.on("pushing_notification", newPushnotification);
+    
+      return () => {
+      socket.emit("unsubscribe", user._id);
+      socket.off("pushing_notification", newPushnotification);
+    };
+  // }
+  }, []);
 
-
-     useEffect(() => {
-      // if(statex$.default.isConnected.get()){
-         socket.emit("subscribe", `${user._id}_banned`);
-         socket.on("group_banned", bannedGroup);
-      // }
-     }, []);
-
-
-     const bannedGroup = async (newData) => {
-      console.log("si quiero banearte....")
-      if( statex$.default.lastBannedRequest.get() !=  newData.message){
-
-                console.log("Banned from group, please reload group list!!!!")
-                statex$.default.lastBannedRequest.set(newData.message);
-                console.log("push notification realmente enviada!!!!")
-
-                console.log(newData)
-        
-                await Notifications.scheduleNotificationAsync({
-                  content: {
-                    title: "Secure chat: Ha sido removido del grupo!",
-                    body: "Grupo: "+newData.name,
-                    sound: true,
-                  },
-                  trigger: {
-                    seconds: 1,
-                  },
-                });
-          
-                try {
-                  console.log("Removing relacion grupo-llave en la invitacion")
-                  console.log("Grupo id")
-                  console.log(newData._id)
-        
-                  DELETE_STATE_GROUP_LLAVE_BY_ID(newData._id);
-        
-                } catch (error) {
-                  console.log("Error al eliminar relacion grupo, llave")
-                  console.log(error)
-                }
-              
-            
-              
-                upAllGroups();
-
-        }
+  useEffect(() => {
+    // if(statex$.default.isConnected.get()){
+        socket.emit("subscribe", user._id);
+        socket.on("read_messages", updateReadStatus);
       
-    }
+        return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("read_messages", updateReadStatus);
+      };
+    // }
+    }, []);
+
+
+  useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+      socket.emit("subscribe", `${user._id}_banned`);
+      socket.on("group_banned", bannedGroup);
+  // }
+  }, []);
+
+
+  const bannedGroup = async (newData) => {
+    console.log("si quiero banearte....")
+    if( statex$.default.lastBannedRequest.get() !=  newData.message){
+
+              console.log("Banned from group, please reload group list!!!!")
+              statex$.default.lastBannedRequest.set(newData.message);
+              console.log("push notification realmente enviada!!!!")
+
+              console.log(newData)
+      
+              await Notifications.scheduleNotificationAsync({
+                content: {
+                  title: "Secure chat: Ha sido removido del grupo!",
+                  body: "Grupo: "+newData.name,
+                  sound: true,
+                },
+                trigger: {
+                  seconds: 1,
+                },
+              });
+        
+              try {
+                console.log("Removing relacion grupo-llave en la invitacion")
+                console.log("Grupo id")
+                console.log(newData._id)
+      
+                DELETE_STATE_GROUP_LLAVE_BY_ID(newData._id);
+      
+              } catch (error) {
+                console.log("Error al eliminar relacion grupo, llave")
+                console.log(error)
+              }
+            
+              upAllGroups();
+      }
+  }
+
+  const updateReadStatus = async (idMsg) => {
+       console.log("notificando que alguien del grupo ya leyo el id mensaje::::",idMsg)
+       //TODO
+       //Update message with id parameter to read 6668cdd759b7edbfb183c0dd
+       EventRegister.emit("idMessagevisto",idMsg);
+}
+
 
 
   const newPushnotification = async (msg) => {
@@ -280,8 +292,17 @@ export function Item(props) {
   }
 
   const newMessage = async (newMsg) => {
-    
+
+    statex$.default.moveScroll.set(true);
     console.log("message_notify");
+    console.log("userId who send a message::::",  newMsg.user._id)
+
+    const msgOrigen={
+      idUser: newMsg.user._id,
+      idMsg: newMsg._id,
+    }
+    statex$.default.userWhoSendMessage.set(msgOrigen)
+    
 
     if (newMsg.group === group._id) {
 
@@ -290,20 +311,21 @@ export function Item(props) {
         upGroupChat(newMsg.group);
         console.log("setting last message");
 
-        
-        setLastMessage(newMsg);
+        statex$.default.setLastMessage.set(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
         if (activeGroupId !== newMsg.group) {
+          console.log("Updating total number of messages of group on new message event plus 1:")
           setTotalUnreadMessages((prevState) => prevState + 1);
+          unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
         }
       }
     }
   };
 
+  //==================================================================================================================================================================================
   const  openGroup = async () => {
 
-   
     let resGpoSelected=null;
 
     //Getting key and date that this group need to get and decrypt messages
@@ -320,6 +342,7 @@ export function Item(props) {
     
 
     console.log("openning group.."+group._id );
+
     console.log("_id creator group.."+group.creator._id );
     console.log("user id conectado.."+user._id );
     console.log("tipo group.."+group.tipo );
@@ -329,22 +352,6 @@ export function Item(props) {
     console.log(statex$.default.fechaAltaGrupoSelected.get())
     console.log("llave del grupo")
     console.log(statex$.default.llaveGrupoSelected.get())
-
-    /*if(group.tipo=="cerrado"){
-
-        //await authController.setCifrado("SI");
-
-        let resAux=null;
-        await GET_STATE_GROUP_LLAVE(group._id).then(result =>{
-              resAux=result.rows._array;
-          
-              statex$.default.llaveGrupoSelected.set(resAux[0]?.llave)
-        }); 
-
-    }else{
-        statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
-    }*/
-      
     console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
 
 
@@ -353,7 +360,36 @@ export function Item(props) {
           [{  text: 'Ok',      } ]);
     }
     
+    console.log("Updating total number of messages of group on openning a group to Zero:", group._id)
     setTotalUnreadMessages(0);
+    unreadMessagesController.setTotalReadMessages(group._id, 0);//new
+
+    //TODO: notifying user who send the message that it has been read
+    //Hay q avisarle q ya s eentro al grupo y se deben marcar como leidos por parte del q recibe
+    try{
+
+      console.log("notificando que su mensaje ha sido leido por:")
+      const msgOrigen =statex$.default.userWhoSendMessage.get();
+      //
+      console.log("msgOrigen")
+      console.log(statex$.default.userWhoSendMessage.get())
+      if(msgOrigen !=''){
+        console.log("notifyRead...")
+       const respo = await groupMessageController.notifyRead(
+          accessToken,
+          msgOrigen.idUser,
+          msgOrigen.idMsg
+        );
+      }
+
+      console.log("Resultado de la operacion:",respo)
+
+    }catch(errx){
+   
+      console.log("Error al notificar", errx)
+    }
+   
+   
 
     navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo, creator: group.creator });
   };

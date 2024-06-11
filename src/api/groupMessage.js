@@ -69,6 +69,40 @@ export class GroupMessage {
     }
   }
 //=====================================================================================================
+
+
+async notifyRead(accessToken, idUser, idMsg) {
+
+  try {
+   
+      const url = `${ENV.API_URL}/${ENV.ENDPOINTS.NOTIFY_READ}`;
+      const params = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          idUser: idUser,
+          idMsg: idMsg,
+        }),
+      };
+
+
+      const response = await fetch(url, params);
+      const resultAPI = await response.json();
+
+       
+
+        if (response.status !== 200) throw resultAPI;
+
+  } catch (error) {
+ 
+    throw error;
+  }
+}
+
+
   async getAll(accessToken, groupId) {
     try {
       //TODO: add to local db

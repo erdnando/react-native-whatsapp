@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { ScrollView, View } from "react-native";
 import { map } from "lodash";
 import { ItemText } from "./ItemText";
@@ -6,10 +6,30 @@ import { ItemImage } from "./ItemImage";
 import { ItemFile } from "./ItemFile";
 import { styles } from "./ListMessages.styles";
 import * as statex$ from '../../../state/local'
+import { EventRegister } from "react-native-event-listeners";
 
 export function ListMessages(props) {
   const { messages } = props;
   const scrollViewRef = useRef();
+
+  //=================================================================
+  useEffect(() => {
+      const updateVisto = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
+      console.log("actualizando estatus de visto en la vista...", idMsg);
+    
+      var foundIndex = messages.findIndex(x => x._id == idMsg);
+      messages[foundIndex].estatus = "LEIDO";
+
+         
+    });
+
+    return ()=>{
+      EventRegister.removeEventListener(updateVisto);
+    }
+  }, [])
+  
+  
+ //================================================================
 
   return (
     <ScrollView

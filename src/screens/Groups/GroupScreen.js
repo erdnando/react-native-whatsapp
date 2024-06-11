@@ -220,7 +220,7 @@ export function GroupScreen() {
           console.log("message.group:"+data.group);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
           console.log("message.type:"+data.type);
-         
+          statex$.default.moveScroll.set(false);
           //======================================================
           ADD_STATE_MY_DELETED_MESSAGES(data._id)
 
@@ -358,37 +358,7 @@ export function GroupScreen() {
              
             });
             setMessages(unlockedMessages);
-           // setMessages(unlockedMessages);
-
-            
-            /*const initialStatus = {
-              volume: 0.1,
-            };
-            
-            const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);//'../../assets/newmsg.wav'
-            await sound.playAsync();*/
-
-            /*console.log("playing audio........2")
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Secure chat: Un nuevo mensaje!",
-                body: "Recargando mensajes",
-                sound: true,//true // or sound: "default"
-              },
-              trigger: {
-                seconds: 1,
-              },
-            });
-      
-            await Notifications.setNotificationChannelAsync('default', {
-              name: 'default',
-              importance: Notifications.AndroidImportance.MAX,
-              vibrationPattern: [0, 250, 250, 250],
-              lightColor: '#FF231F7C',
-            });*/
-
-           
-           
+         
           //==============================================================================
         }
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
@@ -412,9 +382,8 @@ export function GroupScreen() {
     (async () => {
 
     console.log("identificando nuevo mensaje:::::")
-   // console.log("===========================================")
-   // console.log(msg);
-   // console.log("===========================================")
+
+ 
 
 
      //==========================================================
@@ -428,9 +397,32 @@ export function GroupScreen() {
               console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
               //console.log(JSON.stringify(response))
               UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
+
+
+               //TODO: notifying user who send the message that it has been read
+               //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
+                console.log("notificando que su mensaje ha sido leido a:")
+                console.log( statex$.default.userWhoSendMessage.get())
+
+
+
+                const msgOrigen={
+                  idUser: msg.user._id,
+                  idMsg: msg._id,
+                }
+                statex$.default.userWhoSendMessage.set(msgOrigen)
+
+                await groupMessageController.notifyRead(
+                  accessToken,
+                  msg.user._id,
+                  msg._id
+                );
+
+
               }
       } catch (error) {
-        
+        console.log("error::::")
+        console.log(error)
       }
 //==========================================================     
     let msgOriginal=msg.message;;
@@ -458,49 +450,14 @@ export function GroupScreen() {
 
       }
 
-
-
-      //here  sound
-     // const initialStatus = {
-      //  volume: 1,
-      //};
-      console.log("playing audio..on target......3")
-     
-      
-      
       const isMe = user._id === msg.user._id;
+      console.log("userId who send a message::::",  msg.user._id)
+      
+     
+
       console.log(msg.user._id)
       console.log(user._id)
       console.log(isMe)
-
-      if(!isMe){
-          //const { sound } = await Audio.Sound.createAsync( require('../../assets/newmsg.wav'),initialStatus);
-          //await sound.playAsync();
-
-          //TODO validate, just target should be notified!!!!!
-            /*Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Secure chat: Un nuevo mensaje!",
-                body: msgOriginal,
-                sound: true,//true // or sound: "default"
-              },
-              trigger: {
-                seconds: 1,
-              },
-            });*/
-      
-            /*await Notifications.setNotificationChannelAsync('default', {
-              name: 'default',
-              importance: Notifications.AndroidImportance.MAX,
-              vibrationPattern: [0, 250, 250, 250],
-              lightColor: '#FF231F7C',
-            });*/
-  
-      }
-      
-     
-
-      
     }
    
     //==================================================

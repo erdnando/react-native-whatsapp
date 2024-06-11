@@ -116,10 +116,10 @@ export function GroupForm(props) {
   }, [opacityx]);
 
 
-    // Initial Load to get the audio permission
-    useEffect(() => {
-      GetPermission();
-    }, []);
+  // Initial Load to get the audio permission
+  useEffect(() => {
+    GetPermission();
+  }, []);
       
 
   // Function to get the audio permission
@@ -616,11 +616,11 @@ export function GroupForm(props) {
           console.log("message.group:"+data.group);
           console.log("message.tipo_cifrado:"+data.tipo_cifrado);
           console.log("message.type:"+data.type);
-          
+          statex$.default.moveScroll.set(false);
     
          await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
          setIdMessage("");
-          
+        
         });
     
         return ()=>{
@@ -631,6 +631,7 @@ export function GroupForm(props) {
       } catch (error) {
         console.error(error);
       }
+     
    // })();
   }, []);
 
@@ -731,7 +732,7 @@ export function GroupForm(props) {
   return (<View style={{position: "absolute",top:0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(60, 60, 60, 0.7)",
+            backgroundColor: "rgba(60, 60, 60, 0.4)",
             justifyContent: "center",
             alignItems: "center",}}>
           <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.500" />

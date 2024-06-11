@@ -22,6 +22,8 @@ const state$ = observable({
   nombreG:"",
   llaveG:"",
   moveScroll:true,
+  groupMessagesRead:false,
+  userWhoSendMessage:'',
   user:[{
      _id :"0",
      email :"",

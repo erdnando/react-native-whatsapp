@@ -47,6 +47,18 @@ export const styled = (isMe) => {
       marginTop: 2,
       textAlign: "right",
     },
+    vistoGris: {
+      opacity: 0.4,
+      color: isMe ? "white" : "transparent",
+      fontSize: 22,
+      top:-4
+    },
+    vistoVerde: {
+      opacity: 0.9,
+      color: isMe ? "#33ff55": "transparent",
+      fontSize: 22,
+      top:-2
+    },
     dateEditado: {
       opacity: 1,
       color: "black",
@@ -62,8 +74,9 @@ export const styled = (isMe) => {
       fontSize: 12,
       marginTop: 2,
       textAlign: "right",
-      marginTop:-20
+      marginTop:-10
     },
+    
     rowMenu:{
       flexDirection: 'row',
       flexWrap: 'wrap',

@@ -110,7 +110,7 @@ export function ItemText(props) {
   }, []);
 
   if(modoAvanzado){
-
+  
         return (
           <View style={styles.content}>
             <View style={styles.message}>
@@ -271,16 +271,48 @@ export function ItemText(props) {
               <Text style={styles.text}>{message.message}</Text>
               {/*cifrado*/}
               <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
-              {/*hora del mensaje*/}
-              <Text style={styles.date}>
-              {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
-              </Text>
+              {/*fila fecha, hora visto*/}
+              <View style={{flex:1,flexDirection:'row-reverse'  }}>
+
+                 {/*no visto*/}
+                 <View display={message.estatus=="NOLEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                    <Icon
+                          style={styles.vistoGris}
+                          as={MaterialCommunityIcons}
+                          size="7"
+                          name="check"
+                          color="black"
+                        />
+                  </View>
+                  {/*visto*/}
+                  <View display={message.estatus=="LEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                      <Icon
+                            style={styles.vistoVerde}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="check-all"
+                            color="black"
+                          />
+                  </View>
+                  {/*hora del mensaje*/}
+                  <Text style={styles.date}>
+                  {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
+                  </Text>
+
+              </View>
+
+
                {/*hora del mensaje editado*/}
                <View display={editado?"flex":"none"}>
                 <Text  style={styles.dateEditado}  >
                   {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
                 </Text>
               </View>
+
+              
+
+
+
 
               {/*message forwarded*/}
               <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
@@ -337,10 +369,34 @@ export function ItemText(props) {
                 : message.user.email.substring(0,30)}
             </Text>
             <Text style={styles.text}>{message.message}</Text>
+            {/*visto*/}
+           
             <Text style={styles.cifrado}>{message.tipo_cifrado}</Text>
             <Text style={styles.date}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
+
+            <View display={message.estatus=="NOLEIDO"?"flex":"none"}  style={{alignItems:'flex-end'}}>
+                <Icon
+                      style={styles.vistoGris}
+                      as={MaterialCommunityIcons}
+                      size="7"
+                      name="check"
+                      color="black"
+                    />
+            </View>
+            <View display={message.estatus=="LEIDO"?"flex":"none"}  style={{alignItems:'flex-end'}}>
+                <Icon
+                      style={styles.vistoVerde}
+                      as={MaterialCommunityIcons}
+                      size="7"
+                      name="check-all"
+                      color="black"
+                    />
+            </View>
+
+
+
           </View>
         </View>
       );
