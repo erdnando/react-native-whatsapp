@@ -111,7 +111,7 @@ export function Item(props) {
     })();
   }, [group._id]);
 
-  //send message to socket IO
+  {/*message notify socket listener*/}
   useEffect(() => {
    // if(statex$.default.isConnected.get()){
       socket.emit("subscribe", `${group._id}_notify`);
@@ -125,7 +125,7 @@ export function Item(props) {
    // }
   }, []);
 
-
+ {/*Invitation socket listener*/}
   useEffect(() => {
   // if(statex$.default.isConnected.get()){
       socket.emit("subscribe", `${user._id}_invite`);
@@ -133,6 +133,7 @@ export function Item(props) {
   // }
   }, []);
 
+   {/*Pushing notification socket listener*/}
   useEffect(() => {
   // if(statex$.default.isConnected.get()){
       socket.emit("subscribe", user._id);
@@ -145,6 +146,7 @@ export function Item(props) {
   // }
   }, []);
 
+  {/*Read messages socket listener*/}
   useEffect(() => {
     // if(statex$.default.isConnected.get()){
         socket.emit("subscribe", user._id);
@@ -157,7 +159,7 @@ export function Item(props) {
     // }
     }, []);
 
-
+{/*banned socket listener*/}
   useEffect(() => {
   // if(statex$.default.isConnected.get()){
       socket.emit("subscribe", `${user._id}_banned`);
@@ -368,13 +370,15 @@ export function Item(props) {
     //Hay q avisarle q ya s eentro al grupo y se deben marcar como leidos por parte del q recibe
     try{
 
-      console.log("notificando que su mensaje ha sido leido por:")
+      console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
       const msgOrigen =statex$.default.userWhoSendMessage.get();
       //
       console.log("msgOrigen")
       console.log(statex$.default.userWhoSendMessage.get())
       if(msgOrigen !=''){
         console.log("notifyRead...")
+        console.log( msgOrigen.idUser)
+        console.log( msgOrigen.idMsg)
        const respo = await groupMessageController.notifyRead(
           accessToken,
           msgOrigen.idUser,

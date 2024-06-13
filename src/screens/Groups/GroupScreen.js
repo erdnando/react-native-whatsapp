@@ -243,6 +243,8 @@ export function GroupScreen() {
   }, []);
 
   //subscribe sockets
+  {/*new message socket listener*/}
+  {/*reload socket listener*/}
   useEffect(() => {
 
     if(statex$.default.isConnected.get()){
@@ -406,17 +408,27 @@ export function GroupScreen() {
 
 
 
-                const msgOrigen={
-                  idUser: msg.user._id,
-                  idMsg: msg._id,
-                }
-                statex$.default.userWhoSendMessage.set(msgOrigen)
+                console.log(msg.user._id)
+                console.log(user._id)
+               // console.log(isMe)
+               const isMe = (msg.user._id==user._id)
+               const msgOrigen={
+                idUser: msg.user._id,
+                idMsg: msg._id,
+              }
+              statex$.default.userWhoSendMessage.set(msgOrigen)
 
-                await groupMessageController.notifyRead(
-                  accessToken,
-                  msg.user._id,
-                  msg._id
-                );
+               if(!isMe){
+                  await groupMessageController.notifyRead(
+                    accessToken,
+                    msg.user._id,
+                    msg._id
+                  );
+               }
+
+              
+
+               
 
 
               }
@@ -455,9 +467,7 @@ export function GroupScreen() {
       
      
 
-      console.log(msg.user._id)
-      console.log(user._id)
-      console.log(isMe)
+      
     }
    
     //==================================================

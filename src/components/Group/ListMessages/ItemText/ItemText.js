@@ -298,9 +298,7 @@ export function ItemText(props) {
                   <Text style={styles.date}>
                   {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
                   </Text>
-
               </View>
-
 
                {/*hora del mensaje editado*/}
                <View display={editado?"flex":"none"}>
@@ -310,9 +308,6 @@ export function ItemText(props) {
               </View>
 
               
-
-
-
 
               {/*message forwarded*/}
               <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
