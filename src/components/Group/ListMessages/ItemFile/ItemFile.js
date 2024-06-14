@@ -516,9 +516,40 @@ export function ItemFile(props) {
 
               <Text display={ showProgressBar ? "flex":"none"} style={styles.totalSize} >{totalSize}</Text>
               <Text style={styles.cifrado}>{"AES"}</Text>
-              <Text style={styles.date}>
-                {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
-              </Text>
+              
+
+              {/*fila fecha, hora visto*/}
+              <View style={{flex:1,flexDirection:'row-reverse' , marginTop:-15  }}>
+
+                 {/*no visto*/}
+                 <View display={message.estatus=="NOLEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                    <Icon
+                          style={styles.vistoGris}
+                          as={MaterialCommunityIcons}
+                          size="7"
+                          name="check-all"
+                          color="black"
+                        />
+                  </View>
+                  {/*visto*/}
+                  <View display={message.estatus=="LEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                      <Icon
+                            style={styles.vistoVerde}
+                            as={MaterialCommunityIcons}
+                            size="7"
+                            name="check-all"
+                            color="black"
+                          />
+                  </View>
+                  {/*hora del mensaje*/}
+                  <Text style={styles.date}>
+                  {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
+                  </Text>
+              </View>
+
+
+
+
 
             {/*message forwarded*/}
             <View display={forwarded?"flex":"none"} style={{ alignItems:'center',flexDirection:'row',flex:2 }}>
@@ -596,14 +627,14 @@ export function ItemFile(props) {
             <Pressable onPress={onOpenImage}>
               <AutoHeightImage
                 width={width}
-                maxHeight={400}
+                maxHeight={420}
                 source={{ uri: imageUri }}
                 style={styles.image}
               />
             </Pressable>
 
             
-            <Text style={styles.date}>
+            <Text style={styles.dateCrypt}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
           </View>

@@ -169,7 +169,7 @@ export function GroupScreen() {
                    // setMessages(unlockedMessages);
                     setMessages([]);
                     setMessages( unlockedMessages);
-                    unreadMessagesController.setTotalReadMessages(groupId, response.total);
+                   // unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
                   } catch (error) {
                     console.log("Error 1")
@@ -364,7 +364,7 @@ export function GroupScreen() {
           //==============================================================================
         }
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-        unreadMessagesController.setTotalReadMessages(groupId, response.total);
+        //unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
       } catch (error) {
         console.error(error);
@@ -373,7 +373,7 @@ export function GroupScreen() {
 
     return async () => {
       const response = await groupMessageController.getAll(accessToken, groupId );
-      unreadMessagesController.setTotalReadMessages(groupId, response.total);
+     // unreadMessagesController.setTotalReadMessages(groupId, response.total);
     };
    //=================================================================================
   };

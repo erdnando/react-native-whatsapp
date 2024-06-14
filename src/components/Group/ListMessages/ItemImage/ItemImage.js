@@ -237,9 +237,34 @@ export function ItemImage(props) {
             <View style={styles.colFile}>
                     
                 <Text style={styles.cifrado}>{"AES"}</Text>
-                <Text style={styles.date}>
-                  {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
-                </Text>
+               
+
+                  {/*fila fecha, hora visto*/}
+                  <View style={{flex:1,flexDirection:'row-reverse', marginTop:20  }}>
+                    {/*no visto*/}
+                    <View display={message.estatus=="NOLEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                            <Icon
+                                  style={styles.vistoGris}
+                                  as={MaterialCommunityIcons}
+                                  size="7"
+                                  name="check-all"
+                                  color="black"
+                                />
+                          </View>
+                          {/*visto*/}
+                          <View display={message.estatus=="LEIDO"?"flex":"none"}  style={{marginLeft:5,}}>
+                              <Icon
+                                    style={styles.vistoVerde}
+                                    as={MaterialCommunityIcons}
+                                    size="7"
+                                    name="check-all"
+                                    color="black"
+                                  />
+                          </View>
+                    <Text style={styles.date}>
+                      {DateTime.fromISO(createMessage.toISOString()).toFormat("Hdd/MM/yy    H:mm")}
+                    </Text>
+              </View>
 
 
 
@@ -305,14 +330,25 @@ export function ItemImage(props) {
             <Pressable onPress={onOpenImage}>
               <AutoHeightImage
                 width={width}
-                maxHeight={400}
+                maxHeight={420}
                 source={{ uri: imageUri }}
                 style={styles.image}
               />
             </Pressable>
-            <Text style={styles.date}>
+
+
+
+
+            
+            <Text style={styles.dateCrypt}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("Hdd/MM/yy    H:mm")}
             </Text>
+     
+
+            
+    
+
+            
           </View>
         </View>
       );

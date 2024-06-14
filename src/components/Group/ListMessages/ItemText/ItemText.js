@@ -280,7 +280,7 @@ export function ItemText(props) {
                           style={styles.vistoGris}
                           as={MaterialCommunityIcons}
                           size="7"
-                          name="check"
+                          name="check-all"
                           color="black"
                         />
                   </View>
@@ -370,28 +370,6 @@ export function ItemText(props) {
             <Text style={styles.date}>
               {DateTime.fromISO(createMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
             </Text>
-
-            <View display={message.estatus=="NOLEIDO"?"flex":"none"}  style={{alignItems:'flex-end'}}>
-                <Icon
-                      style={styles.vistoGris}
-                      as={MaterialCommunityIcons}
-                      size="7"
-                      name="check"
-                      color="black"
-                    />
-            </View>
-            <View display={message.estatus=="LEIDO"?"flex":"none"}  style={{alignItems:'flex-end'}}>
-                <Icon
-                      style={styles.vistoVerde}
-                      as={MaterialCommunityIcons}
-                      size="7"
-                      name="check-all"
-                      color="black"
-                    />
-            </View>
-
-
-
           </View>
         </View>
       );

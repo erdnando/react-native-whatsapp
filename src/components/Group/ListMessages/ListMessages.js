@@ -54,18 +54,17 @@ export function ListMessages(props) {
       <View style={styles.content}>
         {map(messages, (message) => {
           
-           
-          if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
-
           if (message.type === "TEXT") {
+            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
             return <ItemText key={message._id} message={message} />;
           }
           if (message.type === "IMAGE") {
-              
+            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
             return <ItemImage key={message._id} message={message} />;
           }
 
           if (message.type === "FILE") {
+            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
             return <ItemFile key={message._id} message={message} />;
           }
         })}

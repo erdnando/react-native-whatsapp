@@ -38,7 +38,11 @@ export const styled = (isMe) => {
     text: {
       color: "#fff",
       fontSize: 16,
-      marginBottom:25
+      marginBottom:10,
+      backgroundColor:'rgba(52, 52, 52, 0.1)',
+      borderRadius:8,
+      margin:5,
+      padding:5
     },
     date: {
       opacity: 1,

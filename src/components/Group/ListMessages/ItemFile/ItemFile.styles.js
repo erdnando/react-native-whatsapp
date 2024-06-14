@@ -13,7 +13,7 @@ export const styled = (isMe) => {
       maxWidth: "80%",
       borderRadius: 10,
       padding: 3,
-      paddingBottom:10,
+      paddingBottom:30,
       paddingTop:5,
       paddingHorizontal: 10,
     },
@@ -31,7 +31,7 @@ export const styled = (isMe) => {
     date: {
       position: "absolute",
       bottom: 8,
-      right: 10,
+      right: 33,
       color: "#fff",
       fontSize: 12,
       marginTop: 2,
@@ -75,7 +75,6 @@ export const styled = (isMe) => {
       width:'100%',
     },
     cifrado: {
-     
       fontWeight:"bold",
       color: "black",
       fontSize: 12,
@@ -124,5 +123,27 @@ export const styled = (isMe) => {
       marginTop:-15,
       marginBottom:0
     },
+    vistoGris: {
+      opacity: 0.4,
+      color: isMe ? "white" : "transparent",
+      fontSize: 22,
+      top:-4
+    },
+    vistoVerde: {
+      opacity: 0.9,
+      color: isMe ? "#33ff55": "transparent",
+      fontSize: 22,
+      top:-2
+    },
+    dateCrypt: {
+      position: "absolute",
+     
+      right: 10,
+      color: "#fff",
+      fontSize: 12,
+      bottom: 6,
+      textAlign: "right",
+    },
+
   });
 };

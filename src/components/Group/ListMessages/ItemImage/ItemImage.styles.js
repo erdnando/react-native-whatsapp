@@ -15,6 +15,7 @@ export const styled = (isMe) => {
       padding: 3,
       paddingVertical: 6,
       paddingHorizontal: 10,
+      paddingBottom:30
     },
     identity: {
       color: isMe ? "black" : "gray",
@@ -24,16 +25,25 @@ export const styled = (isMe) => {
     },
     image: {
       borderRadius: 10,marginTop:10,
-      //   height: 100,
+       //  height: 180,
       //   width: "100%",
     },
     date: {
       position: "absolute",
       bottom: 10,
+      right: 30,
+      color: "#fff",
+      fontSize: 12,
+      bottom: 4,
+      textAlign: "right",
+    },
+    dateCrypt: {
+      position: "absolute",
+      bottom: 10,
       right: 10,
       color: "#fff",
       fontSize: 12,
-      marginTop: 0,
+      bottom: 4,
       textAlign: "right",
     },
     rowMenu:{
@@ -76,6 +86,18 @@ export const styled = (isMe) => {
       bottom: 30,
       textAlign: "right",
       top:15
+    },
+    vistoGris: {
+      opacity: 0.4,
+      color: isMe ? "white" : "transparent",
+      fontSize: 22,
+      top:0
+    },
+    vistoVerde: {
+      opacity: 0.9,
+      color: isMe ? "#33ff55": "transparent",
+      fontSize: 22,
+      top:0
     },
   });
 };
