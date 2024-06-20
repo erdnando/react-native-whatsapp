@@ -74,7 +74,8 @@ export class GroupMessage {
 async notifyRead(accessToken, idUser, idMsg) {
 
   try {
-   
+    console.log("idMsg enviado a notify read")
+    console.log(idMsg)
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.NOTIFY_READ}`;
       const params = {
         method: "POST",
@@ -88,17 +89,17 @@ async notifyRead(accessToken, idUser, idMsg) {
         }),
       };
 
-
+  
       const response = await fetch(url, params);
       const resultAPI = await response.json();
+       console.log("resultAPI NOTIFY_READ")
+       console.log(resultAPI)
 
-       
-
-        if (response.status !== 200) throw resultAPI;
+        if (response.status !== 201) throw resultAPI;
 
   } catch (error) {
- 
-    throw error;
+     console.log(error)
+    //throw error;
   }
 }
 
@@ -133,18 +134,18 @@ async notifyRead(accessToken, idUser, idMsg) {
       let blackList=null;
       let filteredResult=null;
 
-      console.log("resultAPI")
-      console.log(resultAPI)
-      console.log("Add idMessage to local black list")
+      //console.log("resultAPI")
+      //console.log(resultAPI)
+      //console.log("Add idMessage to local black list")
       await GET_STATE_MY_DELETED_MESSAGES().then(result =>{
         blackList=result.rows._array;      
-        console.log("blackList")
-        console.log(blackList)
+        //console.log("blackList")
+        //console.log(blackList)
 
 
        const listMsgs = resultAPI.messages;
-       console.log("all messages")
-       console.log(listMsgs);
+       //console.log("all messages")
+       //console.log(listMsgs);
 
        filteredResult = listMsgs.filter(lm => 
         blackList.every(bl => bl.idMessage !== lm._id));
@@ -154,8 +155,8 @@ async notifyRead(accessToken, idUser, idMsg) {
 
     resultAPI.messages= filteredResult;
 
-      console.log("resultAPI")
-      console.log(resultAPI)
+      //console.log("resultAPI")
+      //console.log(resultAPI)
       return resultAPI;
     } catch (error) {
       EventRegister.emit("loadingEvent",false);

@@ -16,13 +16,18 @@ crypto-js/evpkdf
 
 const Encrypt = (word,tipo) =>{
 
+  if(statex$.default.llaveGrupoSelected.get()==""){
+  
+    statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0")
+  }
+
   let qey=statex$.default.llaveGrupoSelected.get()
 
   
   let cifrado='';
 
 
-  console.log("Encryptando con llave::" + statex$.default.llaveGrupoSelected.get())
+  
   switch (tipo) {
     case 'AES': cifrado=CryptoJS.AES.encrypt(word,qey).toString(); break;
     case '3DES': cifrado=CryptoJS.TripleDES.encrypt(word,qey).toString(); break;
@@ -37,8 +42,13 @@ const Encrypt = (word,tipo) =>{
 //===================================================================================================
 const Decrypt = (word, tipo) =>{
 
+  if(statex$.default.llaveGrupoSelected.get()==""){
+  
+    statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0")
+  }
+
   let decifrado='';
-  let qey=statex$.default.llaveGrupoSelected.get()
+  let qey=statex$.default.llaveGrupoSelected.get();
 
  
   console.log("Decriptando con llave::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
@@ -79,7 +89,7 @@ const EncryptWithLlave = (word,tipo, qey) =>{
 
   let cifrado='';
    
-  console.log("Encryptando con llave::" + qey)
+  
   switch (tipo) {
     case 'AES': cifrado=CryptoJS.AES.encrypt(word,qey).toString(); break;
     case '3DES': cifrado=CryptoJS.TripleDES.encrypt(word,qey).toString(); break;

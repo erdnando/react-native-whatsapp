@@ -116,6 +116,8 @@ export function GroupScreen() {
 
                             if(msg.type=="TEXT"){
                                   //================================================================================
+                                  
+                                
                                     msg.message = Decrypt(msg.message,msg.tipo_cifrado,tipo);
                                    console.log("->"+msg.message +"<-")
                                     if(msg.message===""){
@@ -262,7 +264,7 @@ export function GroupScreen() {
 
   }, [groupId, messages]);
 
-
+//==================================================================================================================================================================
   //get all messages
   const getAllMessages = () => {
    // console.log("reloading message:::GroupScreen");
@@ -378,60 +380,66 @@ export function GroupScreen() {
    //=================================================================================
   };
 
+  //==================================================================================================================================================================
   //when newMessage is required, call this instruction
   const newMessage = (msg) => {
    
     (async () => {
 
-    console.log("identificando nuevo mensaje:::::")
-
- 
-
-
-     //==========================================================
+    console.log("identificando nuevo mensaje en GroupScreen:::::")
+     console.log(msg)
 
      try {
+                  
           //Get all messages
           if(statex$.default.isConnected.get()){
 
-              response = await groupMessageController.getAll(accessToken, groupId);
+            response = await groupMessageController.getAll(accessToken, groupId);
 
-              console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
-              //console.log(JSON.stringify(response))
-              UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
-
-
-               //TODO: notifying user who send the message that it has been read
-               //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
-                console.log("notificando que su mensaje ha sido leido a:")
-                console.log( statex$.default.userWhoSendMessage.get())
+            //console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
+            //console.log(JSON.stringify(response))
+            UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
 
 
+            //TODO: notifying user who send the message that it has been read
+            //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
+              console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
+              console.log( statex$.default.userWhoSendMessage.get())
 
-                console.log(msg.user._id)
-                console.log(user._id)
-               // console.log(isMe)
-               const isMe = (msg.user._id==user._id)
-               const msgOrigen={
-                idUser: msg.user._id,
-                idMsg: msg._id,
-              }
-              statex$.default.userWhoSendMessage.set(msgOrigen)
 
-               if(!isMe){
-                  await groupMessageController.notifyRead(
-                    accessToken,
-                    msg.user._id,
-                    msg._id
-                  );
-               }
+              console.log("Usuario que envio el mensjaje")
+              console.log(msg.user._id);//user who send the msg
+              console.log("Usuario logeado enla app")
+              console.log(user._id)//user who is logged into
+            
+            const isMe = (msg.user._id==user._id);
 
-              
+            console.log("isMe")
+            console.log(isMe)
+            console.log("msg._id")
+            console.log(msg._id)
 
+              if(!isMe){
+               console.log("preparando envio de leido")
+                const msgOrigen={
+                  idUser: msg.user._id,
+                  idMsg: msg._id,
+                }
+                
+                
                
+                await groupMessageController.notifyRead(
+                  accessToken,
+                  msg.user._id,
+                  msg._id
+                );
+
+                statex$.default.userWhoSendMessage.set(msgOrigen);
+            }
 
 
-              }
+          } 
+
       } catch (error) {
         console.log("error::::")
         console.log(error)
@@ -440,7 +448,15 @@ export function GroupScreen() {
     let msgOriginal=msg.message;;
     if(msg.type=="TEXT"){
 
+      console.log("decifrando")
+      console.log(msg)
+      console.log("tipo")
+      console.log(tipo)
+      console.log("llave generica")
+      console.log(statex$.default.llaveGrupoSelected.get())
       msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
+      console.log(" msg despues dle decifrado")
+      console.log(msg)
 
       if(msg.email_replied != null){
         msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);

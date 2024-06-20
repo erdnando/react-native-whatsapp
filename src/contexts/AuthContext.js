@@ -202,8 +202,8 @@ export function AuthProvider(props) {
 
         response = await userController.getMe(accessToken);
 
-        console.log("Persistiendo ADD_STATE_GETME")
-        console.log(response)
+        //console.log("Persistiendo ADD_STATE_GETME")
+        //console.log(response)
         ADD_STATE_GETME(JSON.stringify(response))
 
       }else{

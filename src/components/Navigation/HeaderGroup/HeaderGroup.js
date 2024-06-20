@@ -77,6 +77,13 @@ export function HeaderGroup(props) {
      if(statex$.default.isConnected.get()){
           //call api to validate nip 
           response = await userController.getMe(accessToken);
+
+          console.log("response.nip fron ws")
+          console.log(response)
+          console.log("nip ingresado")
+          console.log(nip.toString())
+          console.log(MD5method(nip.toString()));
+
           await authController.setNip(response.nip);
       }//connected
       else{

@@ -13,7 +13,7 @@ import {
 const state$ = observable({
   isConnected:true,
   expoPushToken:{},
-  llaveGrupoSelected:"",
+  llaveGrupoSelected:"3rdn4nd03rdn4nd03rdn4nd03rdn4nd0",
   fechaAltaGrupoSelected:"",
   AUTHLOGIN:{},
   lastPushNotification:"",
@@ -24,6 +24,8 @@ const state$ = observable({
   moveScroll:true,
   groupMessagesRead:false,
   userWhoSendMessage:'',
+  idMessageEstatus:'',
+  actualizaEstatus:false,
   user:[{
      _id :"0",
      email :"",

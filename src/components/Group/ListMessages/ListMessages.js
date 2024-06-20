@@ -9,22 +9,30 @@ import * as statex$ from '../../../state/local'
 import { EventRegister } from "react-native-event-listeners";
 
 export function ListMessages(props) {
+
   const { messages } = props;
   const scrollViewRef = useRef();
-  const [ idMessageEstatus, setIdMessageEstatus] = useState(0)
-  const [ actualizaEstatus, setActualizaEstatus] = useState(false)
+  const [messagesx, setMessagesx] = useState(null);
 
   //=================================================================
   useEffect(() => {
      
+      setMessagesx(messages);
+
       const updateVisto = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
       console.log("actualizando estatus de visto en la lista de mensajes...", idMsg);
     
-      setIdMessageEstatus(idMsg);
-      setActualizaEstatus(true)
-      console.log("idMessageEstatus")
-      console.log(idMessageEstatus)
      
+      statex$.default.idMessageEstatus.set(idMsg);
+      statex$.default.actualizaEstatus.set(true);
+    
+      console.log("idMessageEstatus")
+      console.log(statex$.default.idMessageEstatus.get())
+      console.log(statex$.default.actualizaEstatus.get())
+      console.log("=========================================")
+
+      setMessagesx([]);
+      
     });
 
     return ()=>{
@@ -53,18 +61,22 @@ export function ListMessages(props) {
     >
       <View style={styles.content}>
         {map(messages, (message) => {
+          console.log(message._id)
+          console.log(statex$.default.idMessageEstatus.get())
+          console.log("son iguales::::")
+          console.log(message._id === statex$.default.idMessageEstatus.get())
           
           if (message.type === "TEXT") {
-            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
+            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
             return <ItemText key={message._id} message={message} />;
           }
           if (message.type === "IMAGE") {
-            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
+            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
             return <ItemImage key={message._id} message={message} />;
           }
 
           if (message.type === "FILE") {
-            if(actualizaEstatus){ if(message._id === idMessageEstatus){ message.estatus="LEIDO"};  setActualizaEstatus(false)  }
+            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
             return <ItemFile key={message._id} message={message} />;
           }
         })}

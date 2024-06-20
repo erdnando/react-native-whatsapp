@@ -152,10 +152,10 @@ export function Item(props) {
         socket.emit("subscribe", user._id);
         socket.on("read_messages", updateReadStatus);
       
-        return () => {
+        /*return () => {
         socket.emit("unsubscribe", user._id);
         socket.off("read_messages", updateReadStatus);
-      };
+      };*/
     // }
     }, []);
 
@@ -211,8 +211,6 @@ export function Item(props) {
        //Update message with id parameter to read 6668cdd759b7edbfb183c0dd
        EventRegister.emit("idMessagevisto",idMsg);
 }
-
-
 
   const newPushnotification = async (msg) => {
    
@@ -370,23 +368,28 @@ export function Item(props) {
     //Hay q avisarle q ya s eentro al grupo y se deben marcar como leidos por parte del q recibe
     try{
 
-      console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
-      const msgOrigen =statex$.default.userWhoSendMessage.get();
-      //
-      console.log("msgOrigen")
-      console.log(statex$.default.userWhoSendMessage.get())
-      if(msgOrigen !=''){
-        console.log("notifyRead...")
-        console.log( msgOrigen.idUser)
-        console.log( msgOrigen.idMsg)
-       const respo = await groupMessageController.notifyRead(
-          accessToken,
-          msgOrigen.idUser,
-          msgOrigen.idMsg
-        );
-      }
+          console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
+          const msgOrigen =statex$.default.userWhoSendMessage.get();
+          //
+          console.log("msgOrigen")
+          console.log(statex$.default.userWhoSendMessage.get());
 
-      console.log("Resultado de la operacion:",respo)
+          if(msgOrigen !=''){
+
+            console.log("notifyRead...")
+            console.log( msgOrigen.idUser)
+            console.log( msgOrigen.idMsg)
+
+            const respo = await groupMessageController.notifyRead(
+              accessToken,
+              msgOrigen.idUser,
+              msgOrigen.idMsg
+            );
+
+            console.log("Resultado de la operacion:",respo)
+          }
+
+        
 
     }catch(errx){
    
@@ -399,8 +402,6 @@ export function Item(props) {
   };
 
   
-
-
   return (
     <TouchableOpacity style={styles.content} onPress={openGroup}>
 

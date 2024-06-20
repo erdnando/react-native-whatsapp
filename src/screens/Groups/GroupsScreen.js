@@ -129,9 +129,9 @@ export function GroupsScreen() {
 
               response = await groupController.getAll(accessToken);
 
-                console.log("Persistiendo ADD_STATE_ALLGROUPS")
+                //console.log("Persistiendo ADD_STATE_ALLGROUPS")
                 //console.log(response)
-                console.log(JSON.stringify(response))
+                //console.log(JSON.stringify(response))
                 UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
 
                 //==============================================
