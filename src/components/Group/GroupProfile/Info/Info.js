@@ -58,7 +58,8 @@ export function Info(props) {
         <Avatar
           bg="cyan.500"
           size="xl"
-          source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+          source={{ uri: `${ENV.BASE_PATH}/${group.image == undefined ? "group/group1.png" : group.image}` }}
+          //source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
           //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }}
         />
         </Pressable>

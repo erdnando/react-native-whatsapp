@@ -11,7 +11,11 @@ export class Group {
       
       const formData = new FormData();
       formData.append("name", name);
-      formData.append("image", image);
+
+      console.log("Validando imagen del grupo")
+      console.log(image)
+      
+      if(image!="")formData.append("image", image);
       formData.append("creator", creatorId);
       formData.append("participants", JSON.stringify([...usersId, creatorId]));
       formData.append("tipo", llave!="" ? "cerrado":"abierto");

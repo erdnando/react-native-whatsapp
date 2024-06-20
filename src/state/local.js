@@ -26,6 +26,8 @@ const state$ = observable({
   userWhoSendMessage:'',
   idMessageEstatus:'',
   actualizaEstatus:false,
+  totalUnreadMessages:0,
+  contadorVistos:0,
   user:[{
      _id :"0",
      email :"",

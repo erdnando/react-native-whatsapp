@@ -732,12 +732,12 @@ export function GroupForm(props) {
   return (<View style={{position: "absolute",top:0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(60, 60, 60, 0.4)",
+            backgroundColor: "rgba(60, 60, 60, 0)",
             justifyContent: "center",
             alignItems: "center",}}>
-          <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.500" />
+          <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.100" />
           <Heading color="white" fontSize="lg">
-          Enviando...
+          
           </Heading>
         </View>
         );  }

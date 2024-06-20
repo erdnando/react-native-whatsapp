@@ -12,75 +12,90 @@ export function ListMessages(props) {
 
   const { messages } = props;
   const scrollViewRef = useRef();
-  const [messagesx, setMessagesx] = useState(null);
+  //const [allSeen, setAllSeen] = useState("");
+
 
   //=================================================================
-  useEffect(() => {
+ // useEffect(() => {
      
-      setMessagesx(messages);
+      //setAllSeen("false");
 
-      const updateVisto = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
+     /* const updateVisto = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
       console.log("actualizando estatus de visto en la lista de mensajes...", idMsg);
+      //setAllSeen("true");
+      EventRegister.emit("reloadMessagesSeen",true);
+      //statex$.default.idMessageEstatus.set(idMsg);
+      //statex$.default.actualizaEstatus.set(true);
     
-     
-      statex$.default.idMessageEstatus.set(idMsg);
-      statex$.default.actualizaEstatus.set(true);
-    
-      console.log("idMessageEstatus")
-      console.log(statex$.default.idMessageEstatus.get())
-      console.log(statex$.default.actualizaEstatus.get())
-      console.log("=========================================")
+     // console.log("idMessageEstatus")
+     // console.log(statex$.default.idMessageEstatus.get())
+     // console.log(statex$.default.actualizaEstatus.get())
+     // console.log("=========================================")
 
-      setMessagesx([]);
+      
       
     });
 
     return ()=>{
       EventRegister.removeEventListener(updateVisto);
     }
-  }, [])
+  }, [])*/
   
   
  //================================================================
 
-  return (
-    <ScrollView
-      style={styles.container}
-      alwaysBounceVertical={false}
-      ref={scrollViewRef}
-      onContentSizeChange={() => {
+      return (
+        <ScrollView
+          style={styles.container}
+          alwaysBounceVertical={false}
+          ref={scrollViewRef}
+          onContentSizeChange={() => {
 
-        console.log("moving to bottom")
-        console.log(statex$.default.moveScroll.get())
-        if(statex$.default.moveScroll.get()){
-          scrollViewRef.current.scrollToEnd({ animated: false });
-        }
-       
-       
-      }}
-    >
-      <View style={styles.content}>
-        {map(messages, (message) => {
-          console.log(message._id)
-          console.log(statex$.default.idMessageEstatus.get())
-          console.log("son iguales::::")
-          console.log(message._id === statex$.default.idMessageEstatus.get())
+            console.log("moving to bottom")
+            console.log(statex$.default.moveScroll.get())
+            if(statex$.default.moveScroll.get()){
+              scrollViewRef.current.scrollToEnd({ animated: false });
+            }
           
-          if (message.type === "TEXT") {
-            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
-            return <ItemText key={message._id} message={message} />;
-          }
-          if (message.type === "IMAGE") {
-            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
-            return <ItemImage key={message._id} message={message} />;
-          }
+          
+          }}
+        >
+          <View style={styles.content}>
+            {
+              map(messages, (message) => {
+                   
+                    
+                      console.log(message._id)
+                     // console.log(statex$.default.idMessageEstatus.get())
+                    // console.log("son iguales::::")
+                      //console.log(message._id === statex$.default.idMessageEstatus.get())
 
-          if (message.type === "FILE") {
-            if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
-            return <ItemFile key={message._id} message={message} />;
-          }
-        })}
-      </View>
-    </ScrollView>
-  );
+                      //console.log("allSeen::::")
+                      //console.log(allSeen)
+                      //console.log("message.estatus")
+                      //console.log(message.estatus)
+                     // message.estatus="LEIDO";
+                      
+                      if (message.type === "TEXT") {
+                        //if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
+                        return <ItemText key={message._id} message={message} />;
+                      }
+                      if (message.type === "IMAGE") {
+                      // if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
+                        return <ItemImage key={message._id} message={message} />;
+                      }
+
+                      if (message.type === "FILE") {
+                        //if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
+                        return <ItemFile key={message._id} message={message} />;
+                      }
+                      
+                    })
+
+                   
+            }
+          </View>
+        </ScrollView>
+      );
+
 }

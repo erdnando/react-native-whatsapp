@@ -52,6 +52,43 @@ export function GroupScreen() {
   const toast = useToast();
   
 
+
+    //EventListener:: decifra mensajes
+    useEffect(() => {
+      console.log("statex$.default.isConnected.get()")
+      console.log(statex$.default.isConnected.get())
+      
+  
+         const eventReloadMessages = EventRegister.addEventListener("idMessagevisto", async bFlag=>{
+           
+                try {
+                 
+                  (async () => {
+                    console.log("reloadMessagesSeen:::");
+                  
+                    try {
+                     
+                      getAllMessages(true);
+                    } catch (error) {
+                      console.log("Error")
+                      console.error(error);
+                    }
+                  })();
+                } catch (error) {
+                  console.log("Error 3")
+                  console.error(error);
+                }
+          });
+      
+          return ()=>{
+            EventRegister.removeEventListener(eventReloadMessages);
+          }
+    }, []);
+
+
+
+
+
   //EventListener:: decifra mensajes
   useEffect(() => {
     console.log("statex$.default.isConnected.get()")
@@ -171,7 +208,7 @@ export function GroupScreen() {
                    // setMessages(unlockedMessages);
                     setMessages([]);
                     setMessages( unlockedMessages);
-                   // unreadMessagesController.setTotalReadMessages(groupId, response.total);
+                    unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
                   } catch (error) {
                     console.log("Error 1")
@@ -203,7 +240,7 @@ export function GroupScreen() {
   //Get messages
   useEffect(() => {
     
-   getAllMessages();
+   getAllMessages(false);
 
   }, [groupId]);
 
@@ -229,7 +266,7 @@ export function GroupScreen() {
           
           
     
-          getAllMessages();
+          getAllMessages(false);
           
         });
     
@@ -266,7 +303,7 @@ export function GroupScreen() {
 
 //==================================================================================================================================================================
   //get all messages
-  const getAllMessages = () => {
+  const getAllMessages = (visto) => {
    // console.log("reloading message:::GroupScreen");
     //=================================================================================
     (async () => {
@@ -342,6 +379,8 @@ export function GroupScreen() {
 
             unlockedMessages.map((msg) => {
       
+              if(visto==true)msg.estatus="LEIDO";
+
               if(msg.type=="TEXT"){
                // console.log("========texto=======================")
                 //console.log(msg);
@@ -366,7 +405,7 @@ export function GroupScreen() {
           //==============================================================================
         }
        // console.log("::::::::::::::GroupScreen:::::::::::::::::::::::::::");
-        //unreadMessagesController.setTotalReadMessages(groupId, response.total);
+        unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
       } catch (error) {
         console.error(error);
@@ -375,7 +414,7 @@ export function GroupScreen() {
 
     return async () => {
       const response = await groupMessageController.getAll(accessToken, groupId );
-     // unreadMessagesController.setTotalReadMessages(groupId, response.total);
+      unreadMessagesController.setTotalReadMessages(groupId, response.total);
     };
    //=================================================================================
   };

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Avatar } from "native-base";
 import { isEmpty } from "lodash";
 import { DateTime } from "luxon";
@@ -42,16 +42,11 @@ export function Item(props) {
   const navigation = useNavigation();
 
 
+  //Get messages read and totals
   useEffect(() => {
 
     (async () => {
       try {
-       
-            const totalMessages = await groupMessageController.getTotal(
-              accessToken,
-              group._id
-            );
-          
 
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
               accessToken,
@@ -59,16 +54,20 @@ export function Item(props) {
             );
             setTotalMembers(totalParticipants);
             
+            //==============================Get messages from DB========================================================
+            const totalMessages = await groupMessageController.getTotal(accessToken, group._id );//From DB
 
-
-            const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);
-
-            console.log("Getting total number of messages of group on render group list:", group._id)
-            //get total number of messages and discount read messages counter
+            //==============================Get messages read from AsynStorage==========================================
+            const totalReadMessages = await unreadMessagesController.getTotalReadMessages(group._id);//From AsyncStorage
+           
+            //==============================Mensajes NO leidos==========================================================
+            //statex$.default.totalUnreadMessages.set( totalMessages - totalReadMessages );
             setTotalUnreadMessages(totalMessages - totalReadMessages);
-            unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
 
-            //=================================================================
+
+
+
+            //==========================================================================================================
             const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
               console.log("group list updated...");
             
@@ -87,8 +86,6 @@ export function Item(props) {
             return ()=>{
               EventRegister.removeEventListener(eventGrupo);
             }
-            
-            
             //================================================================
 
       } catch (error) {
@@ -314,10 +311,19 @@ export function Item(props) {
         statex$.default.setLastMessage.set(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
+
         if (activeGroupId !== newMsg.group) {
+
           console.log("Updating total number of messages of group on new message event plus 1:")
+          console.log("totalUnreadMessages antes de sumarle 1")
+          //console.log(statex$.default.totalUnreadMessages.get())
+          
           setTotalUnreadMessages((prevState) => prevState + 1);
-          unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
+          //statex$.default.totalUnreadMessages.set(statex$.default.totalUnreadMessages.get()+1)
+          //console.log("totalUnreadMessages mas 1")
+         // console.log(statex$.default.totalUnreadMessages.get())
+          //unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
+          
         }
       }
     }
@@ -360,9 +366,14 @@ export function Item(props) {
           [{  text: 'Ok',      } ]);
     }
     
-    console.log("Updating total number of messages of group on openning a group to Zero:", group._id)
-    setTotalUnreadMessages(0);
-    unreadMessagesController.setTotalReadMessages(group._id, 0);//new
+    //console.log("Updating total number of messages of group on openning a group to Zero:", group._id)
+    //setTotalUnreadMessages(0);
+    
+
+   // const totalMessages = await groupMessageController.getTotal(accessToken,group._id );
+    //unreadMessagesController.setTotalReadMessages(group._id, totalMessages);//new
+   // statex$.default.totalUnreadMessages.set(0)
+      setTotalUnreadMessages(0);
 
     //TODO: notifying user who send the message that it has been read
     //Hay q avisarle q ya s eentro al grupo y se deben marcar como leidos por parte del q recibe
@@ -410,7 +421,7 @@ export function Item(props) {
         size="sm"
         marginRight={3}
         style={styles.avatar}
-        source={{ uri: `${ENV.BASE_PATH}/${group.image}` }}
+        source={{ uri: `${ENV.BASE_PATH}/${group.image == undefined ? "group/group1.png" : group.image}` }}
         //source={{ uri: `${ENV.BASE_PATH}/group/group1.png` }} 
       />
 
@@ -442,10 +453,10 @@ export function Item(props) {
             </Text>
           ) : null}
 
-          {totalUnreadMessages ? (
+          { totalUnreadMessages ? (
             <View style={styles.totalUnreadContent}>
               <Text style={styles.totalUnread}>
-                {totalUnreadMessages < 99 ? totalUnreadMessages : 99}
+                { totalUnreadMessages < 99 ?  totalUnreadMessages : 99}
               </Text>
             </View>
           ) : null}
