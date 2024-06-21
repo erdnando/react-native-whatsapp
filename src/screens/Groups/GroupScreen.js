@@ -433,6 +433,11 @@ export function GroupScreen() {
           //Get all messages
           if(statex$.default.isConnected.get()){
 
+
+            const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
+            if(totalParticipants==1)msg.estatus="LEIDO";
+
+
             response = await groupMessageController.getAll(accessToken, groupId);
 
             //console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
@@ -466,12 +471,14 @@ export function GroupScreen() {
                 }
                 
                 
-               
+               if(totalParticipants>1){
                 await groupMessageController.notifyRead(
                   accessToken,
                   msg.user._id,
                   msg._id
                 );
+               }
+               
 
                 statex$.default.userWhoSendMessage.set(msgOrigen);
             }

@@ -71,10 +71,17 @@ export function ItemText(props) {
     }
   
     if(createMessage.getTime() ==updatedMessage.getTime() ){
+       console.log("mismas fechas no editado")
        setEditado(false)
     }else{
-      setEditado(true)
+    
+        console.log("diferentes fechas y dif mensaje")
+        setEditado(true)
+      
+     
     }
+
+   
 
     async function fetchData() {
 
