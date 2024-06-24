@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { Types } from 'mongoose';
 import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, 
   CREATE_STATE_ALLGROUPS,CREATE_STATE_ALLMESSAGES,CREATE_STATE_GROUP_LLAVE, 
-  ADD_STATE_ALLGROUPS, CREATE_STATE_MY_DELETED_MESSAGES, DELETE_STATE_GROUP_LLAVE } from '../hooks/useDA.js';
+  ADD_STATE_ALLGROUPS, CREATE_STATE_MY_DELETED_MESSAGES, CREATE_STATE_GROUP_READ_MESSAGE_COUNT,DELETE_STATE_GROUP_LLAVE } from '../hooks/useDA.js';
   import { observable } from "@legendapp/state";
   import { observer } from "@legendapp/state/react";
   import * as statex$ from '../state/local.js'
@@ -49,10 +49,11 @@ export function AuthProvider(props) {
           CREATE_STATE_AUTHLOGIN();//ok
           CREATE_STATE_GETME();//ok
           CREATE_STATE_ALLGROUPS();//ok
-          CREATE_STATE_ALLMESSAGES();//ok
+          CREATE_STATE_ALLMESSAGES();//ok 
           CREATE_STATE_GROUP_LLAVE();
           CREATE_STATE_MY_DELETED_MESSAGES();
-          ADD_STATE_ALLGROUPS("ggg")
+          ADD_STATE_ALLGROUPS("ggg");
+          CREATE_STATE_GROUP_READ_MESSAGE_COUNT();
           //DELETE_STATE_GROUP_LLAVE();
        
           console.log("--------------------------------")
@@ -152,7 +153,8 @@ export function AuthProvider(props) {
         //show alert with initial NIP
         await authController.setInitial("1");
         //1a vez, bandera de mensajes cifrados
-        await authController.setCifrado("SI");
+        //await authController.setCifrado("SI");
+        statex$.default.cifrado.set("SI");
         
         await login(access);
 

@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite/legacy';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db08.db');
+const db = SQLite.openDatabase('db13.db');
 
 
 /*  export  async function loadDB(){
@@ -251,6 +251,7 @@ export  function DELETE_STATE_GROUP_LLAVE_BY_ID(groupId) {
     );
   });    
 }
+
 //==================================================================================================================================================================================
 
 export  function CREATE_STATE_ALLMESSAGES() {
@@ -258,7 +259,7 @@ export  function CREATE_STATE_ALLMESSAGES() {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_ALLMESSAGES (valor TEXT, groupId TEXT, llave TEXT, tipo TEXT);" , (_, result) => resolve(result), (_, error) => reject(error));
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_ALLMESSAGES ( valor TEXT, groupId TEXT, llave TEXT, tipo TEXT );" , (_, result) => resolve(result), (_, error) => reject(error));
       }
     );
   });
@@ -286,12 +287,12 @@ export  function UPDATE_STATE_ALLMESSAGES_LLAVE(llave, groupId) {
   });    
 }
 
-export  function ADD_STATE_ALLMESSAGES(valor,groupId,llave, tipo) {
+export  function ADD_STATE_ALLMESSAGES(valor,groupId,llavex, tipo) {
 
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql('INSERT INTO STATE_ALLMESSAGES (valor,groupId,llave,tipo) values(?,?,?,?)', [valor,groupId,llave,tipo], (_, result) => resolve(result), (_, error) => reject(error) );
+        tx.executeSql('INSERT INTO STATE_ALLMESSAGES (valor,groupId,llave,tipo) values(?,?,?,?)', [valor,groupId,llavex,tipo], (_, result) => resolve(result), (_, error) => reject(error) );
       }
     );
   });    
@@ -303,7 +304,8 @@ export  function GET_STATE_ALLMESSAGESBYID(groupId) {
   return new Promise((resolve, reject) => {
     db.transaction(
       tx => {
-        tx.executeSql("SELECT valor, llave, groupId,tipo  FROM STATE_ALLMESSAGES WHERE groupId=? LIMIT 1;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
+        //valor, groupId, llave, tipo
+        tx.executeSql("SELECT *  FROM STATE_ALLMESSAGES WHERE groupId=? LIMIT 1;", [groupId], (_, result) => resolve(result),(_, error) => reject(error) );
       }
     );
   });     
@@ -651,6 +653,73 @@ export async function getFile64ById(id_message){
 
 
 //=================================================================================================================================================================================
+
+export  function CREATE_STATE_GROUP_READ_MESSAGE_COUNT() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql("CREATE TABLE IF NOT EXISTS STATE_GROUP_READ_MESSAGE_COUNT (groupId TEXT, contador INTEGER DEFAULT 0);" , (_, result) => resolve(result), (_, error) => reject(error));
+      }
+    );
+  });
+}
+
+export  function ADD_STATE_GROUP_READ_MESSAGE_COUNT(groupId, contador) {
+  
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('INSERT INTO STATE_GROUP_READ_MESSAGE_COUNT (groupId, contador) values(?,?)', [groupId, contador], (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function UPDATE_STATE_GROUP_READ_MESSAGE_COUNT(groupId, contador) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        tx.executeSql('UPDATE STATE_GROUP_READ_MESSAGE_COUNT set contador=? WHERE groupId=?', [contador, groupId],  (_, result) => resolve(result), (_, error) => reject(error) );
+      }
+    );
+  });    
+}
+
+export  function GET_STATE_GROUP_READ_MESSAGE_COUNT(groupId) {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM STATE_GROUP_READ_MESSAGE_COUNT where groupId=?;", [groupId], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
+
+export  function GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL() {
+
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      tx => {
+        // Execute SQL operation
+        tx.executeSql("SELECT * FROM STATE_GROUP_READ_MESSAGE_COUNT;", [], 
+          // Success callback
+          (_, result) => resolve(result),
+          // Error callback
+          (_, error) => reject(error)
+        );
+      }
+    );
+  });     
+}
 
 
 //=================================================================================================================================================================================

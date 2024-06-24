@@ -46,9 +46,11 @@ export function GroupScreen() {
   const [messages, setMessages] = useState(null);
   const [isGroupCreator, setIsGroupCreator] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [cifradox, setCifradox] = useState(true);
   const [nuevaLlave, setNuevaLlave] = useState("");
   const [tituloModal, setTituloModal] = useState('');
   const [ lblMensaje, setLblMensaje] = useState('')
+  const [ drop, setDrop] = useState('')
   const toast = useToast();
   
 
@@ -68,7 +70,19 @@ export function GroupScreen() {
                   
                     try {
                      
-                      getAllMessages(true);
+                      //getAllMessages(true);
+                      //console.log("messages")
+                     // console.log(messages)
+                      (messages).map((msgx) => {
+                        console.log("actualizando estatus de ;eido")
+                        msgx.estatus="LEIDO";
+                       });
+
+                       console.log("messages")
+                       console.log(messages)
+                       setMessages(messages)
+
+
                     } catch (error) {
                       console.log("Error")
                       console.error(error);
@@ -83,8 +97,61 @@ export function GroupScreen() {
           return ()=>{
             EventRegister.removeEventListener(eventReloadMessages);
           }
-    }, []);
+    }, [messages]);
 
+
+  //EventListener:: decifra mensajes
+  useEffect(() => {
+    console.log("statex$.default.isConnected.get()")
+    console.log(statex$.default.isConnected.get())
+    
+
+       const eventMessagesx = EventRegister.addEventListener("newMessagex", async msg=> {
+         
+              try {
+                console.log("recupera msgs from db 1")
+                
+                //recuperaMensajesDB(msg.group)
+              //getAllMessages(msg.estatus=="LEIDO"? true: false);
+             // setDrop('1');
+             newMessage(msg)
+              
+               statex$.default.moveScroll.set(true)
+              } catch (error) {
+                console.error(error);
+              }
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventMessagesx);
+        }
+  }, [messages]);
+
+  useEffect(() => {
+    console.log("statex$.default.isConnected.get()")
+    console.log(statex$.default.isConnected.get())
+    
+
+       const eventMessagesxMe = EventRegister.addEventListener("newMessagex_me", async msg=> {
+         
+              try {
+               // console.log("recupera msgs from db 1")
+                
+                //recuperaMensajesDB(msg.group)
+              //getAllMessages(msg.estatus=="LEIDO"? true: false);
+             // setDrop('1');
+             newMessageMe(msg)
+              
+               statex$.default.moveScroll.set(true)
+              } catch (error) {
+                console.error(error);
+              }
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventMessagesxMe);
+        }
+  }, [messages]);
 
 
 
@@ -100,9 +167,11 @@ export function GroupScreen() {
               try {
                
                 (async () => {
-                  console.log("setCifrado por evento:::"+ isCypher);
+                 
                   //setCryptMessage(data);
-                  await authController.setCifrado(isCypher);
+                  //await authController.setCifrado(isCypher);
+                  console.log("statex$.default.cifrado.set 1"+ isCypher);
+                  statex$.default.cifrado.set(isCypher);
 
                   let response=null;
                   try {
@@ -115,9 +184,9 @@ export function GroupScreen() {
                         let resAux=null;
                         await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
                               resAux=result.rows._array;
-                              console.log("resAux.length grupos????????");
-                              console.log(resAux.length);
-                              console.log(resAux);
+                              //console.log("resAux.length grupos????????");
+                             // console.log(resAux.length);
+                              //console.log(resAux);
 
                               if(resAux.length==0){
                                 //add it
@@ -289,18 +358,39 @@ export function GroupScreen() {
     if(statex$.default.isConnected.get()){
       
       socket.emit("subscribe", groupId);
-      socket.on("message", newMessage);
+     // socket.on("message", newMessage);
       socket.on("reloadmsgs", getAllMessages);
 
       return () => {
         socket.emit("unsubscribe", groupId);
-        socket.off("message", newMessage);
+       // socket.off("message", newMessage);
         socket.off("reloadmsgs", getAllMessages);
       };
     }
 
   }, [groupId, messages]);
 
+
+
+
+  /*const  recuperaMensajesDB= async(groupId)  =>{
+
+    console.log("recupuera mesgs from db2");
+
+  
+        let resAux=null;
+        await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
+              resAux=result.rows._array;
+              console.log("recuperaMensajesDB 3");
+              console.log(resAux);
+
+              setMessages( resAux[0]?.valor?.messages);
+      });
+
+
+   
+
+  }*/
 //==================================================================================================================================================================
   //get all messages
   const getAllMessages = (visto) => {
@@ -310,23 +400,24 @@ export function GroupScreen() {
 
       let response = null;
       try {
-        const cifrados = await authController.getCifrado(); 
-       // console.log("cifrados");
-       // console.log(cifrados);
+        let cifrados = statex$.default.cifrado.get();//await authController.getCifrado(); 
+        console.log("cifrados");
+        console.log(statex$.default.cifrado.get());
 
         if( statex$.default.isConnected.get() ){
+          
           console.log("online, getting from internet db")
           response = await groupMessageController.getAll(accessToken, groupId);
 
-          console.log("mensajes en el server del grupo" + groupId)
+          console.log("mensajes en el server del grupo.............." + groupId)
           
 
           let resAux=null;
           await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
                 resAux=result.rows._array;
-                console.log("resAux.length grupos????????");
-                console.log(resAux.length);
-                console.log(resAux);
+                //console.log("resAux.length grupos????????");
+               // console.log(resAux.length);
+               // console.log(resAux);
 
                 if(resAux.length==0){
                   //add it
@@ -350,7 +441,7 @@ export function GroupScreen() {
         }
        
 
-        //console.log("mensajes del grupo")
+        console.log("despues de la consulta")
         //console.log(response)
 
         if(cifrados=="SI"){
@@ -400,6 +491,7 @@ export function GroupScreen() {
               }
              
             });
+            console.log("Setting messages from server...................")
             setMessages(unlockedMessages);
          
           //==============================================================================
@@ -408,6 +500,7 @@ export function GroupScreen() {
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
       } catch (error) {
+        console.log("error:::::::::::::");
         console.error(error);
       }
     })();
@@ -425,8 +518,11 @@ export function GroupScreen() {
    
     (async () => {
 
+      console.log("messages::::::::::::::::::::::")
+      console.log(messages)
     console.log("identificando nuevo mensaje en GroupScreen:::::")
-     console.log(msg)
+     console.log(msg);
+    // let messagesx=[];
 
      try {
                   
@@ -435,42 +531,24 @@ export function GroupScreen() {
 
 
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
+            console.log("totalParticipants")
+            console.log(totalParticipants)
             if(totalParticipants==1)msg.estatus="LEIDO";
-
-
-            response = await groupMessageController.getAll(accessToken, groupId);
-
-            //console.log("Persistiendo UPDATE_STATE_ALLMESSAGES")
-            //console.log(JSON.stringify(response))
-            UPDATE_STATE_ALLMESSAGES(JSON.stringify(response),groupId)
-
 
             //TODO: notifying user who send the message that it has been read
             //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
               console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
-              console.log( statex$.default.userWhoSendMessage.get())
+             // console.log( statex$.default.userWhoSendMessage.get())
 
-
-              console.log("Usuario que envio el mensjaje")
-              console.log(msg.user._id);//user who send the msg
-              console.log("Usuario logeado enla app")
-              console.log(user._id)//user who is logged into
-            
             const isMe = (msg.user._id==user._id);
 
-            console.log("isMe")
-            console.log(isMe)
-            console.log("msg._id")
-            console.log(msg._id)
-
-              if(!isMe){
+            if(!isMe){
                console.log("preparando envio de leido")
                 const msgOrigen={
                   idUser: msg.user._id,
                   idMsg: msg._id,
                 }
-                
-                
+                             
                if(totalParticipants>1){
                 await groupMessageController.notifyRead(
                   accessToken,
@@ -479,11 +557,63 @@ export function GroupScreen() {
                 );
                }
                
-
-                statex$.default.userWhoSendMessage.set(msgOrigen);
+               statex$.default.userWhoSendMessage.set(msgOrigen);
+            }else{
+              if(totalParticipants==1){
+                await groupMessageController.notifyRead(
+                  accessToken,
+                  msg.user._id,
+                  msg._id
+                );
+               }
             }
 
+            let msgOriginal=msg.message;
+            if(msg.type=="TEXT"){
+        
+              msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
+        
+              if(msg.email_replied != null){
+                //console.log("Entro a email_replied.....????")
+                msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
+        
+                //find message original and decryp it on message array
+                try{
+                  (messages).map((msgx) => {
+        
+                    if( Decrypt(msgx.message,msgx.tipo_cifrado, tipo) == msg.message_replied){
+                      msgx.message = msg.message_replied;
+                    }
+                   
+                  });
+                  setMessages(messages);
 
+                 // console.log("messages 4");
+                 // console.log(messagesx);
+                }catch(error){
+                  console.log("error al validar xxx")
+                }
+              }
+        
+              const isMe = user._id === msg.user._id;
+             // console.log("userId who send a message::::",  msg.user._id) 
+            }
+           
+            //==================================================
+              if(statex$.default.cifrado.get()=="SI"){
+               // setCifradox(true);
+                //setCryptMessage(true);
+                if(msg.type=="TEXT"){
+                  msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+                }else{ //img or filr
+                  msg.message = "images/cryptedImagex.png";
+                }
+              }
+              console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+              console.log(messages);
+        
+              
+              setMessages([...messages, msg]);
           } 
 
       } catch (error) {
@@ -491,60 +621,124 @@ export function GroupScreen() {
         console.log(error)
       }
 //==========================================================     
-    let msgOriginal=msg.message;;
-    if(msg.type=="TEXT"){
+   
+    })();
 
-      console.log("decifrando")
-      console.log(msg)
-      console.log("tipo")
-      console.log(tipo)
-      console.log("llave generica")
-      console.log(statex$.default.llaveGrupoSelected.get())
-      msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
-      console.log(" msg despues dle decifrado")
-      console.log(msg)
+  };
 
-      if(msg.email_replied != null){
-        msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
+  const newMessageMe = (msg) => {
+   
+    (async () => {
+      console.log("mensaje por newMessageMe")
+      console.log("messages::::::::::::::::::::::")
+      console.log(messages)
+      console.log("identificando nuevo mensaje en GroupScreen:::::")
+      console.log(msg);
+    // let messagesx=[];
 
-        //find message original and decryp it on message array
-        try{
-          messages.map((msgx) => {
+     try {
+                  
+          //Get all messages
+          if(statex$.default.isConnected.get()){
 
-            if( Decrypt(msgx.message,msgx.tipo_cifrado, tipo) == msg.message_replied){
-              msgx.message = msg.message_replied;
+
+            const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
+            console.log("totalParticipants")
+            console.log(totalParticipants)
+            if(totalParticipants==1)msg.estatus="LEIDO";
+
+            //TODO: notifying user who send the message that it has been read
+            //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
+              console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
+             // console.log( statex$.default.userWhoSendMessage.get())
+
+            const isMe = (msg.user._id==user._id);
+
+            if(!isMe){
+               console.log("preparando envio de leido")
+                const msgOrigen={
+                  idUser: msg.user._id,
+                  idMsg: msg._id,
+                }
+                             
+               if(totalParticipants>1){
+                await groupMessageController.notifyRead(
+                  accessToken,
+                  msg.user._id,
+                  msg._id
+                );
+               }
+               
+               statex$.default.userWhoSendMessage.set(msgOrigen);
+            }else{
+              if(totalParticipants==1){
+                await groupMessageController.notifyRead(
+                  accessToken,
+                  msg.user._id,
+                  msg._id
+                );
+               }
+            }
+
+            let msgOriginal=msg.message;
+            if(msg.type=="TEXT"){
+        
+              msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
+              console.log("msg.message decifrado::::");
+              console.log(msg.message);
+        
+              if(msg.email_replied != null){
+                //console.log("Entro a email_replied.....????")
+                msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
+        
+                //find message original and decryp it on message array
+                try{
+                  (messages).map((msgx) => {
+        
+                    if( Decrypt(msgx.message,msgx.tipo_cifrado, tipo) == msg.message_replied){
+                      msgx.message = msg.message_replied;
+                    }
+                   
+                  });
+                  setMessages(messages);
+
+                 // console.log("messages 4");
+                 // console.log(messagesx);
+                }catch(error){
+                  console.log("error al validar xxx")
+                }
+              }
+        
+              const isMe = user._id === msg.user._id;
+             // console.log("userId who send a message::::",  msg.user._id) 
             }
            
-          });
-          setMessages(messages);
-        }catch(error){
-          console.log("error al validar xxx")
-        }
+            //==================================================
+              if(statex$.default.cifrado.get()=="SI"){
+               // setCifradox(true);
+                //setCryptMessage(true);
+                if(msg.type=="TEXT"){
+                  msg.message=Encrypt(msg.message,msg.tipo_cifrado);
+                }else{ //img or filr
+                  msg.message = "images/cryptedImagex.png";
+                }
+              }
+              console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+              console.log(messages);
         
+              
+              setMessages([...messages, msg]);
 
+              console.log("messages al final:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+              console.log(messages);
+          } 
+
+      } catch (error) {
+        console.log("error::::")
+        console.log(error)
       }
-
-      const isMe = user._id === msg.user._id;
-      console.log("userId who send a message::::",  msg.user._id)
-      
-     
-
-      
-    }
+//==========================================================     
    
-    //==================================================
-      const cifrados = await authController.getCifrado(); 
-
-      if(cifrados=="SI"){
-        //setCryptMessage(true);
-        if(msg.type=="TEXT"){
-          msg.message=Encrypt(msg.message,msg.tipo_cifrado);
-        }else{ //img or filr
-          msg.message = "images/cryptedImagex.png";
-        }
-      }
-     
-      setMessages([...messages, msg]);
     })();
 
   };

@@ -331,7 +331,7 @@ export function ItemFile(props) {
 
 
      // console.log("useEffect ItemText:::::");
-      const cifrado = await authController.getCifrado();
+      const cifrado = statex$.default.cifrado.get();//await authController.getCifrado();
       //console.log("cifrado image item:::::"+cifrado);
       if(cifrado=="SI"){
         setWidth(120);

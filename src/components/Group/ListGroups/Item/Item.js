@@ -13,7 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Icon } from "native-base";
 import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local';
-import { GET_STATE_GROUP_LLAVE, ADD_STATE_GROUP_LLAVE, DELETE_STATE_GROUP_LLAVE_BY_ID } from '../../../../hooks/useDA';
+import { GET_STATE_GROUP_LLAVE, ADD_STATE_GROUP_LLAVE, DELETE_STATE_GROUP_LLAVE_BY_ID,GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT } from '../../../../hooks/useDA';
 import * as Notifications from 'expo-notifications';
 
 
@@ -34,11 +34,14 @@ const authController = new Auth();
 
 export function Item(props) {
 
-  const { group, upGroupChat, upAllGroups } = props;
+  const { group, upGroupChat, upAllGroups, contador } = props;
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
+  const [contadorNoLeidos, setContadorNoLeidos] = useState(0);
+  const [contadorAux, setContadorAux] = useState(0);
+  const [grupoNotificado, setGrupoNotificado] = useState('');
   const navigation = useNavigation();
 
 
@@ -48,6 +51,19 @@ export function Item(props) {
     (async () => {
       try {
 
+           
+           //console.log(contador)
+           //console.log(contador.find(o => o.groupId === group._id))
+           const cont = contador.find(o => o.groupId === group._id);
+
+           if(cont!=undefined){
+            console.log("contador")
+            console.log(cont["contador"])
+
+            setContadorAux(cont["contador"])
+           }
+           
+     
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
               accessToken,
               group._id
@@ -92,7 +108,7 @@ export function Item(props) {
            console.error(error);
       }
     })();
-  }, [group._id]);
+  }, [group._id,contadorAux]);
 
   //getLastMessage
   useEffect(() => {
@@ -108,19 +124,7 @@ export function Item(props) {
     })();
   }, [group._id]);
 
-  {/*message notify socket listener*/}
-  useEffect(() => {
-   // if(statex$.default.isConnected.get()){
-      socket.emit("subscribe", `${group._id}_notify`);
-      socket.on("message_notify", newMessage);
-
-      return () => {
-        socket.emit("unsubscribe",`${group._id}_notify`);
-        socket.off("message_notify", newMessage);
-      };
-     
-   // }
-  }, []);
+ 
 
  {/*Invitation socket listener*/}
   useEffect(() => {
@@ -130,18 +134,7 @@ export function Item(props) {
   // }
   }, []);
 
-   {/*Pushing notification socket listener*/}
-  useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-      socket.emit("subscribe", user._id);
-      socket.on("pushing_notification", newPushnotification);
-    
-      return () => {
-      socket.emit("unsubscribe", user._id);
-      socket.off("pushing_notification", newPushnotification);
-    };
-  // }
-  }, []);
+
 
   {/*Read messages socket listener*/}
   useEffect(() => {
@@ -163,6 +156,164 @@ export function Item(props) {
       socket.on("group_banned", bannedGroup);
   // }
   }, []);
+
+
+
+
+   {/*Pushing notification socket listener to the rest of the group*/}
+   useEffect(() => {
+    // if(statex$.default.isConnected.get()){
+        socket.emit("subscribe", user._id);
+        socket.on("pushing_notification", newMessagex);
+      
+        return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("pushing_notification", newMessagex);
+      };
+    // }
+}, [grupoNotificado]);
+
+ {/*Pushing notification socket listener to user who created the message*/}
+ useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+      socket.emit("subscribe", user._id);
+      socket.on("pushing_notification_me", newMessagex_me);
+    
+     return () => {
+      socket.emit("unsubscribe", user._id);
+      socket.off("pushing_notification_me", newMessagex_me);
+    };
+  // }
+}, [grupoNotificado]);
+
+
+//==============================================================================================================================================================================
+  //Aviso de nuevo mensaje para el resto del grupo
+  const newMessagex = async (msg) => {
+   
+    
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
+      console.log("notify por pushing_notification")
+      console.log(msg)
+
+      console.log("userId who send a message::::",  msg.user._id)
+      const msgOrigen={
+        idUser: msg.user._id,
+        idMsg: msg._id,
+      }
+      statex$.default.userWhoSendMessage.set(msgOrigen)
+
+
+
+     //Push notification=========================================================
+       console.log("setting push notif message")
+       statex$.default.lastPushNotification.set(msg.message);
+  
+       console.log("push notification realmente enviada!!!!")
+       await Notifications.scheduleNotificationAsync({
+         content: {
+           title: "Secure chat: Nuevo mensaje!",
+           body: "Grupo: "+msg.message,
+           sound: true,
+         },
+         trigger: {
+           seconds: 1,
+         },
+       });
+  
+      
+       //LOCAL NOTIFICATION=================================================================
+  
+       let resAux=null;
+       setGrupoNotificado(msg.group)
+       await GET_STATE_GROUP_READ_MESSAGE_COUNT(msg.group).then(result =>{
+             resAux=result.rows._array;
+
+             if(resAux.length==0){
+              console.log("No se encontro el grupo")
+               //add it
+               console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+               ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,1);
+              // setContadorNoLeidos(1);
+             }else{
+              //console.log("Si se encontro el grupo")
+              //console.log(msg.group)
+              //console.log("resAux")
+              //console.log(resAux)
+              if(resAux[0].contador==null)resAux[0].contador=0;
+  
+               let numberAux =Number(resAux[0].contador)+1;
+               UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,  numberAux );
+              // setContadorNoLeidos( numberAux  );
+             }
+           
+         }); 
+  
+       //=======================================================================
+       EventRegister.emit("updatingContadores",true);
+       //New message============================================================
+       //
+       EventRegister.emit("newMessagex",msg);
+
+       console.log("Evaluando groups id::::::::::::::::::::::::::::::::::::::;")
+       console.log(grupoNotificado)
+       console.log(msg.group)
+       console.log(group._id)
+       console.log(grupoNotificado==group._id)
+       //=======================================================================
+   }
+  }
+  
+  const newMessagex_me = async (msg) => {
+   
+    //console.log("evaluando notifies")
+    //console.log(statex$.default.lastPushNotification.get())
+   // console.log(msg.message)
+   // console.log(( statex$.default.lastPushNotification.get() !=  msg.message))
+
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
+        console.log("notify por pushing_notification me")
+    //  console.log("userId who send a message::::",  msg.user._id)
+
+     
+
+       //New message============================================================
+       statex$.default.lastPushNotification.set(msg.message);
+       EventRegister.emit("newMessagex_me",msg);
+
+       //Local Notify always 0 because it's himself===========================================================
+       let resAux=null;
+       await GET_STATE_GROUP_READ_MESSAGE_COUNT(msg.group).then(result =>{
+             resAux=result.rows._array;
+
+  
+             if(resAux.length==0){
+               //add it
+               console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+               ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,0);
+               setContadorNoLeidos(0);
+
+             }else{
+              if(resAux[0].contador==null)resAux[0].contador=0;
+  
+
+               UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,  0 );
+               setContadorNoLeidos(0);
+
+             }
+           
+         }); 
+       //=======================================================================
+   }
+  }
+
+  
+
+
+
+
+
+
 
 
   const bannedGroup = async (newData) => {
@@ -209,12 +360,15 @@ export function Item(props) {
        EventRegister.emit("idMessagevisto",idMsg);
 }
 
+
+
   const newPushnotification = async (msg) => {
    
   
 
          if( statex$.default.lastPushNotification.get() !=  msg.message){
 
+          //Push notification=========================================================
             console.log("setting push notif message")
             statex$.default.lastPushNotification.set(msg.message);
 
@@ -229,6 +383,13 @@ export function Item(props) {
                 seconds: 1,
               },
             });
+            //=======================================================================
+
+            //=======================================================================
+
+            //=======================================================================
+
+            //=======================================================================
 
             
         }
@@ -352,7 +513,8 @@ export function Item(props) {
     console.log("_id creator group.."+group.creator._id );
     console.log("user id conectado.."+user._id );
     console.log("tipo group.."+group.tipo );
-    await authController.setCifrado("SI");
+    //await authController.setCifrado("SI");
+    statex$.default.cifrado.set("SI")
     //TODO: use this date to get messages
     console.log("Fecha alta al grupo")
     console.log(statex$.default.fechaAltaGrupoSelected.get())
@@ -409,6 +571,10 @@ export function Item(props) {
    
    
 
+    UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( group._id,  0 );
+    setContadorNoLeidos( 0  );
+
+
     navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo, creator: group.creator });
   };
 
@@ -453,10 +619,10 @@ export function Item(props) {
             </Text>
           ) : null}
 
-          { totalUnreadMessages ? (
+          { contadorAux>0 ? (
             <View style={styles.totalUnreadContent}>
               <Text style={styles.totalUnread}>
-                { totalUnreadMessages < 99 ?  totalUnreadMessages : 99}
+                { contadorAux < 99 ?  contadorAux : 99}
               </Text>
             </View>
           ) : null}

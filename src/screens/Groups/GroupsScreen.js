@@ -10,8 +10,8 @@ import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS } from '../../hooks/useDA';
-
+import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL } from '../../hooks/useDA';
+import { EventRegister } from "react-native-event-listeners";
 
 
 const groupController = new Group();
@@ -26,10 +26,85 @@ export function GroupsScreen() {
   const [groupsResult, setGroupsResult] = useState(null);
   const [totalMembers, setTotalMembers] = useState(0);
   const [showModal, setShowModal] = useState(false);
+  const [drop, setDrop] = useState(null);
   const [nip, setNip] = useState("00000000");
 
 
- 
+  useEffect(() => {
+    console.log("statex$.default.isConnected.get()")
+    console.log(statex$.default.isConnected.get())
+    
+
+       const eventContadores = EventRegister.addEventListener("updatingContadores", async bFlag=> {
+         
+              try {
+                console.log("actualizando contadores");
+                await GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL().then(result =>{
+                  resAux=result.rows._array;
+                  console.log("listado de contadores por grupo:::::::");
+                  console.log(resAux);
+               
+                  if(resAux.length >0){
+                    statex$.default.arrContadores.set(resAux);
+                   
+                  }
+    
+                
+                }); 
+                
+              
+                //===========reload grupos
+console.log("reloading groups.....")
+                let response = null;
+
+                try {
+      
+                  //Get all GRUPOS!!!!
+                  if(statex$.default.isConnected.get()){
+      
+                    response = await groupController.getAll(accessToken);
+      
+                      //console.log("Persistiendo ADD_STATE_ALLGROUPS")
+                      //console.log(response)
+                      //console.log(JSON.stringify(response))
+                      UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
+      
+                      //==============================================
+                      
+                  }else{
+                      await GET_STATE_ALLGROUPS().then(result =>{
+                      response=result.rows._array;
+                      response =JSON.parse(response[0].valor);
+                      });
+                  }
+      
+                  const result = response.sort((a, b) => {
+                    return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
+                  });
+      
+                  setGroupsResult([])
+                  //setGroups([])
+                  setGroups(result);
+                  setGroupsResult(result);
+      
+                } catch (error) {
+                  console.error(error);
+                }
+
+
+                //=======================
+              // statex$.default.moveScroll.set(true)
+              } catch (error) {
+                console.error(error);
+              }
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(eventContadores);
+        }
+  }, []);
+
+
 
     useEffect(() => {
 
@@ -221,7 +296,7 @@ export function GroupsScreen() {
     <View>
       {size(groups) > 0 && <Search data={groups} setData={setGroupsResult} />}
       <ListGroups groups={size(groups) === size(groupsResult) ? groups : groupsResult}
-                  upGroupChat={upGroupChat} upAllGroups={upAllGroups}
+                  upGroupChat={upGroupChat} upAllGroups={upAllGroups} contador={ statex$.default.arrContadores.get()}
       />
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>

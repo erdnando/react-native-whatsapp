@@ -1,7 +1,6 @@
 import { observable } from "@legendapp/state";
 import { observer } from "@legendapp/state/react";
 
-
 import {
     configureObservablePersistence,
     persistObservable,
@@ -28,6 +27,9 @@ const state$ = observable({
   actualizaEstatus:false,
   totalUnreadMessages:0,
   contadorVistos:0,
+  messagesx:[],
+  cifrado:"SI",
+  arrContadores:[],
   user:[{
      _id :"0",
      email :"",

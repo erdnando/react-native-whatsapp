@@ -51,7 +51,7 @@ const Decrypt = (word, tipo) =>{
   let qey=statex$.default.llaveGrupoSelected.get();
 
  
-  console.log("Decriptando con llave::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
+  //console.log("Decriptando con llave::" + tipo + ":::" + statex$.default.llaveGrupoSelected.get() + " word:::" + word)
   
   switch (tipo) {
     case 'AES': decifrado=CryptoJS.AES.decrypt(word,qey).toString(CryptoJS.enc.Utf8); break;
@@ -61,7 +61,7 @@ const Decrypt = (word, tipo) =>{
     default:decifrado=CryptoJS.AES.decrypt(word,qey).toString(CryptoJS.enc.Utf8); break;
       break;
   }
-  console.log(decifrado)
+  //console.log(decifrado)
   return decifrado;
 }
 
@@ -71,7 +71,7 @@ const DecryptWithLlave = (word, tipo, qey) =>{
 
   let decifrado='';
   
-    console.log("Decriptando con llave::" + qey)
+   // console.log("Decriptando con llave::" + qey)
 
   
   switch (tipo) {

@@ -1,11 +1,17 @@
 import { View, ScrollView, Text, Platform } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { map, size } from "lodash";
 import { Item } from "./Item";
 import { styles } from "./ListGroups.styles";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
+import { useAuth } from "../../../hooks";
+import * as statex$ from '../../../state/local';
+import { GET_STATE_GROUP_READ_MESSAGE_COUNT,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL } 
+from '../../../hooks/useDA.js';
+
+import { socket } from "../../../utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -17,9 +23,18 @@ Notifications.setNotificationHandler({
 
 
 export function ListGroups(props) {
-  const { groups, upGroupChat, upAllGroups } = props;
+
+  const { groups, upGroupChat, upAllGroups, contador } = props;
   const [expoPushToken, setExpoPushToken] = useState('');
-  console.log("Setting up notifications...")
+  //const [contador, setContador] = useState(0);
+  const [grupoAfectado, setGrupoAfectado] = useState('');
+  const { accessToken, user } = useAuth();
+  const { arrContadores, setArrContadores } = useState([]);
+  
+
+ 
+
+
 
   useEffect(()=>{
 
@@ -31,7 +46,64 @@ export function ListGroups(props) {
     
   },[])
 
-  console.log("Token: ", expoPushToken)
+ 
+
+
+
+const getContador = async (grupo)=>{
+  console.log("getting counter...."+ grupo);
+ // let auxReturn =1;
+
+  
+   console.log("async way")
+    let resAux=null;
+     await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
+        resAux=result.rows._array;
+        console.log("selecting from db")
+        
+        if(resAux.length==0){
+          console.log("returning 0")
+          return 0;
+        }else{
+          console.log("returning contador")
+          console.log(Number(resAux[0].contador))
+
+          return Number(resAux[0].contador);
+        }
+      
+    }); 
+  
+
+}
+
+
+  async function getCounter(grupo){
+  console.log("getting counter...."+ grupo);
+  // let auxReturn =1;
+ 
+   
+    console.log("async way")
+     let resAux=null;
+        await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
+         resAux=result.rows._array;
+         console.log("selecting from db")
+         
+         if(resAux.length==0){
+           console.log("returning 0")
+           return 0;
+         }else{
+           console.log("returning contador")
+           console.log(Number(resAux[0].contador))
+ 
+           return Number(resAux[0].contador);
+         }
+       
+     }); 
+}
+
+
+
+  //console.log("Token: ", expoPushToken);
 
   return (
     <ScrollView alwaysBounceVertical={false}>
@@ -42,8 +114,10 @@ export function ListGroups(props) {
           </Text>
         ) : (
           map(groups, (group) => (
-            <Item key={group._id} group={group} upGroupChat={upGroupChat} upAllGroups={upAllGroups} />
+            <Item key={group._id} group={group} upGroupChat={upGroupChat} upAllGroups={upAllGroups} 
+                  contador={contador}  />
           ))
+         
         )}
       </View>
     </ScrollView>

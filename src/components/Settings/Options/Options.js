@@ -8,7 +8,7 @@ import { styles } from "./Options.styles";
 import * as statex$ from '../../../state/local'
 import { Center, Flex, Icon, AlertDialog,Button ,TextArea } from "native-base";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { GET_STATE_ALLMESSAGES,GET_STATE_ALLGROUP_LLAVE,GET_STATE_MY_DELETED_MESSAGES } from '../../../hooks/useDA';
+import { GET_STATE_ALLMESSAGES,GET_STATE_ALLGROUP_LLAVE,GET_STATE_MY_DELETED_MESSAGES, GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL } from '../../../hooks/useDA';
 
 const userController = new User();
 
@@ -64,7 +64,9 @@ export function Options(props) {
   const goDataView = async () => {
     //get data STATE_GROUP_LLAVE
     //GET_STATE_ALLGROUP_LLAVE
-    await GET_STATE_MY_DELETED_MESSAGES().then(result =>{
+    //GET_STATE_MY_DELETED_MESSAGES
+    //STATE_ALLMESSAGES
+    await (GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL()).then(result =>{
       let response=result.rows._array;
       console.log(response)
       response =JSON.stringify(response);
@@ -102,13 +104,13 @@ export function Options(props) {
         </Flex>
       </TouchableOpacity>
 
-      {/*<TouchableOpacity style={styles.item} onPress={goDataView}>
+    <TouchableOpacity style={styles.item} onPress={goDataView}>
       <Flex direction="row"   >
           <Icon as={MaterialCommunityIcons} name="security" style={styles.iconOptions} />   
           <Center size={3}></Center>
           <Text style={styles.text}>Ver Data</Text>
         </Flex>
-</TouchableOpacity>*/}
+</TouchableOpacity>
 
       {/* <TouchableOpacity
         style={[styles.item, styles.itemClose]}

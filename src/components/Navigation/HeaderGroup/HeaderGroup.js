@@ -35,7 +35,7 @@ export function HeaderGroup(props) {
   useEffect(() => {
 
     (async () => {
-       const cifrado = await authController.getCifrado();
+       const cifrado = statex$.default.cifrado.get();//await authController.getCifrado();
        if(cifrado=="SI"){
         setLock(true);
        }else{
@@ -96,7 +96,10 @@ export function HeaderGroup(props) {
           if(MD5method(nip.toString()) == response.nip){
             console.log("NIP OK");
             //if, it is ok, unlock messages, reloading them
-            await authController.setCifrado("NO");
+           // await authController.setCifrado("NO");
+           console.log("statex$.default.cifrado.set 2 en NO");
+
+            statex$.default.cifrado.set("NO");
             EventRegister.emit("setCifrado","NO");
             setLock(false);
           
@@ -104,7 +107,8 @@ export function HeaderGroup(props) {
 
           }else{
             //else, show an error message
-            await authController.setCifrado("SI");
+            //await authController.setCifrado("SI");
+            statex$.default.cifrado.set("SI");
             EventRegister.emit("setCifrado","SI");
             setLock(true);
             

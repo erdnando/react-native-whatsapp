@@ -104,7 +104,7 @@ export function ItemText(props) {
 
 
      // console.log("useEffect ItemText:::::");
-      const cifrado = await authController.getCifrado();
+      const cifrado = statex$.default.cifrado.get();//await authController.getCifrado();
      // console.log("cifrado item:::::"+cifrado);
       if(cifrado=="SI"){
        setmodoAvanzado(false);
