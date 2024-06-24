@@ -8,7 +8,7 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { useAuth } from "../../../hooks";
 import * as statex$ from '../../../state/local';
-import { GET_STATE_GROUP_READ_MESSAGE_COUNT,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL } 
+import { GET_STATE_GROUP_READ_MESSAGE_COUNT } 
 from '../../../hooks/useDA.js';
 
 import { socket } from "../../../utils";
@@ -26,14 +26,9 @@ export function ListGroups(props) {
 
   const { groups, upGroupChat, upAllGroups, contador } = props;
   const [expoPushToken, setExpoPushToken] = useState('');
-  //const [contador, setContador] = useState(0);
   const [grupoAfectado, setGrupoAfectado] = useState('');
   const { accessToken, user } = useAuth();
   const { arrContadores, setArrContadores } = useState([]);
-  
-
- 
-
 
 
   useEffect(()=>{
@@ -103,8 +98,6 @@ const getContador = async (grupo)=>{
 
 
 
-  //console.log("Token: ", expoPushToken);
-
   return (
     <ScrollView alwaysBounceVertical={false}>
       <View style={styles.content}>
@@ -122,9 +115,6 @@ const getContador = async (grupo)=>{
       </View>
     </ScrollView>
   );
-
-
-
 
 
 

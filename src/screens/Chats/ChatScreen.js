@@ -56,10 +56,10 @@ export function ChatScreen() {
       socket.emit("subscribe", chatId);
       socket.on("message", newMessage);
 
-      return () => {
+      /*return () => {
         socket.emit("unsubscribe", chatId);
         socket.off("message", newMessage);
-      };
+      };*/
       
     }
   }, [chatId, messages]);

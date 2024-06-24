@@ -12,34 +12,7 @@ export function ListMessages(props) {
 
   const { messages } = props;
   const scrollViewRef = useRef();
-  //const [allSeen, setAllSeen] = useState("");
-
-
-  //=================================================================
- // useEffect(() => {
-     
-      //setAllSeen("false");
-
-     /* const updateVisto = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
-      console.log("actualizando estatus de visto en la lista de mensajes...", idMsg);
-      //setAllSeen("true");
-      EventRegister.emit("reloadMessagesSeen",true);
-      //statex$.default.idMessageEstatus.set(idMsg);
-      //statex$.default.actualizaEstatus.set(true);
-    
-     // console.log("idMessageEstatus")
-     // console.log(statex$.default.idMessageEstatus.get())
-     // console.log(statex$.default.actualizaEstatus.get())
-     // console.log("=========================================")
-
-      
-      
-    });
-
-    return ()=>{
-      EventRegister.removeEventListener(updateVisto);
-    }
-  }, [])*/
+ 
   
   
  //================================================================

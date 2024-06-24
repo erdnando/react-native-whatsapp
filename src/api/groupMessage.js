@@ -164,6 +164,36 @@ async notifyRead(accessToken, idUser, idMsg) {
     }
   }
 
+
+
+  async updateVisto(accessToken, groupId) {
+    try {
+      
+      
+      console.log("groupId")
+      console.log(groupId)
+      const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LEIDO}/${groupId}`; 
+      
+
+      const params = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+
+      const response = await fetch(url, params);
+      console.log("resultAPI")
+      console.log(response)
+
+      //let resultAPI = await response.json();
+      //if (response.status !== 200) throw resultAPI;
+     
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //==============================================================================================
   async sendText(accessToken, groupId, message ,tipoCifrado, replyMessage, tipox) {
 

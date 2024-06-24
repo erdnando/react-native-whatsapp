@@ -61,7 +61,7 @@ export function GroupScreen() {
       console.log(statex$.default.isConnected.get())
       
   
-         const eventReloadMessages = EventRegister.addEventListener("idMessagevisto", async bFlag=>{
+         const eventReloadMessages = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
            
                 try {
                  
@@ -70,18 +70,47 @@ export function GroupScreen() {
                   
                     try {
                      
-                      //getAllMessages(true);
-                      //console.log("messages")
-                     // console.log(messages)
+                      //TODO Update Read status of the messages by group
+                     
+                      getAllMessages(true);
+                      let grupoAsociado='';
+
                       (messages).map((msgx) => {
-                        console.log("actualizando estatus de ;eido")
-                        msgx.estatus="LEIDO";
+                        console.log("buscando el grupo del msg")
+                        console.log(msgx)
+                        if(msgx._id == idMsg){
+                          grupoAsociado = msgx.group
+                        }
+                      
                        });
 
-                       console.log("messages")
-                       console.log(messages)
-                       setMessages(messages)
+                       if(grupoAsociado!='') updateVistoGrupo(grupoAsociado);
+                      
 
+/*
+                     (messages).map((msgx) => {
+                      console.log("buscando el grupo del msg")
+                      console.log(msgx)
+                      if(msgx._id == idMsg){
+                        grupoAsociado = msgx.group
+                      }
+                    
+                     });
+
+
+                      (messages).map((msgx) => {
+                        console.log("actualizando estatus de leido")
+                        if(msgx.group == grupoAsociado){
+                          msgx.estatus="LEIDO";
+                        }
+                       
+                       });*/
+
+                       //console.log("messages")
+                       //console.log(messages)
+                       
+                       setMessages(messages)
+                       //setDrop('');
 
                     } catch (error) {
                       console.log("Error")
@@ -110,13 +139,8 @@ export function GroupScreen() {
          
               try {
                 console.log("recupera msgs from db 1")
-                
-                //recuperaMensajesDB(msg.group)
-              //getAllMessages(msg.estatus=="LEIDO"? true: false);
-             // setDrop('1');
-             newMessage(msg)
-              
-               statex$.default.moveScroll.set(true)
+                newMessage(msg)
+                statex$.default.moveScroll.set(true)
               } catch (error) {
                 console.error(error);
               }
@@ -135,14 +159,8 @@ export function GroupScreen() {
        const eventMessagesxMe = EventRegister.addEventListener("newMessagex_me", async msg=> {
          
               try {
-               // console.log("recupera msgs from db 1")
-                
-                //recuperaMensajesDB(msg.group)
-              //getAllMessages(msg.estatus=="LEIDO"? true: false);
-             // setDrop('1');
-             newMessageMe(msg)
-              
-               statex$.default.moveScroll.set(true)
+                newMessageMe(msg)
+                statex$.default.moveScroll.set(true)
               } catch (error) {
                 console.error(error);
               }
@@ -361,11 +379,11 @@ export function GroupScreen() {
      // socket.on("message", newMessage);
       socket.on("reloadmsgs", getAllMessages);
 
-      return () => {
+      /*return () => {
         socket.emit("unsubscribe", groupId);
        // socket.off("message", newMessage);
         socket.off("reloadmsgs", getAllMessages);
-      };
+      };*/
     }
 
   }, [groupId, messages]);
@@ -512,6 +530,34 @@ export function GroupScreen() {
    //=================================================================================
   };
 
+  const updateVistoGrupo = (groupId) => {
+    // console.log("reloading message:::GroupScreen");
+     //=================================================================================
+     (async () => {
+ 
+       let response = null;
+       try {
+        
+ 
+         if( statex$.default.isConnected.get() ){
+           
+           console.log("calling VISTO api")
+           response = await groupMessageController.updateVisto(accessToken, groupId);
+
+         }
+ 
+         console.log("despues de la consulta")
+         console.log(response)
+        
+       } catch (error) {
+         console.log("error:::::::::::::");
+         console.error(error);
+       }
+     })();
+ 
+    //=================================================================================
+   };
+
   //==================================================================================================================================================================
   //when newMessage is required, call this instruction
   const newMessage = (msg) => {
@@ -520,9 +566,8 @@ export function GroupScreen() {
 
       console.log("messages::::::::::::::::::::::")
       console.log(messages)
-    console.log("identificando nuevo mensaje en GroupScreen:::::")
-     console.log(msg);
-    // let messagesx=[];
+      console.log("identificando nuevo mensaje en GroupScreen:::::")
+      console.log(msg);
 
      try {
                   
@@ -574,7 +619,6 @@ export function GroupScreen() {
               msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
         
               if(msg.email_replied != null){
-                //console.log("Entro a email_replied.....????")
                 msg.message_replied=Decrypt(msg.message_replied,msg.tipo_cifrado_replied, tipo);
         
                 //find message original and decryp it on message array
@@ -588,15 +632,10 @@ export function GroupScreen() {
                   });
                   setMessages(messages);
 
-                 // console.log("messages 4");
-                 // console.log(messagesx);
                 }catch(error){
                   console.log("error al validar xxx")
                 }
               }
-        
-              const isMe = user._id === msg.user._id;
-             // console.log("userId who send a message::::",  msg.user._id) 
             }
            
             //==================================================
@@ -634,7 +673,6 @@ export function GroupScreen() {
       console.log(messages)
       console.log("identificando nuevo mensaje en GroupScreen:::::")
       console.log(msg);
-    // let messagesx=[];
 
      try {
                   
@@ -647,10 +685,7 @@ export function GroupScreen() {
             console.log(totalParticipants)
             if(totalParticipants==1)msg.estatus="LEIDO";
 
-            //TODO: notifying user who send the message that it has been read
-            //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
               console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
-             // console.log( statex$.default.userWhoSendMessage.get())
 
             const isMe = (msg.user._id==user._id);
 
