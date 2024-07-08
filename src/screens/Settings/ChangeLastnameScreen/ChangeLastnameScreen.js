@@ -31,12 +31,12 @@ export function ChangeLastnameScreen() {
 
   const onValidateNIP = async () => {
 
-    console.log("validando nip:::::::::::");
+   // console.log("validando nip:::::::::::");
     //call api to validate nip 
     const response = await userController.getMe(accessToken);
 
     if(MD5method(nip.toString()) == response.nip){
-        console.log("NIP OK");
+       // console.log("NIP OK");
         setShowAdvertencia(false);
         setNipError(false)
         
@@ -55,8 +55,8 @@ export function ChangeLastnameScreen() {
     validateOnChange: false,
     onSubmit: async (formValue) => {
       try {
-        console.log("set nip:::::");
-        console.log(formValue); //MD5method
+       // console.log("set nip:::::");
+       // console.log(formValue); //MD5method
        // formValue.nip = MD5method(formValue.nip)
         await userController.updateUser(accessToken, formValue);
 

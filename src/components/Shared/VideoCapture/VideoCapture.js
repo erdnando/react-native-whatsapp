@@ -22,21 +22,21 @@ export function VideoCapture(props) {
   const sendMedia = async () => {
     try {
       setLoading(true);
-      console.log("video.uri")
-      console.log(video.uri)
+     // console.log("video.uri")
+      //console.log(video.uri)
 
       const file = videoExpoFormat(video.uri);
-      console.log("video")
-      console.log(video)
+     // console.log("video")
+     // console.log(video)
      // const image64=video.base64;//ok
 
-      console.log("video.file")
-      console.log(file)
+     // console.log("video.file")
+     // console.log(file)
 
   
      
-        console.log("sendind video to the group");
-        console.log(file)
+       // console.log("sendind video to the group");
+      //  console.log(file)
         //=================================================================================================
         /*FileSystem.readAsStringAsync(video.uri, { encoding: FileSystem.EncodingType.Base64 }).then((base64) => {*/
           //console.log(base64)

@@ -36,9 +36,9 @@ export function ChangeFirstnameScreen() {
 
       //TODO: validate whether it exists or not.
       const aliasResponse = await userController.validateAlias(accessToken, formValue.firstname.toLowerCase());
-      console.log(aliasResponse)
+    //  console.log(aliasResponse)
       if(aliasResponse.length>0){
-            console.log("El alias ya existe, favor de utilizar otro....")
+           // console.log("El alias ya existe, favor de utilizar otro....")
 
             toast.show({
               placement: "top",

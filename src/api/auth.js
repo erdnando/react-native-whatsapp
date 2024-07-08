@@ -42,11 +42,11 @@ export class Auth {
    
 
     //console.log("isConnected - login")
-    console.log(statex$.default.isConnected.get())
+    //console.log(statex$.default.isConnected.get())
     
 
     if(statex$.default.isConnected.get()){
-      console.log("trying to connect to api..")
+     // console.log("trying to connect to api..")
           try {
             const url = `${ENV.API_URL}/${ENV.ENDPOINTS.AUTH.LOGIN}`;
             const params = {

@@ -29,23 +29,23 @@ export function FileOption(props) {
   const sendFile = async (uri) => {
     try {
       const file = fileExpoFormat(uri);
-      console.log("file enviado ::");
-      console.log(file);
-      console.log("uri enviado ::");
-      console.log(uri)
+      //console.log("file enviado ::");
+      //console.log(file);
+      //console.log("uri enviado ::");
+     // console.log(uri)
 
       if(uri.endsWith(".jpg") || uri.endsWith(".jpeg") || uri.endsWith(".png")||uri.endsWith(".gif")||uri.endsWith(".bpm")){
         file.type="image/jpg";
-        console.log("file enviadox ::");
-        console.log(file);
+       // console.log("file enviadox ::");
+       // console.log(file);
 
         await groupMessageController.sendImage(accessToken, groupId, file);
       }else{
-        console.log("Archivo puro")
-        console.log("file enviado ::");
-        console.log(accessToken);
-        console.log(groupId);
-        console.log(file);
+      //  console.log("Archivo puro")
+      //  console.log("file enviado ::");
+      //  console.log(accessToken);
+      //  console.log(groupId);
+      //  console.log(file);
         await groupMessageController.sendFile(accessToken, groupId, file);
       }
     

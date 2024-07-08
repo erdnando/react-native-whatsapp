@@ -31,18 +31,18 @@ export function GroupsScreen() {
 
 
   useEffect(() => {
-    console.log("statex$.default.isConnected.get()")
-    console.log(statex$.default.isConnected.get())
+    //console.log("statex$.default.isConnected.get()")
+    //console.log(statex$.default.isConnected.get())
     
 
        const eventContadores = EventRegister.addEventListener("updatingContadores", async bFlag=> {
          
               try {
-                console.log("actualizando contadores");
+               // console.log("actualizando contadores");
                 await GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL().then(result =>{
                   resAux=result.rows._array;
-                  console.log("listado de contadores por grupo:::::::");
-                  console.log(resAux);
+                 // console.log("listado de contadores por grupo:::::::");
+                  //console.log(resAux);
                
                   if(resAux.length >0){
                     setArrContadores(resAux)
@@ -63,8 +63,8 @@ export function GroupsScreen() {
 
     useEffect(() => {
 
-      console.log("statex$.default.isConnected.get()")
-      console.log(statex$.default.isConnected.get())
+      //console.log("statex$.default.isConnected.get()")
+     // console.log(statex$.default.isConnected.get())
 
       
       if(!statex$.default.isConnected.get()){
@@ -78,18 +78,18 @@ export function GroupsScreen() {
         const firtsTime=  await authController.getInitial();
 
         if(firtsTime=="1"){
-          console.log("NIP modal");
+          //console.log("NIP modal");
 
 
           const min = 1000; 
           const max = 9999; 
           const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
+         
+          //console.log("set nip:::::");
+         // console.log("1"+randomNumber);
+         // console.log("accessToken:::::"+accessToken);
 
-          console.log("set nip:::::");
-          console.log("2"+randomNumber);
-          console.log("accessToken:::::"+accessToken);
-
-          console.log("setShowModal:::::");
+         // console.log("setShowModal:::::");
           setNip("2"+randomNumber);
         const cifrado =MD5method("2"+randomNumber).toString();
 
@@ -198,9 +198,9 @@ export function GroupsScreen() {
 
           response = await groupController.getAll(accessToken);
 
-            console.log("Persistiendo ADD_STATE_ALLGROUPS")
+            //console.log("Persistiendo ADD_STATE_ALLGROUPS")
             //console.log(response)
-            console.log(JSON.stringify(response))
+            //console.log(JSON.stringify(response))
             UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
 
             //==============================================

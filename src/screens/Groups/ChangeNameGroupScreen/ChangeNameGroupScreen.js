@@ -29,9 +29,9 @@ export function ChangeNameGroupScreen() {
 
   useEffect(() => {
     
-    console.log("Datos de usuarios")
-    console.log(user._id)
-    console.log(params.creator)
+    //console.log("Datos de usuarios")
+    //console.log(user._id)
+    //console.log(params.creator)
     if(user._id === params.creator){
       console.log("Bienvenido creator del grupo")
       setIsGroupCreator(true)
@@ -49,21 +49,21 @@ export function ChangeNameGroupScreen() {
 
   const cambiosGrupo = async () => {
     try {
-      console.log("cambios al grupo")
-      console.log(params)
+      //console.log("cambios al grupo")
+      //console.log(params)
       //console.log(nombreG)
       //console.log(nuevaLlaveG)
-      console.log(statex$.default.nombreG.get())
-      console.log(statex$.default.llaveG.get())
+      //console.log(statex$.default.nombreG.get())
+      //console.log(statex$.default.llaveG.get())
 
 
        //TODO: validat eif this channel exists previously
        const aliasResponse = await groupController.validateAlias(accessToken, statex$.default.nombreG.get());
-       console.log(aliasResponse)
+       //console.log(aliasResponse)
 
        if(aliasResponse.length>0){
          //==================================================================================================================
-             console.log("El alias ya existe, favor de utilizar otro....")
+             //console.log("El alias ya existe, favor de utilizar otro....")
             // setIsLoading(false);
              toast.show({
                placement: "top",
@@ -144,11 +144,11 @@ export function ChangeNameGroupScreen() {
        //TODO: validat eif this channel exists previously
 
 
-        console.log("Datos del forulario q se actualizan::::::")
+       // console.log("Datos del forulario q se actualizan::::::")
         statex$.default.nombreG.set('')
         statex$.default.llaveG.set('')
-           console.log(formValue.name)
-           console.log(formValue.llave)
+          // console.log(formValue.name)
+         //  console.log(formValue.llave)
 
 
            setNombreG(formValue.name)
@@ -156,8 +156,8 @@ export function ChangeNameGroupScreen() {
            statex$.default.nombreG.set(formValue.name)
            statex$.default.llaveG.set(formValue.llave)
 
-           console.log("nombreG")
-           console.log(nombreG)
+          // console.log("nombreG")
+          // console.log(nombreG)
 
            if(params.tipo=="abierto"){
             cambiosGrupo();//cambio dorecto del nombre del grupo

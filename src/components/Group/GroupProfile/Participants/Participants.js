@@ -13,8 +13,8 @@ const groupController = new Group();
 
 export function Participants(props) {
 
-  console.log("===========props==================");
-  console.log(props);
+  //console.log("===========props==================");
+  //console.log(props);
   const {
     group: { _id, participants },
     onReload,

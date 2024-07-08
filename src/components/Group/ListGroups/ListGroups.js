@@ -46,18 +46,18 @@ export function ListGroups(props) {
 
 
 const getContador = async (grupo)=>{
-  console.log("getting counter...."+ grupo);
+  //console.log("getting counter...."+ grupo);
  // let auxReturn =1;
 
   
-   console.log("async way")
+   //console.log("async way")
     let resAux=null;
      await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
         resAux=result.rows._array;
-        console.log("selecting from db")
+       // console.log("selecting from db")
         
         if(resAux.length==0){
-          console.log("returning 0")
+         // console.log("returning 0")
           return 0;
         }else{
           console.log("returning contador")
@@ -77,18 +77,18 @@ const getContador = async (grupo)=>{
   // let auxReturn =1;
  
    
-    console.log("async way")
+    //console.log("async way")
      let resAux=null;
         await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
          resAux=result.rows._array;
-         console.log("selecting from db")
+        // console.log("selecting from db")
          
          if(resAux.length==0){
            console.log("returning 0")
            return 0;
          }else{
-           console.log("returning contador")
-           console.log(Number(resAux[0].contador))
+          // console.log("returning contador")
+          // console.log(Number(resAux[0].contador))
  
            return Number(resAux[0].contador);
          }
@@ -122,7 +122,7 @@ const getContador = async (grupo)=>{
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
+        importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: '#FF231F7C',
       });
@@ -152,7 +152,7 @@ const getContador = async (grupo)=>{
             projectId,
           })
         ).data;
-        console.log(pushTokenString);
+       // console.log(pushTokenString);
         return pushTokenString;
       } catch (e) {
         handleRegistrationError(`${e}`);

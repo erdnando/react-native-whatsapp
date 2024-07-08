@@ -21,14 +21,14 @@ export function PhotoCapture(props) {
     try {
       setLoading(true);
       const file = imageExpoFormat(photo.uri);
-      console.log(file)
+     // console.log(file)
 
       if (type === "chat") {
         await chatMessageController.sendImage(accessToken, id, file);
       }
       if (type === "group") {
-        console.log("sendind image to the group");
-        console.log(file)
+        //console.log("sendind image to the group");
+        //console.log(file)
         await groupMessageController.sendImage(accessToken, id, file);
       }
 

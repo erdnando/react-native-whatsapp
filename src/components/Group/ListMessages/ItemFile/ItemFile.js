@@ -54,7 +54,7 @@ export function ItemFile(props) {
 
 
     setShowAdvertencia(false);
-    console.log("eliminando message:::::::::::");
+   // console.log("eliminando message:::::::::::");
  
     
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
@@ -64,7 +64,7 @@ export function ItemFile(props) {
   const onEliminarMensajeParaMi = () => {
 
     setShowAdvertencia(false);
-    console.log("eliminando message para mi:::::::::::");
+    //console.log("eliminando message para mi:::::::::::");
                          
     EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
     setMensajeEliminar(null);
@@ -84,18 +84,18 @@ export function ItemFile(props) {
     try {
       setIsPressed(true);
 
-      console.log("playing recordedURI:::::::");
+      //console.log("playing recordedURI:::::::");
 
       const recordedURIx = `${ENV.BASE_PATH}/${message.message}`;
-      console.log(recordedURIx);
+     // console.log(recordedURIx);
 
-      console.log("playing audio..");
+      //console.log("playing audio..");
 
       try {
         await soundObject.loadAsync({ uri: recordedURIx });
         const playerStatus = await soundObject.getStatusAsync();
-        console.log("playerStatus")
-        console.log(playerStatus.durationMillis)
+      //  console.log("playerStatus")
+      //  console.log(playerStatus.durationMillis)
         duracionAudio=playerStatus.durationMillis;
 
 
@@ -140,7 +140,7 @@ export function ItemFile(props) {
     var progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
     progress = progress.toFixed(2) * 100
 
-    console.log(progress.toFixed(0))
+    //console.log(progress.toFixed(0))
     if(progress.toFixed(0)==100)setLoading(false);
   };
 
@@ -150,7 +150,7 @@ export function ItemFile(props) {
 
   const PlayRecordedVideo = async () =>{
     
-    console.log("openning video client...")
+   // console.log("openning video client...")
 
     if(!statex$.default.isConnected.get()){
       Alert.alert ('Modo offline. ','La aplicacion esta en modo offline, por lo que no podra generar nuevos mensajes u operaciones',
@@ -166,10 +166,10 @@ export function ItemFile(props) {
     const filename=message.message.replace("files/","");
     
     let mimetype =mime.getType(filename);
-    console.log("mimetype::::::")
-    console.log(mimetype)
-    console.log(urlFile)
-    console.log(filename)
+    //console.log("mimetype::::::")
+    //console.log(mimetype)
+    //console.log(urlFile)
+    //console.log(filename)
     
     //const downloadResumable = FileSystem.createDownloadResumable( urlFile, FileSystem.documentDirectory + filename,  {},  callback );
    // const { urix } = await downloadResumable.downloadAsync();
@@ -190,16 +190,16 @@ export function ItemFile(props) {
     const filename=message.message.replace("files/","");
     
     let mimetype =mime.getType(filename);
-    console.log("mimetype::::::")
-    console.log(mimetype)
+   // console.log("mimetype::::::")
+   // console.log(mimetype)
     
 
     // Download the file and get its local URI
     const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
 
     let fileInfo = await FileSystem.getInfoAsync(uri);
-    console.log("fileInfo");
-    console.log(fileInfo);
+    //console.log("fileInfo");
+    //console.log(fileInfo);
 
     const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
@@ -248,8 +248,8 @@ export function ItemFile(props) {
             const filename=message.message.replace("files/","");
             
             let mimetype =mime.getType(filename);
-            console.log("mimetype::::::")
-            console.log(mimetype);
+          //  console.log("mimetype::::::")
+           // console.log(mimetype);
             //=============================================================
 
             const callbackx = (downloadProgress) => {
@@ -259,9 +259,9 @@ export function ItemFile(props) {
               progress = progress.toFixed(2) * 100
               setProgressValue(progress.toFixed(0))
           
-              console.log("Descargando archivo...")
-              console.log(formatBytes(downloadProgress.totalBytesExpectedToWrite))
-              console.log(progress.toFixed(0))
+            //  console.log("Descargando archivo...")
+           //   console.log(formatBytes(downloadProgress.totalBytesExpectedToWrite))
+           //   console.log(progress.toFixed(0))
             };
 
             
@@ -373,7 +373,7 @@ export function ItemFile(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("responder message:::::::::::");
+                          // console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
@@ -391,7 +391,7 @@ export function ItemFile(props) {
                      <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("reenviando message:::::::::::");
+                          // console.log("reenviando message:::::::::::");
                            EventRegister.emit("forwardingMessage",message);  //-->GroupForm
                         }}>
                            <View style={styles.contentMenuItem} >

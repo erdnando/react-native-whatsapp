@@ -80,7 +80,7 @@ export function GroupForm(props) {
 
 
     // Your custom logic here
-    console.log(seconds);
+    //console.log(seconds);
     setSeconds(seconds+1);
 
     if(seconds==59){
@@ -88,7 +88,7 @@ export function GroupForm(props) {
       setSeconds(0)
     }
 
-    console.log("running time...")
+    //console.log("running time...")
 
     
   }, vuelta); // passing null instead of 1000 will cancel the interval if it is already running
@@ -194,7 +194,7 @@ export function GroupForm(props) {
 
 
   const cancelAudio = ()=>{
-    console.log("canceling audio......")
+    //console.log("canceling audio......")
     SetIsRecording(false);
     setHasFinishedAudio(false)
     setShowRedRecord(false);
@@ -251,8 +251,8 @@ export function GroupForm(props) {
   const PlayRecordedAudio = async () => {
       try {
 
-        console.log("playing recordedURI:::::::1");
-        console.log(recordedURIx);
+      //  console.log("playing recordedURI:::::::1");
+      //  console.log(recordedURIx);
 
         //release resources
         try {
@@ -309,8 +309,8 @@ export function GroupForm(props) {
 
     try {
       const file = fileExpoFormat(uri);
-      console.log("file::");
-      console.log(file);
+      //console.log("file::");
+     // console.log(file);
       await groupMessageController.sendFile(accessToken, groupId, file);
       
 
@@ -363,14 +363,14 @@ export function GroupForm(props) {
       return;
     }
               
-      console.log("sending msg into selected group:::::::::::");
+      //console.log("sending msg into selected group:::::::::::");
     
       groups.map(async (gpo) => {
 
         if(gpo.isSelected){
-          console.log("-->")
-          console.log(forwardMessage)
-          console.log(gpo)
+         // console.log("-->")
+         // console.log(forwardMessage)
+         // console.log(gpo)
           //TODO validat tipo cifrado, no llega l mensaje destino
           if(forwardMessage.type=="TEXT"){
             await groupMessageController.sendText(accessToken , gpo._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
@@ -488,8 +488,8 @@ export function GroupForm(props) {
           
           //=================================================================
           const eventForwardMessage = EventRegister.addEventListener("forwardingMessage", async data=>{
-            console.log("grupo desde donde salio el forward::::")
-            console.log(data.group);
+           // console.log("grupo desde donde salio el forward::::")
+           // console.log(data.group);
             setForwardMessage(true);
             //get groups from API
        
@@ -510,9 +510,9 @@ export function GroupForm(props) {
                       gpo.isSelected =false;
                   });
                  
-                  console.log("obteniendo grupos para actionSheet....")
+                 // console.log("obteniendo grupos para actionSheet....")
                   //Revisar en el click del action button -->  handleForward()
-                  console.log(result)
+                 // console.log(result)
                   setGroups(result);
                  
                 } catch (error) {
@@ -546,8 +546,8 @@ export function GroupForm(props) {
           const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async data=>{
             setIdMessage("");
             setFocusInput(true);
-            console.log("mensaje replicado::::")
-            console.log(data)
+           // console.log("mensaje replicado::::")
+            //console.log(data)
             setReplyMessage(data);
             inputMessageRef.current.focus();
             
@@ -575,12 +575,12 @@ export function GroupForm(props) {
         //=================================================================
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
           setIdMessage("");
-          console.log("message._id:"+data._id);
+          //console.log("message._id:"+data._id);
           setIdMessage(data._id);
-          console.log("message.message:"+data.message);
-          console.log("message.group:"+data.group);
-          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-          console.log("message.type:"+data.type);
+         // console.log("message.message:"+data.message);
+         // console.log("message.group:"+data.group);
+          //console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+         // console.log("message.type:"+data.type);
           
           formik.setFieldValue("message", data.message);
           setFocusInput(true);
@@ -610,12 +610,12 @@ export function GroupForm(props) {
          //=================================================================
          const eventDeleteMessage = EventRegister.addEventListener("deletingMessage", async data=>{
           setIdMessage("");
-          console.log("message._id:"+data._id);
+         // console.log("message._id:"+data._id);
           setIdMessage(data._id);
-          console.log("message.message:"+data.message);
-          console.log("message.group:"+data.group);
-          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-          console.log("message.type:"+data.type);
+          //console.log("message.message:"+data.message);
+          //console.log("message.group:"+data.group);
+         // console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+         // console.log("message.type:"+data.type);
           statex$.default.moveScroll.set(false);
     
          await groupMessageController.deleteMessage(accessToken , groupId , "", tipoCifrado,data._id );
@@ -690,8 +690,8 @@ export function GroupForm(props) {
         setKeyboardHeight(0);
         Keyboard.dismiss();
        
-        console.log("idMessage:::::::")
-        console.log(idMessage)
+       // console.log("idMessage:::::::")
+       // console.log(idMessage)
         //process();
        //Envio de mensajes
       // console.log("tipo cifrado::"+tipoCifrado);
@@ -700,9 +700,9 @@ export function GroupForm(props) {
         //llamada normal, nuevo mensaje
         //replyMessage==null if you like a normal message
 
-        console.log("===========sending replied=============")
-        console.log(replyMessage);
-        console.log("=======================================")
+       // console.log("===========sending replied=============")
+       // console.log(replyMessage);
+       // console.log("=======================================")
         //if replyMessage is null, then it's a normal message
         //else it's a reply
         await groupMessageController.sendText(accessToken , groupId , formValue.message , tipoCifrado, replyMessage, tipo );

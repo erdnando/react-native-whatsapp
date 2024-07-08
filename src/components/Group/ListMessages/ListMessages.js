@@ -24,8 +24,8 @@ export function ListMessages(props) {
           ref={scrollViewRef}
           onContentSizeChange={() => {
 
-            console.log("moving to bottom")
-            console.log(statex$.default.moveScroll.get())
+            //console.log("moving to bottom")
+            //console.log(statex$.default.moveScroll.get())
             if(statex$.default.moveScroll.get()){
               scrollViewRef.current.scrollToEnd({ animated: false });
             }

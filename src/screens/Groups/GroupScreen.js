@@ -29,7 +29,7 @@ Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: true,
+    shouldSetBadge: false,
   }),
 });
 
@@ -37,7 +37,7 @@ export function GroupScreen() {
 
   const navigation = useNavigation();
   const unsubscribe = NetInfo.addEventListener(state => {
-    console.log('Is connected?', state.isConnected);
+   // console.log('Is connected?', state.isConnected);
     statex$.default.isConnected.set(state.isConnected)
   });
 
@@ -55,10 +55,66 @@ export function GroupScreen() {
   
 
 
+
+  //EventListener:: delete_group_message
+  useEffect(() => {
+    // console.log("statex$.default.isConnected.get()")
+   //  console.log(statex$.default.isConnected.get())
+     
+ 
+        const eventDeletedMessagesupdate = EventRegister.addEventListener("reloadmsgs", async msg=>{
+          console.log("Deleting message")
+          console.log(msg)
+               try {
+                
+                 (async () => {
+                
+                 
+                   try {
+                    statex$.default.moveScroll.set(false);
+                     getAllMessages(true);
+                     /*let grupoAsociado='';
+
+                     (messages).map((msgx) => {
+
+                       if(msgx._id == idMsg){
+                         grupoAsociado = msgx.group
+                       }
+                     
+                      });
+
+                      if(grupoAsociado!='') updateVistoGrupo(grupoAsociado);
+                     */
+                     // statex$.default.moveScroll.set(false);
+                      
+                      setMessages(messages)
+                   
+
+                   } catch (error) {
+                     console.log("Error")
+                     console.error(error);
+                   }
+                 })();
+               } catch (error) {
+                 console.log("Error al actualizar listado de mensajes")
+                 console.error(error);
+               }
+         });
+     
+         return ()=>{
+           EventRegister.removeEventListener(eventDeletedMessagesupdate);
+         }
+   }, [messages]);
+
+
+
+
+
+
     //EventListener:: decifra mensajes
     useEffect(() => {
-      console.log("statex$.default.isConnected.get()")
-      console.log(statex$.default.isConnected.get())
+     // console.log("statex$.default.isConnected.get()")
+    //  console.log(statex$.default.isConnected.get())
       
   
          const eventReloadMessages = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
@@ -66,18 +122,18 @@ export function GroupScreen() {
                 try {
                  
                   (async () => {
-                    console.log("reloadMessagesSeen:::");
+                  //  console.log("reloadMessagesSeen:::");
                   
                     try {
                      
                       //TODO Update Read status of the messages by group
                      
-                      getAllMessages(true);
+                      //getAllMessages(true);
                       let grupoAsociado='';
 
                       (messages).map((msgx) => {
-                        console.log("buscando el grupo del msg")
-                        console.log(msgx)
+                       // console.log("buscando el grupo del msg")
+                        //console.log(msgx)
                         if(msgx._id == idMsg){
                           grupoAsociado = msgx.group
                         }
@@ -85,7 +141,7 @@ export function GroupScreen() {
                        });
 
                        if(grupoAsociado!='') updateVistoGrupo(grupoAsociado);
-                      
+                       getAllMessages(true);
 
 /*
                      (messages).map((msgx) => {
@@ -131,14 +187,14 @@ export function GroupScreen() {
 
   //EventListener:: decifra mensajes
   useEffect(() => {
-    console.log("statex$.default.isConnected.get()")
-    console.log(statex$.default.isConnected.get())
+    //console.log("statex$.default.isConnected.get()")
+    //console.log(statex$.default.isConnected.get())
     
 
        const eventMessagesx = EventRegister.addEventListener("newMessagex", async msg=> {
          
               try {
-                console.log("recupera msgs from db 1")
+              //  console.log("recupera msgs from db 1")
                 newMessage(msg)
                 statex$.default.moveScroll.set(true)
               } catch (error) {
@@ -149,11 +205,13 @@ export function GroupScreen() {
         return ()=>{
           EventRegister.removeEventListener(eventMessagesx);
         }
+
+
   }, [messages]);
 
   useEffect(() => {
-    console.log("statex$.default.isConnected.get()")
-    console.log(statex$.default.isConnected.get())
+   // console.log("statex$.default.isConnected.get()")
+   // console.log(statex$.default.isConnected.get())
     
 
        const eventMessagesxMe = EventRegister.addEventListener("newMessagex_me", async msg=> {
@@ -176,8 +234,8 @@ export function GroupScreen() {
 
   //EventListener:: decifra mensajes
   useEffect(() => {
-    console.log("statex$.default.isConnected.get()")
-    console.log(statex$.default.isConnected.get())
+   // console.log("statex$.default.isConnected.get()")
+    //console.log(statex$.default.isConnected.get())
     
 
        const eventMessages = EventRegister.addEventListener("setCifrado", async isCypher=>{
@@ -188,7 +246,7 @@ export function GroupScreen() {
                  
                   //setCryptMessage(data);
                   //await authController.setCifrado(isCypher);
-                  console.log("statex$.default.cifrado.set 1"+ isCypher);
+                  //console.log("statex$.default.cifrado.set 1"+ isCypher);
                   statex$.default.cifrado.set(isCypher);
 
                   let response=null;
@@ -208,10 +266,10 @@ export function GroupScreen() {
 
                               if(resAux.length==0){
                                 //add it
-                                console.log("ADD_STATE_ALLMESSAGES " + groupId);
+                              //  console.log("ADD_STATE_ALLMESSAGES " + groupId);
                                 ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'','abierto');
                               }else{
-                                console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
+                               // console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
                                 UPDATE_STATE_ALLMESSAGES(JSON.stringify(response), groupId);
                               }
                             
@@ -220,8 +278,8 @@ export function GroupScreen() {
 
                     }else{
                       //======================================================================================
-                      console.log("offline, getting from local db");
-                      console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
+                      //console.log("offline, getting from local db");
+                     // console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
           
                       await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
                             response=result.rows._array;
@@ -243,9 +301,9 @@ export function GroupScreen() {
                                   
                                 
                                     msg.message = Decrypt(msg.message,msg.tipo_cifrado,tipo);
-                                   console.log("->"+msg.message +"<-")
+                                  // console.log("->"+msg.message +"<-")
                                     if(msg.message===""){
-                                      console.log("seteando mal decifrado")
+                                     // console.log("seteando mal decifrado")
                                       estatusLLave=false
                                       msg.message="Llave no valida ☠️"
                                     }
@@ -254,7 +312,7 @@ export function GroupScreen() {
                                       msg.message_replied= Decrypt(msg.message_replied,msg.tipo_cifrado_replied,tipo);
 
                                       if(msg.message===""){
-                                        console.log("seteando mal decifrado")
+                                      //  console.log("seteando mal decifrado")
                                         msg.message="Llave no valida ☠️"
                                         estatusLLave=false
                                       }
@@ -262,14 +320,14 @@ export function GroupScreen() {
                                   //================================================================================
                             }else{
                                   //==================================================================================
-                                  console.log("msg.message imagen o  archivo")
-                                  console.log(estatusLLave)
+                                //  console.log("msg.message imagen o  archivo")
+                                  //console.log(estatusLLave)
 
                                   if(estatusLLave==false){
-                                    msg.message="Llave no valida ☠️"
-                                  console.log("msg.message imagen o  archivo hay q mantenerlo encryptado")
-                                  }else
-                                  console.log(msg.message)
+                                    msg.message="Llave no valida ☠️";
+                                 // console.log("msg.message imagen o  archivo hay q mantenerlo encryptado")
+                                  }
+                                 // console.log(msg.message)
                                   //todo bien con lo archivos
                                   //==================================================================================
                             }
@@ -289,7 +347,7 @@ export function GroupScreen() {
                     }
                   
                     //==========================================
-                    console.log("setting mensajes");
+                   // console.log("setting mensajes");
                     //console.log(unlockedMessages);
                    // console.log("===============================");
                    // setMessages(unlockedMessages);
@@ -340,12 +398,12 @@ export function GroupScreen() {
          //=================================================================
          const eventDeleteMessageForMe = EventRegister.addEventListener("deletingMessageForMe", async data=>{
           
-          console.log("Deleteing for me message")
-          console.log("message._id:"+data._id);
-          console.log("message.message:"+data.message);
-          console.log("message.group:"+data.group);
-          console.log("message.tipo_cifrado:"+data.tipo_cifrado);
-          console.log("message.type:"+data.type);
+          //console.log("Deleteing for me message")
+         // console.log("message._id:"+data._id);
+         // console.log("message.message:"+data.message);
+         // console.log("message.group:"+data.group);
+         // console.log("message.tipo_cifrado:"+data.tipo_cifrado);
+         // console.log("message.type:"+data.type);
           statex$.default.moveScroll.set(false);
           //======================================================
           ADD_STATE_MY_DELETED_MESSAGES(data._id)
@@ -375,9 +433,9 @@ export function GroupScreen() {
 
     if(statex$.default.isConnected.get()){
       
-      socket.emit("subscribe", groupId);
-     // socket.on("message", newMessage);
-      socket.on("reloadmsgs", getAllMessages);
+     // socket.emit("subscribe", groupId);
+     
+     // socket.on("reloadmsgs", getAllMessages);
 
       /*return () => {
         socket.emit("unsubscribe", groupId);
@@ -419,15 +477,15 @@ export function GroupScreen() {
       let response = null;
       try {
         let cifrados = statex$.default.cifrado.get();//await authController.getCifrado(); 
-        console.log("cifrados");
-        console.log(statex$.default.cifrado.get());
+       // console.log("cifrados");
+       // console.log(statex$.default.cifrado.get());
 
         if( statex$.default.isConnected.get() ){
           
-          console.log("online, getting from internet db")
+          //console.log("online, getting from internet db")
           response = await groupMessageController.getAll(accessToken, groupId);
 
-          console.log("mensajes en el server del grupo.............." + groupId)
+          //console.log("mensajes en el server del grupo.............." + groupId)
           
 
           let resAux=null;
@@ -439,18 +497,18 @@ export function GroupScreen() {
 
                 if(resAux.length==0){
                   //add it
-                  console.log("ADD_STATE_ALLMESSAGES " + groupId);
+                 // console.log("ADD_STATE_ALLMESSAGES " + groupId);
                   ADD_STATE_ALLMESSAGES(JSON.stringify(response), groupId,'','abierto');
                 }else{
-                  console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
+                 // console.log("UPDATE_STATE_ALLMESSAGES " + groupId);
                   UPDATE_STATE_ALLMESSAGES(JSON.stringify(response), groupId);
                 }
               
             }); 
 
         }else{
-            console.log("offline, getting from local db");
-            console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
+           // console.log("offline, getting from local db");
+           // console.log("GET_STATE_ALLMESSAGESBYID " + groupId);
 
             await GET_STATE_ALLMESSAGESBYID(groupId).then(result =>{
                   response=result.rows._array;
@@ -459,7 +517,7 @@ export function GroupScreen() {
         }
        
 
-        console.log("despues de la consulta")
+       // console.log("despues de la consulta")
         //console.log(response)
 
         if(cifrados=="SI"){
@@ -467,14 +525,14 @@ export function GroupScreen() {
           const lockedMessages = response.messages;
           lockedMessages.map((msg) => {
               if(msg.type=="IMAGE"){
-                console.log("=====imagen=========")
-                console.log(msg.message)
+              //  console.log("=====imagen=========")
+             //   console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
 
               if(msg.type=="FILE"){
-                console.log("=====file=========")
-                console.log(msg.message)
+               // console.log("=====file=========")
+                //console.log(msg.message)
                 msg.message = "images/cryptedImagex.png";
               }
 
@@ -505,11 +563,11 @@ export function GroupScreen() {
                if(msg.type=="IMAGE" || msg.type=="FILE"){
                    // console.log("========imagen or file=======================")
                     msg.message =msg.message;
-                    console.log(msg);
+                    //console.log(msg);
               }
              
             });
-            console.log("Setting messages from server...................")
+           // console.log("Setting messages from server...................")
             setMessages(unlockedMessages);
          
           //==============================================================================
@@ -541,13 +599,13 @@ export function GroupScreen() {
  
          if( statex$.default.isConnected.get() ){
            
-           console.log("calling VISTO api")
+          // console.log("calling VISTO api")
            response = await groupMessageController.updateVisto(accessToken, groupId);
 
          }
  
-         console.log("despues de la consulta")
-         console.log(response)
+         //console.log("despues de la consulta")
+         //console.log(response)
         
        } catch (error) {
          console.log("error:::::::::::::");
@@ -564,10 +622,10 @@ export function GroupScreen() {
    
     (async () => {
 
-      console.log("messages::::::::::::::::::::::")
-      console.log(messages)
-      console.log("identificando nuevo mensaje en GroupScreen:::::")
-      console.log(msg);
+     // console.log("messages::::::::::::::::::::::")
+     // console.log(messages)
+    //  console.log("identificando nuevo mensaje en GroupScreen:::::")
+     // console.log(msg);
 
      try {
                   
@@ -576,19 +634,19 @@ export function GroupScreen() {
 
 
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
-            console.log("totalParticipants")
-            console.log(totalParticipants)
+           // console.log("totalParticipants")
+           // console.log(totalParticipants)
             if(totalParticipants==1)msg.estatus="LEIDO";
 
             //TODO: notifying user who send the message that it has been read
             //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
-              console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
+             // console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
              // console.log( statex$.default.userWhoSendMessage.get())
 
             const isMe = (msg.user._id==user._id);
 
             if(!isMe){
-               console.log("preparando envio de leido")
+              // console.log("preparando envio de leido")
                 const msgOrigen={
                   idUser: msg.user._id,
                   idMsg: msg._id,
@@ -648,8 +706,8 @@ export function GroupScreen() {
                   msg.message = "images/cryptedImagex.png";
                 }
               }
-              console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
-              console.log(messages);
+           //   console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+            //  console.log(messages);
         
               
               setMessages([...messages, msg]);
@@ -668,11 +726,11 @@ export function GroupScreen() {
   const newMessageMe = (msg) => {
    
     (async () => {
-      console.log("mensaje por newMessageMe")
-      console.log("messages::::::::::::::::::::::")
-      console.log(messages)
-      console.log("identificando nuevo mensaje en GroupScreen:::::")
-      console.log(msg);
+      //console.log("mensaje por newMessageMe")
+      //console.log("messages::::::::::::::::::::::")
+     // console.log(messages)
+      //console.log("identificando nuevo mensaje en GroupScreen:::::")
+     // console.log(msg);
 
      try {
                   
@@ -681,16 +739,16 @@ export function GroupScreen() {
 
 
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
-            console.log("totalParticipants")
-            console.log(totalParticipants)
+            //console.log("totalParticipants")
+           // console.log(totalParticipants)
             if(totalParticipants==1)msg.estatus="LEIDO";
 
-              console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
+             // console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
 
             const isMe = (msg.user._id==user._id);
 
             if(!isMe){
-               console.log("preparando envio de leido")
+              // console.log("preparando envio de leido")
                 const msgOrigen={
                   idUser: msg.user._id,
                   idMsg: msg._id,
@@ -719,8 +777,8 @@ export function GroupScreen() {
             if(msg.type=="TEXT"){
         
               msg.message=Decrypt(msg.message, msg.tipo_cifrado, tipo);
-              console.log("msg.message decifrado::::");
-              console.log(msg.message);
+             // console.log("msg.message decifrado::::");
+             // console.log(msg.message);
         
               if(msg.email_replied != null){
                 //console.log("Entro a email_replied.....????")
@@ -758,14 +816,14 @@ export function GroupScreen() {
                   msg.message = "images/cryptedImagex.png";
                 }
               }
-              console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
-              console.log(messages);
+             // console.log("messages decifrados:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+             // console.log(messages);
         
               
               setMessages([...messages, msg]);
 
-              console.log("messages al final:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
-              console.log(messages);
+              //console.log("messages al final:::::::::::::::::::::::::::::::::::::::::::::::::::::::::;");
+            //  console.log(messages);
           } 
 
       } catch (error) {
@@ -782,19 +840,19 @@ export function GroupScreen() {
     console.log("Aplicando llave")
     
 
-    console.log("Datos")
+   // console.log("Datos")
 
-    console.log("llave actual")
-    console.log(statex$.default.llaveGrupoSelected.get())
-    console.log('user._id')
-    console.log(user._id)
-    console.log("groupId")
-    console.log(groupId)
-    console.log("creator._id")
-    console.log(creator._id)
+   // console.log("llave actual")
+   // console.log(statex$.default.llaveGrupoSelected.get())
+   // console.log('user._id')
+   // console.log(user._id)
+  //  console.log("groupId")
+   // console.log(groupId)
+   // console.log("creator._id")
+   // console.log(creator._id)
 
     if(user._id === creator._id){
-      console.log("Bienvenido creator del grupo")
+      //console.log("Bienvenido creator del grupo")
       setIsGroupCreator(true)
       setTituloModal("Modifique la llave")
       setLblMensaje('Asegurese de notificar al otro miembro del grupo del cambio para que puedan seguir interactuando');
@@ -824,24 +882,24 @@ export function GroupScreen() {
       return;
     }
 
-    console.log("Aplicando llave")
-    console.log("Datos")
-    console.log("llave actual")
-    console.log(statex$.default.llaveGrupoSelected.get())
-    console.log('user._id')
-    console.log(user._id)
-    console.log("groupId")
-    console.log(groupId)
-    console.log("creator._id")
-    console.log(creator._id)
+   // console.log("Aplicando llave")
+   // console.log("Datos")
+    //console.log("llave actual")
+    //console.log(statex$.default.llaveGrupoSelected.get())
+    //console.log('user._id')
+   // console.log(user._id)
+   // console.log("groupId")
+    //console.log(groupId)
+   // console.log("creator._id")
+   // console.log(creator._id)
    
     if(user._id === creator._id){
       //=========================================================================================
        //get all messages of the group
        const respAllMessages = await groupMessageController.getAll(accessToken, groupId);
 
-       console.log("decifrando con llave vieja")
-       console.log(statex$.default.llaveGrupoSelected.get())
+       //console.log("decifrando con llave vieja")
+       //console.log(statex$.default.llaveGrupoSelected.get())
 
        const unlockedMessages = respAllMessages.messages;
          //loop group's messages and apply new crypted key, one by one
@@ -850,8 +908,8 @@ export function GroupScreen() {
            if(msg.type=="TEXT"){
              //decrypt message
              msg.message = Decrypt(msg.message, msg.tipo_cifrado)
-             console.log("mensaje decifrado")
-             console.log(msg.message)
+            // console.log("mensaje decifrado")
+            // console.log(msg.message)
              //apply new crypted message
 
              await groupMessageController.updateCifrados(accessToken, groupId, msg.message,msg.tipo_cifrado,msg._id, "cerrado", nuevaLlave);

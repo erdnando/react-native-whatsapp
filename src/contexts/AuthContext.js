@@ -42,10 +42,10 @@ export function AuthProvider(props) {
   useEffect(() => {
 
     async function fetchData() {
-      console.log(" ")
+     // console.log(" ")
      
       try{
-
+       
           CREATE_STATE_AUTHLOGIN();//ok
           CREATE_STATE_GETME();//ok
           CREATE_STATE_ALLGROUPS();//ok
@@ -56,10 +56,10 @@ export function AuthProvider(props) {
           CREATE_STATE_GROUP_READ_MESSAGE_COUNT();
           //DELETE_STATE_GROUP_LLAVE();
        
-          console.log("--------------------------------")
-          console.log(new Date().toISOString())
+         // console.log("--------------------------------")
+        //  console.log(new Date().toISOString())
     
-          console.log("--------------------------------")
+         // console.log("--------------------------------")
      
        
       }catch(err){
@@ -94,18 +94,18 @@ export function AuthProvider(props) {
      const idApp = uuid;
      //await authController.removeTokens();
 
-     console.log("Login user:")
-     console.log(idApp)
-     console.log(statex$.default.isConnected.get())
+    // console.log("Login user:")
+    // console.log(idApp)
+    // console.log(statex$.default.isConnected.get())
      const userRegistrado = await authController.login(idApp, idApp );
 
-     console.log("userRegistrado")
-     console.log(userRegistrado  )
+     //console.log("userRegistrado")
+    // console.log(userRegistrado  )
 
 
      const { access, refresh } = userRegistrado;
 
-     console.log("accessTokenx:" + access);
+     //console.log("accessTokenx:" + access);
      
 /*
      if( (access=="" || access == undefined) && isConnected==false){
@@ -115,7 +115,7 @@ export function AuthProvider(props) {
 
      if(access=="" || access == undefined){
       //if it's not registered, registered it
-      console.log("Registrando: " + idApp);
+      //console.log("Registrando: " + idApp);
       //reset asyncStorage
      // await authController.removeTokens();
       //
@@ -125,8 +125,8 @@ export function AuthProvider(props) {
 
         const responseLogin = await authController.login(idApp,idApp);
 
-        console.log("login:::::::");
-        console.log(responseLogin);
+        //console.log("login:::::::");
+      //  console.log(responseLogin);
 
         const { access, refresh } = responseLogin;
 
@@ -134,8 +134,8 @@ export function AuthProvider(props) {
         await authController.setRefreshToken(refresh);
         setUser(idApp);
 
-        console.log("access")
-        console.log(access)
+        //console.log("access")
+        //console.log(access)
         //Creating its own personal group
         //-------------------------------------------------------------
         
@@ -162,9 +162,9 @@ export function AuthProvider(props) {
 
        
     }else{
-      console.log("Accessing directly");
-      console.log("login::")
-      console.log(access)
+     // console.log("Accessing directly");
+     // console.log("login::")
+     // console.log(access)
       await authController.setInitial("0");
       await authController.setIdApp(idApp);
       //siempre cifrados cuando entra

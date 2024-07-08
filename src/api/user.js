@@ -29,7 +29,7 @@ export class User {
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.ALIAS}/${alias}`;
-      console.log(url)
+      //console.log(url)
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,

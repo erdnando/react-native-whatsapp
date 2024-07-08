@@ -37,7 +37,7 @@ export function ItemText(props) {
   const onEliminarMensaje = () => {
 
     setShowAdvertencia(false);
-    console.log("eliminando message:::::::::::");
+    //console.log("eliminando message:::::::::::");
                          
     EventRegister.emit("deletingMessage",mensajeEliminar);  //
     setMensajeEliminar(null);
@@ -71,11 +71,11 @@ export function ItemText(props) {
     }
   
     if(createMessage.getTime() ==updatedMessage.getTime() ){
-       console.log("mismas fechas no editado")
+      // console.log("mismas fechas no editado")
        setEditado(false)
     }else{
     
-        console.log("diferentes fechas y dif mensaje")
+       // console.log("diferentes fechas y dif mensaje")
         setEditado(true)
       
      
@@ -165,7 +165,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("reenviando message:::::::::::");
+                          // console.log("reenviando message:::::::::::");
                            EventRegister.emit("forwardingMessage",message);  //-->GroupForm
                         }}>
                     <View style={styles.contentMenuItem} >
@@ -183,7 +183,7 @@ export function ItemText(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("copiando message:::::::::::");
+                          // console.log("copiando message:::::::::::");
                          
                            //set text message on the clipboard
                            Clipboard.setString(message.message);

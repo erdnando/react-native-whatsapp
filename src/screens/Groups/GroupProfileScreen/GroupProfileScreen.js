@@ -23,9 +23,9 @@ export function GroupProfileScreen() {
     (async () => {
       try {
         const response = await groupController.obtain(accessToken, params.groupId );
-        console.log("===========miembros obtenidos=================");
-        console.log(response);
-        console.log("==============================================");
+       // console.log("===========miembros obtenidos=================");
+       // console.log(response);
+       // console.log("==============================================");
 
         setGroup(response);
       } catch (error) {
@@ -46,9 +46,9 @@ export function GroupProfileScreen() {
 
   if (!group) return null;
 
-  console.log("===========miembros obtenidos 2=================");
-  console.log(group);
-  console.log("============================");
+  //console.log("===========miembros obtenidos 2=================");
+ // console.log(group);
+ // console.log("============================");
 
   return (
     <ScrollView style={styles.content}>

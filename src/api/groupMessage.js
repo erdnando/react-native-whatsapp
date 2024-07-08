@@ -74,8 +74,8 @@ export class GroupMessage {
 async notifyRead(accessToken, idUser, idMsg) {
 
   try {
-    console.log("idMsg enviado a notify read")
-    console.log(idMsg)
+   // console.log("idMsg enviado a notify read")
+   // console.log(idMsg)
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.NOTIFY_READ}`;
       const params = {
         method: "POST",
@@ -92,8 +92,8 @@ async notifyRead(accessToken, idUser, idMsg) {
   
       const response = await fetch(url, params);
       const resultAPI = await response.json();
-       console.log("resultAPI NOTIFY_READ")
-       console.log(resultAPI)
+      // console.log("resultAPI NOTIFY_READ")
+       //console.log(resultAPI)
 
         if (response.status !== 201) throw resultAPI;
 
@@ -110,8 +110,8 @@ async notifyRead(accessToken, idUser, idMsg) {
       EventRegister.emit("loadingEvent",true);
      
       let fecha=statex$.default.fechaAltaGrupoSelected.get();
-      console.log("fecha")
-      console.log(fecha)
+     // console.log("fecha")
+      //console.log(fecha)
       const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILTERED}/${groupId}/${fecha}`; 
       
 
@@ -170,8 +170,8 @@ async notifyRead(accessToken, idUser, idMsg) {
     try {
       
       
-      console.log("groupId")
-      console.log(groupId)
+      //console.log("groupId")
+     // console.log(groupId)
       const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LEIDO}/${groupId}`; 
       
 
@@ -182,8 +182,8 @@ async notifyRead(accessToken, idUser, idMsg) {
       };
 
       const response = await fetch(url, params);
-      console.log("resultAPI")
-      console.log(response)
+     // console.log("resultAPI")
+      //console.log(response)
 
       //let resultAPI = await response.json();
       //if (response.status !== 200) throw resultAPI;
@@ -405,7 +405,7 @@ async notifyRead(accessToken, idUser, idMsg) {
         },
         body: JSON.stringify({
           group_id: groupId,
-          //message: Encrypt(message, tipoCifrado),
+          message: Encrypt(message, tipoCifrado),
           tipo_cifrado: tipoCifrado,
           idMessage: idMessage
         }),
@@ -436,11 +436,11 @@ async notifyRead(accessToken, idUser, idMsg) {
   async sendImage(accessToken, groupId, file) {
 
       EventRegister.emit("loadingEvent",true);
-      console.log("file")
-      console.log(file)
+     // console.log("file")
+      //console.log(file)
       const manipulateResult = await manipulateAsync(file.uri, [], { compress: 0.1 });
-      console.log("manipulateResult")
-      console.log(manipulateResult)
+     // console.log("manipulateResult")
+     // console.log(manipulateResult)
 
       const filex = {
         name:file.name,
@@ -517,8 +517,8 @@ async notifyRead(accessToken, idUser, idMsg) {
         body: formData,
       };
 
-      console.log("params");
-      console.log(params);
+     // console.log("params");
+     // console.log(params);
 
     try {
           const response = await fetch(url, params);

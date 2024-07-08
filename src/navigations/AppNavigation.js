@@ -30,7 +30,7 @@ export function AppNavigation() {
 
   const navigation = useNavigation();
   const regresar = async () => {
-    console.log("regresar.......")
+    //console.log("regresar.......")
     navigation.goBack();
    
   };

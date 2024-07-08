@@ -9,7 +9,7 @@ export default function App() {
 
  
   const unsubscribe = NetInfo.addEventListener(state => {
-    console.log('Is connected?', state.isConnected);
+    //console.log('Is connected?', state.isConnected);
     statex$.default.isConnected.set(state.isConnected)
     
   });

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert,AppState } from "react-native";
 import { Avatar } from "native-base";
 import { isEmpty } from "lodash";
 import { DateTime } from "luxon";
@@ -15,7 +15,7 @@ import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local';
 import { GET_STATE_GROUP_LLAVE, ADD_STATE_GROUP_LLAVE, DELETE_STATE_GROUP_LLAVE_BY_ID,GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT } from '../../../../hooks/useDA';
 import * as Notifications from 'expo-notifications';
-
+import * as TaskManager from 'expo-task-manager';
 
 //====================PUSH NOTIFICATIONS=================================================================================
 
@@ -41,7 +41,157 @@ export function Item(props) {
   const [lastMessage, setLastMessage] = useState(null);
   const [contadorAux, setContadorAux] = useState(0);
   const [grupoNotificado, setGrupoNotificado] = useState('');
+  const [appState, setAppState] = useState(AppState.currentState);
+ // const [isMounted, setIsMounted] = useState(true);
   const navigation = useNavigation();
+ // const lastNotificationResponse = Notifications.useLastNotificationResponse();
+  const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
+
+  useEffect(() => {
+    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+ }, [])
+
+  useEffect(() => {
+    TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, ({ data, error, executionInfo }) => {
+      console.log('Received a notification in the background!');
+      // Do something with the notification data
+      /*let notificationId = await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Secure chat: Nuevo mensaje background!",
+          body: "Grupo: Aviso!!!!!",
+          sound: true,
+        },
+        trigger: {
+          seconds: 1,
+          repeats:false
+        },
+      });*/
+      
+    });
+    
+    //Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
+    
+  }, []);
+
+
+
+  useEffect(() => {
+
+    const handleAppStateChange = (nextAppState) => {
+      console.log("Estado")
+      console.log(nextAppState);
+
+      if(nextAppState=="background"){
+
+      }
+      if(nextAppState=="active"){
+        Notifications.dismissAllNotificationsAsync();
+      }
+      
+      setAppState(nextAppState);
+    };
+
+
+    AppState.addEventListener('change', handleAppStateChange);
+    try{
+      return () => {
+        AppState.removeEventListener('change', handleAppStateChange);
+      };
+    }catch(err){
+
+    }
+    
+
+  }, [])
+  
+ 
+  {/*Read messages socket listener*/}
+  useEffect(() => {
+   
+    // if(statex$.default.isConnected.get()){
+    
+        socket.emit("subscribe", user._id);
+        socket.on("message_invite", newInvite);//
+        socket.on("read_messages", updateReadStatus);
+        socket.on("group_banned", bannedGroup);//
+        socket.on("pushing_notification", newMessagex);//listenning new messages - just members
+        socket.on("pushing_notification_me", newMessagex_me);//listenning new messages - just me
+        socket.on("reloadmsgs", delete_group_message);
+        /*return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("message_invite", newInvite);//
+        socket.off("read_messages", updateReadStatus);
+        socket.off("group_banned", bannedGroup);//
+        socket.off("pushing_notification", newMessagex);
+        socket.off("pushing_notification_me", newMessagex_me);*/
+
+      //};
+    // }
+    }, [grupoNotificado]);
+
+
+
+ {/*Invitation socket listener*/}
+  useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+     // socket.emit("subscribe", `${user._id}_invite`);
+     // socket.on("message_invite", newInvite);
+  // }
+  }, []);
+
+
+
+  {/*Read messages socket listener*/}
+  useEffect(() => {
+    // if(statex$.default.isConnected.get()){
+        //socket.emit("subscribe", user._id);
+        //socket.on("read_messages", updateReadStatus);
+      
+        /*return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("read_messages", updateReadStatus);
+      };*/
+    // }
+    }, []);
+
+{/*banned socket listener*/}
+  useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+     // socket.emit("subscribe", `${user._id}_banned`);
+    //  socket.on("group_banned", bannedGroup);
+  // }
+  }, []);
+
+
+
+
+   {/*Pushing notification socket listener to the rest of the group*/}
+   useEffect(() => {
+    // if(statex$.default.isConnected.get()){
+       // socket.emit("subscribe", user._id);
+        //socket.on("pushing_notification", newMessagex);
+      
+        /*return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("pushing_notification", newMessagex);
+      };*/
+    // }
+}, [grupoNotificado]);
+
+ {/*Pushing notification socket listener to user who created the message*/}
+ useEffect(() => {
+  // if(statex$.default.isConnected.get()){
+      //socket.emit("subscribe", user._id);
+      //socket.on("pushing_notification_me", newMessagex_me);
+    
+     /*return () => {
+      socket.emit("unsubscribe", user._id);
+      socket.off("pushing_notification_me", newMessagex_me);
+    };*/
+  // }
+}, [grupoNotificado]);
+
+
 
 
   //Get messages read and totals
@@ -51,8 +201,8 @@ export function Item(props) {
       try {
 
            
-           console.log("El contador se actualizo.................")
-           console.log(contador)
+          // console.log("El contador se actualizo.................")
+         //  console.log(contador)
            const cont = contador?.find(o => o.groupId === group._id);
 
            if(cont!=undefined){
@@ -78,7 +228,7 @@ export function Item(props) {
 
             //==========================================================================================================
             const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-              console.log("group list updated...");
+             // console.log("group list updated...");
             
                   try {
                     const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
@@ -86,7 +236,7 @@ export function Item(props) {
                       group._id
                     );
                     setTotalMembers(totalParticipants);
-                    console.log("group and groupResult updated...");
+                  //  console.log("group and groupResult updated...");
                   } catch (error) {
                     console.error(error);
                   }
@@ -108,8 +258,8 @@ export function Item(props) {
     (async () => {
       try {
         const response = await groupMessageController.getLastMessage(accessToken,group._id);
-        console.log("===========================");
-        console.log(response);
+       // console.log("===========================");
+       // console.log(response);
         if (!isEmpty(response)) setLastMessage(response);
       } catch (error) {
         console.error(error);
@@ -117,79 +267,33 @@ export function Item(props) {
     })();
   }, [group._id]);
 
- 
 
- {/*Invitation socket listener*/}
-  useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-      socket.emit("subscribe", `${user._id}_invite`);
-      socket.on("message_invite", newInvite);
-  // }
-  }, []);
+  //==============================================================================================================================================================================
+  //Aviso de mensaje eliminado para el resto del grupo
+  const delete_group_message = async (msg)=>{
 
-
-
-  {/*Read messages socket listener*/}
-  useEffect(() => {
-    // if(statex$.default.isConnected.get()){
-        socket.emit("subscribe", user._id);
-        socket.on("read_messages", updateReadStatus);
-      
-        /*return () => {
-        socket.emit("unsubscribe", user._id);
-        socket.off("read_messages", updateReadStatus);
-      };*/
-    // }
-    }, []);
-
-{/*banned socket listener*/}
-  useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-      socket.emit("subscribe", `${user._id}_banned`);
-      socket.on("group_banned", bannedGroup);
-  // }
-  }, []);
-
-
-
-
-   {/*Pushing notification socket listener to the rest of the group*/}
-   useEffect(() => {
-    // if(statex$.default.isConnected.get()){
-        socket.emit("subscribe", user._id);
-        socket.on("pushing_notification", newMessagex);
-      
-        /*return () => {
-        socket.emit("unsubscribe", user._id);
-        socket.off("pushing_notification", newMessagex);
-      };*/
-    // }
-}, [grupoNotificado]);
-
- {/*Pushing notification socket listener to user who created the message*/}
- useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-      socket.emit("subscribe", user._id);
-      socket.on("pushing_notification_me", newMessagex_me);
+    //console.log("a borrar message ....");
+          
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
     
-     /*return () => {
-      socket.emit("unsubscribe", user._id);
-      socket.off("pushing_notification_me", newMessagex_me);
-    };*/
-  // }
-}, [grupoNotificado]);
+      console.log("Deleting message 0");
+      console.log(msg);
+      EventRegister.emit("reloadmsgs",msg);
+      statex$.default.lastPushNotification.set(msg.message);
 
+    }
 
+  }
 //==============================================================================================================================================================================
   //Aviso de nuevo mensaje para el resto del grupo
   const newMessagex = async (msg) => {
-   
+    Notifications.dismissAllNotificationsAsync();
     
     if( statex$.default.lastPushNotification.get() !=  msg.message){
-      console.log("notify por pushing_notification")
-      console.log(msg)
+      console.log("notify por pushing_notification a nex message")
+      //console.log(msg)
 
-      console.log("userId who send a message::::",  msg.user._id)
+     // console.log("userId who send a message::::",  msg.user._id)
       const msgOrigen={
         idUser: msg.user._id,
         idMsg: msg._id,
@@ -199,11 +303,11 @@ export function Item(props) {
 
 
      //Push notification=========================================================
-       console.log("setting push notif message")
+      // console.log("setting push notif message")
        statex$.default.lastPushNotification.set(msg.message);
   
-       console.log("push notification realmente enviada!!!!")
-       await Notifications.scheduleNotificationAsync({
+      // console.log("push notification realmente enviada!!!!")
+      let notificationId = await Notifications.scheduleNotificationAsync({
          content: {
            title: "Secure chat: Nuevo mensaje!",
            body: "Grupo: "+msg.message,
@@ -211,9 +315,12 @@ export function Item(props) {
          },
          trigger: {
            seconds: 1,
+           repeats:false
          },
        });
-  
+
+     
+      
       
        //LOCAL NOTIFICATION=================================================================
   
@@ -223,8 +330,8 @@ export function Item(props) {
              resAux=result.rows._array;
 
              if(resAux.length==0){
-              console.log("No se encontro el grupo")
-               console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+             // console.log("No se encontro el grupo")
+              // console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
                ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,1);
               EventRegister.emit("updatingContadores",true);
              }else{
@@ -240,11 +347,11 @@ export function Item(props) {
        //New message============================================================
        EventRegister.emit("newMessagex",msg);
 
-       console.log("Evaluando groups id::::::::::::::::::::::::::::::::::::::;")
-       console.log(grupoNotificado)
-       console.log(msg.group)
-       console.log(group._id)
-       console.log(grupoNotificado==group._id)
+      // console.log("Evaluando groups id::::::::::::::::::::::::::::::::::::::;")
+      // console.log(grupoNotificado)
+      // console.log(msg.group)
+      // console.log(group._id)
+     //  console.log(grupoNotificado==group._id)
        //=======================================================================
        EventRegister.emit("updatingContadores",true);
    }
@@ -252,6 +359,9 @@ export function Item(props) {
   
   const newMessagex_me = async (msg) => {
 
+    Notifications.dismissAllNotificationsAsync();
+
+    //console.log("notify por pushing_notification me x")
     if( statex$.default.lastPushNotification.get() !=  msg.message){
         console.log("notify por pushing_notification me")
 
@@ -268,7 +378,7 @@ export function Item(props) {
   
              if(resAux.length==0){
                //add it
-               console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+               //console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
                ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,0);
                EventRegister.emit("updatingContadores",true);
 
@@ -284,9 +394,6 @@ export function Item(props) {
        //=======================================================================
    }
   }
-
-  
-
 
   const bannedGroup = async (newData) => {
     console.log("si quiero banearte....")
@@ -326,7 +433,7 @@ export function Item(props) {
   }
 
   const updateReadStatus = async (idMsg) => {
-       console.log("notificando que alguien del grupo ya leyo el id mensaje::::",idMsg)
+     //  console.log("notificando que alguien del grupo ya leyo el id mensaje::::",idMsg)
        //TODO
        //Update message with id parameter to read 6668cdd759b7edbfb183c0dd
        EventRegister.emit("idMessagevisto",idMsg);
@@ -339,10 +446,10 @@ export function Item(props) {
          if( statex$.default.lastPushNotification.get() !=  msg.message){
 
           //Push notification=========================================================
-            console.log("setting push notif message")
+            //console.log("setting push notif message")
             statex$.default.lastPushNotification.set(msg.message);
 
-            console.log("push notification realmente enviada!!!!")
+            //console.log("push notification realmente enviada!!!!")
             await Notifications.scheduleNotificationAsync({
               content: {
                 title: "Secure chat: Nuevo mensaje!",
@@ -370,12 +477,12 @@ export function Item(props) {
   const newInvite = async (newData) => {
     
     
-      console.log("si quiero invitarte....")
+      //console.log("si quiero invitarte....")
     //if(user._id != newData._id){
       if( statex$.default.lastGroupInvitation.get() !=  newData.message){
 
-            console.log("New group invite to participate, please reload group list!!!!")
-            console.log(newData)
+            //console.log("New group invite to participate, please reload group list!!!!")
+            //console.log(newData)
             statex$.default.lastGroupInvitation.set(newData.message);
 
             Notifications.scheduleNotificationAsync({
@@ -390,15 +497,15 @@ export function Item(props) {
             });
       
             try {
-              console.log("Anadiendo relacion grupo-llave en la invitacion")
+             // console.log("Anadiendo relacion grupo-llave en la invitacion")
             
             
               let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
-              console.log("llaveIni")
-              console.log(llaveIni)
-              console.log("Grupo id")
-              console.log(newData._id)
-              console.log(newData.tipo)
+             // console.log("llaveIni")
+             // console.log(llaveIni)
+             // console.log("Grupo id")
+             // console.log(newData._id)
+             // console.log(newData.tipo)
 
               const fechaAlta = new Date().toISOString();
               ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
@@ -422,8 +529,8 @@ export function Item(props) {
   const newMessage = async (newMsg) => {
 
     statex$.default.moveScroll.set(true);
-    console.log("message_notify");
-    console.log("userId who send a message::::",  newMsg.user._id)
+    //console.log("message_notify");
+    //console.log("userId who send a message::::",  newMsg.user._id)
 
     const msgOrigen={
       idUser: newMsg.user._id,
@@ -437,7 +544,7 @@ export function Item(props) {
       if (newMsg.user._id !== user._id) {
 
         upGroupChat(newMsg.group);
-        console.log("setting last message");
+       // console.log("setting last message");
 
         statex$.default.setLastMessage.set(newMsg);
 
@@ -445,8 +552,8 @@ export function Item(props) {
 
         if (activeGroupId !== newMsg.group) {
 
-          console.log("Updating total number of messages of group on new message event plus 1:")
-          console.log("totalUnreadMessages antes de sumarle 1")
+        //  console.log("Updating total number of messages of group on new message event plus 1:")
+        //  console.log("totalUnreadMessages antes de sumarle 1")
           //console.log(statex$.default.totalUnreadMessages.get())
           
           setTotalUnreadMessages((prevState) => prevState + 1);
@@ -477,18 +584,18 @@ export function Item(props) {
     }
     
     
+    Notifications.dismissAllNotificationsAsync();
+    //console.log("openning group.."+group._id );
 
-    console.log("openning group.."+group._id );
-
-    console.log("_id creator group.."+group.creator._id );
-    console.log("user id conectado.."+user._id );
-    console.log("tipo group.."+group.tipo );
+    //console.log("_id creator group.."+group.creator._id );
+    //console.log("user id conectado.."+user._id );
+    //console.log("tipo group.."+group.tipo );
     statex$.default.cifrado.set("SI")
-    console.log("Fecha alta al grupo")
-    console.log(statex$.default.fechaAltaGrupoSelected.get())
-    console.log("llave del grupo")
-    console.log(statex$.default.llaveGrupoSelected.get())
-    console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
+   // console.log("Fecha alta al grupo")
+    //console.log(statex$.default.fechaAltaGrupoSelected.get())
+   // console.log("llave del grupo")
+   // console.log(statex$.default.llaveGrupoSelected.get())
+    //console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
 
 
     if(group.creator._id != user._id &&  statex$.default.llaveGrupoSelected.get() == undefined){
@@ -500,17 +607,17 @@ export function Item(props) {
 
     try{
 
-          console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
+          //console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
           const msgOrigen =statex$.default.userWhoSendMessage.get();
           //
-          console.log("msgOrigen")
-          console.log(statex$.default.userWhoSendMessage.get());
+          //console.log("msgOrigen")
+         // console.log(statex$.default.userWhoSendMessage.get());
 
           if(msgOrigen !=''){
 
-            console.log("notifyRead...")
-            console.log( msgOrigen.idUser)
-            console.log( msgOrigen.idMsg)
+           // console.log("notifyRead...")
+           // console.log( msgOrigen.idUser)
+           // console.log( msgOrigen.idMsg)
 
             const respo = await groupMessageController.notifyRead(
               accessToken,
@@ -518,7 +625,7 @@ export function Item(props) {
               msgOrigen.idMsg
             );
 
-            console.log("Resultado de la operacion:",respo)
+           // console.log("Resultado de la operacion:",respo)
           }
 
         
@@ -529,7 +636,7 @@ export function Item(props) {
     }
    
    
-    console.log('reseteando contador del grupo', group._id)
+   // console.log('reseteando contador del grupo', group._id)
     UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( group._id,  0 );
     EventRegister.emit("updatingContadores",true);
 

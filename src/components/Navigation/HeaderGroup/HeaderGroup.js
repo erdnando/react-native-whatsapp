@@ -70,34 +70,34 @@ export function HeaderGroup(props) {
   };
 
   const validateNIP = async () => {
-    console.log("======validating NIP==================");
-    console.log(statex$.default.isConnected.get())
+  //  console.log("======validating NIP==================");
+   // console.log(statex$.default.isConnected.get())
 
     let response=null;
      if(statex$.default.isConnected.get()){
           //call api to validate nip 
           response = await userController.getMe(accessToken);
 
-          console.log("response.nip fron ws")
-          console.log(response)
-          console.log("nip ingresado")
-          console.log(nip.toString())
-          console.log(MD5method(nip.toString()));
+        //  console.log("response.nip fron ws")
+        //  console.log(response)
+        //  console.log("nip ingresado")
+       //   console.log(nip.toString())
+       //   console.log(MD5method(nip.toString()));
 
           await authController.setNip(response.nip);
       }//connected
       else{
         response={nip: await authController.getNip()}
 
-        console.log("response.nip fron local storage")
-        console.log(response.nip)
+        //console.log("response.nip fron local storage")
+       // console.log(response.nip)
       }
 
           if(MD5method(nip.toString()) == response.nip){
-            console.log("NIP OK");
+          //  console.log("NIP OK");
             //if, it is ok, unlock messages, reloading them
            // await authController.setCifrado("NO");
-           console.log("statex$.default.cifrado.set 2 en NO");
+          // console.log("statex$.default.cifrado.set 2 en NO");
 
             statex$.default.cifrado.set("NO");
             EventRegister.emit("setCifrado","NO");
@@ -113,7 +113,7 @@ export function HeaderGroup(props) {
             setLock(true);
             
             setTituloModal("NIP Incorrecto!");
-            console.log("NIP Incorrecto");
+           // console.log("NIP Incorrecto");
 
             toast.show({
               placement: "top",

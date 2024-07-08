@@ -12,8 +12,8 @@ export class Group {
       const formData = new FormData();
       formData.append("name", name);
 
-      console.log("Validando imagen del grupo")
-      console.log(image)
+      //console.log("Validando imagen del grupo")
+      //console.log(image)
       
       if(image!="")formData.append("image", image);
       formData.append("creator", creatorId);
@@ -89,7 +89,7 @@ export class Group {
 
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUPALIAS}/${alias}`;
-      console.log(url)
+      //console.log(url)
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,

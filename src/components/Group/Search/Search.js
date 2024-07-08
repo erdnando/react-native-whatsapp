@@ -13,17 +13,17 @@ export function Search(props) {
   const onSearch = (text) => {
   let tipoBusqueda="usuario";
     if(data[0]?.nip != null){
-      console.log("listado de usuarios")
+     // console.log("listado de usuarios")
       tipoBusqueda="usuarios";
       setTitulo("Alias de usuario")
     }else{
-      console.log("Listado de grupos")
+     // console.log("Listado de grupos")
       tipoBusqueda="grupos";
       setTitulo("Alias de canal")
     }
 
     const resultSearch = data.filter(createFilter(text, KEYS_TO_FILTERS));
-    console.log(resultSearch)
+   // console.log(resultSearch)
 
     if(text.trim() =="" && tipoBusqueda=="usuarios"){
       setData([]);

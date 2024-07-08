@@ -33,7 +33,7 @@ export function Form(props) {
     validateOnChange: false,
     onSubmit: async (formValue) => {
 
-      console.log("Creando canal......")
+     // console.log("Creando canal......")
       setIsLoading(true);
 
 
@@ -42,7 +42,7 @@ export function Form(props) {
       console.log(aliasResponse)
       if(aliasResponse.length>0){
         //==================================================================================================================
-            console.log("El alias ya existe, favor de utilizar otro....")
+           // console.log("El alias ya existe, favor de utilizar otro....")
             setIsLoading(false);
             toast.show({
               placement: "top",
@@ -102,8 +102,8 @@ export function Form(props) {
       if(!isChecked){
         formik.values.llave=""
       }
-      console.log("formik.values.llave")
-      console.log(formik.values.llave)
+     // console.log("formik.values.llave")
+     // console.log(formik.values.llave)
  }
 
   const openGallery = async () => {

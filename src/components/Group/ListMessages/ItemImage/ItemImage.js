@@ -39,7 +39,7 @@ export function ItemImage(props) {
 
 
     setShowAdvertencia(false);
-    console.log("eliminando message:::::::::::");
+    //console.log("eliminando message:::::::::::");
                          
     //delete
     //persist changes
@@ -51,14 +51,14 @@ export function ItemImage(props) {
   const onEliminarMensajeParaMi = () => {
 
     setShowAdvertencia(false);
-    console.log("eliminando message para mi:::::::::::");
+    //console.log("eliminando message para mi:::::::::::");
                          
     EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
     setMensajeEliminar(null);
   }
 
   const onOpenImage = () => {
-    console.log(imageUri)
+    //console.log(imageUri)
     navigation.navigate(screens.global.imageFullScreen, { uri: imageUri });
   };
 
@@ -70,16 +70,16 @@ export function ItemImage(props) {
     const filename=message.message.replace("images/","");
     
     let mimetype =mime.getType(filename);
-    console.log("mimetype::::::")
-    console.log(mimetype)
+   // console.log("mimetype::::::")
+   // console.log(mimetype)
     
 
     // Download the file and get its local URI
     const { uri } = await FileSystem.downloadAsync(urlFile,FileSystem.documentDirectory + filename);
 
     let fileInfo = await FileSystem.getInfoAsync(uri);
-    console.log("fileInfo");
-    console.log(fileInfo);
+   // console.log("fileInfo");
+   // console.log(fileInfo);
 
     const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
 
@@ -151,7 +151,7 @@ export function ItemImage(props) {
                     <Menu.Item style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("responder message:::::::::::");
+                          // console.log("responder message:::::::::::");
                            EventRegister.emit("replyingMessage",message);  //-->GroupForm
                         }}>
                          <View style={styles.contentMenuItem} >
@@ -169,7 +169,7 @@ export function ItemImage(props) {
                     <Menu.Item  style={styles.menuItem}  
                         onPress={() => {
                      
-                           console.log("reenviando message:::::::::::");
+                           //console.log("reenviando message:::::::::::");
                            EventRegister.emit("forwardingMessage",message);  //-->GroupForm
                         }}>
                            <View style={styles.contentMenuItem} >

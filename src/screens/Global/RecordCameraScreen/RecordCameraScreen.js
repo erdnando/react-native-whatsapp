@@ -29,7 +29,7 @@ export function RecordCameraScreen() {
 
   useInterval(() => {
     // Your custom logic here
-    console.log(seconds);
+    //console.log(seconds);
     setSeconds(seconds+1);
 
     if(seconds==59){
@@ -54,7 +54,7 @@ export function RecordCameraScreen() {
 
     setMsgrecord("Detener");
     setIsRecording(true);
-    console.log("Iniciando grabacion...");
+    //console.log("Iniciando grabacion...");
 
     setSeconds(0)
     setMinutes(0)
@@ -86,8 +86,8 @@ export function RecordCameraScreen() {
       mute: false,
       }
     const newVideo = await cameraRef.current.recordAsync(options).then((recordedVideo) => {
-      console.log("newVideo")
-      console.log("Grabacion terminada, preparada para envier...")
+    //  console.log("newVideo")
+    //  console.log("Grabacion terminada, preparada para envier...")
       setMsgrecord("Detener");
       setVideo(recordedVideo);
   
@@ -99,14 +99,14 @@ export function RecordCameraScreen() {
   const stopRecordVideo = async () => {
 
     if(vuelta==null){
-      console.log("nada q hacer!!!")
+     // console.log("nada q hacer!!!")
       return;
     }
     setVuelta(null);
 
 
 
-    console.log("en stopRecordVideo, dandole stop")
+    //console.log("en stopRecordVideo, dandole stop")
     setIsRecording(false);
     setMsgrecord("Grabar video")
     cameraRef.current.stopRecording();

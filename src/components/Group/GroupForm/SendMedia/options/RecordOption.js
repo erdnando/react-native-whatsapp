@@ -13,8 +13,8 @@ export function RecordOption(props) {
     const { status } = await Camera.requestCameraPermissionsAsync();
     const micro = await Camera.requestMicrophonePermissionsAsync()
 
-    console.log("micro")
-    console.log(micro)
+    //console.log("micro")
+    //console.log(micro)
 
     if (status !== "granted" && micro.status !="granted") {
       console.error("No has acepatdo los permisos de la camara y el microfono");
