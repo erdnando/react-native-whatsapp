@@ -71,7 +71,7 @@ export class GroupMessage {
 //=====================================================================================================
 
 
-async notifyRead(accessToken, idUser, idMsg) {
+async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
 
   try {
    // console.log("idMsg enviado a notify read")
@@ -86,6 +86,7 @@ async notifyRead(accessToken, idUser, idMsg) {
         body: JSON.stringify({
           idUser: idUser,
           idMsg: idMsg,
+          grupoAbierto:grupoAbierto
         }),
       };
 
@@ -124,8 +125,8 @@ async notifyRead(accessToken, idUser, idMsg) {
       const response = await fetch(url, params);
       let resultAPI = await response.json();
 
-      //console.log("getting all messages by group");
-      //console.log(resultAPI);
+      console.log("getting all messages by group");
+      console.log(resultAPI);
       EventRegister.emit("loadingEvent",false);
       if (response.status !== 200) throw resultAPI;
      

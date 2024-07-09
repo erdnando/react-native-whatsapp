@@ -87,7 +87,7 @@ export function GroupScreen() {
                      */
                      // statex$.default.moveScroll.set(false);
                       
-                      setMessages(messages)
+                     // setMessages(messages)
                    
 
                    } catch (error) {
@@ -128,7 +128,7 @@ export function GroupScreen() {
                      
                       //TODO Update Read status of the messages by group
                      
-                      //getAllMessages(true);
+                      getAllMessages(true);
                       let grupoAsociado='';
 
                       (messages).map((msgx) => {
@@ -141,7 +141,7 @@ export function GroupScreen() {
                        });
 
                        if(grupoAsociado!='') updateVistoGrupo(grupoAsociado);
-                       getAllMessages(true);
+                      // getAllMessages(true);
 
 /*
                      (messages).map((msgx) => {
@@ -195,8 +195,15 @@ export function GroupScreen() {
          
               try {
               //  console.log("recupera msgs from db 1")
-                newMessage(msg)
-                statex$.default.moveScroll.set(true)
+              console.log("validando si es el grupo correcto para mostraer el new msg")
+              console.log(msg.group)
+              console.log(groupId)
+              console.log("==========================================")
+                if( msg.group == groupId ){
+                  newMessage(msg)
+                  statex$.default.moveScroll.set(true)
+                }
+               
               } catch (error) {
                 console.error(error);
               }
@@ -431,24 +438,50 @@ export function GroupScreen() {
   {/*reload socket listener*/}
   useEffect(() => {
 
-    if(statex$.default.isConnected.get()){
+    socket.emit("subscribe", groupId);
+    socket.on("reloadmsgs", reloadmsgs);
+   // if(statex$.default.isConnected.get()){
       
+
      // socket.emit("subscribe", groupId);
      
      // socket.on("reloadmsgs", getAllMessages);
 
-      /*return () => {
+      return () => {
         socket.emit("unsubscribe", groupId);
        // socket.off("message", newMessage);
-        socket.off("reloadmsgs", getAllMessages);
-      };*/
-    }
+        socket.off("reloadmsgs", reloadmsgs);
+      };
+    //}
 
   }, [groupId, messages]);
 
 
 
+  const reloadmsgs = async (msg)=>{
 
+   
+          
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
+    
+      console.log("reloading....");
+      console.log(msg);
+      
+      if(groupId== msg.group_id){
+        statex$.default.moveScroll.set(true);
+        getAllMessages(true);
+
+        setMessages(messages)
+      }
+      
+    
+       
+      
+      statex$.default.lastPushNotification.set(msg.message);
+
+    }
+
+  }
   /*const  recuperaMensajesDB= async(groupId)  =>{
 
     console.log("recupuera mesgs from db2");
@@ -485,7 +518,8 @@ export function GroupScreen() {
           //console.log("online, getting from internet db")
           response = await groupMessageController.getAll(accessToken, groupId);
 
-          //console.log("mensajes en el server del grupo.............." + groupId)
+          console.log("mensajes en el server del grupo.............." + groupId)
+          console.log(response)
           
 
           let resAux=null;
@@ -546,7 +580,7 @@ export function GroupScreen() {
 
             unlockedMessages.map((msg) => {
       
-              if(visto==true)msg.estatus="LEIDO";
+             // if(visto==true)msg.estatus="LEIDO";
 
               if(msg.type=="TEXT"){
                // console.log("========texto=======================")
@@ -567,7 +601,9 @@ export function GroupScreen() {
               }
              
             });
-           // console.log("Setting messages from server...................")
+           console.log("Setting messages from server...................")
+           console.log(unlockedMessages)
+           //setMessages([]);
             setMessages(unlockedMessages);
          
           //==============================================================================
@@ -636,32 +672,45 @@ export function GroupScreen() {
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
            // console.log("totalParticipants")
            // console.log(totalParticipants)
-            if(totalParticipants==1)msg.estatus="LEIDO";
+            //if(totalParticipants==1)msg.estatus="LEIDO";
 
             //TODO: notifying user who send the message that it has been read
             //Por q estoy dentro del chat e inmediatamente hay q avisarle que ya se leyo
              // console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
              // console.log( statex$.default.userWhoSendMessage.get())
 
+             console.log("notificando q ya lo leyo el msg: "+ msg._id+" el miembro", user._id, "que esta en el grupo: ", groupId);
+            await groupMessageController.notifyRead(
+              accessToken,
+              user._id,
+              msg._id,
+              groupId
+            );
+
             const isMe = (msg.user._id==user._id);
 
             if(!isMe){
+
+
+            
+
               // console.log("preparando envio de leido")
-                const msgOrigen={
-                  idUser: msg.user._id,
-                  idMsg: msg._id,
-                }
+              //  const msgOrigen={
+             //     idUser: user._id,
+              //    idMsg: msg._id,
+              //  }
                              
-               if(totalParticipants>1){
-                await groupMessageController.notifyRead(
+              // if(totalParticipants>1){
+                /*await groupMessageController.notifyRead(
                   accessToken,
-                  msg.user._id,
-                  msg._id
-                );
-               }
+                  user._id,
+                  msg._id,
+                );*/
+              // }
                
-               statex$.default.userWhoSendMessage.set(msgOrigen);
-            }else{
+              // statex$.default.userWhoSendMessage.set(msgOrigen);
+            }
+            /*else{
               if(totalParticipants==1){
                 await groupMessageController.notifyRead(
                   accessToken,
@@ -669,7 +718,7 @@ export function GroupScreen() {
                   msg._id
                 );
                }
-            }
+            }*/
 
             let msgOriginal=msg.message;
             if(msg.type=="TEXT"){
@@ -726,11 +775,8 @@ export function GroupScreen() {
   const newMessageMe = (msg) => {
    
     (async () => {
-      //console.log("mensaje por newMessageMe")
-      //console.log("messages::::::::::::::::::::::")
-     // console.log(messages)
-      //console.log("identificando nuevo mensaje en GroupScreen:::::")
-     // console.log(msg);
+      console.log("mensaje por newMessageMe")
+      console.log(msg);
 
      try {
                   
@@ -741,13 +787,21 @@ export function GroupScreen() {
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal( accessToken, groupId );
             //console.log("totalParticipants")
            // console.log(totalParticipants)
-            if(totalParticipants==1)msg.estatus="LEIDO";
+           // if(totalParticipants==1)msg.estatus="LEIDO";
+
+            console.log("(owner )notificando q ya lo leyo el msg: "+ msg._id+" el miembro", msg.user._id, "que esta en el grupo: ", groupId);
+            await groupMessageController.notifyRead(
+              accessToken,
+              msg.user._id,
+              msg._id,
+              groupId
+            );
 
              // console.log("notificando que su mensaje ha sido recibido en newMessage en GroupScreen:")
 
             const isMe = (msg.user._id==user._id);
 
-            if(!isMe){
+           /* if(!isMe){
               // console.log("preparando envio de leido")
                 const msgOrigen={
                   idUser: msg.user._id,
@@ -762,7 +816,7 @@ export function GroupScreen() {
                 );
                }
                
-               statex$.default.userWhoSendMessage.set(msgOrigen);
+              // statex$.default.userWhoSendMessage.set(msgOrigen);
             }else{
               if(totalParticipants==1){
                 await groupMessageController.notifyRead(
@@ -771,7 +825,7 @@ export function GroupScreen() {
                   msg._id
                 );
                }
-            }
+            }*/
 
             let msgOriginal=msg.message;
             if(msg.type=="TEXT"){
