@@ -135,19 +135,10 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
       let blackList=null;
       let filteredResult=null;
 
-      //console.log("resultAPI")
-      //console.log(resultAPI)
-      //console.log("Add idMessage to local black list")
+  
       await GET_STATE_MY_DELETED_MESSAGES().then(result =>{
         blackList=result.rows._array;      
-        //console.log("blackList")
-        //console.log(blackList)
-
-
        const listMsgs = resultAPI.messages;
-       //console.log("all messages")
-       //console.log(listMsgs);
-
        filteredResult = listMsgs.filter(lm => 
         blackList.every(bl => bl.idMessage !== lm._id));
        
@@ -155,9 +146,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
     }); 
 
     resultAPI.messages= filteredResult;
-
-      //console.log("resultAPI")
-      //console.log(resultAPI)
       return resultAPI;
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
@@ -170,12 +158,8 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
   async updateVisto(accessToken, groupId) {
     try {
       
-      
-      //console.log("groupId")
-     // console.log(groupId)
       const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_LEIDO}/${groupId}`; 
       
-
       const params = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -183,11 +167,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
       };
 
       const response = await fetch(url, params);
-     // console.log("resultAPI")
-      //console.log(response)
-
-      //let resultAPI = await response.json();
-      //if (response.status !== 200) throw resultAPI;
      
       return true;
     } catch (error) {
@@ -200,14 +179,8 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
 
     EventRegister.emit("loadingEvent",true);
     let reenviado=false;
-    //console.log("enviando msg:::::::::::::::::::::")
-   // console.log(message);
-   // console.log(tipoCifrado);
-   // console.log(tipox);
-    //cifrando msg reenviado
 
   if(replyMessage!=null){
-   // console.log("cifrando 1")
     replyMessage.message = Encrypt(replyMessage?.message, replyMessage?.tipo_cifrado );
   }
   if(message.startsWith("reenviado::")){
@@ -235,14 +208,10 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         }),
       };
 
-      //console.log("sending...."+url);
-      //console.log(params);
 
       const response = await fetch(url, params);
       const result = await response.json();
 
-      //get group messages and persist
-    // await selectTable('BITACORA');
     EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
@@ -251,7 +220,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-      //console.log("Error a enviar el mensaje...")
       throw error;
     }
   }
@@ -259,9 +227,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
   async sendTextForwardFile(accessToken, groupId, message ,tipoCifrado) {
 
     EventRegister.emit("loadingEvent",true);
-  
-    //console.log("reenviando file:::::::::::::::::::::")
-    //console.log(message);
   
     
     try {
@@ -281,16 +246,10 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         }),
       };
 
-    //  console.log("sending...."+url);
-     // console.log("params");
-    //  console.log(params)
 
       const response = await fetch(url, params);
       const result = await response.json();
-      //console.log(result)
 
-      //get group messages and persist
-    // await selectTable('BITACORA');
     EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
@@ -299,7 +258,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-     // console.log("Error a enviar el file...")
       throw error;
     }
   }
@@ -308,10 +266,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
 
     EventRegister.emit("loadingEvent",true);
   
-    //console.log("reenviando img:::::::::::::::::::::")
-    //console.log(message);
-  
-    
     try {
       const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FORWARD_IMAGE}`;
       const params = {
@@ -329,16 +283,9 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         }),
       };
 
-    //  console.log("sending...."+url);
-     // console.log("params");
-    //  console.log(params)
-
       const response = await fetch(url, params);
       const result = await response.json();
-     // console.log(result)
-
-      //get group messages and persist
-    // await selectTable('BITACORA');
+   
     EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
@@ -347,7 +294,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
     } catch (error) {
       EventRegister.emit("loadingEvent",false);
       console.log(error);
-      //console.log("Error a enviar el mensaje...")
       throw error;
     }
   }
@@ -371,17 +317,9 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
           }),
         };
 
-       // console.log("sending...."+url);
-       // console.log(params);
-
         const response = await fetch(url, params);
         const result = await response.json();
 
-       // console.log("==========After updating====================");
-       // console.log(result);
-
-        //get group messages and persist
-      // await selectTable('BITACORA');
       EventRegister.emit("loadingEvent",false);
         if (response.status !== 201) throw result;
 
@@ -412,17 +350,9 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         }),
       };
 
-     // console.log("sending...."+url);
-     // console.log(params);
-
       const response = await fetch(url, params);
       const result = await response.json();
 
-      //console.log("==========After updating====================");
-      //console.log(result);
-
-      //get group messages and persist
-    // await selectTable('BITACORA');
     EventRegister.emit("loadingEvent",false);
       if (response.status !== 201) throw result;
 
@@ -437,11 +367,8 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
   async sendImage(accessToken, groupId, file) {
 
       EventRegister.emit("loadingEvent",true);
-     // console.log("file")
-      //console.log(file)
+    
       const manipulateResult = await manipulateAsync(file.uri, [], { compress: 0.1 });
-     // console.log("manipulateResult")
-     // console.log(manipulateResult)
 
       const filex = {
         name:file.name,
@@ -457,9 +384,7 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
       
 
         const url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_IMAGE}`;
-        //console.log(url);
-
-        //"Content-Type": "application/json",
+     
         const params = {
           method: "POST",
           headers: {
@@ -470,25 +395,19 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
           body: formData,
         };
 
-        //console.log(formData);
-
           try {
             const response = await fetch(url, params);
-            //console.log(response);
             const result = await response.json();
-           // console.log(result);
 
             EventRegister.emit("loadingEvent",false);
             if (response.status !== 201) throw result;
           } catch (error) {
-           // console.log("Error al enviar imagen al grupo")
             console.log(error);
           }
       
 
         return true;
       } catch (error) {
-       // console.log("Error general al enviar imagen al grupo")
         EventRegister.emit("loadingEvent",false);
         throw error;
       }
@@ -499,8 +418,6 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
 
     EventRegister.emit("loadingEvent",true);
     try {
-      //console.log("sending file from telephone...")
-      //console.log(file);
 
       const formData = new FormData();
       formData.append("group_id", groupId);
@@ -518,16 +435,9 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         body: formData,
       };
 
-     // console.log("params");
-     // console.log(params);
-
     try {
           const response = await fetch(url, params);
-        
-          //console.log(response);
           const result = await response.json();
-         // console.log("result call api file");
-         // console.log(result);
 
           EventRegister.emit("loadingEvent",false);
           if (response.status !== 201) throw result;
@@ -566,17 +476,9 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
           }),
         };
 
-      //  console.log("sending...."+url);
-       // console.log(params);
-
         const response = await fetch(url, params);
         const result = await response.json();
 
-        //console.log("==========After updating====================");
-       // console.log(result);
-
-        //get group messages and persist
-      // await selectTable('BITACORA');
       EventRegister.emit("loadingEvent",false);
         if (response.status !== 201) throw result;
 

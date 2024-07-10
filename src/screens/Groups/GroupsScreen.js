@@ -24,25 +24,23 @@ export function GroupsScreen() {
   const { accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
-  const [totalMembers, setTotalMembers] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [arrContadores, setArrContadores] = useState(null);
   const [nip, setNip] = useState("00000000");
 
 
-  useEffect(() => {
-    //console.log("statex$.default.isConnected.get()")
-    //console.log(statex$.default.isConnected.get())
-    
 
+  //=====================LISTENERS============================================================================
+
+  //updatingContadores
+  useEffect(() => {
+  
        const eventContadores = EventRegister.addEventListener("updatingContadores", async bFlag=> {
          
               try {
-               // console.log("actualizando contadores");
+      
                 await GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL().then(result =>{
                   resAux=result.rows._array;
-                 // console.log("listado de contadores por grupo:::::::");
-                  //console.log(resAux);
                
                   if(resAux.length >0){
                     setArrContadores(resAux)
@@ -60,36 +58,26 @@ export function GroupsScreen() {
   }, []);
 
 
+//=====================ON_LOAD============================================================================
 
-    useEffect(() => {
-
-      //console.log("statex$.default.isConnected.get()")
-     // console.log(statex$.default.isConnected.get())
-
+  //Valida 1a vez y presenta NIP inicial
+  useEffect(() => {
       
       if(!statex$.default.isConnected.get()){
         Alert.alert ('Modo offline. ','La aplicacion pasa a modo offline, por lo que no podra generar nuevos mensajes u operaciones',
         [{  text: 'Ok',      } ]);
       }
       
-    
       async function validateInitialModal() {
 
         const firtsTime=  await authController.getInitial();
 
         if(firtsTime=="1"){
-          //console.log("NIP modal");
-
-
+        
           const min = 1000; 
           const max = 9999; 
           const randomNumber =  Math.floor(Math.random() * (max - min + 1)) + min; 
          
-          //console.log("set nip:::::");
-         // console.log("1"+randomNumber);
-         // console.log("accessToken:::::"+accessToken);
-
-         // console.log("setShowModal:::::");
           setNip("2"+randomNumber);
         const cifrado =MD5method("2"+randomNumber).toString();
 
@@ -97,24 +85,13 @@ export function GroupsScreen() {
           //hash nip
           updateUser("nip", cifrado);
           setShowModal(true);
-          
-
-        
         }
       }
       validateInitialModal();
-    
-
-
   }, []);
 
-
-    useEffect(() => {
-
-      async function fetchData() {
-    
-      }
-      fetchData();
+  //Valida Offline
+  useEffect(() => {
 
       if(statex$.default.isConnected.get()){
         navigation.setOptions({
@@ -144,9 +121,10 @@ export function GroupsScreen() {
       }
       
 
-    }, []);
+  }, []);
 
-    useFocusEffect(
+  //Carga todos los grupos
+  useFocusEffect(
       useCallback(() => {
         (async () => {
 
@@ -158,14 +136,7 @@ export function GroupsScreen() {
             if(statex$.default.isConnected.get()){
 
               response = await groupController.getAll(accessToken);
-
-                //console.log("Persistiendo ADD_STATE_ALLGROUPS")
-                //console.log(response)
-                //console.log(JSON.stringify(response))
                 UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
-
-                //==============================================
-                
             }else{
                 await GET_STATE_ALLGROUPS().then(result =>{
                 response=result.rows._array;
@@ -185,9 +156,10 @@ export function GroupsScreen() {
           }
         })();
       }, [])
-    );
+  );
 
-    const upAllGroups=async ()=>{
+  //=====================FUNCIONES============================================================================
+  const upAllGroups=async ()=>{
 
       let response = null;
 
@@ -197,14 +169,7 @@ export function GroupsScreen() {
         if(statex$.default.isConnected.get()){
 
           response = await groupController.getAll(accessToken);
-
-            //console.log("Persistiendo ADD_STATE_ALLGROUPS")
-            //console.log(response)
-            //console.log(JSON.stringify(response))
             UPDATE_STATE_ALLGROUPS(JSON.stringify(response));
-
-            //==============================================
-            
         }else{
             await GET_STATE_ALLGROUPS().then(result =>{
             response=result.rows._array;
@@ -230,9 +195,9 @@ export function GroupsScreen() {
       }
 
       
-    }
+  }
    
-    const upGroupChat = (groupId) => {
+  const upGroupChat = (groupId) => {
 
       const data = groupsResult;
       const fromIndex = data.map((group) => group._id).indexOf(groupId);
@@ -241,11 +206,11 @@ export function GroupsScreen() {
     
       data.splice(toIndex, 0, element);
       setGroups([...data]);
-    
+  };
 
-    };
 
-    if (!groupsResult) return <LoadingScreen />;
+    //=====================VIEW============================================================================
+  if (!groupsResult) return <LoadingScreen />;
 
   return (
     <View>

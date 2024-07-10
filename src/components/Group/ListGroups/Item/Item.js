@@ -42,9 +42,7 @@ export function Item(props) {
   const [contadorAux, setContadorAux] = useState(0);
   const [grupoNotificado, setGrupoNotificado] = useState('');
   const [appState, setAppState] = useState(AppState.currentState);
- // const [isMounted, setIsMounted] = useState(true);
   const navigation = useNavigation();
- // const lastNotificationResponse = Notifications.useLastNotificationResponse();
   const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
 
 
@@ -130,67 +128,6 @@ export function Item(props) {
 
 
 
- {/*Invitation socket listener*/}
-  useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-     // socket.emit("subscribe", `${user._id}_invite`);
-     // socket.on("message_invite", newInvite);
-  // }
-  }, []);
-
-
-
-  {/*Read messages socket listener*/}
-  useEffect(() => {
-    // if(statex$.default.isConnected.get()){
-        //socket.emit("subscribe", user._id);
-        //socket.on("read_messages", updateReadStatus);
-      
-        /*return () => {
-        socket.emit("unsubscribe", user._id);
-        socket.off("read_messages", updateReadStatus);
-      };*/
-    // }
-    }, []);
-
-{/*banned socket listener*/}
-  useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-     // socket.emit("subscribe", `${user._id}_banned`);
-    //  socket.on("group_banned", bannedGroup);
-  // }
-  }, []);
-
-
-
-
-   {/*Pushing notification socket listener to the rest of the group*/}
-   useEffect(() => {
-    // if(statex$.default.isConnected.get()){
-       // socket.emit("subscribe", user._id);
-        //socket.on("pushing_notification", newMessagex);
-      
-        /*return () => {
-        socket.emit("unsubscribe", user._id);
-        socket.off("pushing_notification", newMessagex);
-      };*/
-    // }
-}, [grupoNotificado]);
-
- {/*Pushing notification socket listener to user who created the message*/}
- useEffect(() => {
-  // if(statex$.default.isConnected.get()){
-      //socket.emit("subscribe", user._id);
-      //socket.on("pushing_notification_me", newMessagex_me);
-    
-     /*return () => {
-      socket.emit("unsubscribe", user._id);
-      socket.off("pushing_notification_me", newMessagex_me);
-    };*/
-  // }
-}, [grupoNotificado]);
-
-
 
 
   //Get messages read and totals
@@ -267,39 +204,13 @@ export function Item(props) {
   }, [group._id]);
 
 
-  //==============================================================================================================================================================================
-  //Aviso de mensaje eliminado para el resto del grupo
-  /*const reloadmsgs = async (msg)=>{
-
-   
-          
-    if( statex$.default.lastPushNotification.get() !=  msg.message){
-    
-      console.log("reloading....");
-      console.log(msg);
-      EventRegister.emit("reloadmsgs",msg);
-      statex$.default.lastPushNotification.set(msg.message);
-
-    }
-
-  }*/
 //==============================================================================================================================================================================
   //Aviso de nuevo mensaje para el resto del grupo
   const newMessagex = async (msg) => {
     Notifications.dismissAllNotificationsAsync();
-   // console.log("notify por pushing_notification a nex message")
     if( statex$.default.lastPushNotification.get() !=  msg.message){
       console.log("notify por pushing_notification a nex message")
-      //console.log(msg)
-
-     // console.log("userId who send a message::::",  msg.user._id)
-     /* const msgOrigen={
-        idUser: msg.user._id,
-        idMsg: msg._id,
-      }
-      statex$.default.userWhoSendMessage.set(msgOrigen)*/
-
-
+  
 
      //Push notification=========================================================
       // console.log("setting push notif message")
@@ -317,10 +228,6 @@ export function Item(props) {
            repeats:false
          },
        });
-
-     
-      
-      
        //LOCAL NOTIFICATION=================================================================
   
        let resAux=null;
@@ -345,12 +252,6 @@ export function Item(props) {
   
        //New message============================================================
        EventRegister.emit("newMessagex",msg);
-
-      // console.log("Evaluando groups id::::::::::::::::::::::::::::::::::::::;")
-      // console.log(grupoNotificado)
-      // console.log(msg.group)
-      // console.log(group._id)
-     //  console.log(grupoNotificado==group._id)
        //=======================================================================
        EventRegister.emit("updatingContadores",true);
    }
@@ -459,17 +360,9 @@ export function Item(props) {
                 seconds: 1,
               },
             });
-            //=======================================================================
-
-            //=======================================================================
-
-            //=======================================================================
-
-            //=======================================================================
-
+     
             
         }
-    //}
 
   }
 
@@ -528,8 +421,6 @@ export function Item(props) {
   const newMessage = async (newMsg) => {
 
     statex$.default.moveScroll.set(true);
-    //console.log("message_notify");
-    //console.log("userId who send a message::::",  newMsg.user._id)
 
     const msgOrigen={
       idUser: newMsg.user._id,
@@ -543,24 +434,13 @@ export function Item(props) {
       if (newMsg.user._id !== user._id) {
 
         upGroupChat(newMsg.group);
-       // console.log("setting last message");
 
         statex$.default.setLastMessage.set(newMsg);
 
         const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
 
         if (activeGroupId !== newMsg.group) {
-
-        //  console.log("Updating total number of messages of group on new message event plus 1:")
-        //  console.log("totalUnreadMessages antes de sumarle 1")
-          //console.log(statex$.default.totalUnreadMessages.get())
-          
           setTotalUnreadMessages((prevState) => prevState + 1);
-          //statex$.default.totalUnreadMessages.set(statex$.default.totalUnreadMessages.get()+1)
-          //console.log("totalUnreadMessages mas 1")
-         // console.log(statex$.default.totalUnreadMessages.get())
-          //unreadMessagesController.setTotalReadMessages(group._id, totalUnreadMessages);//new
-          
         }
       }
     }
@@ -586,17 +466,9 @@ export function Item(props) {
     Notifications.dismissAllNotificationsAsync();
     console.log("openning group.."+group._id );
 
-    //console.log("_id creator group.."+group.creator._id );
-    //console.log("user id conectado.."+user._id );
-    //console.log("tipo group.."+group.tipo );
+   
     statex$.default.cifrado.set("SI")
-   // console.log("Fecha alta al grupo")
-    //console.log(statex$.default.fechaAltaGrupoSelected.get())
-   // console.log("llave del grupo")
-   // console.log(statex$.default.llaveGrupoSelected.get())
-    //console.log("llave del grupo:"+ group._id + ":::" + statex$.default.llaveGrupoSelected.get());
-
-
+  
     if(group.creator._id != user._id &&  statex$.default.llaveGrupoSelected.get() == undefined){
           Alert.alert ('Grupo cerrado. ','Para poder acceder a los mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido. En caso contrario no podra ver los mensajes',
           [{  text: 'Ok',      } ]);
@@ -606,17 +478,9 @@ export function Item(props) {
 
     try{
 
-          //console.log("notificando que su mensaje ha sido leido por abrir bandeja:")
+          
           const msgOrigen =statex$.default.userWhoSendMessage.get();
-          //
-          //console.log("msgOrigen")
-         // console.log(statex$.default.userWhoSendMessage.get());
-
-       //   if(msgOrigen !=''){
-
-           // console.log("notifyRead...")
-           // console.log( msgOrigen.idUser)
-           // console.log( msgOrigen.idMsg)
+        
            console.log("(openning) notificando q ya lo leyo el msg: "+ msgOrigen._id+" el miembro", user._id, "que esta en el grupo: ", group._id);
             const respo = await groupMessageController.notifyRead(
               accessToken,
@@ -624,11 +488,6 @@ export function Item(props) {
               msgOrigen.idMsg,
               group._id
             );
-
-           // console.log("Resultado de la operacion:",respo)
-         // }
-
-        
 
     }catch(errx){
    

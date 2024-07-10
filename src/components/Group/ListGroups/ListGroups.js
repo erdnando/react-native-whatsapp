@@ -1,17 +1,12 @@
 import { View, ScrollView, Text, Platform } from "react-native";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { map, size } from "lodash";
 import { Item } from "./Item";
 import { styles } from "./ListGroups.styles";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import { useAuth } from "../../../hooks";
-import * as statex$ from '../../../state/local';
-import { GET_STATE_GROUP_READ_MESSAGE_COUNT } 
-from '../../../hooks/useDA.js';
 
-import { socket } from "../../../utils";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -25,76 +20,14 @@ Notifications.setNotificationHandler({
 export function ListGroups(props) {
 
   const { groups, upGroupChat, upAllGroups, contador } = props;
-  const [expoPushToken, setExpoPushToken] = useState('');
-  const [grupoAfectado, setGrupoAfectado] = useState('');
-  const { accessToken, user } = useAuth();
-  const { arrContadores, setArrContadores } = useState([]);
-
 
   useEffect(()=>{
 
     registerForPushNotificationsAsync().then(
       (token) => token && setExpoPushToken(token),
     );
-
-
-    
   },[])
 
- 
-
-
-
-const getContador = async (grupo)=>{
-  //console.log("getting counter...."+ grupo);
- // let auxReturn =1;
-
-  
-   //console.log("async way")
-    let resAux=null;
-     await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
-        resAux=result.rows._array;
-       // console.log("selecting from db")
-        
-        if(resAux.length==0){
-         // console.log("returning 0")
-          return 0;
-        }else{
-          console.log("returning contador")
-          console.log(Number(resAux[0].contador))
-
-          return Number(resAux[0].contador);
-        }
-      
-    }); 
-  
-
-}
-
-
-  async function getCounter(grupo){
-  console.log("getting counter...."+ grupo);
-  // let auxReturn =1;
- 
-   
-    //console.log("async way")
-     let resAux=null;
-        await GET_STATE_GROUP_READ_MESSAGE_COUNT(grupo).then(result =>{
-         resAux=result.rows._array;
-        // console.log("selecting from db")
-         
-         if(resAux.length==0){
-           console.log("returning 0")
-           return 0;
-         }else{
-          // console.log("returning contador")
-          // console.log(Number(resAux[0].contador))
- 
-           return Number(resAux[0].contador);
-         }
-       
-     }); 
-}
 
 
 
