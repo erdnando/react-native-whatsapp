@@ -28,10 +28,9 @@ export function Participants(props) {
       let ms = d.getMilliseconds();
       statex$.default.lastBannedRequest.set(ms)//clean flag
       await groupController.ban(accessToken, _id, participant._id);
-      onReload();
-
       EventRegister.emit("participantsModified",true);
-
+      onReload();
+      
     } catch (error) {
       console.error(error);
     }

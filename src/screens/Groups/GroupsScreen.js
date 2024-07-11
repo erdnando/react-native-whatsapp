@@ -21,7 +21,7 @@ const userController = new User();
 export function GroupsScreen() {
   
   const navigation = useNavigation();
-  const { accessToken,updateUser } = useAuth();
+  const {accessToken,updateUser } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -54,6 +54,20 @@ export function GroupsScreen() {
     
         return ()=>{
           EventRegister.removeEventListener(eventContadores);
+        }
+  }, []);
+
+  //reloading groups
+  useEffect(() => {
+  
+       const updatingGroups = EventRegister.addEventListener("updatingGroups", async bFlag=> {
+         
+        upAllGroups();
+
+        });
+    
+        return ()=>{
+          EventRegister.removeEventListener(updatingGroups);
         }
   }, []);
 
@@ -159,6 +173,8 @@ export function GroupsScreen() {
   );
 
   //=====================FUNCIONES============================================================================
+
+  //get all groups
   const upAllGroups=async ()=>{
 
       let response = null;
@@ -208,15 +224,15 @@ export function GroupsScreen() {
       setGroups([...data]);
   };
 
-
+//upGroupChat={upGroupChat} 
     //=====================VIEW============================================================================
   if (!groupsResult) return <LoadingScreen />;
 
   return (
     <View>
       {size(groups) > 0 && <Search data={groups} setData={setGroupsResult} />}
-      <ListGroups groups={size(groups) === size(groupsResult) ? groups : groupsResult}
-                  upGroupChat={upGroupChat} upAllGroups={upAllGroups} contador= {arrContadores}
+      <ListGroups groups={size(groups) === size(groupsResult) ? groups : groupsResult} upAllGroups={upAllGroups} 
+                   contador= {arrContadores}
       />
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)}>

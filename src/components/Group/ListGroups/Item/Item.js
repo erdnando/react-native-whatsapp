@@ -33,8 +33,8 @@ const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
 
 export function Item(props) {
-
-  const { group, upGroupChat, upAllGroups, contador } = props;
+//,
+  const { group, upAllGroups,contador } = props;// upGroupChat, 
   const { accessToken, user } = useAuth();
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const [totalMembers, setTotalMembers] = useState(0);
@@ -107,27 +107,38 @@ export function Item(props) {
     // if(statex$.default.isConnected.get()){
     
         socket.emit("subscribe", user._id);
-        socket.on("message_invite", newInvite);//
         socket.on("read_messages", updateReadStatus);
         socket.on("group_banned", bannedGroup);//
-        socket.on("pushing_notification", newMessagex);//listenning new messages - just members
-        socket.on("pushing_notification_me", newMessagex_me);//listenning new messages - just me
+        socket.on("newMessagex", newMessagex);//listenning new messages - just members
+        socket.on("newMessagex_me", newMessagex_me);//listenning new messages - just me
+       // socket.on("pushing_notification", pushing_notification);//listenning new messages - just members
        // socket.on("reloadmsgs", reloadmsgs);
 
         return () => {
         socket.emit("unsubscribe", user._id);
-       /socket.off("message_invite", newInvite);//
         socket.off("read_messages", updateReadStatus);
         socket.off("group_banned", bannedGroup);//
-        socket.off("pushing_notification", newMessagex);
-        socket.off("pushing_notification_me", newMessagex_me);
+        socket.on("newMessagex", newMessagex);//listenning new messages - just members
+        socket.on("newMessagex_me", newMessagex_me);//listenning new messages - just me
+        //socket.off("pushing_notification", pushing_notification);
         }
       //};
     // }
     }, [grupoNotificado]);
 
 
+    useEffect(() => {
+      socket.emit("subscribe", `${user._id}_notify`);
+      socket.on("pushing_notification", pushing_notification);
 
+    }, [grupoNotificado]);
+
+
+    useEffect(() => {
+      socket.emit("subscribe", `${user._id}_invite`);
+      socket.on("newInvite", newInvite);
+
+    }, [grupoNotificado]);
 
 
   //Get messages read and totals
@@ -164,7 +175,7 @@ export function Item(props) {
 
             //==========================================================================================================
             const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-             // console.log("group list updated...");
+              console.log("participantsModified listener...");
             
                   try {
                     const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
@@ -204,31 +215,47 @@ export function Item(props) {
   }, [group._id]);
 
 
+
+
+   //Aviso de nuevo mensaje para el resto del grupo
+   const pushing_notification = async (msg) => {
+
+    //Notifications.dismissAllNotificationsAsync();
+    console.log("push notification")
+
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
+      console.log("notify por pushing_notification a nex message")
+  
+      // console.log("setting push notif message")
+       statex$.default.lastPushNotification.set(msg.message);
+  
+       //Push notification=========================================================
+         // console.log("push notification realmente enviada!!!!")
+         await Notifications.scheduleNotificationAsync({
+          content: {
+            title: "Secure chat: Nuevo mensaje!",
+            body: "Grupo: "+msg.message,
+            sound: true,
+          },
+          trigger: {
+            seconds: 2,
+            repeats:false
+          },
+        });
+        //LOCAL NOTIFICATION=================================================================
+   }
+  }
+
+
 //==============================================================================================================================================================================
   //Aviso de nuevo mensaje para el resto del grupo
   const newMessagex = async (msg) => {
     Notifications.dismissAllNotificationsAsync();
     if( statex$.default.lastPushNotification.get() !=  msg.message){
-      console.log("notify por pushing_notification a nex message")
+     // console.log("notify por pushing_notification a nex message")
   
-
-     //Push notification=========================================================
       // console.log("setting push notif message")
        statex$.default.lastPushNotification.set(msg.message);
-  
-      // console.log("push notification realmente enviada!!!!")
-      let notificationId = await Notifications.scheduleNotificationAsync({
-         content: {
-           title: "Secure chat: Nuevo mensaje!",
-           body: "Grupo: "+msg.message,
-           sound: true,
-         },
-         trigger: {
-           seconds: 1,
-           repeats:false
-         },
-       });
-       //LOCAL NOTIFICATION=================================================================
   
        let resAux=null;
        setGrupoNotificado(msg.group)
@@ -259,7 +286,7 @@ export function Item(props) {
   
   const newMessagex_me = async (msg) => {
     //console.log("notify por pushing_notification me")
-    Notifications.dismissAllNotificationsAsync();
+   Notifications.dismissAllNotificationsAsync();
 
     //console.log("notify por pushing_notification me x")
     if( statex$.default.lastPushNotification.get() !=  msg.message){
@@ -268,7 +295,7 @@ export function Item(props) {
 
        //New message============================================================
        statex$.default.lastPushNotification.set(msg.message);
-       EventRegister.emit("newMessagex_me",msg);
+      
 
        //Local Notify always 0 because it's himself===========================================================
        let resAux=null;
@@ -292,6 +319,9 @@ export function Item(props) {
            
          }); 
        //=======================================================================
+
+       EventRegister.emit("newMessagex_me",msg);
+
    }
   }
 
@@ -328,8 +358,56 @@ export function Item(props) {
                 console.log(error)
               }
             
-              upAllGroups();
+             // upAllGroups();
+              EventRegister.emit("updatingGroups",true);
       }
+  }
+
+  const newInvite = async (newData) => {
+    
+    console.log("si quiero invitarte....");
+   
+    //if(user._id != newData._id){
+      if( statex$.default.lastGroupInvitation.get() !=  newData.message){
+
+            //console.log("New group invite to participate, please reload group list!!!!")
+            //console.log(newData)
+            statex$.default.lastGroupInvitation.set(newData.message);
+
+            Notifications.scheduleNotificationAsync({
+              content: {
+                title: "Secure chat: Invitacion nuevo grupo!",
+                body: "Grupo: "+newData.name,
+                sound: true,//true // or sound: "default"
+              },
+              trigger: {
+                seconds: 1,
+              },
+            });
+      
+            try {
+             // console.log("Anadiendo relacion grupo-llave en la invitacion")
+            
+            
+              let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
+
+              const fechaAlta = new Date().toISOString();
+              ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
+
+            } catch (error) {
+              console.log("Error al insertar relacion grupo, llave")
+              console.log(error)
+            }
+          
+        
+          
+            upAllGroups();
+        //}
+      }
+    
+   
+
+
   }
 
   const updateReadStatus = async (idMsg) => {
@@ -366,57 +444,8 @@ export function Item(props) {
 
   }
 
-  const newInvite = async (newData) => {
-    
-    
-      //console.log("si quiero invitarte....")
-    //if(user._id != newData._id){
-      if( statex$.default.lastGroupInvitation.get() !=  newData.message){
-
-            //console.log("New group invite to participate, please reload group list!!!!")
-            //console.log(newData)
-            statex$.default.lastGroupInvitation.set(newData.message);
-
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Secure chat: Invitacion nuevo grupo!",
-                body: "Grupo: "+newData.name,
-                sound: true,//true // or sound: "default"
-              },
-              trigger: {
-                seconds: 1,
-              },
-            });
-      
-            try {
-             // console.log("Anadiendo relacion grupo-llave en la invitacion")
-            
-            
-              let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
-             // console.log("llaveIni")
-             // console.log(llaveIni)
-             // console.log("Grupo id")
-             // console.log(newData._id)
-             // console.log(newData.tipo)
-
-              const fechaAlta = new Date().toISOString();
-              ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
-
-            } catch (error) {
-              console.log("Error al insertar relacion grupo, llave")
-              console.log(error)
-            }
-          
-        
-          
-            upAllGroups();
-        //}
-      }
-    
-   
-
-
-  }
+  
+  
 
   const newMessage = async (newMsg) => {
 
@@ -433,7 +462,7 @@ export function Item(props) {
 
       if (newMsg.user._id !== user._id) {
 
-        upGroupChat(newMsg.group);
+        //upGroupChat(newMsg.group);
 
         statex$.default.setLastMessage.set(newMsg);
 

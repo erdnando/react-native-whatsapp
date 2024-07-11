@@ -398,16 +398,37 @@ export function GroupScreen() {
 
     socket.emit("subscribe", groupId);
     socket.on("reloadmsgs", reloadmsgs);
+    socket.on("refreshDelete", refreshDelete);
 
       return () => {
         socket.emit("unsubscribe", groupId);
-       // socket.off("message", newMessage);
         socket.off("reloadmsgs", reloadmsgs);
+        socket.on("refreshDelete", refreshDelete);
       };
 
   }, [groupId, messages]);
 
 
+
+  const refreshDelete = async (msg)=>{
+   
+    if( statex$.default.lastPushNotification.get() !=  msg.message){
+    
+      console.log("reloading....");
+      console.log(msg);
+      
+      if(groupId== msg.group_id){
+        statex$.default.moveScroll.set(false);
+        getAllMessages(true);
+
+       // setMessages(messages)
+      }
+      
+      statex$.default.lastPushNotification.set(msg.message);
+
+    }
+
+  }
 
   const reloadmsgs = async (msg)=>{
    
@@ -420,7 +441,7 @@ export function GroupScreen() {
         statex$.default.moveScroll.set(true);
         getAllMessages(true);
 
-        setMessages(messages)
+       // setMessages(messages)
       }
       
       statex$.default.lastPushNotification.set(msg.message);
@@ -520,8 +541,8 @@ export function GroupScreen() {
               }
              
             });
-           console.log("Setting messages from server...................")
-           console.log(unlockedMessages)
+          // console.log("Setting messages from server...................")
+          // console.log(unlockedMessages)
             setMessages(unlockedMessages);
          
           //==============================================================================

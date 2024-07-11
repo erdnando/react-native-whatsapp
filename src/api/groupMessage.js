@@ -125,8 +125,8 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
       const response = await fetch(url, params);
       let resultAPI = await response.json();
 
-      console.log("getting all messages by group");
-      console.log(resultAPI);
+     // console.log("getting all messages by group");
+     // console.log(resultAPI);
       EventRegister.emit("loadingEvent",false);
       if (response.status !== 200) throw resultAPI;
      

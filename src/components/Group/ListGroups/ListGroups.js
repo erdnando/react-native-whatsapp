@@ -19,7 +19,7 @@ Notifications.setNotificationHandler({
 
 export function ListGroups(props) {
 
-  const { groups, upGroupChat, upAllGroups, contador } = props;
+  const { groups, upAllGroups, contador } = props;  //upGroupChat
 
   useEffect(()=>{
 
@@ -29,7 +29,7 @@ export function ListGroups(props) {
   },[])
 
 
-
+//upGroupChat={upGroupChat}
 
   return (
     <ScrollView alwaysBounceVertical={false}>
@@ -40,8 +40,7 @@ export function ListGroups(props) {
           </Text>
         ) : (
           map(groups, (group) => (
-            <Item key={group._id} group={group} upGroupChat={upGroupChat} upAllGroups={upAllGroups} 
-                  contador={contador}  />
+            <Item key={group._id} group={group} upAllGroups={upAllGroups}   contador={contador}  />
           ))
          
         )}
