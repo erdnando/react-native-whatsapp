@@ -735,9 +735,9 @@ export function GroupForm(props) {
             backgroundColor: "rgba(60, 60, 60, 0)",
             justifyContent: "center",
             alignItems: "center",}}>
-          <Spinner accessibilityLabel="Loading posts" size="xlg" color="indigo.100" />
+         <Spinner accessibilityLabel="Loading posts" size="xlg" color="transparent" />
           <Heading color="white" fontSize="lg">
-          
+          ...
           </Heading>
         </View>
         );  }

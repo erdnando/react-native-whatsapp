@@ -107,20 +107,15 @@ export function Item(props) {
     // if(statex$.default.isConnected.get()){
     
         socket.emit("subscribe", user._id);
-        socket.on("read_messages", updateReadStatus);
         socket.on("group_banned", bannedGroup);//
         socket.on("newMessagex", newMessagex);//listenning new messages - just members
         socket.on("newMessagex_me", newMessagex_me);//listenning new messages - just me
-       // socket.on("pushing_notification", pushing_notification);//listenning new messages - just members
-       // socket.on("reloadmsgs", reloadmsgs);
 
         return () => {
         socket.emit("unsubscribe", user._id);
-        socket.off("read_messages", updateReadStatus);
         socket.off("group_banned", bannedGroup);//
-        socket.on("newMessagex", newMessagex);//listenning new messages - just members
-        socket.on("newMessagex_me", newMessagex_me);//listenning new messages - just me
-        //socket.off("pushing_notification", pushing_notification);
+        socket.off("newMessagex", newMessagex);//listenning new messages - just members
+        socket.off("newMessagex_me", newMessagex_me);//listenning new messages - just me
         }
       //};
     // }
@@ -238,7 +233,7 @@ export function Item(props) {
             sound: true,
           },
           trigger: {
-            seconds: 2,
+            seconds: 1,
             repeats:false
           },
         });
@@ -410,13 +405,13 @@ export function Item(props) {
 
   }
 
-  const updateReadStatus = async (idMsg) => {
+  /*const updateReadStatus = async (idMsg) => {
        console.log("notificando que alguien del grupo ya leyo el id mensaje::::",idMsg)
        //TODO
        //Update message with id parameter to read 6668cdd759b7edbfb183c0dd
        EventRegister.emit("idMessagevisto",idMsg);
-}
-
+}*/
+/*
   const newPushnotification = async (msg) => {
    
   
@@ -443,9 +438,6 @@ export function Item(props) {
         }
 
   }
-
-  
-  
 
   const newMessage = async (newMsg) => {
 
@@ -474,7 +466,7 @@ export function Item(props) {
       }
     }
   };
-
+*/
   //==================================================================================================================================================================================
   const  openGroup = async () => {
 
@@ -496,7 +488,7 @@ export function Item(props) {
     console.log("openning group.."+group._id );
 
    
-    statex$.default.cifrado.set("SI")
+    statex$.default.cifrado.set("SI");
   
     if(group.creator._id != user._id &&  statex$.default.llaveGrupoSelected.get() == undefined){
           Alert.alert ('Grupo cerrado. ','Para poder acceder a los mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido. En caso contrario no podra ver los mensajes',
@@ -506,15 +498,15 @@ export function Item(props) {
       setTotalUnreadMessages(0);
 
     try{
-
-          
-          const msgOrigen =statex$.default.userWhoSendMessage.get();
+   
+          //const msgOrigen =statex$.default.userWhoSendMessage.get();
         
-           console.log("(openning) notificando q ya lo leyo el msg: "+ msgOrigen._id+" el miembro", user._id, "que esta en el grupo: ", group._id);
+           console.log("(openning) notificando q ya leyo msg el miembro", user._id, " en el grupo: ", group._id);
+
+           //Solicitandi q se actualicen en visto todos los mensajes del grupo al q estoy accediendo
             const respo = await groupMessageController.notifyRead(
               accessToken,
               user._id,
-              msgOrigen.idMsg,
               group._id
             );
 
@@ -527,6 +519,8 @@ export function Item(props) {
    // console.log('reseteando contador del grupo', group._id)
     UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( group._id,  0 );
     EventRegister.emit("updatingContadores",true);
+
+    statex$.default.fromOpenning.set(true);
 
     navigation.navigate(screens.global.groupScreen, { groupId: group._id, tipo: group.tipo, creator: group.creator });
   };

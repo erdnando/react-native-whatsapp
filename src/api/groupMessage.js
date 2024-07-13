@@ -71,7 +71,7 @@ export class GroupMessage {
 //=====================================================================================================
 
 
-async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
+async notifyRead(accessToken, idUser,grupoAbierto) {
 
   try {
    // console.log("idMsg enviado a notify read")
@@ -85,8 +85,7 @@ async notifyRead(accessToken, idUser, idMsg,grupoAbierto) {
         },
         body: JSON.stringify({
           idUser: idUser,
-          idMsg: idMsg,
-          grupoAbierto:grupoAbierto
+          group_id:grupoAbierto
         }),
       };
 

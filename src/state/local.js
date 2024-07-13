@@ -30,6 +30,7 @@ const state$ = observable({
   messagesx:[],
   cifrado:"SI",
   arrContadores:[],
+  fromOpenning:false,
   user:[{
      _id :"0",
      email :"",
