@@ -609,7 +609,7 @@ export function GroupScreen() {
              
             });
           // console.log("Setting messages from server...................")
-          // console.log(unlockedMessages)
+           console.log(unlockedMessages)
             setMessages(unlockedMessages);
             console.log("setting messages and reload again.....")
          

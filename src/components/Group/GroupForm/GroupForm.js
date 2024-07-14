@@ -362,7 +362,7 @@ export function GroupForm(props) {
       [{  text: 'Ok',      } ]);
       return;
     }
-              
+       
       //console.log("sending msg into selected group:::::::::::");
     
       groups.map(async (gpo) => {
@@ -373,6 +373,7 @@ export function GroupForm(props) {
          // console.log(gpo)
           //TODO validat tipo cifrado, no llega l mensaje destino
           if(forwardMessage.type=="TEXT"){
+          
             await groupMessageController.sendText(accessToken , gpo._id , "reenviado::"+forwardMessage.message, forwardMessage.tipo_cifrado, null );
           }
           else if(forwardMessage.type=="IMAGE"){
@@ -383,34 +384,6 @@ export function GroupForm(props) {
             
             await groupMessageController.sendTextForwardFile(accessToken , gpo._id , forwardMessage.message, "BASE64" );
           }
-            
-            //here  sound
-            /*const initialStatus = {
-              volume: 1,
-            };
-            
-            const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
-            await sound.playAsync();*/
-            
-            //TODO, it seems this sound, never will be sent
-            /*console.log("playing audio........1")
-            Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Secure chat: Un nuevo mensaje!",
-                body: forwardMessage.message,
-                sound: true,//true // or sound: "default"
-              },
-              trigger: {
-                seconds: 1,
-              },
-            });*/
-      
-           /* await Notifications.setNotificationChannelAsync('default', {
-              name: 'default',
-              importance: Notifications.AndroidImportance.MAX,
-              vibrationPattern: [0, 250, 250, 250],
-              lightColor: '#FF231F7C',
-            });*/
 
         } 
       });
@@ -574,6 +547,7 @@ export function GroupForm(props) {
         
         //=================================================================
         const eventEditMessage = EventRegister.addEventListener("editingMessage", async data=>{
+         // console.log("editado paso por aqui1")
           setIdMessage("");
           //console.log("message._id:"+data._id);
           setIdMessage(data._id);
@@ -647,14 +621,6 @@ export function GroupForm(props) {
     validateOnChange: false,
     onSubmit: async (formValue) => {
 
-      //here  sound
-      /*const initialStatus = {
-        volume: 0.1,
-      };
-      
-      const { sound } = await Audio.Sound.createAsync( require('../../../assets/newmsg.wav'),initialStatus);
-      await sound.playAsync();*/
-
       if(statex$.default.llaveGrupoSelected.get()==undefined){
 
         Alert.alert ('LLave requerida. ','Para poder enviar mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido',
@@ -695,7 +661,7 @@ export function GroupForm(props) {
         //process();
        //Envio de mensajes
       // console.log("tipo cifrado::"+tipoCifrado);
-       
+      //console.log("editado paso por aqui 2::::"+idMessage)  
        if(idMessage==""){
         //llamada normal, nuevo mensaje
         //replyMessage==null if you like a normal message

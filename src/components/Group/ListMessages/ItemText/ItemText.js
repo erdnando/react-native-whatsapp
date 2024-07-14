@@ -28,6 +28,7 @@ export function ItemText(props) {
   const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState(false);
+
   const [showImagen,setShowImagen]=useState(false)
   const [imageUri, setImageUri]=useState("https://toppng.com/uploads/preview/online-chat-icon-png-11553724429hinzyclu43.png")
   const [isConnected,setIsConnected]=useState(false) 
@@ -43,7 +44,6 @@ export function ItemText(props) {
     setMensajeEliminar(null);
   }
 
-  
   const onEliminarMensajeParaMi = () => {
 
     setShowAdvertencia(false);
@@ -52,12 +52,16 @@ export function ItemText(props) {
     EventRegister.emit("deletingMessageForMe",mensajeEliminar);  //
     setMensajeEliminar(null);
   }
+ 
 
   //Identifica modo avanzado basado en el estatus de cifrado
   useEffect( () => {
 
     setIsConnected(statex$.default.isConnected.get())
     setForwarded(message.forwarded);
+    console.log("message")
+    console.log(message)
+    setEditado(message.edited_message);
     //console.log("forwarded??")
     //console.log(message.forwarded)
     
@@ -70,18 +74,13 @@ export function ItemText(props) {
       setReplicado(false);
     }
   
-    if(createMessage.getTime() ==updatedMessage.getTime() ){
-      // console.log("mismas fechas no editado")
+    /*if(createMessage.getTime() ==updatedMessage.getTime() ){
        setEditado(false)
     }else{
-    
-       // console.log("diferentes fechas y dif mensaje")
         setEditado(true)
-      
-     
-    }
+    }*/
 
-   
+    
 
     async function fetchData() {
 

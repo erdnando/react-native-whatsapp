@@ -19,13 +19,13 @@ import * as TaskManager from 'expo-task-manager';
 
 //====================PUSH NOTIFICATIONS=================================================================================
 
-Notifications.setNotificationHandler({
+/*Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
-});
+});*/
 
 //=====================================================================================================
 const groupMessageController = new GroupMessage();
@@ -40,7 +40,7 @@ export function Item(props) {
   const [totalMembers, setTotalMembers] = useState(0);
   const [lastMessage, setLastMessage] = useState(null);
   const [contadorAux, setContadorAux] = useState(0);
-  const [grupoNotificado, setGrupoNotificado] = useState('');
+  //const [grupoNotificado, setGrupoNotificado] = useState('');
   const [appState, setAppState] = useState(AppState.currentState);
   const navigation = useNavigation();
   const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
@@ -100,24 +100,24 @@ export function Item(props) {
 
   }, [])
   
- 
-  {/*Read messages socket listener*/}
+ /*
+  //Read messages socket listener
   useEffect(() => {
    
     // if(statex$.default.isConnected.get()){
     
         socket.emit("subscribe", user._id);
-        socket.on("group_banned", bannedGroup);//
-        socket.on("newMessagex", newMessagex);//listenning new messages - just members
-        socket.on("newMessagex_me", newMessagex_me);//listenning new messages - just me
+        socket.on("group_banned", bannedGroup);
+        socket.on("newMessagex", newMessagex);
+        socket.on("newMessagex_me", newMessagex_me);
 
         return () => {
         socket.emit("unsubscribe", user._id);
-        socket.off("group_banned", bannedGroup);//
-        socket.off("newMessagex", newMessagex);//listenning new messages - just members
-        socket.off("newMessagex_me", newMessagex_me);//listenning new messages - just me
+        socket.off("group_banned", bannedGroup);
+        socket.off("newMessagex", newMessagex);
+        socket.off("newMessagex_me", newMessagex_me);
         }
-      //};
+      
     // }
     }, [grupoNotificado]);
 
@@ -134,15 +134,13 @@ export function Item(props) {
       socket.on("newInvite", newInvite);
 
     }, [grupoNotificado]);
-
+*/
 
   //Get messages read and totals
   useEffect(() => {
 
     (async () => {
       try {
-
-           
           // console.log("El contador se actualizo.................")
          //  console.log(contador)
            const cont = contador?.find(o => o.groupId === group._id);
@@ -213,7 +211,7 @@ export function Item(props) {
 
 
    //Aviso de nuevo mensaje para el resto del grupo
-   const pushing_notification = async (msg) => {
+   /*const pushing_notification = async (msg) => {
 
     //Notifications.dismissAllNotificationsAsync();
     console.log("push notification")
@@ -239,11 +237,12 @@ export function Item(props) {
         });
         //LOCAL NOTIFICATION=================================================================
    }
-  }
+  }*/
 
 
 //==============================================================================================================================================================================
   //Aviso de nuevo mensaje para el resto del grupo
+  /*
   const newMessagex = async (msg) => {
     Notifications.dismissAllNotificationsAsync();
     if( statex$.default.lastPushNotification.get() !=  msg.message){
@@ -318,9 +317,9 @@ export function Item(props) {
        EventRegister.emit("newMessagex_me",msg);
 
    }
-  }
+  }*/
 
-  const bannedGroup = async (newData) => {
+  /*const bannedGroup = async (newData) => {
     console.log("si quiero banearte....")
     if( statex$.default.lastBannedRequest.get() !=  newData.message){
 
@@ -356,9 +355,9 @@ export function Item(props) {
              // upAllGroups();
               EventRegister.emit("updatingGroups",true);
       }
-  }
+  }*/
 
-  const newInvite = async (newData) => {
+  /*const newInvite = async (newData) => {
     
     console.log("si quiero invitarte....");
    
@@ -382,8 +381,6 @@ export function Item(props) {
       
             try {
              // console.log("Anadiendo relacion grupo-llave en la invitacion")
-            
-            
               let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
 
               const fechaAlta = new Date().toISOString();
@@ -399,74 +396,8 @@ export function Item(props) {
             upAllGroups();
         //}
       }
-    
-   
+  }*/
 
-
-  }
-
-  /*const updateReadStatus = async (idMsg) => {
-       console.log("notificando que alguien del grupo ya leyo el id mensaje::::",idMsg)
-       //TODO
-       //Update message with id parameter to read 6668cdd759b7edbfb183c0dd
-       EventRegister.emit("idMessagevisto",idMsg);
-}*/
-/*
-  const newPushnotification = async (msg) => {
-   
-  
-
-         if( statex$.default.lastPushNotification.get() !=  msg.message){
-
-          //Push notification=========================================================
-            //console.log("setting push notif message")
-            statex$.default.lastPushNotification.set(msg.message);
-
-            //console.log("push notification realmente enviada!!!!")
-            await Notifications.scheduleNotificationAsync({
-              content: {
-                title: "Secure chat: Nuevo mensaje!",
-                body: "Grupo: "+msg.message,
-                sound: true,
-              },
-              trigger: {
-                seconds: 1,
-              },
-            });
-     
-            
-        }
-
-  }
-
-  const newMessage = async (newMsg) => {
-
-    statex$.default.moveScroll.set(true);
-
-    const msgOrigen={
-      idUser: newMsg.user._id,
-      idMsg: newMsg._id,
-    }
-    statex$.default.userWhoSendMessage.set(msgOrigen)
-    
-
-    if (newMsg.group === group._id) {
-
-      if (newMsg.user._id !== user._id) {
-
-        //upGroupChat(newMsg.group);
-
-        statex$.default.setLastMessage.set(newMsg);
-
-        const activeGroupId = await AsyncStorage.getItem(ENV.ACTIVE_GROUP_ID);
-
-        if (activeGroupId !== newMsg.group) {
-          setTotalUnreadMessages((prevState) => prevState + 1);
-        }
-      }
-    }
-  };
-*/
   //==================================================================================================================================================================================
   const  openGroup = async () => {
 
@@ -498,9 +429,6 @@ export function Item(props) {
       setTotalUnreadMessages(0);
 
     try{
-   
-          //const msgOrigen =statex$.default.userWhoSendMessage.get();
-        
            console.log("(openning) notificando q ya leyo msg el miembro", user._id, " en el grupo: ", group._id);
 
            //Solicitandi q se actualicen en visto todos los mensajes del grupo al q estoy accediendo

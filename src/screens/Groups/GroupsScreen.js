@@ -5,28 +5,270 @@ import { IconButton, AddIcon } from "native-base";
 import { size } from "lodash";
 import { Group,Auth,User } from "../../api";
 import { useAuth } from "../../hooks";
-import { screens,MD5method } from "../../utils";
+import { screens,MD5method,socket } from "../../utils";
 import { LoadingScreen } from "../../components/Shared";
 import { ListGroups, Search } from "../../components/Group";
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
-import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL } from '../../hooks/useDA';
+import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL,DELETE_STATE_GROUP_LLAVE_BY_ID,
+  GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT
+ } from '../../hooks/useDA';
 import { EventRegister } from "react-native-event-listeners";
-
+import * as Notifications from 'expo-notifications';
 
 const groupController = new Group();
 const authController = new Auth();
 const userController = new User();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 export function GroupsScreen() {
   
   const navigation = useNavigation();
-  const {accessToken,updateUser } = useAuth();
+  const {accessToken,updateUser,user } = useAuth();
   const [groups, setGroups] = useState(null);
   const [groupsResult, setGroupsResult] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [arrContadores, setArrContadores] = useState(null);
   const [nip, setNip] = useState("00000000");
+
+  const [grupoNotificado, setGrupoNotificado] = useState('');
+
+
+
+
+   {/*Read messages socket listener*/}
+   useEffect(() => {
+   
+    // if(statex$.default.isConnected.get()){
+        socket.emit("subscribe", user._id);
+        socket.on("group_banned", bannedGroup);
+        socket.on("newMessagex", newMessagex);
+        socket.on("newMessagex_me", newMessagex_me);
+
+        return () => {
+        socket.emit("unsubscribe", user._id);
+        socket.off("group_banned", bannedGroup);
+        socket.off("newMessagex", newMessagex);
+        socket.off("newMessagex_me", newMessagex_me);
+        }
+      
+    // }
+    }, [grupoNotificado]);
+
+
+    useEffect(() => {
+      socket.emit("subscribe", `${user._id}_notify`);
+      socket.on("pushing_notification", pushing_notification);
+
+    }, [grupoNotificado]);
+
+
+    useEffect(() => {
+      socket.emit("subscribe", `${user._id}_invite`);
+      socket.on("newInvite", newInvite);
+
+    }, [grupoNotificado]);
+
+
+
+
+
+    const bannedGroup = async (newData) => {
+      console.log("si quiero banearte....")
+      if( statex$.default.lastBannedRequest.get() !=  newData.message){
+  
+                console.log("Banned from group, please reload group list!!!!")
+                statex$.default.lastBannedRequest.set(newData.message);
+                console.log("push notification realmente enviada!!!!")
+  
+                console.log(newData)
+        
+                await Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: "Secure chat: Ha sido removido del grupo!",
+                    body: "Grupo: "+newData.name,
+                    sound: true,
+                  },
+                  trigger: {
+                    seconds: 1,
+                  },
+                });
+          
+                try {
+                  console.log("Removing relacion grupo-llave en la invitacion")
+                  console.log("Grupo id")
+                  console.log(newData._id)
+        
+                  DELETE_STATE_GROUP_LLAVE_BY_ID(newData._id);
+        
+                } catch (error) {
+                  console.log("Error al eliminar relacion grupo, llave")
+                  console.log(error)
+                }
+              
+               // upAllGroups();
+                EventRegister.emit("updatingGroups",true);
+        }
+    }
+
+    const newMessagex = async (msg) => {
+      Notifications.dismissAllNotificationsAsync();
+      if( statex$.default.lastPushNotification.get() !=  msg.message){
+       // console.log("notify por pushing_notification a nex message")
+    
+        // console.log("setting push notif message")
+         statex$.default.lastPushNotification.set(msg.message);
+    
+         let resAux=null;
+         setGrupoNotificado(msg.group)
+
+         await GET_STATE_GROUP_READ_MESSAGE_COUNT(msg.group).then(result =>{
+               resAux=result.rows._array;
+  
+               if(resAux.length==0){
+               // console.log("No se encontro el grupo")
+                // console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+                 ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,1);
+                EventRegister.emit("updatingContadores",true);
+               }else{
+                if(resAux[0].contador==null)resAux[0].contador=0;
+    
+                 let numberAux =Number(resAux[0].contador)+1;
+                 UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,  numberAux );
+                EventRegister.emit("updatingContadores",true);
+               }
+             
+           }); 
+    
+         //New message============================================================
+         EventRegister.emit("newMessagex",msg);
+         //=======================================================================
+         EventRegister.emit("updatingContadores",true);
+     }
+    }
+    
+    const newMessagex_me = async (msg) => {
+      //console.log("notify por pushing_notification me")
+     Notifications.dismissAllNotificationsAsync();
+  
+      //console.log("notify por pushing_notification me x")
+      if( statex$.default.lastPushNotification.get() !=  msg.message){
+          console.log("notify por pushing_notification me")
+  
+  
+         //New message============================================================
+         statex$.default.lastPushNotification.set(msg.message);
+        
+  
+         //Local Notify always 0 because it's himself===========================================================
+         let resAux=null;
+         await GET_STATE_GROUP_READ_MESSAGE_COUNT(msg.group).then(result =>{
+               resAux=result.rows._array;
+  
+    
+               if(resAux.length==0){
+                 //add it
+                 //console.log("ADD_STATE_GROUP_READ_MESSAGE_COUNT " + msg.group);
+                 ADD_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,0);
+                 EventRegister.emit("updatingContadores",true);
+  
+               }else{
+                if(resAux[0].contador==null)resAux[0].contador=0;
+    
+                 UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( msg.group,  0 );
+                 EventRegister.emit("updatingContadores",true);
+  
+               }
+             
+           }); 
+         //=======================================================================
+  
+         EventRegister.emit("newMessagex_me",msg);
+  
+     }
+    }
+
+    const pushing_notification = async (msg) => {
+
+      //Notifications.dismissAllNotificationsAsync();
+      console.log("push notification")
+  
+      if( statex$.default.lastPushNotification.get() !=  msg.message){
+        console.log("notify por pushing_notification a nex message")
+    
+        // console.log("setting push notif message")
+         statex$.default.lastPushNotification.set(msg.message);
+    
+         //Push notification=========================================================
+           // console.log("push notification realmente enviada!!!!")
+           await Notifications.scheduleNotificationAsync({
+            content: {
+              title: "Secure chat: Nuevo mensaje!",
+              body: "Grupo: "+msg.message,
+              sound: true,
+            },
+            trigger: {
+              seconds: 1,
+              repeats:false
+            },
+          });
+          //LOCAL NOTIFICATION=================================================================
+     }
+    }
+
+    const newInvite = async (newData) => {
+    
+      console.log("si quiero invitarte....");
+     
+      //if(user._id != newData._id){
+        if( statex$.default.lastGroupInvitation.get() !=  newData.message){
+  
+              //console.log("New group invite to participate, please reload group list!!!!")
+              //console.log(newData)
+              statex$.default.lastGroupInvitation.set(newData.message);
+  
+              Notifications.scheduleNotificationAsync({
+                content: {
+                  title: "Secure chat: Invitacion nuevo grupo!",
+                  body: "Grupo: "+newData.name,
+                  sound: true,//true // or sound: "default"
+                },
+                trigger: {
+                  seconds: 1,
+                },
+              });
+        
+              try {
+               // console.log("Anadiendo relacion grupo-llave en la invitacion")
+                let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
+  
+                const fechaAlta = new Date().toISOString();
+                ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
+  
+              } catch (error) {
+                console.log("Error al insertar relacion grupo, llave")
+                console.log(error)
+              }
+            
+          
+            
+              upAllGroups();
+          //}
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -38,7 +280,7 @@ export function GroupsScreen() {
        const eventContadores = EventRegister.addEventListener("updatingContadores", async bFlag=> {
          
               try {
-      
+      console.log("Updating contadores...")
                 await GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL().then(result =>{
                   resAux=result.rows._array;
                
@@ -73,6 +315,11 @@ export function GroupsScreen() {
 
 
 //=====================ON_LOAD============================================================================
+useEffect(() => {
+  EventRegister.emit("updatingContadores",true);//check it!!!
+
+}, [])
+
 
   //Valida 1a vez y presenta NIP inicial
   useEffect(() => {
