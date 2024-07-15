@@ -13,6 +13,7 @@ export const styles = new StyleSheet.create({
     marginBottom: 10,
   },
   text: {
+    
     color: "#fff",
     fontSize: 16,
   },

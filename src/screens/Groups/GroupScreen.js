@@ -412,7 +412,7 @@ export function GroupScreen() {
     if( (groupId == data.group_id) && (messages !=null && messages.length>0)){
 
 
-     
+        console.log("Actualizando mensajes....")
         statex$.default.moveScroll.set(true);
         getAllMessages(true);
 
@@ -609,9 +609,12 @@ export function GroupScreen() {
              
             });
           // console.log("Setting messages from server...................")
-           console.log(unlockedMessages)
+          console.log("mensajes actualizados...")
+           console.log(unlockedMessages);
+           
+           //setDrop(unlockedMessages.length)
             setMessages(unlockedMessages);
-            console.log("setting messages and reload again.....")
+            console.log("setting messages and reload again.....1")
          
           //==============================================================================
         }

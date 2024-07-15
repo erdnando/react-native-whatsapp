@@ -1,13 +1,13 @@
 import { View, Text,Pressable,Clipboard } from "react-native";
 import { Menu,Icon,AlertDialog,Button } from 'native-base';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState, useEffect,useRef } from "react";
+import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 import { useAuth } from "../../../../hooks";
 import { styled } from "./ItemText.styles";
 import { Auth } from '../../../../api';
 import { EventRegister } from "react-native-event-listeners";
-import { ENV,Decrypt,Encrypt } from "../../../../utils";
+import { ENV } from "../../../../utils";
 import AutoHeightImage from "react-native-auto-height-image";
 import * as statex$ from '../../../../state/local'
 
@@ -21,11 +21,12 @@ export function ItemText(props) {
   const styles = styled(isMe);
   const createMessage = new Date(message.createdAt);
   const updatedMessage = new Date(message.updatedAt);
+  const editadox = message.edited_message;
 
   const [modoAvanzado, setmodoAvanzado] = useState(false);
   const [showAdvertencia, setShowAdvertencia] = useState(false);
   const [mensajeEliminar, setMensajeEliminar] = useState(null);
-  const [editado, setEditado] = useState(false);
+  //const [editado, setEditado] = useState(false);
   const [replicado, setReplicado] = useState(false);
   const [forwarded, setForwarded] = useState(false);
 
@@ -61,7 +62,7 @@ export function ItemText(props) {
     setForwarded(message.forwarded);
     console.log("message")
     console.log(message)
-    setEditado(message.edited_message);
+    //setEditado(message.edited_message);
     //console.log("forwarded??")
     //console.log(message.forwarded)
     
@@ -79,6 +80,8 @@ export function ItemText(props) {
     }else{
         setEditado(true)
     }*/
+
+       
 
     
 
@@ -307,7 +310,7 @@ export function ItemText(props) {
               </View>
 
                {/*hora del mensaje editado*/}
-               <View display={editado?"flex":"none"}>
+               <View display={editadox?"flex":"none"}>
                 <Text  style={styles.dateEditado}  >
                   {"Editado: " + DateTime.fromISO(updatedMessage.toISOString()).toFormat("dd/MM/yy    HH:mm")}
                 </Text>

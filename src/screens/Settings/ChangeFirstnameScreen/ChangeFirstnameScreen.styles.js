@@ -6,8 +6,8 @@ export const styles = new StyleSheet.create({
     marginTop: 20,
   },
   input: {
-    backgroundColor: "#202020",
-    color: "#fff",
+    backgroundColor: "white",
+    color: "black",
     fontSize: 18,
     marginVertical: 5,
   },

@@ -2,11 +2,11 @@ import { StyleSheet } from "react-native";
 
 export const styles = new StyleSheet.create({
   content: {
-    padding: 10,
+    padding: 20,
   },
   input: {
-    backgroundColor: "#29292b",
-    color: "#fff",
+    backgroundColor: "#d9d3d3",
+    color: "black",
     fontSize: 16,
     borderRadius: 10,
   },

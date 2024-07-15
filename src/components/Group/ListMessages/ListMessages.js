@@ -51,6 +51,7 @@ export function ListMessages(props) {
                       
                       if (message.type === "TEXT") {
                         //if(statex$.default.actualizaEstatus.get()){ if(message._id === statex$.default.idMessageEstatus.get()){ message.estatus="LEIDO"};   }
+                        
                         return <ItemText key={message._id} message={message} />;
                       }
                       if (message.type === "IMAGE") {
