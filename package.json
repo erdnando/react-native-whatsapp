@@ -42,6 +42,7 @@
     "expo-task-manager": "~11.8.2",
     "expo-video": "^1.1.10",
     "expo-web-browser": "~13.0.3",
+    "firebase": "^10.12.4",
     "formik": "^2.2.9",
     "install": "^0.13.0",
     "intl": "^1.2.5",

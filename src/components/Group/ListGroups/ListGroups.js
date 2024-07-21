@@ -6,7 +6,8 @@ import { styles } from "./ListGroups.styles";
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-
+import { initializeApp } from 'firebase/app';
+import { getDatabase, ref, onValue }  from 'firebase/database'
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -21,6 +22,24 @@ export function ListGroups(props) {
 
   const { groups, upAllGroups, contador } = props;  //upGroupChat
 
+  const firebaseConfig = {
+    apiKey: 'AIzaSyAkll4IuB-ps6UZvYCFyBJFNMW2z6Djm7I',
+    projectId: "chat-37d8f",
+    databaseURL: "https://chat-37d8f-default-rtdb.firebaseio.com",
+    appId:'1:870085043873:android:fde602b8b71dc935aa72e0',
+    
+  };
+  
+  const appx = initializeApp(firebaseConfig);
+  const databasefb = getDatabase(appx);
+
+  const starCountRef = ref(databasefb);
+  onValue(starCountRef, (snapshot) => {
+    console.log("Cambio en db firebase.....");
+    console.log(snapshot.val());
+  
+  });
+    
   useEffect(()=>{
 
     registerForPushNotificationsAsync().then(
