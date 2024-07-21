@@ -32,7 +32,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.erdnando.chatapp"
+      "package": "com.erdnando.chatapp",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -43,6 +44,7 @@
       }
     },
     "plugins": [
+      "@react-native-firebase/app",
       [
         "expo-media-library",
         {

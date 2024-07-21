@@ -15,7 +15,7 @@ import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBY
   GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE, ADD_STATE_MY_DELETED_MESSAGES } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import * as Notifications from "expo-notifications";
+//import * as Notifications from "expo-notifications";
 
 
 
@@ -24,13 +24,13 @@ const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
 
-Notifications.setNotificationHandler({
+/*Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
   }),
-});
+});*/
 
 export function GroupScreen() {
 

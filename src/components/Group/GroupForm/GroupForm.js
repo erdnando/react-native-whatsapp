@@ -14,19 +14,19 @@ import { Audio, InterruptionModeAndroid } from 'expo-av';
 import useInterval from 'use-interval'
 import { fileExpoFormat } from "../../../utils";
 import * as statex$ from '../../../state/local';
-import * as Notifications from "expo-notifications";
+//import * as Notifications from "expo-notifications";
 import * as Haptics from 'expo-haptics';
 
 const groupMessageController = new GroupMessage();
 const groupController = new Group();
 
-Notifications.setNotificationHandler({
+/*Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
-});
+});*/
 
 export function GroupForm(props) {
 

@@ -43,32 +43,9 @@ export function Item(props) {
   //const [grupoNotificado, setGrupoNotificado] = useState('');
   const [appState, setAppState] = useState(AppState.currentState);
   const navigation = useNavigation();
-  const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND-NOTIFICATION-TASK';
+  
 
-
-
-  useEffect(() => {
-    TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, async ({ data, error, executionInfo }) => {
-      console.log('Received a notification in the background!');
-      // Do something with the notification data
-      let notificationId = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Secure chat: Nuevo mensaje background!",
-          body: "Grupo: Aviso!!!!!",
-          sound: true,
-        },
-        trigger: {
-          seconds: 1,
-          repeats:false
-        },
-      });
-      
-    });
-    
-    Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
-    
-  }, []);
-
+ 
 
 
   useEffect(() => {
