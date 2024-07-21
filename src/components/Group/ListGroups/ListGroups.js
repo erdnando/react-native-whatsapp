@@ -3,25 +3,26 @@ import { useEffect } from "react";
 import { map, size } from "lodash";
 import { Item } from "./Item";
 import { styles } from "./ListGroups.styles";
-import * as Notifications from 'expo-notifications';
+//import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue }  from 'firebase/database'
+//import { initializeApp } from 'firebase/app';
+//import { getDatabase, ref, onValue }  from 'firebase/database'
 
+/*
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
-});
+});*/
 
 
 export function ListGroups(props) {
 
   const { groups, upAllGroups, contador } = props;  //upGroupChat
-
+/*
   const firebaseConfig = {
     apiKey: 'AIzaSyAkll4IuB-ps6UZvYCFyBJFNMW2z6Djm7I',
     projectId: "chat-37d8f",
@@ -34,9 +35,22 @@ export function ListGroups(props) {
   const databasefb = getDatabase(appx);
 
   const starCountRef = ref(databasefb);
-  onValue(starCountRef, (snapshot) => {
+  onValue(starCountRef, async (snapshot) => {
     console.log("Cambio en db firebase.....");
     console.log(snapshot.val());
+
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Secure chat",
+        body: "nuevo mensaje ",
+        sound: true,
+      },
+      trigger: {
+        seconds: 1,
+      },
+    });
+
+    
   
   });
     
@@ -45,7 +59,7 @@ export function ListGroups(props) {
     registerForPushNotificationsAsync().then(
       (token) => token && setExpoPushToken(token),
     );
-  },[])
+  },[])*/
 
 
 //upGroupChat={upGroupChat}
@@ -67,7 +81,7 @@ export function ListGroups(props) {
     </ScrollView>
   );
 
-
+/*
 
   async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
@@ -113,7 +127,7 @@ export function ListGroups(props) {
     }
   }
 
-
+*/
 
 
 }

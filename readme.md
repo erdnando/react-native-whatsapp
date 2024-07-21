@@ -4,7 +4,6 @@ nvm use v20.11.1
 
 yarn install
 
-
 yarn add expo@latest
 
 yarn start
@@ -66,3 +65,13 @@ git merge main
 git status
 git push origin --tags
 git push origin qa
+
+{
+"rules": {
+".read": "now < 1724047200000", // 2024-8-19
+".write": "now < 1724047200000", // 2024-8-19
+}
+}
+
+        ".read": "auth != null",
+        ".write": "auth != null"
