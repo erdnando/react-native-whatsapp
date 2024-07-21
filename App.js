@@ -3,11 +3,11 @@ import { NativeBaseProvider } from "native-base";
 import { HandlerNavigation } from "./src/navigations";
 import { AuthProvider } from "./src/contexts";
 import NetInfo from '@react-native-community/netinfo';
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as statex$ from './src/state/local'
 import * as Notifications from 'expo-notifications';
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, onValue }  from 'firebase/database';
+//import { initializeApp } from 'firebase/app';
+//import { getDatabase, ref, onValue }  from 'firebase/database';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -26,7 +26,7 @@ export default function App() {
     
   });
 
-  const firebaseConfig = {
+  /*const firebaseConfig = {
     apiKey: 'AIzaSyAkll4IuB-ps6UZvYCFyBJFNMW2z6Djm7I',
     projectId: "chat-37d8f",
     databaseURL: "https://chat-37d8f-default-rtdb.firebaseio.com",
@@ -38,11 +38,14 @@ export default function App() {
   const databasefb = getDatabase(appx);
 
   const starCountRef = ref(databasefb);
+  const [expoPushToken, setExpoPushToken] = useState("");*/
 
 
-  onValue(starCountRef, async (snapshot) => {
+  /*onValue(starCountRef, async (snapshot) => {
     console.log("Cambio en db firebase.....");
     console.log(snapshot.val());
+    console.log("expoPushToken")
+    console.log(expoPushToken)
 
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -55,14 +58,21 @@ export default function App() {
       },
     });
 
-  });
+  });*/
 
-  useEffect(()=>{
+  
 
-    registerForPushNotificationsAsync().then(
-      (token) => token && setExpoPushToken(token),
+  /*useEffect( async ()=>{
+
+    await registerForPushNotificationsAsync().then(
+      (token) => token && setExpoPushToken(token)        
+      
     );
-  },[])
+
+
+
+  },[expoPushToken])*/
+
 
 
 
@@ -80,7 +90,7 @@ export default function App() {
 
 
 
-
+/*
   async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
       Notifications.setNotificationChannelAsync('default', {
@@ -109,21 +119,28 @@ export default function App() {
       if (!projectId) {
         handleRegistrationError('Project ID not found');
       }
+
       try {
       const pushTokenString = (
           await Notifications.getExpoPushTokenAsync({
             projectId,
           })
         ).data;
-       // console.log(pushTokenString);
+        console.log(pushTokenString);
+
+       
         return pushTokenString;
       } catch (e) {
+        console.log("Error")
+        console.log(e)
         handleRegistrationError(`${e}`);
       }
+
     } else {
       handleRegistrationError('Must use physical device for push notifications');
     }
   }
+  */
 
 
 

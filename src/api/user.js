@@ -51,6 +51,8 @@ export class User {
   async updateUser(accessToken, userData) {
 
     try {
+      console.log("Updatting user data")
+      console.log(userData)
       const data = userData;
 
       const formData = new FormData();

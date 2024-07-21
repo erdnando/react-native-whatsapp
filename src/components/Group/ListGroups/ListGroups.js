@@ -1,28 +1,33 @@
 import { View, ScrollView, Text, Platform } from "react-native";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { map, size } from "lodash";
 import { Item } from "./Item";
 import { styles } from "./ListGroups.styles";
-//import * as Notifications from 'expo-notifications';
+import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
+import { useAuth } from "../../../hooks";
+import { User } from "../../../api";
 //import { initializeApp } from 'firebase/app';
 //import { getDatabase, ref, onValue }  from 'firebase/database'
 
-/*
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
   }),
-});*/
+});
 
 
 export function ListGroups(props) {
 
   const { groups, upAllGroups, contador } = props;  //upGroupChat
-/*
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const { accessToken, user } = useAuth();
+  const userController = new User();
+
   const firebaseConfig = {
     apiKey: 'AIzaSyAkll4IuB-ps6UZvYCFyBJFNMW2z6Djm7I',
     projectId: "chat-37d8f",
@@ -31,13 +36,16 @@ export function ListGroups(props) {
     
   };
   
-  const appx = initializeApp(firebaseConfig);
+  /*const appx = initializeApp(firebaseConfig);
   const databasefb = getDatabase(appx);
 
   const starCountRef = ref(databasefb);
+
   onValue(starCountRef, async (snapshot) => {
     console.log("Cambio en db firebase.....");
     console.log(snapshot.val());
+    console.log("expoPushToken")
+    console.log(expoPushToken)
 
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -52,16 +60,34 @@ export function ListGroups(props) {
 
     
   
-  });
+  });*/
     
-  useEffect(()=>{
-
-    registerForPushNotificationsAsync().then(
-      (token) => token && setExpoPushToken(token),
-    );
-  },[])*/
+ 
 
 
+
+  useEffect(() => {
+    async function fetchData() {
+      await registerForPushNotificationsAsync().then(
+        (token) => token && registerPushNotificationToken(token)        
+      );
+    }
+    fetchData();
+  }, [expoPushToken]);
+
+
+
+  const registerPushNotificationToken = async (tokenx) => {
+    setExpoPushToken(tokenx)
+    console.log("Registering troken....")
+    console.log(tokenx)
+    console.log("user._id")
+    console.log(user._id)
+    await userController.updateUser(accessToken, { exponentPushToken: tokenx });
+      
+    
+      
+  }
 //upGroupChat={upGroupChat}
 
   return (
@@ -81,7 +107,7 @@ export function ListGroups(props) {
     </ScrollView>
   );
 
-/*
+
 
   async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
@@ -112,12 +138,9 @@ export function ListGroups(props) {
         handleRegistrationError('Project ID not found');
       }
       try {
-      const pushTokenString = (
-          await Notifications.getExpoPushTokenAsync({
-            projectId,
-          })
-        ).data;
-       // console.log(pushTokenString);
+      const pushTokenString = ( await Notifications.getExpoPushTokenAsync({ projectId,  }) ).data;
+        //console.log("pushTokenString::::");
+        //console.log(pushTokenString);
         return pushTokenString;
       } catch (e) {
         handleRegistrationError(`${e}`);
@@ -127,7 +150,7 @@ export function ListGroups(props) {
     }
   }
 
-*/
+
 
 
 }
