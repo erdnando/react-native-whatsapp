@@ -63,11 +63,11 @@ export function GroupsScreen() {
     }, [grupoNotificado]);
 
 
-    useEffect(() => {
+    /*useEffect(() => {
       socket.emit("subscribe", `${user._id}_notify`);
       socket.on("pushing_notification", pushing_notification);
 
-    }, [grupoNotificado]);
+    }, [grupoNotificado]);*/
 
 
     useEffect(() => {
