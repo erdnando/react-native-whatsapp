@@ -529,11 +529,12 @@ export function GroupScreen() {
         let cifrados = statex$.default.cifrado.get();//await authController.getCifrado(); 
 
         if( statex$.default.isConnected.get() ){
-       
+          console.log("groupId.............." + groupId);
+          console.log("accessToken.............." + accessToken);
           response = await groupMessageController.getAll(accessToken, groupId);
 
-         // console.log("mensajes en el server del grupo.............." + groupId)
-         // console.log(response)
+          
+          console.log(response)
           
 
           let resAux=null;
@@ -622,7 +623,7 @@ export function GroupScreen() {
         unreadMessagesController.setTotalReadMessages(groupId, response.total);
 
       } catch (error) {
-        console.log("error:::::::::::::");
+        console.log("error:::::::::::::x");
         console.error(error);
       }
     })();

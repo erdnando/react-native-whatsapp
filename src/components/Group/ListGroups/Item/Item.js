@@ -111,7 +111,7 @@ export function Item(props) {
 
             //==========================================================================================================
             const eventGrupo = EventRegister.addEventListener("participantsModified", async data=>{
-              console.log("participantsModified listener...");
+              //console.log("participantsModified listener...");
             
                   try {
                     const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
@@ -157,7 +157,9 @@ export function Item(props) {
 
     //Getting key and date that this group need to get and decrypt messages
     await GET_STATE_GROUP_LLAVE(group._id).then(result =>{
-        resGpoSelected=result.rows._array;      
+        resGpoSelected=result.rows._array;     
+        console.log("resGpoSelected");
+        console.log(resGpoSelected); 
         statex$.default.llaveGrupoSelected.set(resGpoSelected[0]?.llave);
         statex$.default.fechaAltaGrupoSelected.set(resGpoSelected[0]?.fechaAlta);
     }); 
@@ -174,7 +176,7 @@ export function Item(props) {
     statex$.default.cifrado.set("SI");
   
     if(group.creator._id != user._id &&  statex$.default.llaveGrupoSelected.get() == undefined){
-          Alert.alert ('Grupo cerrado. ','Para poder acceder a los mensajes, es necesario ingresar la llave. Por favor ingrese su llave que le han compartido. En caso contrario no podra ver los mensajes',
+          Alert.alert ('Grupo cerrado. ',`Para poder acceder a los mensajes: 1.- Ingrese la llave que le han compartido. \nEn caso contrario no podra ver los mensajes. \n\n2.- Por seguridad sera enviado al home para que desbloque el chat con su NIP`,
           [{  text: 'Ok',      } ]);
     }
     

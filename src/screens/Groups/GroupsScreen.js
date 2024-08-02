@@ -11,7 +11,7 @@ import { ListGroups, Search } from "../../components/Group";
 import { Modal,FormControl,Button } from "native-base";
 import * as statex$ from '../../state/local'
 import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL,DELETE_STATE_GROUP_LLAVE_BY_ID,
-  GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT
+  GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_LLAVE
  } from '../../hooks/useDA';
 import { EventRegister } from "react-native-event-listeners";
 import * as Notifications from 'expo-notifications';
@@ -249,6 +249,7 @@ export function GroupsScreen() {
                // console.log("Anadiendo relacion grupo-llave en la invitacion")
                 let llaveIni =  newData.tipo=="cerrado"? undefined : "3rdn4nd03rdn4nd03rdn4nd03rdn4nd0"
   
+                console.log("Setting fecha alta al grupo:"+ newData._id)
                 const fechaAlta = new Date().toISOString();
                 ADD_STATE_GROUP_LLAVE(newData._id, llaveIni,newData.tipo,fechaAlta);
   

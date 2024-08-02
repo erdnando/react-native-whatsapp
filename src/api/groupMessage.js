@@ -110,8 +110,8 @@ async notifyRead(accessToken, idUser,grupoAbierto) {
       EventRegister.emit("loadingEvent",true);
      
       let fecha=statex$.default.fechaAltaGrupoSelected.get();
-     // console.log("fecha")
-      //console.log(fecha)
+      console.log("fecha")
+      console.log(fecha)
       const  url = `${ENV.API_URL}/${ENV.ENDPOINTS.GROUP_MESSAGE_FILTERED}/${groupId}/${fecha}`; 
       
 
