@@ -280,7 +280,7 @@ export function GroupsScreen() {
        const eventContadores = EventRegister.addEventListener("updatingContadores", async bFlag=> {
          
               try {
-      console.log("Updating contadores...")
+                console.log("Updating contadores...")
                 await GET_STATE_GROUP_READ_MESSAGE_COUNT_ALL().then(result =>{
                   resAux=result.rows._array;
                
@@ -409,8 +409,33 @@ useEffect(() => {
               return ( new Date(b.last_message_date) - new Date(a.last_message_date)  );
             });
 
+            console.log("Grupos obtenidos:::::::::")
+            //  console.log(result)
+            console.log("User de esta app autenticado::::")
+            console.log(user._id)
+
             setGroups(result);
             setGroupsResult(result);
+
+            //loop result to update arrCounters
+            //loop group's messages and apply new crypted key, one by one
+            result.map(async (grupoUser) => {
+              try {
+                console.log("grupo:",grupoUser.name)
+                 //console.log(grupoUser.messages_unread)
+                 const arrUnRead = grupoUser.messages_unread.filter((msg) => !String(msg.lectores_message).includes(user._id));
+                 //console.log("arrUnRead:::::")
+                 console.log(arrUnRead.length)
+                 //console.log("--------------------")c
+                 UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( grupoUser._id,  arrUnRead.length );
+              } catch (error) {
+                console.log(error)
+              }
+             
+            });
+
+            EventRegister.emit("updatingContadores",true);
+
 
           } catch (error) {
             console.error(error);
