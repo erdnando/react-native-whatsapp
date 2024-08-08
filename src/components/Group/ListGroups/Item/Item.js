@@ -15,6 +15,7 @@ import { EventRegister } from "react-native-event-listeners";
 import * as statex$ from '../../../../state/local';
 import { GET_STATE_GROUP_LLAVE, ADD_STATE_GROUP_LLAVE, DELETE_STATE_GROUP_LLAVE_BY_ID,GET_STATE_GROUP_READ_MESSAGE_COUNT,ADD_STATE_GROUP_READ_MESSAGE_COUNT,UPDATE_STATE_GROUP_READ_MESSAGE_COUNT } from '../../../../hooks/useDA';
 import * as Notifications from 'expo-notifications';
+import NetInfo from '@react-native-community/netinfo';
 import * as TaskManager from 'expo-task-manager';
 
 //====================PUSH NOTIFICATIONS=================================================================================
@@ -44,8 +45,12 @@ export function Item(props) {
   const [appState, setAppState] = useState(AppState.currentState);
   const navigation = useNavigation();
   
+  const unsubscribe = NetInfo.addEventListener(state => {
+    // console.log('Is connected?', state.isConnected);
+     statex$.default.isConnected.set(state.isConnected)
+     //statex$.default.isConnected.set(false)
+   });
 
- 
 
 
   useEffect(() => {
@@ -93,7 +98,8 @@ export function Item(props) {
             setContadorAux(cont["contador"])
            }
            
-     
+     console.log(accessToken)
+     console.log(group._id)
             const totalParticipants = await groupMessageController.getGroupParticipantsTotal(
               accessToken,
               group._id
@@ -152,7 +158,7 @@ export function Item(props) {
 
   //==================================================================================================================================================================================
   const  openGroup = async () => {
-
+    console.log("openning group.. default" );
     let resGpoSelected=null;
 
     //Getting key and date that this group need to get and decrypt messages
@@ -168,10 +174,12 @@ export function Item(props) {
       statex$.default.llaveGrupoSelected.set("3rdn4nd03rdn4nd03rdn4nd03rdn4nd0");
     }
     
-    
-    Notifications.dismissAllNotificationsAsync();
-    console.log("openning group.."+group._id );
-
+    if( statex$.default.isConnected.get() ){
+      Notifications.dismissAllNotificationsAsync();
+      console.log("openning group.."+group._id );
+    }else{
+      console.log("openning group.. no internet"+group._id );
+    }
    
     statex$.default.cifrado.set("SI");
   
@@ -182,25 +190,29 @@ export function Item(props) {
     
       setTotalUnreadMessages(0);
 
-    try{
-           console.log("(openning) notificando q ya leyo msg el miembro", user._id, " en el grupo: ", group._id);
+      if( statex$.default.isConnected.get() ){
+          try{
+                console.log("(openning) notificando q ya leyo msg el miembro", user._id, " en el grupo: ", group._id);
 
-           //Solicitandi q se actualicen en visto todos los mensajes del grupo al q estoy accediendo
-            const respo = await groupMessageController.notifyRead(
-              accessToken,
-              user._id,
-              group._id
-            );
+                //Solicitandi q se actualicen en visto todos los mensajes del grupo al q estoy accediendo
+                  const respo = await groupMessageController.notifyRead(
+                    accessToken,
+                    user._id,
+                    group._id
+                  );
 
-    }catch(errx){
-   
-      console.log("Error al notificar", errx)
-    }
-   
+          }catch(errx){
+        
+            console.log("Error al notificar", errx)
+          }
+      }
    
    // console.log('reseteando contador del grupo', group._id)
     UPDATE_STATE_GROUP_READ_MESSAGE_COUNT( group._id,  0 );
-    EventRegister.emit("updatingContadores",true);
+
+    if( statex$.default.isConnected.get() ){
+        EventRegister.emit("updatingContadores",true);
+    }
 
     statex$.default.fromOpenning.set(true);
 

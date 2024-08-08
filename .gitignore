@@ -16,4 +16,6 @@ web-build/
 .DS_Store
 secretKey.js
 chat-37d8f-firebase-adminsdk-t2541-d8867126aa.json
+#Comment just to build an apk
+#Uncomment when you want to commit changes on git
 google-services.json

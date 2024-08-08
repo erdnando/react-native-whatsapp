@@ -73,6 +73,10 @@ export class Auth {
 
             //console.log("Persistiendo ADD_STATE_AUTHLOGIN")
             //console.log(result)
+
+            
+
+
             ADD_STATE_AUTHLOGIN(JSON.stringify(result))
 
             return result;

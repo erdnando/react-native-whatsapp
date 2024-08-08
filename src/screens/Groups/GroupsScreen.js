@@ -15,6 +15,7 @@ import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAG
  } from '../../hooks/useDA';
 import { EventRegister } from "react-native-event-listeners";
 import * as Notifications from 'expo-notifications';
+import NetInfo from '@react-native-community/netinfo';
 
 const groupController = new Group();
 const authController = new Auth();
@@ -40,13 +41,83 @@ export function GroupsScreen() {
 
   const [grupoNotificado, setGrupoNotificado] = useState('');
 
+  const unsubscribe = NetInfo.addEventListener(state => {
+    // console.log('Is connected?', state.isConnected);
+     statex$.default.isConnected.set(state.isConnected)
+     
+     if(state.isConnected==false){
+      statex$.default.reconnectSockets.set(true);
+     }else{
+        //---------------------------------------------------------
+           EventRegister.emit("reconnectSocketGsS",true);
+          // EventRegister.emit("reconnectSocketGS",true);//reconnectSocketGS
+       // if( statex$.default.reconnectSockets.get()==true){
+           
+
+
+         //  statex$.default.reconnectSockets.set(false)
+           /* statex$.default.reconnectSockets.set(false)
+            socket.emit("subscribe", user._id);
+            socket.on("group_banned", bannedGroup);
+            socket.on("newMessagex", newMessagex);
+            socket.on("newMessagex_me", newMessagex_me);
+
+            socket.emit("subscribe", `${user._id}_invite`);
+            socket.on("newInvite", newInvite);*/
+          
+      //  }
+        //---------------------------------------------------------
+    }
+
+
+   });
 
 
 
+
+
+   useEffect(() => { 
+ 
+        const eventReconnectSocket = EventRegister.addEventListener("reconnectSocketGsS", async msg=>{
+          console.log("reconnect SocketGroupsScreen");
+          //------------------------------------------------------------------------
+         
+            
+                console.log("sockets connecting...GsS")
+             // if(statex$.default.isConnected.get()){
+                socket.emit("subscribe", user._id);
+                socket.on("group_banned", bannedGroup);
+                socket.on("newMessagex", newMessagex);
+                socket.on("newMessagex_me", newMessagex_me);
+        
+               // return () => {
+                //socket.emit("unsubscribe", user._id);
+               // socket.off("group_banned", bannedGroup);
+                //socket.off("newMessagex", newMessagex);
+                //socket.off("newMessagex_me", newMessagex_me);
+               // }
+          //  }
+     
+          EventRegister.emit("reconnectSocketGS",true);//reconnectSocketGS
+        //------------------------------------------------------------------------
+          
+     });
+ 
+     return ()=>{
+       EventRegister.removeEventListener(eventReconnectSocket);
+     }
+}, []);
+
+
+
+
+
+
+   //-------------------------------------------------------------------------------------
    {/*Read messages socket listener*/}
-   useEffect(() => {
-   
-    // if(statex$.default.isConnected.get()){
+  /* useEffect(() => {
+   console.log("sockets connecting...")
+     if(statex$.default.isConnected.get()){
         socket.emit("subscribe", user._id);
         socket.on("group_banned", bannedGroup);
         socket.on("newMessagex", newMessagex);
@@ -55,27 +126,56 @@ export function GroupsScreen() {
         return () => {
         socket.emit("unsubscribe", user._id);
         socket.off("group_banned", bannedGroup);
-        socket.off("newMessagex", newMessagex);
-        socket.off("newMessagex_me", newMessagex_me);
+        //socket.off("newMessagex", newMessagex);
+        //socket.off("newMessagex_me", newMessagex_me);
         }
-      
-    // }
+     }
     }, [grupoNotificado]);
+*/
 
 
-    /*useEffect(() => {
-      socket.emit("subscribe", `${user._id}_notify`);
-      socket.on("pushing_notification", pushing_notification);
 
-    }, [grupoNotificado]);*/
+    useFocusEffect(
+      useCallback(() => {
+        (async () => {
+          console.log("sockets connecting...")
+          if(statex$.default.isConnected.get()){
+            socket.emit("subscribe", user._id);
+            socket.on("group_banned", bannedGroup);
+            socket.on("newMessagex", newMessagex);
+            socket.on("newMessagex_me", newMessagex_me);
+    
+            return () => {
+            socket.emit("unsubscribe", user._id);
+            socket.off("group_banned", bannedGroup);
+            //socket.off("newMessagex", newMessagex);
+            //socket.off("newMessagex_me", newMessagex_me);
+            }
+         }
+        })();
+      }, [grupoNotificado])
+  );
 
 
+/*
     useEffect(() => {
       socket.emit("subscribe", `${user._id}_invite`);
       socket.on("newInvite", newInvite);
 
-    }, [grupoNotificado]);
+    }, [grupoNotificado]);*/
 
+    useFocusEffect(
+      useCallback(() => {
+        (async () => {
+          console.log("sockets connecting...")
+          if(statex$.default.isConnected.get()){
+            socket.emit("subscribe", `${user._id}_invite`);
+            socket.on("newInvite", newInvite);
+         }
+        })();
+      }, [grupoNotificado])
+  );
+//-------------------------------------------------------------------------------------
 
 
 

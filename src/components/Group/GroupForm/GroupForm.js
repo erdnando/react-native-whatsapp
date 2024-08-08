@@ -517,10 +517,11 @@ export function GroupForm(props) {
           
           //=================================================================
           const eventReplyMessage = EventRegister.addEventListener("replyingMessage", async data=>{
+            console.log("mensaje replicado::::");
             setIdMessage("");
             setFocusInput(true);
            // console.log("mensaje replicado::::")
-            //console.log(data)
+            console.log(data)
             setReplyMessage(data);
             inputMessageRef.current.focus();
             
@@ -656,8 +657,8 @@ export function GroupForm(props) {
         setKeyboardHeight(0);
         Keyboard.dismiss();
        
-       // console.log("idMessage:::::::")
-       // console.log(idMessage)
+        console.log("idMessage:::::::")
+        console.log(idMessage)
         //process();
        //Envio de mensajes
       // console.log("tipo cifrado::"+tipoCifrado);
@@ -667,7 +668,8 @@ export function GroupForm(props) {
         //replyMessage==null if you like a normal message
 
        // console.log("===========sending replied=============")
-       // console.log(replyMessage);
+        console.log("replyMessage");
+        console.log(replyMessage);
        // console.log("=======================================")
         //if replyMessage is null, then it's a normal message
         //else it's a reply

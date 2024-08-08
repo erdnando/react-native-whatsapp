@@ -6,7 +6,7 @@ import Constants from 'expo-constants';
 import { Types } from 'mongoose';
 import { CREATE_STATE_AUTHLOGIN,CREATE_STATE_GETME, ADD_STATE_GETME, GET_STATE_GETME, 
   CREATE_STATE_ALLGROUPS,CREATE_STATE_ALLMESSAGES,CREATE_STATE_GROUP_LLAVE, 
-  ADD_STATE_ALLGROUPS, CREATE_STATE_MY_DELETED_MESSAGES, CREATE_STATE_GROUP_READ_MESSAGE_COUNT,DELETE_STATE_GROUP_LLAVE } from '../hooks/useDA.js';
+  ADD_STATE_ALLGROUPS, CREATE_STATE_MY_DELETED_MESSAGES, CREATE_STATE_GROUP_READ_MESSAGE_COUNT,GET_STATE_AUTHLOGIN,DELETE_STATE_GROUP_LLAVE } from '../hooks/useDA.js';
   import { observable } from "@legendapp/state";
   import { observer } from "@legendapp/state/react";
   import * as statex$ from '../state/local.js'
@@ -82,13 +82,33 @@ export function AuthProvider(props) {
 
     (async () => {
 
-      let uuid = await authController.getUUID();
-      if(uuid==null){
+      console.log("checando UUID....")
+      let uuid = "";
+      //validate if STATE_AUTHLOGIN has values
+      //if it is clean, it means we are in front aof a new installation
+      //
+      let respInicio=null;
+      await GET_STATE_AUTHLOGIN().then(result =>{
+        respInicio= result.rows._array;
+      }); 
+
+      console.log("respInicio:::::::::::::::::");
+      console.log(respInicio);
+
+      if(respInicio.length ==0){
         uuid = new Types.ObjectId().toString();
-      
         await authController.setUUID(uuid);
-      
+      }else{
+        uuid = await authController.getUUID();
       }
+
+     /*if(uuid==null){
+        uuid = new Types.ObjectId().toString();
+        await authController.setUUID(uuid);
+      }*/
+
+        console.log("uuid:::::::::::::::::");
+        console.log(uuid);
     
      //get UUID
      const idApp = uuid;

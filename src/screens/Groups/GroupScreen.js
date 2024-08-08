@@ -1,13 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { View, Fab,Modal, Icon, FormControl,Input,Button, Text, useToast, Box } from "native-base";
-import {  Alert } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute, useNavigation,useFocusEffect } from "@react-navigation/native";
 import { GroupMessage, UnreadMessages,Auth } from "../../api";
 import { useAuth } from "../../hooks";
 import { HeaderGroup } from "../../components/Navigation";
 import { LoadingScreen } from "../../components/Shared";
 import { ListMessages, GroupForm } from "../../components/Group";
-import { ENV, socket,Decrypt,Encrypt } from "../../utils";
+import { ENV, socket,Decrypt,Encrypt,screens } from "../../utils";
 import { EventRegister } from "react-native-event-listeners";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as statex$ from '../../state/local'
@@ -15,8 +14,6 @@ import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBY
   GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE, ADD_STATE_MY_DELETED_MESSAGES } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-//import * as Notifications from "expo-notifications";
-
 
 
 
@@ -24,13 +21,6 @@ const groupMessageController = new GroupMessage();
 const unreadMessagesController = new UnreadMessages();
 const authController = new Auth();
 
-/*Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});*/
 
 export function GroupScreen() {
 
@@ -38,6 +28,31 @@ export function GroupScreen() {
   const unsubscribe = NetInfo.addEventListener(state => {
    // console.log('Is connected?', state.isConnected);
     statex$.default.isConnected.set(state.isConnected)
+    //statex$.default.isConnected.set(false)
+   
+    if(state.isConnected==false){
+      statex$.default.reconnectSockets.set(true);
+     }else{
+        //---------------------------------------------------------
+        if( statex$.default.reconnectSockets.get()==true){
+
+           EventRegister.emit("reconnectSocketGsS",true);
+           EventRegister.emit("reconnectSocketGS",true);
+
+            /*statex$.default.reconnectSockets.set(false);
+            socket.emit("subscribe", groupId);
+            socket.on("reloadmsgs", reloadmsgs);
+            socket.on("refreshDelete", refreshDelete);
+
+            socket.emit("subscribe", `${groupId}_seen`);
+            socket.on("updateSeen", updateSeen);*/
+          
+        }
+        //---------------------------------------------------------
+    }
+    
+
+
   });
 
   const { params: { groupId, tipo, creator }, } = useRoute();
@@ -52,6 +67,32 @@ export function GroupScreen() {
   const [ drop, setDrop] = useState('')
   const toast = useToast();
   
+
+
+  useEffect(() => { 
+ 
+    const eventReconnectSocket = EventRegister.addEventListener("reconnectSocketGS", async msg=>{
+          //------------------------------------------------------------------------
+              console.log("sockets re connecting GS...")
+              socket.emit("subscribe", groupId);
+              socket.on("reloadmsgs", reloadmsgs);
+              socket.on("refreshDelete", refreshDelete);
+            
+              console.log("sockets re connecting...")
+              socket.emit("subscribe", `${groupId}_seen`);
+              socket.on("updateSeen", updateSeen);
+
+           
+    //------------------------------------------------------------------------  
+ });
+
+ return ()=>{
+   EventRegister.removeEventListener(eventReconnectSocket);
+ }
+}, []);
+
+
+
 
 
 
@@ -378,7 +419,7 @@ export function GroupScreen() {
   }, [groupId,messages]);
 
   //subscribe sockets
-  useEffect(() => {
+ /* useEffect(() => {
 
     socket.emit("subscribe", groupId);
     socket.on("reloadmsgs", reloadmsgs);
@@ -390,10 +431,28 @@ export function GroupScreen() {
         socket.off("refreshDelete", refreshDelete);
       };
 
-  }, [groupId, messages]);
+  }, [groupId, messages]);*/
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        console.log("sockets connecting...")
+        if(statex$.default.isConnected.get()){
+          socket.emit("subscribe", groupId);
+          socket.on("reloadmsgs", reloadmsgs);
+          socket.on("refreshDelete", refreshDelete);
+      
+            return () => {
+              socket.emit("unsubscribe", groupId);
+              socket.off("reloadmsgs", reloadmsgs);
+              socket.off("refreshDelete", refreshDelete);
+            };
+       }
+      })();
+    }, [groupId, messages])
+);
 
 
-  useEffect(() => {
+  /*useEffect(() => {
     socket.emit("subscribe", `${groupId}_seen`);
     socket.on("updateSeen", updateSeen);
 
@@ -402,7 +461,29 @@ export function GroupScreen() {
       socket.off("updateSeen", updateSeen);
     };
 
-  }, [messages]);
+  }, [messages]);*/
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        console.log("sockets connecting...")
+        if(statex$.default.isConnected.get()){
+          socket.emit("subscribe", `${groupId}_seen`);
+          socket.on("updateSeen", updateSeen);
+
+          return () => {
+            socket.emit("unsubscribe", `${groupId}_seen`);
+            socket.off("updateSeen", updateSeen);
+          };
+            }
+
+
+
+      })();
+    }, [messages])
+);
+
+
+
 
 
   const updateSeen = (data) => {

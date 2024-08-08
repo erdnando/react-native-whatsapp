@@ -10,6 +10,7 @@ import {
   
 
 const state$ = observable({
+  reconnectSockets:false,
   isConnected:true,
   expoPushToken:{},
   llaveGrupoSelected:"3rdn4nd03rdn4nd03rdn4nd03rdn4nd0",

@@ -1,7 +1,7 @@
 //const SERVER_IP = "node-express-sockets-whatsapp-production-50d4.up.railway.app"; // DEV nube
 const SERVER_IP = "node-express-sockets-whatsapp-production-a1d6.up.railway.app";  //QA nube
 //const SERVER_IP = "8c7a-201-149-79-194.ngrok-free.app";//gorillaz inc
-//const SERVER_IP = "192.168.0.102:3977"; //DEV local
+//const SERVER_IP = "192.168.0.3:3977"; //DEV local
 
 
 export const ENV = {
