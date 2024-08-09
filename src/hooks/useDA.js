@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite/legacy';
 import * as FileSystem from 'expo-file-system';
 
-const db = SQLite.openDatabase('db17.db');
+const db = SQLite.openDatabase('db19.db');
 
 
 /*  export  async function loadDB(){

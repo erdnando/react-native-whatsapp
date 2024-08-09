@@ -16,6 +16,7 @@ import { UPDATE_STATE_ALLGROUPS, GET_STATE_ALLGROUPS,GET_STATE_GROUP_READ_MESSAG
 import { EventRegister } from "react-native-event-listeners";
 import * as Notifications from 'expo-notifications';
 import NetInfo from '@react-native-community/netinfo';
+import { useIsFocused } from "@react-navigation/native";
 
 const groupController = new Group();
 const authController = new Auth();
@@ -38,35 +39,37 @@ export function GroupsScreen() {
   const [showModal, setShowModal] = useState(false);
   const [arrContadores, setArrContadores] = useState(null);
   const [nip, setNip] = useState("00000000");
-
   const [grupoNotificado, setGrupoNotificado] = useState('');
+  const isFocused = useIsFocused();
 
   const unsubscribe = NetInfo.addEventListener(state => {
-    // console.log('Is connected?', state.isConnected);
+
      statex$.default.isConnected.set(state.isConnected)
      
      if(state.isConnected==false){
       statex$.default.reconnectSockets.set(true);
      }else{
-        //---------------------------------------------------------
-           EventRegister.emit("reconnectSocketGsS",true);
-          // EventRegister.emit("reconnectSocketGS",true);//reconnectSocketGS
-       // if( statex$.default.reconnectSockets.get()==true){
-           
 
+      if(statex$.default.reconnectSockets.get()==true){
 
-         //  statex$.default.reconnectSockets.set(false)
-           /* statex$.default.reconnectSockets.set(false)
-            socket.emit("subscribe", user._id);
-            socket.on("group_banned", bannedGroup);
-            socket.on("newMessagex", newMessagex);
-            socket.on("newMessagex_me", newMessagex_me);
+        //Regenerate sockets
+        socket.emit("subscribe", user._id);
+        socket.on("group_banned", bannedGroup);
+        socket.on("newMessagex", newMessagex);
+        socket.on("newMessagex_me", newMessagex_me);
 
-            socket.emit("subscribe", `${user._id}_invite`);
-            socket.on("newInvite", newInvite);*/
-          
-      //  }
-        //---------------------------------------------------------
+        statex$.default.reconnectSockets.set(false);
+        return () => {
+          socket.emit("unsubscribe", user._id);
+          socket.off("group_banned", bannedGroup);
+          socket.off("newMessagex", newMessagex);
+          socket.off("newMessagex_me", newMessagex_me);
+          }
+        //...
+
+       
+      }
+      
     }
 
 
@@ -76,48 +79,12 @@ export function GroupsScreen() {
 
 
 
-   useEffect(() => { 
- 
-        const eventReconnectSocket = EventRegister.addEventListener("reconnectSocketGsS", async msg=>{
-          console.log("reconnect SocketGroupsScreen");
-          //------------------------------------------------------------------------
-         
-            
-                console.log("sockets connecting...GsS")
-             // if(statex$.default.isConnected.get()){
-                socket.emit("subscribe", user._id);
-                socket.on("group_banned", bannedGroup);
-                socket.on("newMessagex", newMessagex);
-                socket.on("newMessagex_me", newMessagex_me);
-        
-               // return () => {
-                //socket.emit("unsubscribe", user._id);
-               // socket.off("group_banned", bannedGroup);
-                //socket.off("newMessagex", newMessagex);
-                //socket.off("newMessagex_me", newMessagex_me);
-               // }
-          //  }
-     
-          EventRegister.emit("reconnectSocketGS",true);//reconnectSocketGS
-        //------------------------------------------------------------------------
-          
-     });
- 
-     return ()=>{
-       EventRegister.removeEventListener(eventReconnectSocket);
-     }
-}, []);
-
-
-
-
-
-
    //-------------------------------------------------------------------------------------
    {/*Read messages socket listener*/}
-  /* useEffect(() => {
+  useEffect(() => {
    console.log("sockets connecting...")
-     if(statex$.default.isConnected.get()){
+     if(statex$.default.isConnected.get() ){
+
         socket.emit("subscribe", user._id);
         socket.on("group_banned", bannedGroup);
         socket.on("newMessagex", newMessagex);
@@ -126,55 +93,22 @@ export function GroupsScreen() {
         return () => {
         socket.emit("unsubscribe", user._id);
         socket.off("group_banned", bannedGroup);
-        //socket.off("newMessagex", newMessagex);
-        //socket.off("newMessagex_me", newMessagex_me);
+        socket.off("newMessagex", newMessagex);
+        socket.off("newMessagex_me", newMessagex_me);
         }
      }
     }, [grupoNotificado]);
-*/
 
 
-
-    useFocusEffect(
-      useCallback(() => {
-        (async () => {
-          console.log("sockets connecting...")
-          if(statex$.default.isConnected.get()){
-            socket.emit("subscribe", user._id);
-            socket.on("group_banned", bannedGroup);
-            socket.on("newMessagex", newMessagex);
-            socket.on("newMessagex_me", newMessagex_me);
-    
-            return () => {
-            socket.emit("unsubscribe", user._id);
-            socket.off("group_banned", bannedGroup);
-            //socket.off("newMessagex", newMessagex);
-            //socket.off("newMessagex_me", newMessagex_me);
-            }
-         }
-        })();
-      }, [grupoNotificado])
-  );
-
-
-/*
     useEffect(() => {
-      socket.emit("subscribe", `${user._id}_invite`);
-      socket.on("newInvite", newInvite);
 
-    }, [grupoNotificado]);*/
+      if(statex$.default.isConnected.get()){
+        socket.emit("subscribe", `${user._id}_invite`);
+        socket.on("newInvite", newInvite);
+      }
 
-    useFocusEffect(
-      useCallback(() => {
-        (async () => {
-          console.log("sockets connecting...")
-          if(statex$.default.isConnected.get()){
-            socket.emit("subscribe", `${user._id}_invite`);
-            socket.on("newInvite", newInvite);
-         }
-        })();
-      }, [grupoNotificado])
-  );
+    }, [grupoNotificado]);
+
 //-------------------------------------------------------------------------------------
 
 
@@ -417,6 +351,7 @@ export function GroupsScreen() {
 
 //=====================ON_LOAD============================================================================
 useEffect(() => {
+  
   EventRegister.emit("updatingContadores",true);//check it!!!
 
 }, [])
@@ -489,7 +424,7 @@ useEffect(() => {
   useFocusEffect(
       useCallback(() => {
         (async () => {
-
+          console.log("ONLOAD.....")
           let response = null;
 
           try {

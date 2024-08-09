@@ -1,5 +1,6 @@
 import { useState, useEffect,useCallback } from "react";
 import { View, Fab,Modal, Icon, FormControl,Input,Button, Text, useToast, Box } from "native-base";
+import { Alert } from "react-native";
 import { useRoute, useNavigation,useFocusEffect } from "@react-navigation/native";
 import { GroupMessage, UnreadMessages,Auth } from "../../api";
 import { useAuth } from "../../hooks";
@@ -14,7 +15,7 @@ import { UPDATE_STATE_ALLMESSAGES,ADD_STATE_ALLMESSAGES, GET_STATE_ALLMESSAGESBY
   GET_STATE_GROUP_LLAVE,ADD_STATE_GROUP_LLAVE, ADD_STATE_MY_DELETED_MESSAGES } from '../../hooks/useDA';
 import NetInfo from '@react-native-community/netinfo';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import { useIsFocused } from "@react-navigation/native";
 
 
 const groupMessageController = new GroupMessage();
@@ -24,31 +25,24 @@ const authController = new Auth();
 
 export function GroupScreen() {
 
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
+
   const unsubscribe = NetInfo.addEventListener(state => {
-   // console.log('Is connected?', state.isConnected);
+  
     statex$.default.isConnected.set(state.isConnected)
-    //statex$.default.isConnected.set(false)
-   
+    
     if(state.isConnected==false){
       statex$.default.reconnectSockets.set(true);
      }else{
-        //---------------------------------------------------------
-        if( statex$.default.reconnectSockets.get()==true){
 
-           EventRegister.emit("reconnectSocketGsS",true);
-           EventRegister.emit("reconnectSocketGS",true);
+      if(statex$.default.reconnectSockets.get()==true){
 
-            /*statex$.default.reconnectSockets.set(false);
-            socket.emit("subscribe", groupId);
-            socket.on("reloadmsgs", reloadmsgs);
-            socket.on("refreshDelete", refreshDelete);
+        //...
 
-            socket.emit("subscribe", `${groupId}_seen`);
-            socket.on("updateSeen", updateSeen);*/
-          
-        }
-        //---------------------------------------------------------
+        statex$.default.reconnectSockets.set(false);
+      }
+      
     }
     
 
@@ -67,33 +61,6 @@ export function GroupScreen() {
   const [ drop, setDrop] = useState('')
   const toast = useToast();
   
-
-
-  useEffect(() => { 
- 
-    const eventReconnectSocket = EventRegister.addEventListener("reconnectSocketGS", async msg=>{
-          //------------------------------------------------------------------------
-              console.log("sockets re connecting GS...")
-              socket.emit("subscribe", groupId);
-              socket.on("reloadmsgs", reloadmsgs);
-              socket.on("refreshDelete", refreshDelete);
-            
-              console.log("sockets re connecting...")
-              socket.emit("subscribe", `${groupId}_seen`);
-              socket.on("updateSeen", updateSeen);
-
-           
-    //------------------------------------------------------------------------  
- });
-
- return ()=>{
-   EventRegister.removeEventListener(eventReconnectSocket);
- }
-}, []);
-
-
-
-
 
 
   //EventListener:: delete_group_message
@@ -126,63 +93,6 @@ export function GroupScreen() {
            EventRegister.removeEventListener(eventDeletedMessagesupdate);
          }
    }, [messages]);
-
-
-    //EventListener:: decifra mensajes
-   /* useEffect(() => {
-     // console.log("statex$.default.isConnected.get()")
-    //  console.log(statex$.default.isConnected.get())
-      
-  
-         const eventReloadMessages = EventRegister.addEventListener("idMessagevisto", async idMsg=>{
-           
-                try {
-                 
-                  (async () => {
-                  //  console.log("reloadMessagesSeen:::");
-                  
-                    try {
-                     
-                      //TODO Update Read status of the messages by group
-                     
-                      getAllMessages(true);
-                      let grupoAsociado='';
-
-                      (messages).map((msgx) => {
-                       // console.log("buscando el grupo del msg")
-                        //console.log(msgx)
-                        if(msgx._id == idMsg){
-                          grupoAsociado = msgx.group
-                        }
-                      
-                       });
-
-                       if(grupoAsociado!='') updateVistoGrupo(grupoAsociado);
-                      // getAllMessages(true);
-
-
-
-                       //console.log("messages")
-                       //console.log(messages)
-                       
-                       setMessages(messages)
-                       //setDrop('');
-
-                    } catch (error) {
-                      console.log("Error")
-                      console.error(error);
-                    }
-                  })();
-                } catch (error) {
-                  console.log("Error 3")
-                  console.error(error);
-                }
-          });
-      
-          return ()=>{
-            EventRegister.removeEventListener(eventReloadMessages);
-          }
-    }, [messages]);*/
 
 
   //EventListener:: newMessagex
@@ -419,140 +329,48 @@ export function GroupScreen() {
   }, [groupId,messages]);
 
   //subscribe sockets
- /* useEffect(() => {
-
-    socket.emit("subscribe", groupId);
-    socket.on("reloadmsgs", reloadmsgs);
-    socket.on("refreshDelete", refreshDelete);
-
-      return () => {
-        socket.emit("unsubscribe", groupId);
-        socket.off("reloadmsgs", reloadmsgs);
-        socket.off("refreshDelete", refreshDelete);
-      };
-
-  }, [groupId, messages]);*/
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-        console.log("sockets connecting...")
-        if(statex$.default.isConnected.get()){
-          socket.emit("subscribe", groupId);
-          socket.on("reloadmsgs", reloadmsgs);
-          socket.on("refreshDelete", refreshDelete);
-      
-            return () => {
-              socket.emit("unsubscribe", groupId);
-              socket.off("reloadmsgs", reloadmsgs);
-              socket.off("refreshDelete", refreshDelete);
-            };
-       }
-      })();
-    }, [groupId, messages])
-);
-
-
-  /*useEffect(() => {
-    socket.emit("subscribe", `${groupId}_seen`);
-    socket.on("updateSeen", updateSeen);
-
-    return () => {
-      socket.emit("unsubscribe", `${groupId}_seen`);
-      socket.off("updateSeen", updateSeen);
-    };
-
-  }, [messages]);*/
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-        console.log("sockets connecting...")
-        if(statex$.default.isConnected.get()){
-          socket.emit("subscribe", `${groupId}_seen`);
-          socket.on("updateSeen", updateSeen);
+  useEffect(() => {
+    if(statex$.default.isConnected.get() && isFocused){
+        socket.emit("subscribe", groupId);
+        socket.on("reloadmsgs", reloadmsgs);
+        socket.on("refreshDelete", refreshDelete);
 
           return () => {
-            socket.emit("unsubscribe", `${groupId}_seen`);
-            socket.off("updateSeen", updateSeen);
+            socket.emit("unsubscribe", groupId);
+            socket.off("reloadmsgs", reloadmsgs);
+            socket.off("refreshDelete", refreshDelete);
           };
-            }
+    }
+  }, [groupId, messages]);
 
 
+  useEffect(() => {
 
-      })();
-    }, [messages])
-);
+    if(statex$.default.isConnected.get() && isFocused){
+        socket.emit("subscribe", `${groupId}_seen`);
+        socket.on("updateSeen", updateSeen);
 
+        return () => {
+          socket.emit("unsubscribe", `${groupId}_seen`);
+          socket.off("updateSeen", updateSeen);
+        };
+  }
 
-
+  }, [messages]);
 
 
   const updateSeen = (data) => {
    
     if( statex$.default.lastPushNotification.get() !=  data.message){
-   // (async () => {
+   
     if( (groupId == data.group_id) && (messages !=null && messages.length>0)){
-
 
         console.log("Actualizando mensajes....")
         statex$.default.moveScroll.set(true);
         getAllMessages(true);
 
-       
-      /*try {
-
-            console.log("update seen....")
-            //console.log(data)
-                    
-            console.log("=================================")
-            //Get all messages
-           // if(statex$.default.isConnected.get()){
-
-              console.log("data.arrResponse")
-              console.log(data.arrResponse)
-              console.log("messages updateSeen")
-              console.log(messages.length)
-              console.log("=========================")
-                  //find message original and decryp it on message array
-              const  messagesClone = [...messages];
-
-                  try{
-                    (messagesClone).map((msgx) => {
-                      console.log("looping messages")
-                     // console.log(msgx)
-                     // console.log("------------------------")
-                      let refMsg = (data.arrResponse).find(x => x.idMsg === msgx._id);
-                      console.log(refMsg)
-
-                      if(refMsg != undefined && refMsg.estatus=="LEIDO"){
-                        msgx.estatus = refMsg.estatus;
-                      }
-                      
-                    });
-
-                    //console.log("messages after updating.....");
-                    //console.log(messages);
-
-                   
-                    setMessages(messagesClone);
-                    //messagesClone=[];
-
-                  }catch(error){
-                    console.log("error al acrtualizar vistos")
-                    console.log(error)
-                  }
-              // }
-              //==================================================
-                //setMessages([...messages, msg]);
-          //  } 
-
-        } catch (error) {
-          console.log("error::::")
-          console.log(error)
-        }*/
     }
-//==========================================================     
-   
- //   })();
+//==========================================================
   
   }
 
